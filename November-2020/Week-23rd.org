@@ -1,0 +1,25 @@
+* Week Starting 23rd November 2020
+
+This was the week Philip Herron (I) began full time on GCC Rust employeed
+via Open Source Security, Inc and Embecosm.
+
+** Activities
+
+- Why blog post, "the comerical imperative"
+  - Drafts made to be released next week
+- How blog post, "How this project will be achieved": 
+  - Drafts made to be released next week
+- Rebased the Repo on GCC Master
+  - To ensure we are in sync with GCC we must rebase the repo
+    periodically
+  - This was a hard task the changes to get the target info had many
+    conflicts but now we are able to track the change sets properly
+- Setup the automated testsuite
+- Setup automated docker builds
+- Setup Tasks tracking spreadsheets with github Kanban:
+  https://github.com/Rust-GCC/gccrs/projects/4
+- Moved the repo into a GCC Rust organisation
+
+*** Risks
+
+None
