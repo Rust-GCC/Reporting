@@ -20,6 +20,14 @@ via Open Source Security, Inc and Embecosm.
   https://github.com/Rust-GCC/gccrs/projects/4
 - Moved the repo into a GCC Rust organisation
 
+*** Test Cases
+
+Tesuite status:
+
+| Total Test Cases | Passing Test Cases | Failed Testcases |
+|------------------+--------------------+------------------|
+|               44 |                 40 | 4                |
+
 *** Risks
 
 None
