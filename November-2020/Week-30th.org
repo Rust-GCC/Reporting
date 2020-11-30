@@ -1,0 +1,20 @@
+* Week Starting 30th November 2020
+
+This week is a focus on contining the work on the core data structures in Rust.
+With a Focus on Arrays.
+
+** Activities
+
+- New Zulip channel: https://gcc-rust.zulipchat.com/
+- Why blog post, "the comerical imperative"
+  - Needs content about this paper https://www.cs.ucy.ac.cy/~eliasathan/papers/tops20.pdf
+- How blog post, "How this project will be achieved": 
+  Both need the links to the project for the get involved part
+- Mailing list - Do we need one?
+- Add more test cases
+- Automate the make check-rust to provide a test case overview on every build
+- Work on core data structure ticket
+
+*** Risks
+
+None
