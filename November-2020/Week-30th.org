@@ -15,6 +15,27 @@ With a Focus on Arrays.
 - Automate the make check-rust to provide a test case overview on every build
 - Work on core data structure ticket
 
+*** Task Status
+
+Tasks Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |           |           |       |
+| In Progress |           |           |       |
+| Completed   |           |           |       |
+
+
+*** Test Cases
+
+Tesuite status:
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |        40 |        40 |     0 |
+| Failed    |         4 |         4 |     0 |
+
+
 *** Risks
 
 None
