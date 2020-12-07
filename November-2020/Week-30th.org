@@ -8,23 +8,59 @@ With a Focus on Arrays.
 - New Zulip channel: https://gcc-rust.zulipchat.com/
 - Why blog post, "the comerical imperative"
   - Needs content about this paper https://www.cs.ucy.ac.cy/~eliasathan/papers/tops20.pdf
-- How blog post, "How this project will be achieved": 
-  Both need the links to the project for the get involved part
-- Mailing list - Do we need one?
+- How blog post, "How this project will be achieved"
+- Mailing list - Sync with David
 - Add more test cases
+- Add expected failure test suite
 - Automate the make check-rust to provide a test case overview on every build
 - Work on core data structure ticket
+- Speed up CI build
 
 *** Task Status
 
-Tasks Status
+GitHub Issues
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |           |           |       |
-| In Progress |           |           |       |
-| Completed   |           |           |       |
+| TODO        |        25 |        25 |   +25 |
+| In Progress |         0 |         2 |    +2 |
+| Completed   |         0 |         1 |    +1 |
 
+Lexer and Parser
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |         1 |         1 |     0 |
+| Bugs        |         0 |         2 |    +2 |
+| In Progress |         0 |         0 |     0 |
+| Completed   |        71 |        69 |    -2 |
+
+Static Analysis
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        25 |        24 |    -1 |
+| Bugs        |         0 |         0 |     0 |
+| In Progress |         4 |         3 |    -1 |
+| Completed   |         6 |         7 |    +1 |
+
+Error Handling
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        25 |        24 |    -1 |
+| Bugs        |         0 |         0 |     0 |
+| In Progress |         4 |         3 |    -1 |
+| Completed   |         6 |         7 |    +1 |
+
+Gimple Conversion
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        25 |        24 |    -1 |
+| Bugs        |         0 |         0 |     0 |
+| In Progress |         4 |         3 |    -1 |
+| Completed   |         6 |         7 |    +1 |
 
 *** Test Cases
 
@@ -32,10 +68,19 @@ Tesuite status:
 
 | TestCases | Last Week | This Week | Delta |
 |-----------+-----------+-----------+-------|
-| Passing   |        40 |        40 |     0 |
+| Passing   |        40 |        72 |   +32 |
 | Failed    |         4 |         4 |     0 |
 
 
 *** Risks
 
 None
+
+** Planned Activities
+
+For next week:
+
+- Fix bugs in parser affecting ArrayIndexExpressions and Slices
+- Continue with work on structs 
+- Plan the push to GCC git as a branch
+- Continue HIR IR branch work
