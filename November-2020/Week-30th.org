@@ -22,7 +22,7 @@ GitHub Issues
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |        25 |        25 |   +25 |
+| TODO        |        25 |        22 |    -3 |
 | In Progress |         0 |         2 |    +2 |
 | Completed   |         0 |         1 |    +1 |
 
