@@ -1,0 +1,92 @@
+* Week Starting 7th December 2020
+
+With the feedback from both Philipp Krones and Bjorn3 (RustC backend developer) I have decided
+it is better to start the refactoring process to get HIR (high-level IR) into GCC Rust. This is a big
+change but it will be better to make this change now than 3-4 months from now. 
+
+This change iis currently on a branch phil/hir-dev it reuses our AST as a baseline for the actual
+IR data structures but with the idea the lowering process will remove macros and convert some statements
+just as RustC does.
+
+The architecture goal of this project is to bring the compiler more in line to how the offical rust
+compiler works not nessecarily a clone but similar. The pipeline can now work as follows:
+
+Parsing -> AST -> NameResolution -> Expand -> Lower-AST -> HIR -> TypeResolution -> GIMPLE
+
+With the move to HIR it also brings about a much improved name resolution and type resolution process
+the current algorithm was not going to work when it came to shadowing rules as well as the trait and
+generics work down the road. https://rustc-dev-guide.rust-lang.org/type-inference.html
+
+** Activities
+
+1. Continue working on the HIR Development branch phil/hir-dev
+
+*** Task Status
+
+GitHub Issues
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        22 |        22 |    0 |
+| In Progress |         2 |         2 |    0 |
+| Completed   |         1 |         1 |    0 |
+
+Lexer and Parser
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |         1 |         1 |     0 |
+| Bugs        |         2 |         2 |     0 |
+| In Progress |         0 |         0 |     0 |
+| Completed   |        69 |        69 |     0 |
+
+Static Analysis
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        24 |        24 |     0 |
+| Bugs        |         0 |         0 |     0 |
+| In Progress |         3 |         3 |     0 |
+| Completed   |         7 |         7 |     0 |
+
+Error Handling
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        24 |        24 |     0 |
+| Bugs        |         0 |         0 |     0 |
+| In Progress |         3 |         3 |     0 |
+| Completed   |         7 |         7 |     0 |
+
+Gimple Conversion
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        24 |        24 |     0 |
+| Bugs        |         0 |         0 |     0 |
+| In Progress |         3 |         3 |     0 |
+| Completed   |         7 |         7 |     0 |
+
+*** Test Cases
+
+Tesuite status:
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |        72 |         0 |     0 |
+| Failed    |         4 |         0 |     0 |
+
+
+*** Risks
+
+None
+
+** Planned Activities
+
+Still targeting the core Data Structure Milestone
+
+1. Raise PR for HIR-dev
+   - Ensure no breakages with test suite
+2. Attend Rust workshop and help out
+3. Document the new architecture for the compiler
+4. Still need to plan the GCC branch mirror

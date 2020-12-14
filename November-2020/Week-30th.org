@@ -13,7 +13,7 @@ With a Focus on Arrays.
 - Add more test cases
 - Add expected failure test suite
 - Automate the make check-rust to provide a test case overview on every build
-- Work on core data structure ticket
+- Work on core data structure ticket focusing on Arrays
 - Speed up CI build
 
 *** Task Status
