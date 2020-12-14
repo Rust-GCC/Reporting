@@ -20,6 +20,10 @@ generics work down the road. https://rustc-dev-guide.rust-lang.org/type-inferenc
 ** Activities
 
 1. Continue working on the HIR Development branch phil/hir-dev
+2. Fixed ArrayIndex Expr parsing and CopiedArrayExpressions
+   - SimplyTheOther PR available
+3. Fixed missing location info on Struct Fields
+   - PR available
 
 *** Task Status
 
@@ -90,3 +94,4 @@ Still targeting the core Data Structure Milestone
 2. Attend Rust workshop and help out
 3. Document the new architecture for the compiler
 4. Still need to plan the GCC branch mirror
+5. Finish reviews
