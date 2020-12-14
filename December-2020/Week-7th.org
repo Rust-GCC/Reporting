@@ -77,8 +77,8 @@ Tesuite status:
 
 | TestCases | Last Week | This Week | Delta |
 |-----------+-----------+-----------+-------|
-| Passing   |        72 |         0 |     0 |
-| Failed    |         4 |         0 |     0 |
+| Passing   |        72 |        72 |     0 |
+| Failed    |         4 |         4 |     0 |
 
 
 *** Risks
