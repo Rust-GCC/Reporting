@@ -21,7 +21,7 @@ generics work down the road. https://rustc-dev-guide.rust-lang.org/type-inferenc
 
 1. Continue working on the HIR Development branch phil/hir-dev
 2. Fixed ArrayIndex Expr parsing and CopiedArrayExpressions
-   - SimplyTheOther PR available
+   - PR available
 3. Fixed missing location info on Struct Fields
    - PR available
 
