@@ -1,0 +1,48 @@
+* Week 14th -> 21st December 2020
+
+This week was a push to merge the new IR into the rust-frontend. This
+was a major change but will make completeing the current milestone
+of core data structures in rust much simpler. It also lays the ground
+for handling generics later on.
+
+Still on track for my milestone of core datastructures due Feb 1st.
+
+** Activities
+
+1. Raise and merge new HIR PR - PR #64
+2. Raise and merge new Name Resolution - PR #64
+3. Raise and merge new Type Resolver - PR #64
+4. Merge Parser fixes for arrays work - PR #62
+5. Fixed bug with forward declarations - PR #74
+6. Fix type unification to handle inference variables - PR #71
+
+*** Overall Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        24 |        21 |    -3 |
+| Bugs        |         7 |         5 |    -2 |
+| In Progress |         3 |         4 |    +1 |
+| Completed   |         7 |        12 |    +5 |
+
+*** Test Cases
+
+Tesuite status:
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |        72 |        88 |    +8 |
+| Failed    |         4 |        20 |   +16 |
+
+*** Risks
+
+No Change
+
+** Planned Activities
+
+1. Tuples + Tuple Structs
+2. Finish CopiedArray Expressions
+3. Add post processing dejagnu script to github workflow to fail build on test failures once failures are fixed
+4. Prepare an announcement mail to the GCC mailing list when the project is announced in the new year
+5. Add more tracking of compiler status into github to automate reporting of status
+6. Create test cases to validate the milestone being full-filled.
