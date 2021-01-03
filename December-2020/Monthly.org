@@ -1,0 +1,88 @@
+* Monthly Report for December 2020
+
+Since November 23rd the feedback from rustc backend developer bjorn3
+and Philipp Krones have been crucial in designing a proper architecture
+for the compiler moving forward. The code was not going to be able to handle
+to declare first, generics and traits uniformly. This first month a new HIR IR
+has been added with a node ID mapping system akin to rustc which allows implementation
+of the Hindley Milner type inferencing algorithm, which requires all nodes to be unified
+with rules to determine types.
+
+Consider declare first case we must examine all usages of the name x:
+
+```
+let x; // inference varaible _
+x = 1; // i32
+```
+
+Using type resolution rules it is possible to implement the following case.
+
+```
+let mut x; // _
+x = None;  // option<_>
+x = 1;     // option<i32>
+```
+
+As part of this large re-architecture a new name and type resolver are in place which
+have been designed with thoughs towards generics and traits down the line.
+
+GCCRs is still on track to complete the Core Data structure milestone. For
+this year of funding I believe the best usage of my time is to get onto implementing
+generics and traits where the most complexity and unknowns lie for the compiler.
+
+** Completed Activities
+
+- Introduce new HIR (high-level-IR)
+- HIR mappings for new name and type resolution
+- Type classes to implement Hindley-Milner type inferencing
+- Shadowing rules
+- Scoping rules
+- Arrays
+- Constants
+- Bug fixes for parsing expressions within ArrayIndex
+- Automate the test suite as part of make check using dejagnu
+- Docker Builds
+- Setup Reporting
+- Prepared Blog Posts
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         25 |         35 |   +10 |
+| In Progress |          4 |          5 |    +1 |
+| Completed   |          6 |         23 |   +17 |
+
+*** Test Cases
+
+Tesuite status:
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   |         40 |        124 |   +84 |
+| Failed    |          4 |          8 |    +4 |
+
+*** Milestones Progress
+
+| Milestone            | Last Month | This Month | Delta |
+|----------------------+------------+------------+-------|
+| Core Data Structures |        38% |        61% | +23%  |
+| Basic Control Flow   |         0% |        14% | +14%  |
+| Generics             |         0% |         0% | -     |
+| Traits               |         0% |         0% | -     |
+| Pattern Matching     |         0% |         0% | -     |
+| Imports              |         0% |         0% | -     |
+
+*** Risks
+
+- Get test cases written by someone other than myself to ensure the core
+  datastructure milestone is covered correctly
+
+** Planned Activities
+
+- Complete core data structure milestone
+- Ensure adequate testcase coverage
+- Announcement blog posts
+  - announcement email to GCC mailing list
+  - Mirror the code over on GCC Git as a branch prior to announcement
+
