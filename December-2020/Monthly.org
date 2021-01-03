@@ -10,18 +10,18 @@ with rules to determine types.
 
 Consider declare first case we must examine all usages of the name x:
 
-```
+#+BEGIN_SRC rust
 let x; // inference varaible _
 x = 1; // i32
-```
+#+END_SRC
 
 Using type resolution rules it is possible to implement the following case.
 
-```
+#+BEGIN_SRC rust
 let mut x; // _
 x = None;  // option<_>
 x = 1;     // option<i32>
-```
+#+END_SRC
 
 As part of this large re-architecture a new name and type resolver are in place which
 have been designed with thoughs towards generics and traits down the line.
