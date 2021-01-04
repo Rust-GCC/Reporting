@@ -55,8 +55,6 @@ generics and traits where the most complexity and unknowns lie for the compiler.
 
 *** Test Cases
 
-Tesuite status:
-
 | TestCases | Last Month | This Month | Delta |
 |-----------+------------+------------+-------|
 | Passing   |         40 |        124 |   +84 |
@@ -75,11 +73,13 @@ Tesuite status:
 
 *** Risks
 
-- Get test cases written by someone other than myself to ensure the core
-  datastructure milestone is covered correctly
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
 
 ** Planned Activities
 
+- Start using relevant RustC testsuite to validate compiler milestone
 - Complete core data structure milestone
 - Ensure adequate testcase coverage
 - Announcement blog posts
