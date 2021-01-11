@@ -1,0 +1,76 @@
+* Weekly Report 4th Jan to 11th Jan
+
+This was the first week back since the Christmas vacation, it was good to
+get back into Rust. The focus was making sure the name resolver was working
+correctly by creating an unused name pass which threw up some bugs which had
+to be resolved on the way.
+
+Implicit Returns was the other big focus and with the help from @bjorn3 it helped
+me understand fully the implementation rustc has made. The paticular case in question
+was:
+
+#+BEGIN_SRC rust
+fn test() -> i32 {
+    if x > 1 {
+        5
+    } else {
+        0
+    }
+    123
+}
+#+END_SRC
+
+This test case demonstrates that Rust treats the final last expression as the result of the function.
+Which means the if block is treated as a statement which should be unit type. Though if you were to remove
+the final expression of 123 this is now valid.
+
+** Completed Activities
+
+- Support suffix hint on literals eg: 5.0f64 - PR #121 #122 #126
+- Static variables - PR #120
+- Support hex, binary and octal number literals - PR #128
+- Bug fix scoping rules PR #133 #134
+- Add pass to check for unused decls #135
+- Support implicit returns PR #131
+- Turn on build failures on unexpected test failure - PR #118
+- Created GitHub Pages for the Rust-GCC organisation - https://rust-gcc.github.io/
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         35 |         32 |    -3 |
+| In Progress |          5 |          6 |    +1 |
+| Completed   |         23 |         33 |   +10 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   |        124 |        220 |   +96 |
+| Failed    |          8 |          0 |    -8 |
+
+*** Milestones Progress
+
+| Milestone            | Last Month | This Month | Delta |
+|----------------------+------------+------------+-------|
+| Core Data Structures |        61% |        79% | +18%  |
+| Basic Control Flow   |        14% |        14% | -     |
+| Generics             |         0% |         0% | -     |
+| Traits               |         0% |         0% | -     |
+| Pattern Matching     |         0% |         0% | -     |
+| Imports              |         0% |         0% | -     |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+
+** Planned Activities
+
+- Release Blog Posts
+- Notify GCC Mailing List
+- Tuples
+- Mutability
+- Documentation on name resolver
