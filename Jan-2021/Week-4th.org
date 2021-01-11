@@ -37,29 +37,29 @@ the final expression of 123 this is now valid.
 
 *** Overall Task Status
 
-| Category    | Last Month | This Month | Delta |
-|-------------+------------+------------+-------|
-| TODO        |         35 |         32 |    -3 |
-| In Progress |          5 |          6 |    +1 |
-| Completed   |         23 |         33 |   +10 |
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        35 |        32 |    -3 |
+| In Progress |         5 |         6 |    +1 |
+| Completed   |        23 |        33 |   +10 |
 
 *** Test Cases
 
-| TestCases | Last Month | This Month | Delta |
-|-----------+------------+------------+-------|
-| Passing   |        124 |        220 |   +96 |
-| Failed    |          8 |          0 |    -8 |
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |       124 |       220 |   +96 |
+| Failed    |         8 |         0 |    -8 |
 
 *** Milestones Progress
 
-| Milestone            | Last Month | This Month | Delta |
-|----------------------+------------+------------+-------|
-| Core Data Structures |        61% |        79% | +18%  |
-| Basic Control Flow   |        14% |        14% | -     |
-| Generics             |         0% |         0% | -     |
-| Traits               |         0% |         0% | -     |
-| Pattern Matching     |         0% |         0% | -     |
-| Imports              |         0% |         0% | -     |
+| Milestone            | Last Week | This Week | Delta |
+|----------------------+-----------+-----------+-------|
+| Core Data Structures |       61% |       79% | +18%  |
+| Basic Control Flow   |       14% |       14% | -     |
+| Generics             |        0% |        0% | -     |
+| Traits               |        0% |        0% | -     |
+| Pattern Matching     |        0% |        0% | -     |
+| Imports              |        0% |        0% | -     |
 
 *** Risks
 
