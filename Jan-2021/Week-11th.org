@@ -1,0 +1,60 @@
+* Weekly Report 11th Jan to 18th Jan
+
+This week was the announcement of the funding for GCC Rust.
+
+1. GCC Rust – How it can be achieved: https://www.embecosm.com/2021/01/12/gcc-rust-how-it-can-be-achieved/
+2. Open Source Security, Inc. Announces Funding of GCC Front-End for Rust: https://opensrcsec.com/open_source_security_announces_rust_gcc_funding
+
+Dev wise this week was about completing building blocks for Tuples support.
+
+** Completed Activities
+
+- Implicit returns should enforce typing on stmts before final expression - [[https://github.com/Rust-GCC/gccrs/pull/148][PR-148]]
+- Unit Type support - [[https://github.com/Rust-GCC/gccrs/pull/149][PR-149]]
+- Forward decls compilation support - [[https://github.com/Rust-GCC/gccrs/pull/150][PR-150]]
+- Fix naming of VarDecls in gimple nodes - [[https://github.com/Rust-GCC/gccrs/pull/151][PR-151]]
+- Struct Field Expression support - [[https://github.com/Rust-GCC/gccrs/pull/152][PR-152]]
+- Tuples support - [[https://github.com/Rust-GCC/gccrs/pull/153][PR-153]]
+- Expressions within parentheses - [[https://github.com/Rust-GCC/gccrs/pull/154][PR-154]]
+- Fix Link to Build Shield - [[https://github.com/Rust-GCC/gccrs/pull/147][PR-147]]
+- Fix Link Error - [[https://github.com/Rust-GCC/gccrs/pull/137][PR-137]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        32 |        36 |    +4 |
+| In Progress |         6 |         5 |    -1 |
+| Completed   |        33 |        35 |    +2 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |       220 |       300 |   +80 |
+| Failed    |         0 |         0 |    0  |
+
+*** Milestones Progress
+
+| Milestone         | Last Week | This Week | Delta |
+|-------------------+-----------+-----------+-------|
+| Data Structures 1 |       79% |       87% | +8%   |
+| Control Flow 1    |       14% |       25% | +11%  |
+| Data Structures 2 |        0% |        0% | -     |
+| Data Structures 3 |        0% |        0% | -     |
+| Control Flow 2    |        0% |        0% | -     |
+| Imports           |        0% |        0% | -     |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+
+** Planned Activities
+
+- Tuple Structs
+- Unit Structs
+- Mutability
+- Documentation on name resolver
+- Plan more issues in future milestones
