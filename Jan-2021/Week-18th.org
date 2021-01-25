@@ -68,14 +68,14 @@ warnings.
 
 *** Milestones Progress
 
-| Milestone         | Last Week | This Week | Delta |
-|-------------------+-----------+-----------+-------|
-| Data Structures 1 |       87% |       92% | +5%   |
-| Control Flow 1    |       25% |       25% | -     |
-| Data Structures 2 |        0% |        0% | -     |
-| Data Structures 3 |        0% |        0% | -     |
-| Control Flow 2    |        0% |        0% | -     |
-| Imports           |        0% |        0% | -     |
+| Milestone              | Last Week | This Week | Delta | Start Date         | Completion Date | Target        |
+|------------------------+-----------+-----------+-------+--------------------+-----------------+---------------|
+| Data Structures 1      |       87% |       92% | +5%   | 30th November 2020 | -               | 29th Jan 2021 |
+| Control Flow 1         |       25% |       25% | -     | -                  | -               | 26th Feb 2021 |
+| Data Structures 2      |        0% |        0% | -     | -                  | -               | 28st May 2021 |
+| Data Structures 3      |        0% |        0% | -     | -                  | -               | 27th Aug 2021 |
+| Control Flow 2         |        0% |        0% | -     | -                  | -               | 29th Oct 2021 |
+| Imports and Visibility |        0% |        0% | -     | -                  | -               | TBD           |
 
 *** Risks
 
