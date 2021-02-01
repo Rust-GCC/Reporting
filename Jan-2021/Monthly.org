@@ -1,0 +1,105 @@
+#+title:  Monthly Report for Jan 2021
+#+author: Philip Herron
+#+date:   2021-02-1
+
+This month completes the Core Data Structures milestone this provides the base of the compiler pipeline moving forward on time with the target date. An application to https://nlnet.nl/assure/ has been for submitted for a PhD student to create a general Rust language testing framework to automate the compilation of test cases on any Rust compiler. Initially it will target three compilers: rustc LLVM, rustc Cranelift and Rust-GCC. Taking into account a combination of security features such as the stack-protector, strict-aliasing and optimization levels.
+
+** Milestone Overview
+
+Within this milestone the pipeline of the compiler has been fleshed out following the pipeline below.
+
+#+BEGIN_EXAMPLE
+source.rs
+  -> Lex/Parse
+    -> Produces: AST
+  -> Macro Expansion (TODO)
+  -> Name resolver
+    -> Warnings: Unused names/types
+    -> Validates the LHS of assignments
+    -> Name Shadowing rules
+    -> Produces: side-table lookups of NodeIds to declaration NodeIds (Ribs)
+  -> HIR Lowering
+    -> Preserves attributes
+    -> Produces: side-table lookups of HirIds
+  -> Type Resolver
+    -> Type Inference
+    -> Validates all types have been resolved
+    -> Produces: side-table lookups of HirId's to TyTy types
+  -> Gimple Lowering:
+    -> reuse the lookups of HirIds to TyTy
+    -> Produces Gimple
+#+END_EXAMPLE
+
+Using side table lookups of HirId's is instrumental when it comes to emitting Gimple nodes we can look up the HirId back to the TyTy module what a type of a particular node is instead of maintaining getter/settings on the HIR data structures which is hard to maintain and was buggy in the past implementations of GCCRS. Moreover, it allows static analysis to operate in non-lexical lifetimes which is important in Data Structures 2 and 3 milestones for generics and traits.
+
+Macros have been left as a skeleton expansion pass after parsing, and contributor [[https://github.com/SimplyTheOther/gccrs][SimplyTheOther]] has been making progress on this. Since expansion runs before HIR Lowering, this has minimal impact on the compiler's work after that point. For me, this year's focus should be on the Generics and Traits, which are the areas I expect the most complexity to arise from.
+
+Thanks for new contributions from [[https://github.com/tschwinge][Thomas Schwinge]] for fixing some compilation warnings.
+
+The next Milestone Control flow 1 builds upon this work to provide Loops, assignable block expressions and methods using Impl blocks which is the building block to start work on Generics.
+
+Please find a folder of example demo applications for this Monthly Report. https://github.com/Rust-GCC/Reporting/tree/main/Jan-2021/monthly-demo
+
+** Completed Activities
+
+- [X] Tuples
+- [X] Tuple Structs
+- [X] TupleIndexAccessExpr
+- [X] Structs
+- [X] FieldAccessExpr
+- [X] CompoundAssignmentExpr
+- [X] NegationExpr
+- [X] Integer and Float Inference Variables
+- [X] UnitType
+- [X] Implicit returns
+- [X] Mutability on builtin types
+- [X] Unused name/type warnings
+- [X] Unreachable code check
+- [X] Shadowing rules
+- [X] Global variables
+- [X] Constants
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         35 |         55 |   +20 |
+| In Progress |          5 |          3 |    -2 |
+| Completed   |         23 |         46 |   +23 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   |        124 |        556 |  +432 |
+| Failed    |          0 |          0 |     0 |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |          7 |          3 |    -4 |
+| In Progress |          0 |          0 |     0 |
+| Completed   |          5 |          9 |    +4 |
+
+*** Milestones Progress
+
+| Milestone              | Last Month | This Month | Delta | Start Date         | Completion Date | Target        |
+|------------------------+------------+------------+-------+--------------------+-----------------+---------------|
+| Data Structures 1      |        61% |       100% | +39%  | 30th November 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1         |        14% |        33% | +19%  | 28th Jan 2021      | -               | 26th Feb 2021 |
+| Data Structures 2      |         0% |         0% | -     | -                  | -               | 28st May 2021 |
+| Data Structures 3      |         0% |         0% | -     | -                  | -               | 27th Aug 2021 |
+| Control Flow 2         |         0% |         0% | -     | -                  | -               | 29th Oct 2021 |
+| Imports and Visibility |         0% |         0% | -     | -                  | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+
+** Planned Activities
+
+- Control Flow 1 Milestone
+- Documentation on pipeline
