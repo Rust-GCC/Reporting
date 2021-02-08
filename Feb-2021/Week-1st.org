@@ -1,0 +1,144 @@
+#+title:  Weekly Report for 1st Feb to 8th Feb 2021
+#+author: Philip Herron
+#+date:   2021-02-8
+
+The control flow one milestone is filling in the gaps in basic rust compilation such as impl blocks, method resolution, block expressions and loops.
+
+When the PR for block expressions was merged regressions in implicit returns were found via manual testing. The automated test suite failed to pick this up due to a bug in the fail compilation test suite where we have test cases which we expect the compiler to find an error such as expected <integer> got bool for example.  The dejagnu test suite needs some work to conform to more of the GCC idioms to fix this. We can also implement a macro interception for println and assert_eq to resolve to a libc equivalent until macro expansion is ready.
+
+Gaps in automated testing will be addressed when moving into Generics and Traits where regressions might creep in.
+
+** Milestone Overview
+
+We can now compile block expressions such as:
+
+#+BEGIN_SRC rust
+fn test() -> i32 {
+    123
+}
+
+fn main() {
+    let a = {
+        let a = test() + 2;
+        a + 123
+    };
+    let b = {
+        if a > 10 {
+            a - 1
+        } else {
+            a + 1
+        }
+    };
+}
+#+END_SRC
+
+Many rust developers will rightly comment that the above example could be much simpler such as:
+
+#+BEGIN_SRC rust
+let b = if a > 10 { a - 1 } else { a + 1 };
+#+END_SRC
+
+Currently the parser has a bug in parsing the block without braces at the start which has been raised but in theory all the code is there to handle this when this bug is fixed.
+
+The other major feature was method resolution and impl blocks such as:
+
+#+BEGIN_SRC rust
+struct Point {
+    x: f64,
+    y: f64,
+}
+
+impl Point {
+    fn origin() -> Point {
+        Point { x: 0.0, y: 0.0 }
+    }
+
+    fn new(x: f64, y: f64) -> Point {
+        Point { x: x, y: y }
+    }
+}
+
+struct Rectangle {
+    p1: Point,
+    p2: Point,
+}
+
+impl Rectangle {
+    fn from(p1: Point, p2: Point) -> Self {
+        Self { p1, p2 }
+    }
+}
+
+fn main() {
+    let p1 = Point::origin();
+    let p2 = Point::new(3.0, 4.0);
+    let rect = Rectangle::from(p1, p2);
+
+    let sum = rect.sum_x();
+}
+
+impl Rectangle {
+    fn sum_x(self) -> f64 {
+        let p1 = self.p1;
+        let p2 = self.p2;
+        p1.x + p2.x
+    }
+}
+#+END_SRC
+
+This example shows a method being resolved and called (Rectangle::sum_x) which lead to me realising scanning for unused names or types cannot be done untill we resolve all types because it is only at that point we can resolve fields in algebraic data types as well as methods.
+
+** Completed Activities
+
+- Block Expressions: [[https://github.com/Rust-GCC/gccrs/pull/210][PR210]] [[https://github.com/Rust-GCC/gccrs/pull/211][PR211]] [[https://github.com/Rust-GCC/gccrs/pull/215][PR215]]
+- Compiler Warning Fixes: [[https://github.com/Rust-GCC/gccrs/pull/209][PR209]]
+- Enforce Duplicate definition rules: [[https://github.com/Rust-GCC/gccrs/pull/207][PR207]]
+- Move scan for unused names/types to be after type resolution: [[https://github.com/Rust-GCC/gccrs/pull/206][PR206]]
+- Impl Blocks and method resolution with self and Self: [[https://github.com/Rust-GCC/gccrs/pull/203][PR203]] [[https://github.com/Rust-GCC/gccrs/pull/205][PR205]]
+- Split out the integer inference variable tests and add missing cases: [[https://github.com/Rust-GCC/gccrs/pull/202][PR202]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        55 |        53 |    -2 |
+| In Progress |         3 |         4 |    +1 |
+| Completed   |        46 |        54 |    +8 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |       556 |       688 |  +132 |
+| Failed    |         0 |         0 |     0 |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |         3 |         4 |    +1 |
+| In Progress |         0 |         2 |    +2 |
+| Completed   |         9 |        10 |    +1 |
+
+*** Milestones Progress
+
+| Milestone              | Last Week | This Week | Delta | Start Date         | Completion Date | Target        |
+|------------------------+-----------+-----------+-------+--------------------+-----------------+---------------|
+| Data Structures 1      |      100% |      100% | -     | 30th November 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1         |       14% |       68% | +54%  | 28th Jan 2021      | -               | 26th Feb 2021 |
+| Data Structures 2      |        0% |        0% | -     | -                  | -               | 28st May 2021 |
+| Data Structures 3      |        0% |        0% | -     | -                  | -               | 27th Aug 2021 |
+| Control Flow 2         |        0% |        0% | -     | -                  | -               | 29th Oct 2021 |
+| Imports and Visibility |        0% |        0% | -     | -                  | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+
+** Planned Activities
+
+- Bugs
+- Loops
+- Documentation
