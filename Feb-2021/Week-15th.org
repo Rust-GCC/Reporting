@@ -1,0 +1,99 @@
+#+title:  Weekly Report for 15th to 22nd Feb Feb 2021
+#+author: Philip Herron
+#+date:   2021-02-22
+
+In this weeks status report, multiple pieces of work are in progress. You can find on the repo a branch for adding generics to Algebraic data types. To implement Generics, two significant pieces of work are needed: a [[https://doc.rust-lang.org/nightly/nightly-rustc/rustc_middle/ty/sty/struct.ParamTy.html][ParamTy]], a placeholder TyTy to reference of Generic Argument, the other is a [[https://doc.rust-lang.org/nightly/nightly-rustc/rustc_middle/ty/subst/type.SubstsRef.html][Substitution Mapping]] that allows usages of the template to substitute in the concrete type, which might be an InferType. 
+
+
+** Overview
+
+As mentioned above, the generics work is still in progress; the focus is on getting this working for algebraic data types first, but with the implementation of this, the primitives the compiler will use is the ParamTy and Substitution mappings, and this needs to be reusable for all Generic Arguments.
+
+So far, the branch can compile:
+
+#+BEGIN_SRC rust
+struct GenericStruct<T> {
+    a: T,
+    b: usize,
+}
+
+fn main() {
+    let a1: GenericStruct<i8>;
+    a1 = GenericStruct::<i8> { a: 1, b: 456 };
+
+    let b1: i8 = a1.a;
+    let c2: usize = a1.b;
+
+    let a2;
+    a2 = GenericStruct::<i32> { a: 123, b: 456 };
+
+    let b2: i32 = a2.a;
+    let c2: usize = a2.b;
+
+    let a3;
+    a3 = GenericStruct { a: 1.0, b: 456 };
+
+    let b3: f32 = a3.a;
+    let c3: usize = a3.b;
+}
+#+END_SRC
+
+But there is no implementation of the substitution mappings, which means the management of the ParamTy won't be reusable for Functions, for example. The branch is in the middle of clean up and adding in the Substitution mapper to make it more reusable.
+
+We also need to thank a new contributor looking to join Rust for GSOC 2021 [[https://github.com/YizhePKU][Yizhe]] who has submitted a much needed to refactor and cleanup of the base classes used in the TyTy module. I wish him all the best in his journey into compilers.
+
+We also have now turned on a new GitHub action to verify the code formatting using clang-format in every PR thanks to [[https://github.com/humancalico][Akshat Agarwal]] for this.
+
+** Completed Activities
+
+- Cleanup TyTy Base types and add is_equal method - [[https://github.com/Rust-GCC/gccrs/pull/238][PR238]]
+- Add clang format GitHub action - [[https://github.com/Rust-GCC/gccrs/pull/242][PR242]] [[https://github.com/Rust-GCC/gccrs/pull/246][PR246]]
+- Remove unused code - [[https://github.com/Rust-GCC/gccrs/pull/244][PR244]]
+- Add debug interface to the GENERIC trees - [[https://github.com/Rust-GCC/gccrs/pull/245][PR245]]
+- WIP: Generics on branch - [[https://github.com/Rust-GCC/gccrs/tree/phil/generics][wip-generics]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        46 |        50 |    +4 |
+| In Progress |         2 |         5 |    +3 |
+| Completed   |        71 |        72 |    +1 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |       812 |       812 |     0 |
+| Failed    |         0 |         0 |     0 |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |         5 |         5 |     0 |
+| In Progress |         0 |         0 |     0 |
+| Completed   |        17 |        17 |     0 |
+
+*** Milestones Progress
+
+| Milestone              | Last Week | This Week | Delta | Start Date         | Completion Date | Target        |
+|------------------------+-----------+-----------+-------+--------------------+-----------------+---------------|
+| Data Structures 1      |      100% |      100% | -     | 30th November 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1         |      100% |      100% | -     | 28th Jan 2021      | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2      |       31% |       30% | -1%   | 11th Feb 2021      | -               | 28st May 2021 |
+| Data Structures 3      |        0% |        0% | -     | -                  | -               | 27th Aug 2021 |
+| Control Flow 2         |        0% |        0% | -     | -                  | -               | 29th Oct 2021 |
+| Imports and Visibility |        0% |        0% | -     | -                  | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+
+** Planned Activities
+
+- Finish cleanup of the first branch for generics
+- Add more tickets to milestone
+- Mutable borrows and double borrows
