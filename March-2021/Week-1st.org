@@ -1,0 +1,68 @@
+#+title:  Monthly Report for 1st to 8th March 2021
+#+author: Philip Herron
+#+date:   2021-03-8
+
+An exciting start to March with two new contributors lets welcome:
+
+- Yizhe https://github.com/YizhePKU - Copyright assignment in progress
+- Marc Poulhiès https://github.com/dkm - Awaiting Copyright assignment
+
+There are several streams of work going on in GCC Rust this month, opening up with [[https://github.com/Rust-GCC/gccrs/issues/248][issue-248]], GCC has 2 loggers currently one in the JIT project and one in the analyzer project from [[https://github.com/davidmalcolm][David Malcolm]] logging has always been a useful debugging tool and instead of rolling out own debugger we want to reuse one from GCC. There is already a [[https://gcc.gnu.org/pipermail/gcc-patches/2021-March/566295.html][proposed patch]] on the GCC-Patches mailing list. The next piece is generics on functions and impl blocks; this is still in progress and breaks down into several changes, one where we separate the usage of FNDEF in the TyTy module into FN and FNPTR, function pointers were reusing the FNDEF type, which was never quite right since function pointers cannot have substitutions but function definitions can.
+
+The test suite bug which allowed test that _must_ fail to pass has been fixed, which brought to the front several bugs and a refactoring effort to clean up the TyTy module, which is core to this compiler.
+
+** Completed Activities
+
+- Fix for bad symbol names when assembling code with methods (we are missing name mangling) - [[https://github.com/Rust-GCC/gccrs/commit/f879526899b4680b65da052f4ef396577e6ba621][f87952]]
+- Ensure only TupleStructs can be constructed using CallExpr - [[https://github.com/Rust-GCC/gccrs/commit/2a7cbe4fd99513fdf85f77a80eb04a3d99924162][2a7cbe]]
+- Fix bad type resolution with for examples with and without deadcode - [[https://github.com/Rust-GCC/gccrs/commit/65e06883b05627eeca556b2df22bd125ebd7eb42][65e068]]
+- Fix for test suite allowing tests which must fail to pass - [[https://github.com/Rust-GCC/gccrs/pull/261][PR261]]
+- Remove UnitType TyTy representation and reuse empty Tuple Type (awaiting copyright assignment) - [[https://github.com/Rust-GCC/gccrs/issues/252][ISSUE-252]]
+- Remove unused code - [[https://github.com/Rust-GCC/gccrs/pull/264][PR264]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        53 |        54 |    +1 |
+| In Progress |         3 |         3 |     - |
+| Completed   |        78 |        81 |    +3 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      1008 |      1016 |    +8 |
+| Failed    |         0 |         0 |     - |
+
+*** Bugs
+    
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |         6 |         7 |    +1 |
+| In Progress |         1 |         1 |     - |
+| Completed   |        17 |        18 |    +1 |
+
+*** Milestones Progress
+
+| Milestone              | Last Week | This Week | Delta | Start Date         | Completion Date | Target        |
+|------------------------+-----------+-----------+-------+--------------------+-----------------+---------------|
+| Data Structures 1      |      100% |      100% | -     | 30th November 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1         |      100% |      100% | -     | 28th Jan 2021      | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2      |       41% |       48% | +7%   | 11th Feb 2021      | -               | 28st May 2021 |
+| Data Structures 3      |        0% |        0% | -     | -                  | -               | 27th Aug 2021 |
+| Control Flow 2         |        0% |        0% | -     | -                  | -               | 29th Oct 2021 |
+| Imports and Visibility |        0% |        0% | -     | -                  | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+
+** Planned Activities
+
+- Generics on impl blocks and methods
+- Type Resolution documentation
+- Blog Post
+- Println and assert_eq macro interception
