@@ -1,0 +1,98 @@
+#+title:  Monthly Report for 8th to 15th March 2021
+#+author: Philip Herron
+#+date:   2021-03-15
+
+** Overview
+
+*** GSOC
+
+With the recent announcement of Google Summer of Code 2021 GCC Rust has received a lot of interest from many different students. All of whom are getting up and running with the compiler and trying to figure out what their project proposal will be. This year google summer of code is shorter than the previous, and projects must be achievable within the available time. This is why the two suggested projects are in relation to the GCC Rust  AST and HIR outputs which are critical for debugging the compiler down the line; the other project which will be more challenging is adding more static analysis, which is another open project to find missing static analysis warnings missing in GCC rust that are present in Rustc, this project is more free form and will need more feedback from the community as to its achievability within the time frame.
+
+*** Status Reporting Call
+
+In other news, I am trying to schedule a monthly status report call with the community on Zulip, and I am aiming for the first one to be on the 2nd of April 2021. The time is being narrowed down roughly to 1530 UTC, which is subject to some change as I want to find an appropriate time to maximize availability. I am aiming to record this and upload it to YouTube for those who cannot attend. A blog post detailing this will be released when it is finalized.
+
+*** Compiler Development
+
+My focus for this milestone has been generics; with the first part being merged into the compiler, it implemented the TurboFish and basic generics on Algebraic Data Types; my current branch is implementing Generics arguments on Functions and allowing recursive generic argument substitution such as:
+
+#+BEGIN_SRC rust
+struct Foo<T>(T);
+
+struct Bar<T> {
+    a: Foo<T>,
+    b: bool,
+}
+
+fn test<T>(a: Bar<T>) -> Foo<T> {
+    a.a
+}
+
+fn main() {
+    let a: Bar<i32> = Bar::<i32> {
+        a: Foo::<i32>(123),
+        b: true,
+    };
+    let b: Foo<i32> = test(a);
+}
+#+END_SRC
+
+This was a fairly difficult piece of work and requires name mangling to avoid duplicate symbols linker error. The other piece is if you are compiling the usage of a generic function, this means you are creating a concrete implementation of that function, but this means there is a chance to create duplicate functions if you call the same generic function with the same types which require analysis to cancel out any duplicates here.
+
+*** S-Expressions
+Recently a prospective Google summer of code student [[https://github.com/YizhePKU][Yizhe]] has attempted to format the AST into [[https://en.wikipedia.org/wiki/S-expression][S-epxressions]] this is a brilliant format for the AST and HIR outputs which can have extra metadata such as the NodeMappings. See his open PR for more information: https://github.com/Rust-GCC/gccrs/pull/276
+
+*** Vacation
+Small note that I am taking the 16th and 17th off for St Patrick's Day, so I will pick up any missed messages on Thursday the 18th.
+
+** Completed Activities
+
+- CI Workflow to use make -j which cuts 20 min off each build - [[https://github.com/Rust-GCC/gccrs/pull/277][PR277]]
+- Refactor TyCtx - [[https://github.com/Rust-GCC/gccrs/pull/278][PR278]]
+- Fix warnings in build - [[https://github.com/Rust-GCC/gccrs/pull/273][PR273]] [[https://github.com/Rust-GCC/gccrs/pull/271][PR271]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        54 |        57 |    +3 |
+| In Progress |         3 |         4 |    +1 |
+| Completed   |        81 |        87 |    +6 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      1016 |      1032 | +16   |
+| Failed    |         0 |         0 | -     |
+
+*** Bugs
+    
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |         7 |         7 |     - |
+| In Progress |         1 |         0 |    -1 |
+| Completed   |        18 |        20 |    +2 |
+
+*** Milestones Progress
+
+| Milestone              | Last Week | This Week | Delta | Start Date         | Completion Date | Target        |
+|------------------------+-----------+-----------+-------+--------------------+-----------------+---------------|
+| Data Structures 1      |      100% |      100% | -     | 30th November 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1         |      100% |      100% | -     | 28th Jan 2021      | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2      |       48% |       55% | +7%   | 11th Feb 2021      | -               | 28st May 2021 |
+| Data Structures 3      |        0% |        0% | -     | -                  | -               | 27th Aug 2021 |
+| Control Flow 2         |        0% |        0% | -     | -                  | -               | 29th Oct 2021 |
+| Imports and Visibility |        0% |        0% | -     | -                  | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+
+** Planned Activities
+
+- Raise PR for Generics part 2
+- Type Resolution documentation
+- Println and assert_eq macro interception
