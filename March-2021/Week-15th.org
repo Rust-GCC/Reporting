@@ -1,0 +1,74 @@
+#+title:  Weekly Report for 15th to 22nd March 2021
+#+author: Philip Herron
+#+date:   2021-03-22
+
+** Overview
+
+*** Milestone Progress
+
+As part of my on going work into generics this milestone breaks down into 3 major pieces of work:
+
+- ADT (algebraic data type) with generic params
+- Function with generic params
+- Impl blocks with generic param
+
+The first piece is in and merged the 2nd one is an open PR over on [[https://github.com/Rust-GCC/gccrs/pull/297][PR297]]. This implements recursive generics and generic functions. The branch is currently being cleaned up before it will be merged. This has been an effort of several weeks to get right. Aside from these three pieces of work there are smaller tasks in generics in terms of parameter binding which will be done once these sub taksare done first.
+
+*** Open PRs
+
+The project has recieved many contributions which has been very exciting, but as this project is destined to be upstream with GCC we do have to follow the rules with regards to copyright assignment (https://gcc.gnu.org/contribute.html). There are several PR's that have been stalled waiting for copyright assignment namely:
+
+- Testsuite updates: [[https://github.com/Rust-GCC/gccrs/pull/301][PR301]]
+- Refactor UnitType to reuse empty TupleType like Rustc: [[https://github.com/Rust-GCC/gccrs/pull/286][PR286]]
+- Fix crash on zero length arrays: [[https://github.com/Rust-GCC/gccrs/pull/288][PR288]]
+
+** Completed Activities
+
+- Fix default of decimal numbers to f64 instead of f32 - [[https://github.com/Rust-GCC/gccrs/pull/294][PR294]]
+- Fix type resolution on inference variables in final expressions - [[https://github.com/Rust-GCC/gccrs/pull/298][PR298]]
+- Cleanup the overloaded-virtual build warnings - [[https://github.com/Rust-GCC/gccrs/pull/287][PR287]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        57 |        55 |    -2 |
+| In Progress |         4 |         3 |    -1 |
+| Completed   |        87 |        94 |    +7 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      1032 |      1040 | +8    |
+| Failed    |         0 |         0 | -     |
+
+*** Bugs
+    
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |         7 |        11 |    +4 |
+| In Progress |         0 |         0 |     - |
+| Completed   |        20 |        22 |    +2 |
+
+*** Milestones Progress
+
+| Milestone              | Last Week | This Week | Delta | Start Date         | Completion Date | Target        |
+|------------------------+-----------+-----------+-------+--------------------+-----------------+---------------|
+| Data Structures 1      |      100% |      100% | -     | 30th November 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1         |      100% |      100% | -     | 28th Jan 2021      | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2      |       55% |       60% | +5%   | 11th Feb 2021      | -               | 28st May 2021 |
+| Data Structures 3      |        0% |        0% | -     | -                  | -               | 27th Aug 2021 |
+| Control Flow 2         |        0% |        0% | -     | -                  | -               | 29th Oct 2021 |
+| Imports and Visibility |        0% |        0% | -     | -                  | -               | TBD           |
+
+*** Risks
+
+| Risk                                     | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|------------------------------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments                    |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+
+** Planned Activities
+
+- Finish PR for generics on functions
+- Type Resolution documentation
