@@ -1,0 +1,157 @@
+#+title:  Weekly Report for 22nd to 29th March 2021
+#+author: Philip Herron
+#+date:   2021-03-29
+
+** Overview
+
+*** Status Report Call
+
+We are going to have our first community status report call this week on [[https://gcc-rust.zulipchat.com/][Zulip]] on 2nd April 2021 at 15:30 UTC+1, this is a public holiday for many people but I am going to work these days. Everyone is welcome just join on zulip.
+
+*** Testsuite changes
+
+Recently we have updated the testsuite to be inline with other gcc testsuites with thanks to [[https://github.com/dkm][Marc Poulhies]], who recently completed this GCC copyright assignment and with feedback from GCC developer [[https://github.com/tschwinge][Thomas Schwinge]]. This creates proper support for expected failures and takes advantage of the dejagnu annotations to look for the errors with associated location info to mark the test as passed or not. For example:
+
+#+BEGIN_SRC rust
+fn main() {
+    let logical: bool = 123; // { dg-error "expected .bool. got .<integer>." }
+}
+#+END_SRC
+
+*** Milestone Progress
+
+Recently I have merged [[https://github.com/Rust-GCC/gccrs/pull/304][Generics Part three]] to add templates to Impl blocks such as the following example:
+
+#+BEGIN_SRC rust
+struct GenericStruct<T>(T, usize);
+
+impl<T> GenericStruct<T> {
+    fn new(a: T, b: usize) -> Self {
+        GenericStruct(a, b)
+    }
+
+    fn get(self) -> T {
+        self.0
+    }
+}
+
+fn main() {
+    let a: GenericStruct<i32> = GenericStruct::<i32>::new(123, 456);
+    let aa: i32 = a.get();
+
+    let b: GenericStruct<u32> = GenericStruct::<_>::new(123, 456);
+    let bb: u32 = b.get();
+
+    let c: GenericStruct<f32> = GenericStruct::new(123f32, 456);
+    let cc: f32 = c.get();
+}
+#+END_SRC
+
+It was satisfying to build since it was incremental work from previous weeks on [[https://github.com/Rust-GCC/gccrs/pull/251][templated ADT]] and [[https://github.com/Rust-GCC/gccrs/pull/297][template functions]]. These building blocks have implemented the core of Generics but there are remaining tasks in ensuring we support [[https://doc.rust-lang.org/reference/items/generics.html][generic argument bindings]] where template parameters can have defaults, which means when we try to infer the substitutions we must take this into account and recursively. The other missing piece is when we define an impl block for example with an already substituted type we must ensure that no substitution occurs. This leaves a final task to ensure symbols are mangled correctly to avoid duplicate functions being generated and managled with the correct name of the substituted types involved. 
+
+See below for an example test case which should test each of these remaining pieces of work:
+
+#+BEGIN_SRC rust
+struct Foo<A = (isize, char)> {
+    a: A,
+}
+
+impl Foo<isize> {
+    fn bar(self) -> isize {
+        self.a
+    }
+}
+
+impl Foo<char> {
+    fn bar(self) -> char {
+        self.a
+    }
+}
+
+impl Foo {
+    fn bar(self) {
+        let a: (isize, char) = self.a;
+        let b = a.0;
+        let c = a.1;
+
+        let aa: Foo<isize> = Foo { a: b };
+        let bb: isize = aa.bar();
+    }
+}
+
+fn main() {
+    let a = Foo { a: (123, 'a') };
+    a.bar();
+}
+
+#+END_SRC
+
+Something that came up during development of generics is that generic parameters are not inherited on HIR Items that support generic parameters such as:
+
+#+BEGIN_SRC rust
+fn foo<T>(x: T) -> T {
+    fn bar(y: T) -> T {
+        y
+    }
+    bar(x);
+}
+
+fn main() {
+    foo(123);
+}
+#+END_SRC
+
+It results in [[https://doc.rust-lang.org/error-index.html#E0401][E0401]], this was not clear that rust does not support this but it does simplify things for compiler development.
+
+** Completed Activities
+
+- Refactor TestSuite to be inline with other GCC testsuites - [[https://github.com/Rust-GCC/gccrs/pull/301][PR301]] [[https://github.com/Rust-GCC/gccrs/pull/315][PR315]]
+- Fix hang in parser when we have an unterminated comment - [[https://github.com/Rust-GCC/gccrs/pull/302][PR302]]
+- Add location info for TypePaths - [[https://github.com/Rust-GCC/gccrs/pull/303][PR303]]
+- Generics on impl blocks - [[https://github.com/Rust-GCC/gccrs/pull/304][PR304]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        55 |        55 |     - |
+| In Progress |         3 |         4 |    +1 |
+| Completed   |        94 |       103 |    +9 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      1040 |       800 |  -240 |
+| XFAIL     |         0 |        26 |   +26 |
+| Failed    |         0 |         0 |     - |
+
+*** Bugs
+    
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        11 |        10 |    -1 |
+| In Progress |         0 |         2 |    +2 |
+| Completed   |        22 |        24 |    +2 |
+
+*** Milestones Progress
+
+| Milestone              | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1      |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1         |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2      |       60% |       69% | +9%   | 11th Feb 2021 | -               | 28th May 2021 |
+| Data Structures 3      |        0% |        0% | -     | -             | -               | 27th Aug 2021 |
+| Control Flow 2         |        0% |        0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                                     | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|------------------------------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments                    |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+
+** Planned Activities
+
+- Work on defaults for generic parameters
+- Finish more documentation
