@@ -1,0 +1,127 @@
+#+title:  Monthly Report for March 2021
+#+author: Philip Herron
+#+date:   2021-04-2
+
+** Overview
+
+*** Monthly Community Call
+On April 2 we had our first community status report call which was a nice way to say hello to everyone. The meeting notes can be found over on: https://hackmd.io/@flip1995/BJc1oiNB_
+
+We plan to keep this on the first Friday of every month but we will move the time to suit more people.
+
+*** Google Summer of Code 2021
+
+With GCC kindly making GCC Rust part of the [[https://summerofcode.withgoogle.com/organizations/4718882427764736/][mentoring organisation]] we have attracted several students from around the world interested in compiler development. Many proposal are based on the example projects outlined in our wiki but some have also suggested their own. It its very humbling to see how talented students are out there, and that they are interested in GCC Rust. I thank you all for your work so far, good Luck to each of you.
+
+Please see our wiki for more information: https://github.com/Rust-GCC/gccrs/wiki/Google-Summer-of-Code
+
+*** Automation
+
+Recently [[https://github.com/flip1995][Philipp Krones]] has suggested that we investigate [[https://bors.tech/][BORS]] which is an automation bot for CI/CD and common in Rust projects. This in this [[https://gcc-rust.zulipchat.com/#narrow/stream/266897-general/topic/GitHub.20repository.20write.20access.3F/near/232551949][zulip discussion]] has more context for those interested in why this came around. [[https://github.com/dkm][Marc]] has already proposed a [[https://github.com/Rust-GCC/gccrs/pull/331][PR]] and discussion is flowing on how best to move forward this in terms of [[https://gcc.gnu.org/contribute.html][GCC copyright assignment]] and automated PR's in github. Personally I really like automation and modern practices but as this project is destined to be upstream with GCC lets take our time to get this right; in relation to this a long term goal for this compiler is that the front-end could be seperated from GCC, and become its own project (while maintaining GCC copyright assignments), this is why we are using the rust-gcc.cc fork of go-gcc.cc GENERIC abstractions.
+
+*** Testsuite
+
+Recently the testsuite has been updated to be inline with other gcc testsuites with thanks to [[https://github.com/dkm][Marc Poulhies]], who recently completed this GCC copyright assignment and with feedback from GCC developer [[https://github.com/tschwinge][Thomas Schwinge]]. This creates proper support for expected failures and takes advantage of the dejagnu annotations to look for the errors with associated location info to mark the test as passed or not. For example:
+
+#+BEGIN_SRC rust
+fn main() {
+    let logical: bool = 123; // { dg-error "expected .bool. got .<integer>." }
+}
+#+END_SRC
+
+*** Milestone Progress
+
+The current Milestone is Data Structures 2 which focus on extending the type system for generics. This is a critical step forward ensuring our type system is capable of handling generic functions, methods and types. A lot of the building blocks are already in place namely [[https://github.com/Rust-GCC/gccrs/pull/251][templated ADT]] and [[https://github.com/Rust-GCC/gccrs/pull/297][template functions]]. These building blocks have implemented the core of Generics but there are remaining tasks in ensuring we support [[https://doc.rust-lang.org/reference/items/generics.html][generic argument bindings]] where template parameters can have defaults, which means when we try to infer the substitutions we must take this into account and recursively. The other missing piece is when we define an impl block for example with an already substituted type we must ensure that no substitution occurs. This leaves a final task to ensure symbols are mangled correctly to avoid duplicate functions being generated and managled with the correct name of the substituted types involved. 
+
+See below for an example test case which should test each of these remaining pieces of work in terms of multiple impl blocks and defaults for generic parameters:
+
+#+BEGIN_SRC rust
+struct Foo<A = (isize, char)> {
+    a: A,
+}
+
+impl Foo<isize> {
+    fn bar(self) -> isize {
+        self.a
+    }
+}
+
+impl Foo<char> {
+    fn bar(self) -> char {
+        self.a
+    }
+}
+
+impl Foo {
+    fn bar(self) {
+        let a: (isize, char) = self.a;
+        let b = a.0;
+        let c = a.1;
+
+        let aa: Foo<isize> = Foo { a: b };
+        let bb: isize = aa.bar();
+    }
+}
+
+fn main() {
+    let a = Foo { a: (123, 'a') };
+    a.bar();
+}
+
+#+END_SRC
+
+** Completed Activities
+
+- Initial TypeAlias support - [[https://github.com/Rust-GCC/gccrs/pull/322][PR322]]
+- Fix bugs with substitution types bool need_substitution() const - [[https://github.com/Rust-GCC/gccrs/pull/326][PR326]]
+- Fix infinite loop in cfg expansion - [[https://github.com/Rust-GCC/gccrs/pull/319][PR319]]
+- Add more dg-error annotations to XFAIL tests - [[https://github.com/Rust-GCC/gccrs/pull/329][PR329]] [[https://github.com/Rust-GCC/gccrs/pull/315][PR315]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         53 |       57   |   +4  |
+| In Progress |          3 |       6    |   +3  |
+| Completed   |         78 |       107  |   +29 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   |       1008 |        838 |  -170 |
+| XFAIL     |          0 |         26 |   +26 |
+| Failed    |          0 |          - |     - |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |          6 |         12 |    +6 |
+| In Progress |          1 |          2 |    +1 |
+| Completed   |         17 |         25 |    +8 |
+
+*** Milestones Progress
+
+| Milestone              | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|------------------------+------------+------------+-------+---------------+-----------------+---------------|
+| Data Structures 1      |       100% |       100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1         |       100% |       100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2      |        41% |        72% | +31%  | 11th Feb 2021 | -               | 28th May 2021 |
+| Data Structures 3      |         0% |         0% | -     | -             | -               | 27th Aug 2021 |
+| Control Flow 2         |         0% |         0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility |         0% |         0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+
+** Planned Activities
+
+- Add Canonical Paths to name resolution to fix bugs: [[https://github.com/Rust-GCC/gccrs/issues/335][355]] [[https://github.com/Rust-GCC/gccrs/issues/325][325]]
+ - https://doc.rust-lang.org/reference/paths.html#canonical-paths
+- Add Defaults to Generic Parameters
+- Type resolution Documentation
+- Google Summer of code proposal reviews
