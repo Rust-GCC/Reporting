@@ -103,20 +103,21 @@ fn main() {
 
 *** Milestones Progress
 
-| Milestone              | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
-|------------------------+------------+------------+-------+---------------+-----------------+---------------|
-| Data Structures 1      |       100% |       100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
-| Control Flow 1         |       100% |       100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
-| Data Structures 2      |        41% |        72% | +31%  | 11th Feb 2021 | -               | 28th May 2021 |
-| Data Structures 3      |         0% |         0% | -     | -             | -               | 27th Aug 2021 |
-| Control Flow 2         |         0% |         0% | -     | -             | -               | 29th Oct 2021 |
-| Imports and Visibility |         0% |         0% | -     | -             | -               | TBD           |
+| Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |        41% |        72% | +31%  | 11th Feb 2021 | -               | 28th May 2021 |
+| Data Structures 3 - Traits        |         0% |         0% | -     | -             | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |         0% |         0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |         0% |         0% | -     | -             | -               | TBD           |
 
 *** Risks
 
 | Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
 |-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
 | Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
 
 ** Planned Activities
 
