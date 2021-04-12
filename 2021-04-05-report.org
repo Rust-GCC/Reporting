@@ -1,0 +1,140 @@
+#+title:  Weekly Report for 5th to 12th April 2021
+#+author: Philip Herron
+#+date:   2021-04-12
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This week there has been no progress change for this milestone but that does not mean no work was done. I have opened a new [[https://github.com/Rust-GCC/gccrs/pull/358][PR]] which implements the [[https://techblog.tonsser.com/posts/what-is-rusts-turbofish][TurboFish]] which ensure the compiler iterates all segments in the Path and applies the generic arguments if available to find the apropriate path to a function/constant etc, this change involves a few building blocks. For example in rust you can create an impl block for multiple concrete versions of a generic algebraic data type [[https://github.com/Rust-GCC/gccrs/issues/325][ISSUE-325]].
+
+#+BEGIN_SRC rust
+struct Foo<T>(T, bool);
+
+impl Foo<i32> {
+    fn bar(self) -> i32 {
+        self.0
+    }
+}
+
+impl Foo<f32> {
+    fn bar(self) -> f32 {
+        self.0
+    }
+}
+
+fn main() {
+    let a = Foo(123, true);
+    let aa = a.bar();
+
+    let b = Foo(456f32, true);
+    let bb = b.bar();
+}
+#+END_SRC
+
+This change means we needed to implement [[https://doc.rust-lang.org/reference/paths.html#canonical-paths][Canonical Paths]] for the name resolver so as we don'tt detect duplicate names for the two impl blocks. There are caveats here in that we can end up in a case where we might find multiple applicable items in Path resolution such as [[https://github.com/Rust-GCC/gccrs/issues/355][ISSUE-355]].
+
+The open PR however still does not address the case of overlapping impl items such as: [[https://github.com/Rust-GCC/gccrs/issues/353][ISSUE-353]]
+
+*** Detecting unused code
+
+Recent we have merged [[https://github.com/Rust-GCC/gccrs/pull/365][PR-365]] from a potential Google Summer of code student [[https://github.com/thomasyonug][Thomas]] who wishes to improve our unused code diagnostic warnings. This includes using liveness variables to follow code paths such as:
+
+#+BEGIN_SRC rust
+fn bar() {
+    foo();
+}
+
+fn foo() {
+    bar();
+}
+
+fn f() {
+
+}
+
+fn main() {
+    f();
+}
+#+END_SRC
+
+Now results in:
+
+#+BEGIN_SRC
+../gccrs/gcc/testsuite/rust.test/xfail_compile/unused.rs:2:1: warning: function is never used: `[bar]`
+    2 | fn bar() { // {dg-warning "function is never used: `bar`"}
+      | ^
+../gccrs/gcc/testsuite/rust.test/xfail_compile/unused.rs:6:1: warning: function is never used: `[foo]`
+    6 | fn foo() { // {dg-warning "function is never used: `foo`"}
+      | ^
+#+END_SRC
+
+*** Empty Arrays Crash
+
+Another potential Google Summer of code Student [[https://github.com/YizhePKU][Yizhe]] has also fixed crashes with empty arrays which are valid in rust:
+
+#+BEGIN_SRC rust
+fn main() {
+    let arr = ["Hello"; 0];
+}
+#+END_SRC
+
+** Completed Activities
+
+- Raised PR for canonical paths: [[https://github.com/Rust-GCC/gccrs/pull/358][PR-358]]
+- Raised PR for multiple applicable items in scope: [[https://github.com/Rust-GCC/gccrs/pull/358][PR-358]]
+- Raised PR to implement TurboFish: [[https://github.com/Rust-GCC/gccrs/pull/358][PR-358]]
+- Fix crash with zero length arrays: [[https://github.com/Rust-GCC/gccrs/issues/260][ISSUE-260]]
+- Add initial liveness variables for dead code detection: [[https://github.com/Rust-GCC/gccrs/issues/330][ISSUE-330]] [[https://github.com/Rust-GCC/gccrs/pull/365][PR-365]]
+
+*** Overall Task Status
+    
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        57 |        61 |    +4 |
+| In Progress |         6 |        11 |    +5 |
+| Completed   |       107 |       110 |    +3 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |       838 |       861 | +23   |
+| XFAIL     |        26 |        26 | -     |
+| Failed    |         0 |         - | -     |
+| XPASS     |         0 |         0 | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        12 |        13 |    +1 |
+| In Progress |         2 |         6 |    +4 |
+| Completed   |        25 |        26 |    +1 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       41% |       72% | -     | 11th Feb 2021 | -               | 28th May 2021 |
+| Data Structures 3 - Traits        |        0% |        0% | -     | -             | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Merge open PR for canonical paths and proper turbo fish implementation
+- Detect overlapping impl items: [[https://github.com/Rust-GCC/gccrs/issues/353][ISSUE-353]]
+- Detect for unconstrained generic arguments in impl blocks: [[https://github.com/Rust-GCC/gccrs/issues/354][ISSUE-354]]
+- Continue work on default generic arguments: [[https://github.com/Rust-GCC/gccrs/issues/307][ISSUE-307]]
