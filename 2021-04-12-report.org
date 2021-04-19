@@ -1,0 +1,135 @@
+#+title:  Weekly Report for 12th to 19th April 2021
+#+author: Philip Herron
+#+date:   2021-04-19
+
+** Overview
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Add check for duplicate overlapping impl-items
+
+Rust allows for multiple impl blocks to give specialisation to a generic data type. But if the programmer adds a generic impl for a dup method it will become impossible to distingish the method 'bar' in each of these specialised impl blocks when it comes to method resolution. Since you receiver could be Foo<_ (inference variable)> which could resolve to Foo<isize> or Foo<char>. rustc --explain E0592
+
+#+BEGIN_SRC rust
+struct Foo<A>(A);
+
+impl Foo<isize> {
+    fn bar(self) -> isize {
+        self.0
+    }
+}
+
+impl Foo<char> {
+    fn bar(self) -> char {
+        self.0
+    }
+}
+
+impl<T> Foo<T> {
+    fn bar(self) -> T {
+        self.0
+    }
+}
+#+END_SRC
+
+*** Check for unconstrained type parameters
+
+When we declare generic impl blocks but don't use all of the type arguments within the generic data type we end up with unconstrained type parameters. This is important since we rely on the Self of the impl block to bind all of the substitions relevant to the impl block. See rustc --explain E0207
+
+#+BEGIN_SRC rust
+struct Foo<T>(T, bool);
+
+impl<X, Y> Foo<X> {
+    fn test() -> Y {
+        123
+    }
+}
+#+END_SRC
+
+*** Multiple candidate errors
+
+Similar to the duplicate overlapping impl items each of theses specialised impl blocks are valid and there is no overlap here. The problem arises when the programmer tries to resolve this path but using the Path Foo::test without any generic argument specialisation, the resolver will find both 'test' impl item as candidates. This can be fixed if the programmer uses Foo::<isize>::test for example. rustc --explain E0034
+
+#+BEGIN_SRC rust
+struct Foo<A>(A);
+
+impl Foo<isize> {
+    fn test() -> i32 { 
+        123
+    }
+}
+
+impl Foo<f32> {
+    fn test() -> i32 {
+        123
+    }
+}
+
+fn main() {
+    let a: i32 = Foo::test();
+}
+#+END_SRC
+
+*** Rich locations
+
+We have also merged a building block to take advantage of GCC's rich location diagnostics for errors such as the multiple candidates error we had to emit multiple errors for each location. Now with rich locations we can add ranges/fixit hints at specific locations and emit one single error which makes diagnostics much easier to read for users of the compiler. There is alot of scope in terms of improving errors over time and rich locations are the first step in this direction.
+
+*** Testsuite updates
+
+Thanks to [[https://github.com/tschwinge][Thomas's]] work we have jumped our test suite number of passes by including checking for warnings emitted by the compiler this will help a lot with detecting any regressions/changes in behaviour.
+
+** Completed Activities
+
+1. Merged building block for using GCC rich locations: [[https://github.com/Rust-GCC/gccrs/pull/374][PR374]]
+2. Merged canonical path work: [[https://github.com/Rust-GCC/gccrs/pull/358][PR358]]
+3. Merged TuboFish work: [[https://github.com/Rust-GCC/gccrs/pull/358][PR358]]
+4. Merged fix for crash in generic impl blocks with different type parameter names: [[https://github.com/Rust-GCC/gccrs/pull/377][PR377]]
+5. Merged check for unconstrained type parameters: [[https://github.com/Rust-GCC/gccrs/pull/378][PR378]]
+6. Merged testsuite to scan for warnings and errors: [[https://github.com/Rust-GCC/gccrs/pull/362][PR362]]
+
+*** Overall Task Status
+    
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        61 |        62 |    +1 |
+| In Progress |        11 |         8 |    -3 |
+| Completed   |       110 |       118 |    +8 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |       861 |      1921 | +1060 |
+| XFAIL     |        26 |        36 | +10   |
+| Failed    |         0 |         0 | -     |
+| XPASS     |         0 |         0 | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        13 |        12 |    -1 |
+| In Progress |         6 |         4 |    -2 |
+| Completed   |        26 |        31 |    +5 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       72% |       79% | +7%   | 11th Feb 2021 | -               | 28th May 2021 |
+| Data Structures 3 - Traits        |        0% |        0% | -     | -             | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Continue default generic argument work
+- Review contributor NeverType work updates
