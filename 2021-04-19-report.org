@@ -1,0 +1,188 @@
+#+title:  Weekly Report for 19th to 26th April 2021
+#+author: Philip Herron
+#+date:   2021-04-26
+
+** Overview
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Array Capacity and constant folding
+
+This week fixed several bugs in the compiler one of the big issues was constant expressions. In rust array capacities must be constant's the default implementation simply just expected a LiteralExpression but this is not correct. Consider the example below:
+
+#+BEGIN_SRC rust
+let a:[_; 1+1+1] = [1,2,3];
+#+END_SRC
+
+This is a toy example but demonstrates that rust should be able to fold the capacity expression of (1+1+1). Constant folding is a complex piece of work to get right and respect all mathematical rules, but GCC already does this for us in gcc/fold-const.c so this [[https://github.com/Rust-GCC/gccrs/pull/383][PR-383]] takes advantage of this.
+
+#+BEGIN_SRC rust
+const TEST:usize = 2;
+let a:[_; TEST+1] = [1,2,3];
+#+END_SRC
+
+GCC also takes into account the fact that the name TEST is a const item such that it can then fold this example again into 3. However there are limitations to constant folding in Rust consider this example:
+
+#+BEGIN_SRC rust
+let size = 2;
+let a:[_; size+1] = [1,2,3];
+#+END_SRC
+
+Although it would indeed be possible for GCC to constant fold this into 3, rust disallows this and return:
+
+#+BEGIN_SRC
+error[E0435]: attempt to use a non-constant value in a constant
+ --> src/main.rs:3:11
+  |
+2 | let size = 2;
+  | -------- help: consider using `const` instead of `let`: `const size`
+3 | let a:[_; size+1] = [1,2,3];
+  |           ^^^^ non-constant value
+
+For more information about this error, try `rustc --explain E0435`.
+#+END_SRC
+
+When we have a variable reference in a constant expression it is not always possible to fold its values since it will depend on [[https://en.wikipedia.org/wiki/Propagation_constant][constant propagation]] as well as constant folding. Even when it references immutable values the initializer expression may not be constant so it won't always be possible to determine the value at compile time.
+
+*** Block Expressions and Never Type
+
+New contributor [[https://github.com/lrh2000][lrh2000]] proposed introducing the rust [[https://doc.rust-lang.org/reference/types/never.html][never type]] to make the compiler more in line with Rustc. This change breaks down into several building blocks in rust you can write:
+
+#+BEGIN_SRC rust
+fn test() -> i32 {
+    let a:u32 = 123;
+    let b:i32 = 456;
+    a;
+    b
+}
+#+END_SRC
+
+Here the compiler needs to track the usage of the semi colon to track which is the final expression of the block, you can see this [[https://github.com/Rust-GCC/gccrs/issues/317#issuecomment-810152563][comment]] for more info on how rustc handles this.
+
+This is where things start to get a little more complex consider this example:
+
+#+BEGIN_SRC rust
+fn test() -> i32 {
+    let a = return 123;
+    456
+}
+#+END_SRC
+
+In this example you can see that return expressions are valid expressions in rust. The old implementation in the compiler infered return expressions as either unit or the type of the return expression. Rustc actually makes this a never type as it is a change in control flow. The old implementation also stripped unreachable code as a way to enforce the typeing rules for cases such as:
+
+#+BEGIN_SRC rust
+fn test() -> i32 {
+    if x > 1 {
+        return 5;
+    } else {
+        return 0;
+    }
+    return 1;
+}
+#+END_SRC
+
+When you have a block that is not the final expression in the block the type resolver needs to enforce the IfExpr resolves to unit type. Since the compiler used to type resolve the return expressions here into i32 instead of NeverType it meant that the rules were not correct. This is now fixed which his recent PRs.
+
+*** Testsuite
+
+As part of on boarding potential google summer of code students we have been encouraging them to write test cases for the compiler. This has threee benifits here:
+
+1. Learning to compile and invoke the compiler
+2. Understanding the state of the compiler as it stands
+3. The project gets free test cases
+
+[[https://github.com/CohenArthur][Arthur]] proposed [[https://github.com/Rust-GCC/gccrs/pull/308][xfail]] testcases but it was found that the compiler at the time was crashing on these at that point. It seems reasonable that XFAIL testsuite should be able to support cases which ICE such that when crashes are fixed we should see a change in the testsuite and update the relevant testcases appropriately. Thanks to [[https://github.com/dkm][Marc]] this is now available though the dg-ice annotation.
+
+*** Milestone Progress
+
+In rust when you specify a TypePath that needs substitution the compiler needs to error correctly (rustc --explain E0107), untill [[https://github.com/Rust-GCC/gccrs/pull/381][PR-381]] this used to cause a crash.
+
+#+BEGIN_SRC rust
+struct Foo<A>(A);
+
+fn main() {
+    let a: Foo = Foo::<i32>(123);
+    // { dg-error "Invalid number of generic arguments to generic type" "" { target { *-*-* } } .-1 }
+}
+#+END_SRC
+
+This also extends over to cases such as:
+
+#+BEGIN_SRC rust
+struct Foo<A>(A);
+
+impl Foo {
+    // { dg-error "Invalid number of generic arguments to generic type" "" { target { *-*-* } } .-1 }
+    fn test() -> i32 {
+        123
+    }
+}
+#+END_SRC
+
+The reason this is important is that it is a building block for my work into defaults on Type Parameters since the following is valid rust code:
+
+#+BEGIN_SRC rust
+struct Foo<A=f32>(A);
+
+impl Foo {
+    fn test() -> i32 {
+        123
+    }
+}
+#+END_SRC
+
+** Completed Activities
+
+1. Track Semicolon in block expressions like rustc - [[https://github.com/Rust-GCC/gccrs/pull/380][PR-380]]
+2. Fix crash when TypePath requiring generic substitution did not receive any generic arguments - [[https://github.com/Rust-GCC/gccrs/pull/381][PR-381]]
+3. Use GCC fold-const.c to enforce const expressions on array capacity - [[https://github.com/Rust-GCC/gccrs/pull/383][PR-383]]
+4. Add support to test suite to test for ICE to allow adding test cases which crash - [[https://github.com/Rust-GCC/gccrs/pull/384][PR-384]]
+5. Undo block expression work which removed unreachable code in HIR lowering - [[https://github.com/Rust-GCC/gccrs/pull/387][PR-387]] [[https://github.com/Rust-GCC/gccrs/pull/390][PR-390]]
+6. Assign outer attributes in the AST as part of the IfLetExpr node constructor - [[https://github.com/Rust-GCC/gccrs/pull/388][PR-388]]
+
+*** Overall Task Status
+    
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        62 |        63 |    +1 |
+| In Progress |         8 |         8 |     - |
+| Completed   |       118 |       121 |    +3 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      1921 |      2092 | +171  |
+| XFAIL     |        36 |        36 | -     |
+| Failed    |         0 |         0 | -     |
+| XPASS     |         0 |         0 | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        12 |        11 |    -1 |
+| In Progress |         4 |         3 |    -1 |
+| Completed   |        31 |        33 |    +2 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       79% |       84% | +5%   | 11th Feb 2021 | -               | 28th May 2021 |
+| Data Structures 3 - Traits        |        0% |        0% | -     | -             | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Complete work on partial substitutions
+- Complete work on default type parameters
