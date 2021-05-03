@@ -1,0 +1,493 @@
+#+title:  Monthly Report for April 2021
+#+author: Philip Herron
+#+date:   2021-05-3
+
+** April Overview
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+A lot of progress has been made for the generics milestone and bugs in general this month. With the know bugs/tickets todo it is likely we will finish the milestone early by the end of next week (14th of May). Since we finished the previous milestone early by two weeks this actually means the pacing/timming of this milestone was about right.
+
+The traits milestone is a complex one and will need some changes to the type system for type coercion and trait constraints, but thanks for the hard work of contributers the testsuite we have will really help find any regressions early. At the moment we are type infering code and type checking at the same time these two things need to be seperated when it comes to traits.
+
+*** Monthly Community Call
+
+We will be having our 2nd community call over on [[https://gcc-rust.zulipchat.com/][Zulip]] as the first Frida of the month: 7th May 2021 the time is currently TBD.
+
+** Detailed changelog
+
+*** Add check for duplicate overlapping impl-items
+
+Rust allows for multiple impl blocks to give specialisation to a generic data type. But if the programmer adds a generic impl for a dup method it will become impossible to distingish the method 'bar' in each of these specialised impl blocks when it comes to method resolution. Since you receiver could be Foo<_ (inference variable)> which could resolve to Foo<isize> or Foo<char>. rustc --explain E0592
+
+#+BEGIN_SRC rust
+struct Foo<A>(A);
+
+impl Foo<isize> {
+    fn bar(self) -> isize {
+        self.0
+    }
+}
+
+impl Foo<char> {
+    fn bar(self) -> char {
+        self.0
+    }
+}
+
+impl<T> Foo<T> {
+    fn bar(self) -> T {
+        self.0
+    }
+}
+#+END_SRC
+
+Gives:
+
+#+BEGIN_SRC
+<source>:4:5: error: duplicate definitions with name bar
+    4 |     fn bar(self) -> isize {
+      |     ^
+......
+   16 |     fn bar(self) -> T {
+      |     ~
+<source>:10:5: error: duplicate definitions with name bar
+   10 |     fn bar(self) -> char {
+      |     ^
+......
+   16 |     fn bar(self) -> T {
+      |     ~
+<source>:16:5: error: duplicate definitions with name bar
+    4 |     fn bar(self) -> isize {
+      |     ~
+......
+   16 |     fn bar(self) -> T {
+      |     ^
+#+END_SRC
+
+*** Check for unconstrained type parameters
+
+When we declare generic impl blocks but don't use all of the type arguments within the generic data type we end up with unconstrained type parameters. This is important since we rely on the Self of the impl block to bind all of the substitions relevant to the impl block. See rustc --explain E0207
+
+#+BEGIN_SRC rust
+struct Foo<T>(T, bool);
+
+impl<X, Y> Foo<X> {
+    fn test() -> Y {
+        123
+    }
+}
+#+END_SRC
+
+Gives:
+
+#+BEGIN_SRC
+<source>:3:9: error: unconstrained type parameter
+    3 | impl<X, Y> Foo<X> {
+      | 
+#+END_SRC
+
+*** Multiple candidate errors
+
+Similar to the duplicate overlapping impl items each of theses specialised impl blocks are valid and there is no overlap here. The problem arises when the programmer tries to resolve this path but using the Path Foo::test without any generic argument specialisation, the resolver will find both 'test' impl item as candidates. This can be fixed if the programmer uses Foo::<isize>::test for example. rustc --explain E0034
+
+#+BEGIN_SRC rust
+struct Foo<A>(A);
+
+impl Foo<isize> {
+    fn test() -> i32 { 
+        123
+    }
+}
+
+impl Foo<f32> {
+    fn test() -> i32 {
+        123
+    }
+}
+
+fn main() {
+    let a: i32 = Foo::test();
+}
+#+END_SRC
+
+Gives:
+
+#+BEGIN_SRC
+<source>:26:23: error: multiple applicable items in scope for: test
+    6 |     fn test() -> i32 {
+      |     ~                  
+......
+   16 |     fn test() -> i32 {
+      |     ~                  
+......
+   26 |     let a: i32 = Foo::test();
+      |                       ^
+#+END_SRC
+
+*** Fix recursive substitutions bug
+
+The compiler used to only support type substitutions on other generic types but this is not always the case. Consider the follow example, we have a generic function but the type parameter is behind a reference type, the substitution manager is required to recursively be able to substitute in the specified type no matter what.
+
+#+BEGIN_SRC rust
+fn callee<T>(t: &T) -> i32 {
+    32
+}
+
+fn caller(t: i32) -> i32 {
+    callee(&t)
+}
+#+END_SRC
+
+This also applies to types like Tuples or pointers.
+
+#+BEGIN_SRC rust
+fn callee<T>(t: (T, bool)) -> i32 {
+    32
+}
+
+fn caller(t: i32) -> i32 {
+    callee((t, false))
+}
+#+END_SRC
+
+*** Defaults on Generic Parameters
+
+Rust TypeParams support type binding that act as defaults depending on what the generic arguments are used.
+
+#+BEGIN_SRC rust
+struct Foo<A,B=f32>(A,B);
+
+struct Bar<A, B = (A, A)>(A, B);
+#+END_SRC
+
+These type parameters can also be generic as you can see above. Rust does have limitations here on where you can use this type of binding see:
+
+#+BEGIN_SRC rust
+struct Foo<A, B>(A, B);
+
+impl<X = i32, Y = f32> Foo<X, Y> {
+    fn new(a: X, b: Y) -> Self {
+        Self(a, b)
+    }
+}
+
+fn main() {
+    let a;
+    a = Foo::new(123, 456f32);
+}
+#+END_SRC
+
+Which gives the following error in rustc:
+
+#+BEGIN_SRC
+ --> test.rs:3:6
+  |
+3 | impl<X = i32, Y = f32> Foo<X, Y> {
+  |      ^
+  |
+  = note: `#[deny(invalid_type_param_default)]` on by default
+  = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
+  = note: for more information, see issue #36887 <https://github.com/rust-lang/rust/issues/36887>
+#+END_SRC
+
+We have also adopted this as an error in GCCRS. Generic types with defaults are very expressive in rust the following example was a goal test case:
+
+#+BEGIN_SRC rust
+struct Foo<A = (isize, char)> {
+    a: A,
+}
+
+impl Foo<isize> {
+    fn bar(self) -> isize {
+        self.a
+    }
+}
+
+impl Foo<char> {
+    fn bar(self) -> char {
+        // { dg-warning "unused name" "" { target *-*-* } .-1 }
+        self.a
+    }
+}
+
+impl Foo {
+    fn bar(self) {
+        let a: (isize, char) = self.a;
+        let b = a.0;
+        let c = a.1;
+        // { dg-warning "unused name" "" { target *-*-* } .-1 }
+
+        let aa: Foo<isize> = Foo { a: b };
+        let bb: isize = aa.bar();
+        // { dg-warning "unused name" "" { target *-*-* } .-1 }
+    }
+}
+
+fn main() {
+    let a = Foo { a: (123, 'a') };
+    a.bar();
+}
+#+END_SRC
+
+There are alot of subtle things going on here to be sure the implementation is right consider the previous sections on overlapping impl items and multiple candiates errors the type system needs to take all of this into consideration to properly resolve the methods and types here so although it looks like a toy example its a fairly complex one.
+
+*** Partial substititions ICE
+
+The example below demonstrates that we can substitute a generic type with a mix of concrete types and a single type parameter this used to cause the compiler to crash.
+
+#+BEGIN_SRC rust
+struct Foo<X, Y>(X, Y);
+
+impl<T> Foo<u32, T> {
+    fn new(a: T) -> Self {
+        Self(123, a)
+    }
+}
+
+fn main() {
+    let a;
+    a = Foo::new(false);
+}
+#+END_SRC
+
+*** Improve error diagnostics for Substitutions
+
+When we perform generic argument substitution there are 2 kinds of error in regards to the number of arguments passed.
+
+1. For too many generic arguments
+2. For too little generic arguments
+
+This seems pretty self explanatory but the 2nd needs to take into account any possible defaults
+
+#+BEGIN_SRC
+test.rs:4:12: error: generic item takes at least 1 type arguments but 0 were supplied
+    1 | struct Foo<A>(A);
+      |            ~
+......
+    4 |     let a: Foo = Foo::<i32>(123);
+      |            ^
+#+END_SRC
+
+*** Detecting unused code
+
+Recent we have merged [[https://github.com/Rust-GCC/gccrs/pull/365][PR-365]] from a potential Google Summer of code student [[https://github.com/thomasyonug][Thomas]] who wishes to improve our unused code diagnostic warnings. This includes using liveness variables to follow code paths such as:
+
+#+BEGIN_SRC rust
+fn bar() {
+    foo();
+}
+
+fn foo() {
+    bar();
+}
+
+fn f() {
+
+}
+
+fn main() {
+    f();
+}
+#+END_SRC
+
+Now results in:
+
+#+BEGIN_SRC
+../gccrs/gcc/testsuite/rust.test/xfail_compile/unused.rs:2:1: warning: function is never used: `[bar]`
+    2 | fn bar()
+      | ^
+../gccrs/gcc/testsuite/rust.test/xfail_compile/unused.rs:6:1: warning: function is never used: `[foo]`
+    6 | fn foo()
+      | ^
+#+END_SRC
+
+*** Rich locations
+
+We have also merged a building block to take advantage of GCC's rich location diagnostics, such that we can add ranges/fixit hints at specific locations all for one single error message. There is a lot of scope in terms of improving errors in the compiler with this.
+
+An example of a RichLocation error message:
+
+#+BEGIN_SRC
+<source>:26:23: error: multiple applicable items in scope for: test
+    6 |     fn test() -> i32 {
+      |     ~                  
+......
+   16 |     fn test() -> i32 {
+      |     ~                  
+......
+   26 |     let a: i32 = Foo::test();
+      |                       ^
+#+END_SRC
+
+*** Testsuite dg-warning
+
+Thanks to [[https://github.com/tschwinge][Thomas's]] work we are now including deja gnu annotations for warnings emitted by the compiler this will help a lot with detecting any regressions/changes in behaviour.
+
+*** Testsuite dg-ice
+
+As part of on boarding potential google summer of code students we have been encouraging them to write test cases for the compiler. This has threee benifits here:
+
+1. Learning to compile and invoke the compiler
+2. Understanding the state of the compiler as it stands
+3. The project gets free test cases
+
+[[https://github.com/CohenArthur][Arthur]] proposed [[https://github.com/Rust-GCC/gccrs/pull/308][xfail]] testcases but it was found that the compiler at the time was crashing on these at that point. It seems reasonable that XFAIL testsuite should be able to support cases which ICE such that when crashes are fixed we should see a change in the testsuite and update the relevant testcases appropriately. Thanks to [[https://github.com/dkm][Marc]] this is now available though the dg-ice annotation.
+
+*** Array Capacity and constant folding
+
+This week fixed several bugs in the compiler one of the big issues was constant expressions. In rust array capacities must be constant's the default implementation simply just expected a LiteralExpression but this is not correct. Consider the example below:
+
+#+BEGIN_SRC rust
+let a:[_; 1+1+1] = [1,2,3];
+#+END_SRC
+
+This is a toy example but demonstrates that rust should be able to fold the capacity expression of (1+1+1). Constant folding is a complex piece of work to get right and respect all mathematical rules, but GCC already does this for us in gcc/fold-const.c so this [[https://github.com/Rust-GCC/gccrs/pull/383][PR-383]] takes advantage of this.
+
+#+BEGIN_SRC rust
+const TEST:usize = 2;
+let a:[_; TEST+1] = [1,2,3];
+#+END_SRC
+
+GCC also takes into account the fact that the name TEST is a const item such that it can then fold this example again into 3. However there are limitations to constant folding in Rust consider this example:
+
+#+BEGIN_SRC rust
+let size = 2;
+let a:[_; size+1] = [1,2,3];
+#+END_SRC
+
+Although it would indeed be possible for GCC to constant fold this into 3, rust disallows this and return:
+
+#+BEGIN_SRC
+error[E0435]: attempt to use a non-constant value in a constant
+ --> src/main.rs:3:11
+  |
+2 | let size = 2;
+  | -------- help: consider using `const` instead of `let`: `const size`
+3 | let a:[_; size+1] = [1,2,3];
+  |           ^^^^ non-constant value
+
+For more information about this error, try `rustc --explain E0435`.
+#+END_SRC
+
+When we have a variable reference in a constant expression it is not always possible to fold its values since it will depend on [[https://en.wikipedia.org/wiki/Propagation_constant][constant propagation]] as well as constant folding. Even when it references immutable values the initializer expression may not be constant so it won't always be possible to determine the value at compile time.
+
+*** Block Expression bug fixes
+
+New contributor [[https://github.com/lrh2000][lrh2000]] proposed introducing the rust [[https://doc.rust-lang.org/reference/types/never.html][never type]] to make the compiler more in line with Rustc. This change breaks down into several building blocks in rust you can write:
+
+#+BEGIN_SRC rust
+fn test() -> i32 {
+    let a:u32 = 123;
+    let b:i32 = 456;
+    a;
+    b
+}
+#+END_SRC
+
+Here the compiler needs to track the usage of the semi colon to track which is the final expression of the block, you can see this [[https://github.com/Rust-GCC/gccrs/issues/317#issuecomment-810152563][comment]] for more info on how rustc handles this.
+
+This is where things start to get a little more complex consider this example:
+
+#+BEGIN_SRC rust
+fn test() -> i32 {
+    let a = return 123;
+    456
+}
+#+END_SRC
+
+In this example you can see that return expressions are valid expressions in rust. The old implementation in the compiler infered return expressions as either unit or the type of the return expression. Rustc actually makes this a never type as it is a change in control flow. The old implementation also stripped unreachable code as a way to enforce the typeing rules for cases such as:
+
+#+BEGIN_SRC rust
+fn test() -> i32 {
+    if x > 1 {
+        return 5;
+    } else {
+        return 0;
+    }
+    return 1;
+}
+#+END_SRC
+
+This was not fully correct since unreachable code should always be typechecked this change fixes it.
+
+*** Fix ICE with Empty Arrays
+
+Another potential Google Summer of code Student [[https://github.com/YizhePKU][Yizhe]] has also fixed crashes with empty arrays which are valid in rust:
+
+#+BEGIN_SRC rust
+fn main() {
+    let arr = ["Hello"; 0];
+}
+#+END_SRC
+
+** Completed Activities
+
+- Merged canonical paths: [[https://github.com/Rust-GCC/gccrs/pull/358][PR-358]]
+- Merged check multiple applicable items in scope: [[https://github.com/Rust-GCC/gccrs/pull/358][PR-358]]
+- Merged implementation of TurboFish: [[https://github.com/Rust-GCC/gccrs/pull/358][PR-358]]
+- Fix crash with zero length arrays: [[https://github.com/Rust-GCC/gccrs/issues/260][ISSUE-260]]
+- Add initial liveness variables for dead code detection: [[https://github.com/Rust-GCC/gccrs/issues/330][ISSUE-330]] [[https://github.com/Rust-GCC/gccrs/pull/365][PR-365]]
+- Merged building block for using GCC rich locations: [[https://github.com/Rust-GCC/gccrs/pull/374][PR374]]
+- Merged canonical path work: [[https://github.com/Rust-GCC/gccrs/pull/358][PR358]]
+- Merged TuboFish work: [[https://github.com/Rust-GCC/gccrs/pull/358][PR358]]
+- Merged fix for crash in generic impl blocks with different type parameter names: [[https://github.com/Rust-GCC/gccrs/pull/377][PR377]]
+- Merged check for unconstrained type parameters: [[https://github.com/Rust-GCC/gccrs/pull/378][PR378]]
+- Merged testsuite to scan for warnings and errors: [[https://github.com/Rust-GCC/gccrs/pull/362][PR362]]
+- Track Semicolon in block expressions like rustc - [[https://github.com/Rust-GCC/gccrs/pull/380][PR-380]]
+- Fix crash when TypePath requiring generic substitution did not receive any generic arguments - [[https://github.com/Rust-GCC/gccrs/pull/381][PR-381]]
+- Use GCC fold-const.c to enforce const expressions on array capacity - [[https://github.com/Rust-GCC/gccrs/pull/383][PR-383]]
+- Add support to test suite to test for ICE to allow adding test cases which crash - [[https://github.com/Rust-GCC/gccrs/pull/384][PR-384]]
+- Undo block expression work which removed unreachable code in HIR lowering - [[https://github.com/Rust-GCC/gccrs/pull/387][PR-387]] [[https://github.com/Rust-GCC/gccrs/pull/390][PR-390]]
+- Assign outer attributes in the AST as part of the IfLetExpr node constructor - [[https://github.com/Rust-GCC/gccrs/pull/388][PR-388]]
+- Partial substitutions - [[https://github.com/Rust-GCC/gccrs/pull/394][PR394]]
+- Recursive substitutions (references,tuples) - [[https://github.com/Rust-GCC/gccrs/pull/398][PR398]]
+- Add support for Type Param defaults - [[https://github.com/Rust-GCC/gccrs/pull/399][PR399]] [[https://github.com/Rust-GCC/gccrs/pull/401][PR401]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         57 |         67 |   +10 |
+| In Progress |          6 |          7 |    +1 |
+| Completed   |        107 |        125 |   +18 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   |        838 |       2190 | +1352 |
+| XFAIL     |         26 |         38 |   +12 |
+| Failed    |          0 |          - |     - |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         12 |         14 |    +2 |
+| In Progress |          2 |          3 |    +1 |
+| Completed   |         25 |         35 |   +10 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |        72% |        92% | +20%  | 11th Feb 2021 | -               | 28th May 2021 |
+| Data Structures 3 - Traits        |         0% |         0% | -     | -             | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |         0% |         0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |         0% |         0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Complete Generics milestone
+- Plan out traits milestone
