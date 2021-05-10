@@ -1,0 +1,115 @@
+#+title:  Weekly Report for 3rd May to 10th May 2021
+#+author: Philip Herron
+#+date:   2021-05-10
+
+** Overview
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+There was no change in the percentage progress for the milestone this week, but we are still on track to be finished by the end of the week. Several of the final tasks are mostly finished but fixes need some more cleanup and testing before they can be raised as PR's.
+
+*** Monthly Community Call
+
+We had our monthly community call for the project on zulip on 7th May 2021 at 10am UTC+1. You can find our meeting minutes: [[https://github.com/Rust-GCC/Reporting/blob/main/2021-05-07-community-call.md][here]]
+
+** Detailed changelog
+
+*** Fix crash in parser with bad syntax
+
+The parser had a crash when there was a space in between "+" and "=" which has be fixed with a simple null check from a new contributor: [[https://github.com/teromene][teromene]]
+
+#+BEGIN_SRC rust
+fn test() {
+    let mut a = 1;
+    a + = 1;
+}
+#+END_SRC
+
+*** Stricter type checking
+
+All implicit inference variables now get location info which is important for cases where a Path resolves to a generic impl item but the Self type cannot be inferred at that position. To get around this rust expects you to use a turbo fish to explicitly set the type parameter here.
+
+#+BEGIN_SRC rust
+struct Foo<T>(T, bool);
+
+impl<T> Foo<T> {
+    fn test() -> i32 {
+        123
+    }
+}
+
+fn main() {
+    let a = Foo::test();
+    // { dg-error "type annotations needed" "" { target { *-*-* } } .-1 }
+}
+#+END_SRC
+
+*** Fix crash when returning generic tuple
+
+The compiler would crash when you return a generic tuple as it was missing some substitution checks.
+
+#+BEGIN_SRC rust
+fn test<A,B>(a:A, b:B) -> (A,B) {
+    (a,b)
+}
+
+fn main() {
+    let a = test::<i32, i32>(123, 456);
+    let b = test::<f32, f32>(123f32, 456f32);
+}
+#+END_SRC
+
+** Completed Activities
+
+- Fix bug in parser: [[https://github.com/Rust-GCC/gccrs/pull/409][PR409]]
+- Stricter type checking: [[https://github.com/Rust-GCC/gccrs/pull/406][PR406]]
+- Crash in generics: [[https://github.com/Rust-GCC/gccrs/pull/416][PR416]]
+- Testsuite cleanup: [[https://github.com/Rust-GCC/gccrs/pull/411][PR411]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        67 |        69 |    +2 |
+| In Progress |         7 |         8 |    +1 |
+| Completed   |       125 |       128 |    +3 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      2190 |      2261 | +71   |
+| XFAIL     |        38 |        40 | +2    |
+| Failed    |         - |           | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        14 |        15 |    +1 |
+| In Progress |         3 |         5 |    +2 |
+| Completed   |        35 |        37 |    +2 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       92% |       92% | -     | 11th Feb 2021 | -               | 28th May 2021 |
+| Data Structures 3 - Traits        |        0% |        0% | -     | -             | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Complete Generics milestone
+- Plan out traits milestone
