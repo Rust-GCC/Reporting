@@ -1,0 +1,137 @@
+#+title:  Weekly Report for 10th May to 17th May 2021
+#+author: Philip Herron
+#+date:   2021-05-14
+
+** Overview
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+As of the 14th of May the Generics milestone is now completed. This was a big goal for the compiler as it forms a basis to move forward with substitutions in general which are required for Traits since Traits can also be generic. Please note that the [[https://godbolt.org/][compiler explorer]] version of GCC Rust is several weeks out of date, leading bug reports for things that are already fixed/implemented.
+
+*** Vacation
+
+[[https://github.com/philberty/][Philip Herron]] is taking 17th, 18th and 19th May 2021 as vacation.
+
+** Detailed changelog
+
+*** Support impl items with generic parameters
+
+Rust allows for the impl block to be generic like we have already seen in previous status reports, but it also allows for the impl items which inherit those generic parameters to also then be generic. This was a great test for the generics implementation since it required a cleanup of existing code rather than rewriting or changing the implementation to fit. The compiler in this instance is performing 2 substitutions in order to support this.
+
+1. Where the method test applies the substitutions from the variable 'a' Foo<i32, f32> onto self
+2. Infer the final type parameter X on the method or apply the turbo fish.
+
+#+BEGIN_SRC rust
+struct Foo<A, B>(A, B);
+
+impl<T> Foo<T, f32> {
+    fn test<X>(self, a: X) -> (T, X) {
+        (self.0, a)
+    }
+}
+
+fn main() {
+    let a;
+    a = Foo(123, 456f32);
+
+    let b;
+    b = a.test::<bool>(false);
+}
+#+END_SRC
+
+*** Symbol mangling
+
+Rustc supports two types of symbol mangling:
+
+1. Legacy
+2. V0 (unstable) - https://github.com/rust-lang/rust/issues/60705
+
+V0 is used in the Rust Linux project but as it is unstable/incomplete it seems prudent to wait for that to stabalise before implementing this but the goal is that GCC Rust should implement both Legacy and V0. The Issue with the legacy symbol magnling is that it uses characters such as $ and has an unstable SIP128 has at the end of the symbol. We now support the legacy symbol mangling but the hash is an FNV-128 hash for now as FNV is simpler to implement than SIP-128.
+
+With the latest version of [[https://www.gnu.org/software/binutils/][binutils]] you can invoke the rust-demangling with:
+
+#+BEGIN_SRC bash
+$ /opt/binutils-master/bin/c++filt --format=rust _ZN9TestCrate3foo17h3085c8a5747c85a8E
+TestCrate::foo::h3085c8a5747c85a8
+#+END_SRC
+
+*** Fix Duplicate function generation
+
+When we have generic methods/functions the compiler needs to substitute the types apropriately so when we see Foo::new called with the same type the compiler needs to check if we have already generated a generic function implementation for this already. Otherwise this leads to duplicate symbol generation issues and increased code size.
+
+#+BEGIN_SRC rust
+struct Foo<A, B>(A, B);
+
+impl Foo<i32, bool> {
+    fn new<T>(a: T) -> (Self, T) {
+        (Self(123, false), a)
+    }
+}
+
+fn main() {
+    let _a = Foo::new(123f32);
+    let _b = Foo::new(123f32);
+
+    let _d = Foo::new(123u32);
+    let _d = Foo::new(123u32);
+}
+#+END_SRC
+
+In this example there should only be 2 versions of Foo::new generated.
+
+1. Foo::new<f32>
+2. Foo::new<u32>
+
+** Completed Activities
+
+- Fix duplicate generic function/method generation - [[https://github.com/Rust-GCC/gccrs/pull/427][PR427]]
+- Add legacy symbol mangling - [[https://github.com/Rust-GCC/gccrs/pull/425][PR425]] [[https://github.com/Rust-GCC/gccrs/pull/430][PR430]]
+- Support Impl items to also be generic - [[https://github.com/Rust-GCC/gccrs/pull/424][PR424]]
+- Add testcase to cover bug report (already fixed) - [[https://github.com/Rust-GCC/gccrs/pull/422][PR422]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        69 |        76 |    +7 |
+| In Progress |         8 |         4 |    -4 |
+| Completed   |       128 |       133 |    +5 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      2261 |      2314 |   +53 |
+| XFAIL     |        40 |        42 |    +2 |
+| Failed    |         - |           |    -  |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        15 |        17 |    +2 |
+| In Progress |         5 |         1 |    -4 |
+| Completed   |        37 |        42 |    +5 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       92% |      100% | +8%   | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |        0% |        0% | -     | -             | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Plan out traits milestone
