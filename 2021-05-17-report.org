@@ -1,0 +1,116 @@
+#+title:  Weekly Report for 17th May to 24th May 2021
+#+author: Philip Herron
+#+date:   2021-05-24
+
+** Overview
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+[[https://thephilbert.io/2021/05/14/gcc-rust-weekly-status-report-15/][Last week]] we saw that the Generics Milestone was completed, now its onto planning Traits. What I have learnt from the previous milestones planning is important and I think spending the time to find the limitations and relevant test cases from the rust test suite helps a lot. In particular expected failure test cases have helped me figure out how things are implemented in the Rustc compiler, as you can find at what point in the compiler pipeline a paticular error was caught by searching the source code and trying difficult permutations of the test case.
+
+I don't expect there to be much if any change in the percentage progress of the milestone this upcomming week as I still want to spend some more time planning and investigating where the limitations in [[https://doc.rust-lang.org/reference/type-coercions.html#least-upper-bound-coercions][least upper bound coercion's]] are.
+
+*** Welcome Google Summer of Code 2021 Students
+
+As of 17th May 2021 Google Summer of code students [[https://gcc.gnu.org/pipermail/gcc/2021-May/236082.html][have been announced]] and we are pleased to have two students for GCC Rust:
+
+1. [[https://github.com/thomasyonug][Wenzhang Yang]] has already started a project called "Static analysis for unreachable functions.". This allows the GCC Rust compiler to emit warnings for dead code just like Rustc.
+2. [[https://github.com/CohenArthur][Arthur Cohen]] is going to be working on "Cargo tool for Rust-GCC" this is an important milestone for GCC Rust in that we wish to be able to leverage the rust build tools. This means finding the gaps in terms of compiler flags in GCC Rust and finding the correct hook points to reuse cargo.
+
+If you wish to know more about these projects there are threads on our Zulip server.
+
+1. https://gcc-rust.zulipchat.com/#narrow/stream/266897-general/topic/GSoC.202021.20cargo.20integration.20project
+2. https://gcc-rust.zulipchat.com/#narrow/stream/266897-general/topic/GSoC.202021.20unused.20function.20detection.20project
+
+** Detailed changelog
+
+*** Issue and PR Templates
+
+We now have added issue and PR templates to GitHub which should help guide new contributors in this area.
+
+*** Raw Identifiers
+
+New contributor [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]] has posted quite a few fixes for the compiler including fixes for Fedora 33 on x86 but also fixes for aarch64. Here he fixed the parser to handle [[https://doc.rust-lang.org/edition-guide/rust-2018/module-system/raw-identifiers.html][raw identifiers]] which in rust allows you to use keywords as names like 'match' for example.
+
+#+BEGIN_SRC rust
+fn main() {
+    let r#match = 123;
+}
+#+END_SRC
+
+*** Unsupported testsuite
+
+[[https://github.com/dkm][Marc]] has provided support for an unsupported testsuite section for the compiler allowing us to add test cases for this that we don't support yet. When we do add/fix the issues these should turn into XPASS which will fail the CI build and require changes to update the test suite accordingly 
+
+*** Fixes for buffered queue on arm64
+
+New contributor [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]] has also found that on arm64 we were hitting an ICE in the parser queue due to a bad calculation on when to extend the buffer.
+
+*** Fix bug parsing attributes
+
+Google Summer of code student [[https://github.com/thomasyonug][Wenzhang Yang]] has fixed the parser in parsing attributes correctly. Note we still have not implemented any attributes.
+
+*** Don't warn unused when name is prefixed with '_'
+
+Google Summer of code student [[https://github.com/CohenArthur][Arthur Cohen]] has fixed the scan for unused to only emit a warning if the name is not prefixed with an underscore in line with the offical rust behaviour.
+
+*** Fix ICE on Fedora
+
+We had issues on Fedora where some of the test cases were failing this was due to a bad bit mask. In rust all toplevel items are given a LocalDefId which forms half of the DefId which is the Crate number and LocalDefId. In Rust this is actually achieved via a struct but in GCC Rust this was a uint64 bitmask of the two u32's. The bug here was that the value was shifted by sizeof(u32) which is bytes and it needed to be shifted by 32 bits in order to correctly format the value correctly. This lead to duplicates being added to the HIR mappings tables causing an ICE.
+
+** Completed Activities
+
+- Add Issue and PR Templates - [[https://github.com/Rust-GCC/gccrs/pull/431][PR431]]
+- Allow unused underscore identifiers - [[https://github.com/Rust-GCC/gccrs/pull/433][PR433]]
+- Fix parsing of attributes - [[https://github.com/Rust-GCC/gccrs/pull/436][PR436]]
+- DefId is a bit mask of CrateNum & LocalDefId - [[https://github.com/Rust-GCC/gccrs/pull/438][PR438]]
+- Fix Raw Identifiers - [[https://github.com/Rust-GCC/gccrs/pull/443][PR443]]
+- ARM64 Fixes - [[https://github.com/Rust-GCC/gccrs/pull/444][PR444]] [[https://github.com/Rust-GCC/gccrs/pull/445][PR445]] [[https://github.com/Rust-GCC/gccrs/pull/446][PR446]] [[https://github.com/Rust-GCC/gccrs/pull/448][PR448]]
+- Add unsupported testsuite - [[https://github.com/Rust-GCC/gccrs/pull/393][PR393]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        76 |        77 |    +1 |
+| In Progress |         4 |         6 |    +2 |
+| Completed   |       133 |       138 |    +5 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      2314 |      2368 | +54   |
+| XFAIL     |        42 |        26 | -16   |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        17 |        17 |     - |
+| In Progress |         1 |         2 |    +1 |
+| Completed   |        42 |        44 |    +2 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |        0% |        0% | -     | 20th May 2021 | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 5 |           10 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Plan out traits milestone
+- Add test cases for traits
