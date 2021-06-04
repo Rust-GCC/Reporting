@@ -74,11 +74,17 @@ This is shaping up well lets give it a week or so to finalize the merging detail
 
 ### What about the rlib metadata in rustc?
 
-GCC Go emits declarations into a section within the object code files and objdump is used to extract this into .gox files which can be parsed to figure out all the declarations. There are other options such as LTO streaming and gimple dumps etc which might also fit.
+GCC Go emits declarations into a section within the object code files and objdump is used to extract this into .gox files which can be parsed to figure out all the declarations.
 See https://github.com/Rust-GCC/gccrs/blob/master/gcc/go/go-backend.c
+
+There are other options such as TREE/LTO streaming and gimple dumps (?) etc. which might also fit.
+Also mentioned: the new C++ modules' implementation.
+
 
 ### Overflow behaviour
 
 We need to figure out the behaviours for overflow, GCC has multiple implementations we can use to handle this.
 See https://github.com/Rust-GCC/gccrs/issues/404
 
+
+### https://github.com/Rust-GCC/gccrs/issues/412 "GCC Abstractions"
