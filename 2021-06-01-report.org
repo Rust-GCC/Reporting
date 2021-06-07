@@ -1,0 +1,123 @@
+#+title:  Weekly Report for 31st May to 7th June
+#+author: Philip Herron
+#+date:   2021-06-07
+
+** Overview
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+For Traits the first piece of work needed was to actually implement a trait using a trait impl block. This forms the basis to start enforcing obligations. I believe the milestones most difficult tickets hit early on, and if the implementation for enforcing obligations is done right from the start, the final items in the milestone should be easier.
+
+*** Monthly Community Call
+
+We had our 3nd community call over on [[https://gcc-rust.zulipchat.com/][Zulip]] you can find the notes over on: https://github.com/Rust-GCC/Reporting/blob/main/2021-06-04-community-call.md
+
+*** Google Summer of Code
+
+**** Cargo Support
+
+[[https://github.com/CohenArthur][Arthur Cohen]] has been working on adding cargo support for GCCRS. He has already added support for GCCRS to accept inputs via stdin. So for example you should be able to invoke the compiler with ‘-’ and it will read parse input until EOF from stdin. He has also been to find issues and missing features such as the target options that cargo uses to infer what extensions to use for static or dynamic libraries for example. We partially have this via -frust-dump-target_options but it needs some more work.
+
+**** Static Analysis
+
+[[https://github.com/thomasyonug][Wenzhang Yang]] has similarly continued his work, this week it included a very big cleanup of Attribues within GCCRS. One of the key parts of this project is developing a framework to work with attributes such as  [[https://doc.rust-lang.org/rust-by-example/attribute/unused.html][allow_deadcode]]. Since our HIR data structures were bootstrapped from our AST, this meant all attributes were duplicated into the HIR this means our HIR can simply reference the AST attributes avoiding duplication.
+
+** Detailed changelog
+
+*** Reorganise the testsuite
+
+Recently I noticed that the test suite numbers didn't really match up to what I epxected. [[https://github.com/tschwinge][Thomas]] has cleaned this up again. Since the front-end is still early on there are many features of Rust we do not support yet so we have an unsupported set of tests that are now marked with XFAIL since we expect these tests to fail, since they are not supported yet. We still contain expected failure test cases such as ensuring we error correctly for bad types, for example, the only difference now is that these expected failures are now counted as a normally expected pass.
+
+*** Build fixes for arm32, mips and rs6000
+
+Thanks to our new contributor [[https://github.com/glaubitz][John Paul Adrian Glaubitz]] has been testing GCC Rust on as many architectures as he can which has resulted in many bug fixes for our TargetOptions support. This is key for Arthur's google summer of code project, but also for cfg expansions.
+
+*** Trait impl blocks
+
+In order to begin work on traits we must first be able to implement a trait. This was a big PR and allows us begin work on Trait Obligations and desugar the AST into HIR further. Since TraitImplItems should be treated the same an normal Impl Items.
+
+#+BEGIN_SRC rust
+trait Foo {
+    fn bar() -> i32;
+}
+
+struct Test<T>(T);
+
+impl<T> Foo for Test<T> {
+    fn bar() -> i32 {
+        123
+    }
+}
+
+fn main() {
+    let a: i32;
+    a = Test::<i32>::bar();
+}
+#+END_SRC
+
+What was nice to see is that the work on generics did not need hanged to support this example test case. The compiler currently is not enforcing the trait here, but this is the building block to begin this work since trait obligations will be used anywhere to enforce any predicate of a trait.
+
+** Completed Activities
+
+- Build Fixes for arm32 and rs6000 - [[https://github.com/Rust-GCC/gccrs/pull/488][PR488]] [[https://github.com/Rust-GCC/gccrs/pull/482][PR482]] [[https://github.com/Rust-GCC/gccrs/pull/475][PR475]] [[https://github.com/Rust-GCC/gccrs/pull/478][PR478]]
+- Fix warnings for format specifiers - [[https://github.com/Rust-GCC/gccrs/pull/486][PR486]]
+- Ensure all toplevel items respect their Canonical Path prefix - [[https://github.com/Rust-GCC/gccrs/pull/485][PR485]]
+- Trait impl block support - [[https://github.com/Rust-GCC/gccrs/pull/484][PR484]]
+- Add -frust-debug for verbose debug output - [[https://github.com/Rust-GCC/gccrs/pull/480][PR480]] [[https://github.com/Rust-GCC/gccrs/pull/466][PR466]]
+- Reuse AST attributes - [[https://github.com/Rust-GCC/gccrs/pull/469][PR469]] [[https://github.com/Rust-GCC/gccrs/pull/453][PR453]]
+- Support pipe input - [[https://github.com/Rust-GCC/gccrs/pull/458][PR458]] [[https://github.com/Rust-GCC/gccrs/pull/460][PR460]]
+
+*** Contributions
+
+Excluding merges, 7 authors have pushed 24 commits to master and 24 commits to all branches. On master, 290 files have changed and there have been 2,006 additions and 2,920 deletions. 
+
+| Category   | Total |
+|------------+-------|
+| Merged PRs |    18 |
+| Authors    |     7 |
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        79 |        85 |    +6 |
+| In Progress |         6 |         6 |     - |
+| Completed   |       139 |       149 |   +10 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      2368 |      2447 |   +79 |
+| XFAIL     |        26 |        15 |   -11 |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        17 |        19 |    +2 |
+| In Progress |         2 |         2 |     - |
+| Completed   |        45 |        46 |    +1 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |        0% |       10% | +10%  | 20th May 2021 | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 3 |            6 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Begin working on Trait Obligations
