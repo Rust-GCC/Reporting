@@ -1,0 +1,126 @@
+#+title:  Weekly Report for 14th to 21st June 2021
+#+author: Philip Herron
+#+date:   2021-06-21
+
+** Overview
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This week I spent the week cleaning up code, as I was working on my branch for traits I found the HIR implementation was missing a lot of desugaring. This is an important part of the HIR lowering process to turn trait-impl and normal impl blocks into a simple impl block with an optional trait reference. There are many of cases to turn methods into functions with a Self parameter. This reduces the complexity of what the type resolution step needs to think about. All of this is important as it now becomes further building blocks, as I am a big fan of iterative development making smaller steps to reach a goal and avoiding big PRs.
+
+*** Linux Plumbers Conference
+
+In other news I have submitted a talk proposal to the [[https://www.linuxplumbersconf.org/][Linux Plumbers Conference 2021]] for the Refereed-track. All going well and it is accepted I hope to present the "GCC Front-End for Rust":
+
+**** GCC Front-End for Rust - Abstract
+
+GCC Rust is a front-end project for the GNU toolchain, a work-in-progress alternative to the official Rustc compiler. Being part of GCC, the compiler benefits from the common compiler flags, available backend targets and provides insight into its distinct optimiser's impact on a modern language.
+
+This project dates back to 2014 where Rust was still ~0.8, but the language was subject to frequent change making an effort too challenging to keep up. More recently, the core language is stable, and in early 2019 the development restarted. Since then, the project has laid out the core milestone targets to create the initial MVP with freely available status reports and is part of Google Summer of Code 2021 under the GCC organisation.
+
+The GNU toolchain has been the foundation of the Linux ecosystem for years, but the official Rustc compiler takes advantage of LLVM for code generation; this leaves a gap in language availability between the toolchains. GCC Rust will eliminate this disparity and provide a compilation experience familiar to those who already use GCC.
+
+As of 2021, GCCRS gained sponsorship from Open Source Security, inc and Embecosm to drive the effort forward. With this support, the project has gained mentorship from the GCC and Rust community.
+
+In this talk, I will introduce the compiler, demonstrate its current state and discuss the goals and motivations for the project.
+
+*** Google Summer of Code
+
+**** Cargo Support
+
+[[https://github.com/CohenArthur][Arthur Cohen]] has merged the [[https://github.com/Rust-GCC/cargo-gccrs/pull/5][MVP]] to compile working binaries, and has moved onto supporting [[https://github.com/Rust-GCC/cargo-gccrs/pull/11/][static]] and [[https://github.com/Rust-GCC/cargo-gccrs/pull/13][shared library]] compilation. As the compiler is GCC based, we gain this support for free and can follow normal compilation commands. Thanks for [[https://github.com/flip1995][Philipp Krones]] and [[https://github.com/bjorn3][bjorn3]] for doing detailed code reviews.
+
+**** Static Analysis
+
+[[https://github.com/thomasyonug][Wenzhang Yang]] has been working on fixing build issues for this personal macbook pro running BigSur. Recently Apple has changed a lot under the hood with its toolchain, when using GCCRS on macos users would run into unable to find libSystem.dylib but from this forum post it seems this is now a cached item: https://developer.apple.com/forums/thread/655588. He has updated the compiler [[https://github.com/Rust-GCC/gccrs#macos][README.md]] for working build instructions for MacOS (note GCC does not yet support the Apple-M1 chip).
+
+** Detailed changelog
+
+*** Improve GDB support
+
+Thanks to our new contributor [[https://github.com/tromey][Tom Tromey]] who is a GDB/GCC developer and has fixed bugs for upstream GDB support for Rust. His patches to the GCC Rust compiler include:
+
+- Fix tuple field names [[https://github.com/Rust-GCC/gccrs/pull/514][PR-514]]
+- Set the correct DWARF for Rust primitive types [[https://github.com/Rust-GCC/gccrs/pull/505][PR-505]]
+- Use DW_LANG_Rust in DWARF emission [[https://github.com/Rust-GCC/gccrs/pull/503][PR-503]] [[https://github.com/Rust-GCC/gccrs/pull/513][PR-513]]
+
+Your GCC Rust mug is on its way.
+
+*** Fixing bugs in Path Expression to support modules
+
+In Rust when you instantiate a struct you give a path to the struct you wish to reference:
+
+#+BEGIN_SRC rust
+let a;
+a = foo::myStruct::<i32>{ ... };
+#+END_SRC
+
+This is a [[https://doc.rust-lang.org/reference/expressions/path-expr.html][path expression]] which allows the programmer to navigate the hierarchy of modules and or impl blocks. The implementation before these fixes assumed a basic A::B::C type structure which is not the case when we want to [[https://github.com/Rust-GCC/gccrs/issues/432][support modules]]. [[https://github.com/dkm][Marc Poulhiès]] has got a [[https://github.com/Rust-GCC/gccrs/pull/509][draft PR]] showing the iniital support for modules within gccrs but we found the limitations in how paths blocked some progress here.
+
+It is not always possible for the name-resolver to fully resolve a path expression, so each path is broken down into segements. the name resolver can start from the root-segement and resolve for that, at which point it can keep appending segements to resolve untill it either fully resolves the path or it fails. The failure case is allowed because this might be a path which resolves to an item within an Impl block which will require type-resolution of each segment in turn to then perform a path probe to lookup relevant impl blocks for that item.
+
+
+*** HIR Cleanup
+
+The compiler has several IRs involved within the compilation pipeline, first the code is parsed into the AST which gives a full represntation of the code. The next is HIR, high-level IR which follows the convention of Rustc, this desugars the syntax alot which helps ensure we canonicalize as many cases as possible to follow the same code paths.
+
+Since our HIR was bootstrapped from the AST structures we ended up with alot of duplication of handling methods seperatly from methods, and even had a trait impl block and a normal impl block. This made sense within the AST but for [[https://doc.rust-lang.org/nightly/nightly-rustc/rustc_hir/struct.Impl.html][HIR this is not nessecary]].
+
+*** General cleanup
+
+ [[https://github.com/dkm][Marc Poulhiès]] from his PR working on modules has been able to extract out alot of smaller PRs which improves general quality of error messages and found a nasty usage of an object which has been moved. Thanks for all our on going work.
+
+** Completed Activities
+
+- Improve GDB support [[https://github.com/Rust-GCC/gccrs/pull/503][PR-503]] [[https://github.com/Rust-GCC/gccrs/pull/513][PR-513]] [[https://github.com/Rust-GCC/gccrs/pull/505][PR-505]] [[https://github.com/Rust-GCC/gccrs/pull/514][PR-514]]
+- Bug fix path-expressions [[https://github.com/Rust-GCC/gccrs/pull/493][PR-493]]
+- HIR cleanup [[https://github.com/Rust-GCC/gccrs/pull/492][PR492]] [[https://github.com/Rust-GCC/gccrs/pull/495][PR495]] [[https://github.com/Rust-GCC/gccrs/pull/498][PR498]]
+- Fix the CanonicalPath for TraitImplItems [[https://github.com/Rust-GCC/gccrs/pull/496][PR496]]
+- Fix build issues on MacOS bugsur [[https://github.com/Rust-GCC/gccrs/pull/497][PR497]]
+- Code cleanup [[https://github.com/Rust-GCC/gccrs/pull/508][PR508]] [[https://github.com/Rust-GCC/gccrs/pull/507][PR507]] [[https://github.com/Rust-GCC/gccrs/pull/506][PR506]] [[https://github.com/Rust-GCC/gccrs/pull/499][PR499]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        87 |        88 |    +1 |
+| In Progress |         6 |         6 |     - |
+| Completed   |       149 |       151 |    +2 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      2447 |      2456 | +9    |
+| XFAIL     |        15 |        15 | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        20 |        22 |    +2 |
+| In Progress |         2 |         2 |     - |
+| Completed   |        46 |        47 |    +1 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       10% |       20% | +10%  | 20th May 2021 | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 3 |            6 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Continue work on Trait Obligations
