@@ -1,0 +1,213 @@
+#+title:  Weekly Report for 21st to 28th June 2021
+#+author: Philip Herron
+#+date:   2021-06-28
+
+** Overview
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This week, I made good progress with merging work that I was working on via git branches. To get through this milestone, I believe that Traits break down into three phases:
+
+1. Trait impl blocks and enforcing the obligations of the trait
+  + Support the implicit Self on Traits
+  + Support optional trait obligations
+2. TypeBounds and update the type system to handle coercions
+3. Where constraints and Least upper bound coercions and testing
+
+Now the first part is almost complete.
+
+*** Monthly Community Call
+
+We will be having our 4th community call over on [[https://gcc-rust.zulipchat.com/][Zulip]] as the first Friday of the month
+
+- Date: 2nd July 2021
+  - UTC: 0900
+  - UK/Ireland UTC+1/BST: 1000
+  - Central European Summer Time UTC+2: 1100 
+
+- Monthly Report: WIP
+- Agenda (WIP): https://hackmd.io/A-b-G90YTNSCEVjiHXz7Qg
+- Jitsi video call: https://meet.jit.si/259057065581073
+
+*** Google Summer of Code
+
+**** Static Analysis
+
+[[https://github.com/thomasyonug][Wenzhang Yang]] has extended his work this week by adding traversing the HIR to generate the live symbols to not only look for dead code but also search for unused structures to provide warnings like:
+
+#+BEGIN_SRC
+../gcc/testsuite/rust/compile/torture/struct_init.rs:1:1: warning: struct is never constructed: ‘Foo’
+    1 | struct Foo {
+      | ^
+#+END_SRC
+
+**** Cargo Support
+
+[[https://github.com/CohenArthur][Arthur Cohen]] has now merged support [[https://github.com/Rust-GCC/cargo-gccrs/pull/11/][static]] and [[https://github.com/Rust-GCC/cargo-gccrs/pull/13][shared library]] compilation. He has also added alot of github automations by reusing the GCCRS docker image to provide integration testing as well as unit-tests. Thanks for [[https://github.com/flip1995][Philipp Krones]] and [[https://github.com/bjorn3][bjorn3]] for doing detailed code reviews.
+
+** Detailed changelog
+
+*** Thanks to the Contributors:
+
+Thanks for all the contributions this week from:
+
+- [[https://github.com/tromey][Tom Tromey]]
+- [[https://github.com/thomasyonug][Wenzhang Yang]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
+
+*** Trait Obligations
+
+When we create an impl block for a trait, each item must be part of the trait; by enforcing this rule, we know that this type fully implements the trait. I was able to merge the first part of trait obligations, which enforces that items declared within a trait impl block must be part of that trait and conform correctly for example:
+
+#+BEGIN_SRC rust
+trait Foo {
+    fn Bar() -> i32 {}
+}
+
+struct Baz;
+
+impl Foo for Baz {
+    fn Barrr() {}
+}
+#+END_SRC
+
+We can see that the function 'Barrr' is not part of the trait so we are able to provide the error:
+
+#+BEGIN_SRC
+test.rs:8:5: error: method ‘Barrr’ is not a member of trait ‘Foo’
+    1 | trait Foo {
+      | ~    
+......
+    8 |     fn Barrr() {}
+      |     ^
+
+#+END_SRC
+
+The other error we can provide is ensuring that the item is actually the correct type:
+
+#+BEGIN_SRC rust
+trait Foo {
+    fn Bar() -> i32 {}
+}
+
+struct Baz;
+
+impl Foo for Baz {
+    fn Bar() {}
+}
+
+fn main() {}
+#+END_SRC
+
+Gives this error showing that the return types are not compatible.
+
+#+BEGIN_SRC
+test.rs:8:5: error: expected [i32] got [()]
+    2 |     fn Bar() -> i32 {}
+      |                 ~
+......
+    8 |     fn Bar() {}
+      |     ^
+test.rs:8:5: error: method ‘Bar’ has an incompatible type for trait ‘Foo’
+#+END_SRC
+
+There is a branch here to add support for this onto methods, constants and associated types but it needs more work.
+
+*** Unit Type support and GCC
+
+Unit types were neglected in GCC rust for some time, but recently we made a breakthrough. I used void_type_node to represent them into GCC's GENERIC, but this led to an ICE with GCC. Thanks to our new contributor [[https://github.com/tromey][Tom Tromey]] suggested that I try a zero precision unsigned integer to represent the unit-type; this solves the issue. However, if we use this as the return type for functions, we end up with one ICE when optimizations are active. Though if we leave functions as void_type_node, everything works fine with optimizations turned on. I will need to reach out to the GCC mailing list in order to get the prefered solution.
+
+*** DWARF magic
+
+[[https://github.com/tromey][Tom Tromey]] noticed that for tuples we used plain integer field names in the DWARF. However, Rustc prefixes these with "__", and GDB understands this convention.
+
+*** Nested Items
+
+We now support nested functions and nested structure definitions. Rust allows for blocks to define new Items: https://doc.rust-lang.org/reference/statements.html
+
+This means we can now compile the following:
+
+#+BEGIN_SRC rust
+pub fn main() {
+    struct foo {
+        a: i32,
+        b: f32,
+    };
+
+    let a;
+    a = foo { a: 123, b: 456f32 };
+
+    fn bar<T>(x: T) -> T {
+        x
+    }
+
+    let mut a = 123;
+    a = bar(a);
+
+    let mut b = 456f32;
+    b = bar(b);
+}
+#+END_SRC
+
+Whats interested is that nested functions are not [[https://doc.rust-lang.org/rust-by-example/fn/closures.html][closures]], they cannot encapsulate the state of the lexical scope it is defined within, which means they can be extracted as a normal function item as you can see here: https://godbolt.org/z/GMqvYjn6x
+
+** Completed Activities
+
+- Trait Obligations: [[https://github.com/Rust-GCC/gccrs/pull/502][PR502]]
+- Fix attribute parsing: [[https://github.com/Rust-GCC/gccrs/pull/530][PR530]]
+- Mark more live symbols: [[https://github.com/Rust-GCC/gccrs/pull/528][PR528]] [[https://github.com/Rust-GCC/gccrs/pull/529][PR529]] [[https://github.com/Rust-GCC/gccrs/pull/525][PR525]]
+- Reject non-pure decimal for TupleIndexExpr: [[https://github.com/Rust-GCC/gccrs/pull/527][PR527]]
+- Add unit-type support: [[https://github.com/Rust-GCC/gccrs/pull/521][PR521]] [[https://github.com/Rust-GCC/gccrs/pull/522][PR522]] [[https://github.com/Rust-GCC/gccrs/pull/526][PR526]]
+- Add nested function support: [[https://github.com/Rust-GCC/gccrs/pull/523][PR523]]
+- Suport block level struct definitions: [[https://github.com/Rust-GCC/gccrs/pull/520][PR520]]
+- DWARF tuple field names: [[https://github.com/Rust-GCC/gccrs/pull/514][PR514]]
+- Various cleanup: [[https://github.com/Rust-GCC/gccrs/pull/517][PR517]] [[https://github.com/Rust-GCC/gccrs/pull/518][PR518]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        88 |        86 |    -2 |
+| In Progress |         6 |         6 |     - |
+| Completed   |       151 |       154 |    +3 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      2456 |      2698 | +242  |
+| XFAIL     |        15 |        15 | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        22 |        19 |    -3 |
+| In Progress |         2 |         2 |     - |
+| Completed   |        47 |        50 |    +3 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       20% |       32% | +12%  | 20th May 2021 | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 2 |            4 | Be up front on all PRs that the code is destined to be upstreamed to GCC |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Complete testing with Trait Obligations on methods and associated types and merge
+- Move onto Type Bounds and Constraints
