@@ -1,0 +1,74 @@
+* GSOC Static Analysis- monthly report June 2021
+
+- Name: Thomas Young
+- Github Profile: https://github.com/thomasyonug
+- Project Kanban: https://github.com/Rust-GCC/gccrs/projects/9
+
+** Overview
+
+Add an unreachable static analysis if a function is unused all functions after that point is unused.
+
+- liveness analysis to get all reachable symbols
+- code called from live codes is live, otherwise dead
+
+Example:
+
+#+BEGIN_SRC rust
+// { dg-warning "function is never used: 'bar'" "" { target *-*-* } .+1 }
+fn bar() {
+    foo();
+}
+
+// { dg-warning "function is never used: 'foo'" "" { target *-*-* } .+1 }
+fn foo() {
+    bar();
+}
+
+fn f() {
+
+}
+
+fn main() {
+    f();
+}
+#+END_SRC
+
+#+BEGIN_SRC rust
+struct Foo {
+// { dg-warning "struct is never constructed" "" { target *-*-* } .-1 }
+    one: i32,
+    two: i32
+}
+
+fn main() {}
+#+END_SRC
+
+** Progress Report
+
+I have setup the analysis framework for this dead-code pass to detect unused functions, unconstructed struct, and unread struct fields. This forms the basis of all dead-code analysis.
+
+** Goals for this GSOC
+
+- Dead Code Analysis
+- Struct Fields used or not
+- Liveness Framework that can be maintained for the life of GCCRS
+
+The goal of the proposal has a high probability of completion, and some additional work can be done if I keep the current working status.
+
+** Status Table
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| Todo        |          7 |          3 |    -4 |
+| In Progress |          4 |          4 |     - |
+| Completed   |          0 |          4 |     4 |
+| Blocked     |          8 |          8 |     0 |
+
+** Risks
+
+- missing features in the compiler
+ - module visibility
+ - attributes system
+ - pattern matching
+
+The visibility and attributes system will be the biggest risk, since these impact what Rust considers live-symbols. To mitigate this, the framework has been done, so we can accomplish it easily in this analysis when some new features are supported by gccrs in the future.
