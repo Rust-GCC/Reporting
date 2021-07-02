@@ -1,0 +1,261 @@
+#+title:  Monthly Report for June 2021
+#+author: Philip Herron
+#+date:   2021-07-02
+
+** June Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+In the month of June, I've focused on working with Trait impl blocks, and enforcing their obligations. This includes associated types and optional traits which are still in progress but need some cleanup and testing. I believe that Traits break down into three phases:
+
+1. Trait impl blocks and enforcing the obligations of the trait
+  + Support the implicit Self on Traits
+  + Support optional trait obligations
+2. TypeBounds and update the type system to handle coercions
+3. Where constraints and Least upper bound coercions and testing
+
+Now the first part is almost complete, but it is hard to say if I am 100% on track as TypeBounds have been a tricky one to work on; though over the next few weeks if progress remains steady we will be in a good place.
+
+Here is some interesting reading, which is what I am using as a reference.
+
+- https://rustc-dev-guide.rust-lang.org/traits/resolution.html
+- https://rustc-dev-guide.rust-lang.org/traits/chalk.html
+
+*** Monthly Community Call
+
+We had our monthly community call on jitsi please find the meeting notes here: https://github.com/Rust-GCC/Reporting/blob/main/2021-07-02-community-call.md
+
+*** Google Summer of Code
+
+Please find their respective monthly reports over on:
+
+- https://github.com/Rust-GCC/Reporting/blob/main/2021-06-gsoc-2021-thomas-young-monthly-report.org
+- https://github.com/Rust-GCC/Reporting/blob/main/2021-06-gsoc-2021-arthur-cohen-monthly-report.md
+
+** Detailed changelog
+
+*** Reorganise the testsuite
+
+Recently I noticed that the test suite numbers didn't really match up to what I epxected. [[https://github.com/tschwinge][Thomas]] has cleaned this up again. Since the front-end is still early on there are many features of Rust we do not support yet so we have an unsupported set of tests that are now marked with XFAIL since we expect these tests to fail, since they are not supported yet. We still contain expected failure test cases such as ensuring we error correctly for bad types, for example, the only difference now is that these expected failures are now counted as a normally expected pass.
+
+*** Build fixes for arm32, mips and rs6000
+
+Thanks to our new contributor [[https://github.com/glaubitz][John Paul Adrian Glaubitz]] has been testing GCC Rust on as many architectures as he can which has resulted in many bug fixes for our TargetOptions support. This is key for Arthur's google summer of code project, but also for cfg expansions.
+
+*** Trait impl blocks
+
+In order to begin work on traits we must first be able to implement a trait. This was a big PR and allows us begin work on Trait Obligations and desugar the AST into HIR further. Since TraitImplItems should be treated the same an normal Impl Items.
+
+#+BEGIN_SRC rust
+trait Foo {
+    fn bar() -> i32;
+}
+
+struct Test<T>(T);
+
+impl<T> Foo for Test<T> {
+    fn bar() -> i32 {
+        123
+    }
+}
+
+fn main() {
+    let a: i32;
+    a = Test::<i32>::bar();
+}
+#+END_SRC
+
+What was nice to see is that the work on generics did not need hanged to support this example test case. The compiler currently is not enforcing the trait here, but this is the building block to begin this work since trait obligations will be used anywhere to enforce any predicate of a trait.
+
+*** Improve GDB support
+
+Thanks to our new contributor [[https://github.com/tromey][Tom Tromey]] who is a GDB/GCC developer and has fixed bugs for upstream GDB support for Rust. His patches to the GCC Rust compiler include:
+
+- Fix tuple field names [[https://github.com/Rust-GCC/gccrs/pull/514][PR-514]]
+- Set the correct DWARF for Rust primitive types [[https://github.com/Rust-GCC/gccrs/pull/505][PR-505]]
+- Use DW_LANG_Rust in DWARF emission [[https://github.com/Rust-GCC/gccrs/pull/503][PR-503]] [[https://github.com/Rust-GCC/gccrs/pull/513][PR-513]]
+
+Your GCC Rust mug is on its way.
+
+*** HIR Cleanup
+
+The compiler has several IRs involved within the compilation pipeline, first the code is parsed into the AST which gives a full represntation of the code. The next is HIR, high-level IR which follows the convention of Rustc, this desugars the syntax alot which helps ensure we canonicalize as many cases as possible to follow the same code paths.
+
+Since our HIR was bootstrapped from the AST structures we ended up with alot of duplication of handling methods seperatly from methods, and even had a trait impl block and a normal impl block. This made sense within the AST but for [[https://doc.rust-lang.org/nightly/nightly-rustc/rustc_hir/struct.Impl.html][HIR this is not nessecary]].
+
+*** Trait Obligations
+
+When we create an impl block for a trait, each item must be part of the trait; by enforcing this rule, we know that this type fully implements the trait. I was able to merge the first part of trait obligations, which enforces that items declared within a trait impl block must be part of that trait and conform correctly for example:
+
+#+BEGIN_SRC rust
+trait Foo {
+    fn Bar() -> i32 {}
+}
+
+struct Baz;
+
+impl Foo for Baz {
+    fn Barrr() {}
+}
+#+END_SRC
+
+We can see that the function 'Barrr' is not part of the trait so we are able to provide the error:
+
+#+BEGIN_SRC
+test.rs:8:5: error: method ‘Barrr’ is not a member of trait ‘Foo’
+    1 | trait Foo {
+      | ~    
+......
+    8 |     fn Barrr() {}
+      |     ^
+
+#+END_SRC
+
+The other error we can provide is ensuring that the item is actually the correct type:
+
+#+BEGIN_SRC rust
+trait Foo {
+    fn Bar() -> i32 {}
+}
+
+struct Baz;
+
+impl Foo for Baz {
+    fn Bar() {}
+}
+
+fn main() {}
+#+END_SRC
+
+Gives this error showing that the return types are not compatible.
+
+#+BEGIN_SRC
+test.rs:8:5: error: expected [i32] got [()]
+    2 |     fn Bar() -> i32 {}
+      |                 ~
+......
+    8 |     fn Bar() {}
+      |     ^
+test.rs:8:5: error: method ‘Bar’ has an incompatible type for trait ‘Foo’
+#+END_SRC
+
+There is a branch here to add support for this onto methods, constants and associated types but it needs more work.
+
+*** Unit Type support and GCC
+
+Unit types were neglected in GCC rust for some time, but recently we made a breakthrough. I used void_type_node to represent them into GCC's GENERIC, but this led to an ICE with GCC. Thanks to our new contributor [[https://github.com/tromey][Tom Tromey]] suggested that I try a zero precision unsigned integer to represent the unit-type; this solves the issue. However, if we use this as the return type for functions, we end up with one ICE when optimizations are active. Though if we leave functions as void_type_node, everything works fine with optimizations turned on. I will need to reach out to the GCC mailing list in order to get the prefered solution.
+
+*** Nested Items
+
+We now support nested functions and nested structure definitions. Rust allows for blocks to define new Items: https://doc.rust-lang.org/reference/statements.html
+
+This means we can now compile the following:
+
+#+BEGIN_SRC rust
+pub fn main() {
+    struct foo {
+        a: i32,
+        b: f32,
+    };
+
+    let a;
+    a = foo { a: 123, b: 456f32 };
+
+    fn bar<T>(x: T) -> T {
+        x
+    }
+
+    let mut a = 123;
+    a = bar(a);
+
+    let mut b = 456f32;
+    b = bar(b);
+}
+#+END_SRC
+
+Whats interested is that nested functions are not [[https://doc.rust-lang.org/rust-by-example/fn/closures.html][closures]], they cannot encapsulate the state of the lexical scope it is defined within, which means they can be extracted as a normal function item as you can see here: https://godbolt.org/z/GMqvYjn6x
+
+** Completed Activities
+
+- Build Fixes for arm32 and rs6000 - [[https://github.com/Rust-GCC/gccrs/pull/488][PR488]] [[https://github.com/Rust-GCC/gccrs/pull/482][PR482]] [[https://github.com/Rust-GCC/gccrs/pull/475][PR475]] [[https://github.com/Rust-GCC/gccrs/pull/478][PR478]]
+- Fix warnings for format specifiers - [[https://github.com/Rust-GCC/gccrs/pull/486][PR486]]
+- Ensure all toplevel items respect their Canonical Path prefix - [[https://github.com/Rust-GCC/gccrs/pull/485][PR485]]
+- Trait impl block support - [[https://github.com/Rust-GCC/gccrs/pull/484][PR484]]
+- Add -frust-debug for verbose debug output - [[https://github.com/Rust-GCC/gccrs/pull/480][PR480]] [[https://github.com/Rust-GCC/gccrs/pull/466][PR466]]
+- Reuse AST attributes - [[https://github.com/Rust-GCC/gccrs/pull/469][PR469]] [[https://github.com/Rust-GCC/gccrs/pull/453][PR453]]
+- Support pipe input - [[https://github.com/Rust-GCC/gccrs/pull/458][PR458]] [[https://github.com/Rust-GCC/gccrs/pull/460][PR460]]
+- Improve GDB support [[https://github.com/Rust-GCC/gccrs/pull/503][PR-503]] [[https://github.com/Rust-GCC/gccrs/pull/513][PR-513]] [[https://github.com/Rust-GCC/gccrs/pull/505][PR-505]] [[https://github.com/Rust-GCC/gccrs/pull/514][PR-514]]
+- Bug fix path-expressions [[https://github.com/Rust-GCC/gccrs/pull/493][PR-493]]
+- HIR cleanup [[https://github.com/Rust-GCC/gccrs/pull/492][PR492]] [[https://github.com/Rust-GCC/gccrs/pull/495][PR495]] [[https://github.com/Rust-GCC/gccrs/pull/498][PR498]]
+- Fix the CanonicalPath for TraitImplItems [[https://github.com/Rust-GCC/gccrs/pull/496][PR496]]
+- Fix build issues on MacOS bugsur [[https://github.com/Rust-GCC/gccrs/pull/497][PR497]]
+- Code cleanup [[https://github.com/Rust-GCC/gccrs/pull/508][PR508]] [[https://github.com/Rust-GCC/gccrs/pull/507][PR507]] [[https://github.com/Rust-GCC/gccrs/pull/506][PR506]] [[https://github.com/Rust-GCC/gccrs/pull/499][PR499]]
+- Trait Obligations: [[https://github.com/Rust-GCC/gccrs/pull/502][PR502]]
+- Fix attribute parsing: [[https://github.com/Rust-GCC/gccrs/pull/530][PR530]]
+- Mark more live symbols: [[https://github.com/Rust-GCC/gccrs/pull/528][PR528]] [[https://github.com/Rust-GCC/gccrs/pull/529][PR529]] [[https://github.com/Rust-GCC/gccrs/pull/525][PR525]]
+- Reject non-pure decimal for TupleIndexExpr: [[https://github.com/Rust-GCC/gccrs/pull/527][PR527]]
+- Add unit-type support: [[https://github.com/Rust-GCC/gccrs/pull/521][PR521]] [[https://github.com/Rust-GCC/gccrs/pull/522][PR522]] [[https://github.com/Rust-GCC/gccrs/pull/526][PR526]]
+- Add nested function support: [[https://github.com/Rust-GCC/gccrs/pull/523][PR523]]
+- Suport block level struct definitions: [[https://github.com/Rust-GCC/gccrs/pull/520][PR520]]
+- DWARF tuple field names: [[https://github.com/Rust-GCC/gccrs/pull/514][PR514]]
+- Various cleanup: [[https://github.com/Rust-GCC/gccrs/pull/517][PR517]] [[https://github.com/Rust-GCC/gccrs/pull/518][PR518]]
+
+*** Contributors this month
+
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/thomasyonug][Wenzhang Yang]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/tromey][Tom Tromey]]
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
+- [[https://github.com/glaubitz][John Paul Adrian Glaubitz]]
+
+Excluding merges, 9 authors have pushed 80 commits to master and 82 commits to all branches. On master, 146 files have changed and there have been 4,190 additions and 3,541 deletions. 
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         79 |         86 |    +7 |
+| In Progress |          6 |          7 |    +1 |
+| Completed   |        139 |        157 |   +18 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   |       2368 |       3027 |  +659 |
+| XFAIL     |         26 |         15 |   -11 |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         17 |         19 |    +2 |
+| In Progress |          2 |          4 |    +2 |
+| Completed   |         45 |         51 |    +6 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |         0% |        40% | +40%  | 20th May 2021 | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |         0% |         0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |         0% |         0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 2 |            4 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Trait Bounds and Where contstraints
+- Type Coercions
