@@ -13,11 +13,11 @@
 * Error handling
 * Code Review
 * Technical Debt
-* Questions
+* Unit Type
 
 ## Monthly report overview
 
-Monthly Report for June 2021: WIP
+Monthly Report for June 2021: https://github.com/Rust-GCC/Reporting/blob/main/2021-06-monthly-report.org
 
 Interesting reading, which is what I am using as a reference.
 
