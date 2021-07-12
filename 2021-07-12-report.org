@@ -1,0 +1,174 @@
+#+title:  Weekly Report for 5th July to 12th July 2021
+#+author: Philip Herron
+#+date:   2021-07-12
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This week my focus has been on the trait resolver; this will be the building block for the traits milestone. We can use it when we have a TraitImplBlock to enforce the impl conforms to the trait correctly. Still, more importantly, when we have a TypeBound specified, we can use this to resolve the trait (find it), then we must correctly select the correct one concerning the type we are bounding. There are some more minor things to finish this week before we can close out the relevant tickets the PR affected, so I expect to see more milestone progress over the next two weeks when tickets get closed.
+
+*** Google Summer of Code
+
+Great progress for both students, thanks for all your hard work.
+
+**** Cargo Support
+
+[[https://github.com/CohenArthur][Arthur Cohen]] has continued his focus on making this project highly maintinable which includes full integration testing with Github automation which uses the [[https://hub.docker.com/r/philberty/gccrs][docker-image]] from the compiler project to invoke it directly. Aside from project maintainability he has also extended it to support taking enviroment variable flags to add extra arguments for AR_EXTRA_ARGS or GCCRS_EXTRA_ARGS. 
+
+**** Static Analysis
+
+[[https://github.com/thomasyonug][Wenzhang Yang]] has got the DeadCode scan pass to a good level where it can be easily extended now. I have always liked to encouage people to get code in early in small building blocks, but now that this pass is getting more mature its time to focus on documentation, readability and error handling, these concepts will enforce good behaviour going forward since we already have a testing framework in palce.
+
+** Detailed changelog
+
+*** Handle doc comments
+
+Our parser failed to handle inner and outer doc comments which is now fixed and example is below.
+
+#+BEGIN_SRC rust
+// comment line not a doc
+/* comment block not a doc                   */
+
+//! inner line comment for most outer crate
+/*! inner block comment for most outer crate */
+
+// comment line not a doc
+/* comment block not a doc                   */
+
+/// outer doc line for module
+/** outer doc block for module               */
+pub mod module
+{
+  //!  inner line doc
+  //!! inner line doc!
+  /*!  inner block doc  */
+  /*!! inner block doc! */
+
+  //   line comment
+  ///  outer line doc
+  //// line comment
+
+  /*   block comment   */
+  /**  outer block doc */
+  /*** block comment   */
+
+  mod block_doc_comments
+  {
+    /*   /* */  /** */  /*! */  */
+    /*!  /* */  /** */  /*! */  */
+    /**  /* */  /** */  /*! */  */
+    mod item { }
+  }
+
+  pub mod empty
+  {
+    //!
+    /*!*/
+    //
+
+    ///
+    mod doc { }
+    /**/
+    /***/
+  }
+}
+
+#+END_SRC
+
+*** Initial support for Associated Types
+
+As mentioned I have been working on the Trait resolver which includes associated types. This is the first-pass of initial support for associated types so we can handle code like this.
+
+#+BEGIN_SRC rust
+trait Foo {
+    type A;
+    type B;
+
+    fn new(a: Self::A, b: Self::B) -> Self;
+}
+
+struct Baz(i32, f32);
+
+impl Foo for Baz {
+    type A = i32;
+    type B = f32;
+
+    fn new(a: Self::A, b: f32) -> Self {
+        Baz(a, b)
+    }
+}
+
+fn main() {
+    Baz::new(123, 456f32);
+}
+#+END_SRC
+
+Currently the associated types are using a placeholder type which must be updated in order to ensure the other trait-items fully conform to the trait properly. Such that they definetly reference the Self::A type. In Rust you can reference the associated type by using the TypePath of Self::A or you can simply use the actual type which complicates ensuring the trait conforms properly, at the moment if you use the wrong type the compiler ignores and thinks its ok, this last piece needs done before this ticket can be completed.
+
+** Completed Activities
+
+- Add some documentation to DeadCode scan [[https://github.com/Rust-GCC/gccrs/pull/560][PR560]] [[https://github.com/Rust-GCC/gccrs/pull/559][PR559]]
+- Improve error handling in DeadCode scan [[https://github.com/Rust-GCC/gccrs/pull/558][PR558]] [[https://github.com/Rust-GCC/gccrs/pull/555][PR555]]
+- Cleanup warning messages in DeadCode scan [[https://github.com/Rust-GCC/gccrs/pull/554][PR554]]
+- Support shebang and UTF-8 BOM parsing [[https://github.com/Rust-GCC/gccrs/pull/546][PR546]] [[https://github.com/Rust-GCC/gccrs/pull/552][PR552]]
+- Initial building blocks for Associated Types and Constants [[https://github.com/Rust-GCC/gccrs/pull/551][PR551]]
+- Fix bug in GIMPLE naming for primitive types [[https://github.com/Rust-GCC/gccrs/pull/548][PR548]]
+- Cargo GCCRS cleanup  [[https://github.com/Rust-GCC/cargo-gccrs/pull/38][CARGO-PR38]] [[https://github.com/Rust-GCC/cargo-gccrs/pull/33][CARGO-PR33]]
+- Support enviroment variable flags in cargo [[https://github.com/Rust-GCC/cargo-gccrs/pull/32][CARGO-PR32]]
+- Support doc comments [[https://github.com/Rust-GCC/gccrs/pull/561][PR561]]
+
+*** Contributors this Week
+
+- [[https://github.com/thomasyonug][Wenzhang Yang]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        86 |        88 |    +2 |
+| In Progress |         7 |         7 |     - |
+| Completed   |       157 |       163 |    +6 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      3027 |      3202 | +175  |
+| XFAIL     |        15 |        15 | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        19 |        20 |    +1 |
+| In Progress |         4 |         3 |    -1 |
+| Completed   |        51 |        53 |    +2 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       40% |       43% | +3%   | 20th May 2021 | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 2 |            4 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Fix enforcement of trait items with associated types
+- Continue TraitBounds work
+
