@@ -1,0 +1,165 @@
+#+title:  Weekly Report for 12th July to 19th July 2021
+#+author: Philip Herron
+#+date:   2021-19-12
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+Last week saw more building blocks being merged to enforce a trait's constraints onto an impl block. What [[https://github.com/bjorn3][bjorn3]] pointed out, which is pretty neat, is that a [[https://github.com/Rust-GCC/gccrs/issues/565][super trait is syntatic sugar]] for a Self TypeParameter with a TypeBound of the super trait. This means we will reuse the same TypeBounding code to get this support for free so long as it is implemented correctly. 
+
+All of this work is to tackle the optional trait items such as functions that will need my TypeBounding branch to do anything useful since a trait function item is pretty much a generic function with an implicit Self Type Parameter.
+
+Throughout this Traits milestone, I've realised that many subtle things are going on in the rust compiler to implement it correctly. Most of all, a lot of this behaviour is just not documented. I think a complete language reference could address it, such as [[https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=1e194947a7390e90f86fe10604b4d386][method resolution rules]] that affect users of the language, not just compiler developers.
+
+*** Google Summer of Code
+
+Great progress for both students, thanks for all your hard work.
+
+**** Cargo Support
+
+[[https://github.com/CohenArthur][Arthur Cohen]] is still focused on the functional test harness work which is key to completing his GSoC goals. Apart from that he has been unifying the interfaces to support common options such as config printing, which includes adding support for enviroment variable arguments to the compiler such as GCCRS_EXTRA_ARGS etc.
+
+**** Static Analysis
+
+[[https://github.com/thomasyonug][Wenzhang Yang]] has completed all the goals of his GSoC proposal, so now he is blocked due to missing pattern matching for example. We have now scoped out further work to fix our unused variables/mutability scan. This fits well within his experience and should be achievable between now and the end of GSoC.
+
+** Detailed changelog
+
+*** Associated Type Errors
+
+Extending from last week the placeholder types are not updated as part of the Trait impl block resolution so we can enforce rules where the TypePath to Self::A is properly enforced such as:
+
+#+BEGIN_SRC rust
+trait Foo {
+    type A;
+
+    fn baz(a: Self::A) -> Self::A;
+}
+
+struct Bar<T>(T);
+
+impl<T> Foo for Bar<T> {
+    type A = i32;
+
+    fn baz(a: f32) -> f32 {
+        // { dg-error "expected .i32. got .f32." "" { target *-*-* } .-1 }
+        // { dg-error "method .baz. has an incompatible type for trait .Foo." "" { target *-*-* } .-2 }
+        a
+    }
+}
+
+fn main() {
+    let a;
+    a = Bar::<i32>::baz(123f32);
+}
+#+END_SRC
+
+#+BEGIN_SRC
+test.rs:12:15: error: expected [i32] got [f32]
+    4 |     fn baz(a: Self::A) -> Self::A;
+      |               ~
+......
+   12 |     fn baz(a: f32) -> f32 {
+      |               ^
+test.rs:12:5: error: method ‘baz’ has an incompatible type for trait ‘Foo’
+    4 |     fn baz(a: Self::A) -> Self::A;
+      |     ~
+......
+   12 |     fn baz(a: f32) -> f32 {
+      |     ^
+
+
+#+END_SRC
+
+*** Missing Trait Items within Impl Block
+
+#+BEGIN_SRC rust
+trait Foo {
+    const A: i32;
+
+    fn test(self);
+}
+
+struct Bar;
+impl Foo for Bar {}
+#+END_SRC
+
+#+BEGIN_SRC
+test.rs:8:1: error: missing A, test in implementation of trait ‘Foo’
+    2 |     const A: i32;
+      |     ~
+    3 | 
+    4 |     fn test(self);
+      |     ~
+......
+    8 | impl Foo for Bar {}
+      | ^
+#+END_SRC
+
+Some items are optional and should not cause this error for example a function with a block this does not cause this error.
+
+** Completed Activities
+
+- Cleanup and comments to DeadCode Pass [[https://github.com/Rust-GCC/gccrs/pull/571][PR571]] [[https://github.com/Rust-GCC/gccrs/pull/564][PR564]] [[https://github.com/Rust-GCC/gccrs/pull/562][PR562]]
+- Warn for unused impl items via DeadCode pass [[https://github.com/Rust-GCC/gccrs/pull/567][PR567]]
+- Add missing DefId mappings [[https://github.com/Rust-GCC/gccrs/pull/568][PR568]]
+- Add const modifier to TyTy equality interface [[https://github.com/Rust-GCC/gccrs/pull/572][PR572]]
+- Add missing test cases to close out unit-structs [[https://github.com/Rust-GCC/gccrs/pull/570][PR570]]
+- Some Trait items are optional and should not error [[https://github.com/Rust-GCC/gccrs/pull/569][PR569]]
+- Enforce mandatory trait items and placeholder type checking [[https://github.com/Rust-GCC/gccrs/pull/566][PR566]]
+
+*** Contributors this Week
+
+- [[https://github.com/thomasyonug][Wenzhang Yang]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        88 |        87 |    -1 |
+| In Progress |         7 |         8 |    +1 |
+| Completed   |       163 |       166 |    +3 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      3202 |      3402 | +200  |
+| XFAIL     |        15 |           | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        20 |        20 | -     |
+| In Progress |         3 |         3 | -     |
+| Completed   |        52 |        53 | +1    |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       43% |       54% | +11%  | 20th May 2021 | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 2 |            4 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Optional trait items
+- Implement Initial Coercion Rules
+- TypeCasts type checking
