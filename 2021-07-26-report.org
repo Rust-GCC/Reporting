@@ -1,0 +1,118 @@
+#+title:  Weekly Report for 19th July to 26th July 2021
+#+author: Philip Herron
+#+date:   2021-07-26
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This week I made good progress in adding [[https://doc.rust-lang.org/stable/reference/type-coercions.html#coercion-sites][Type Coercion]] code for the fist coercion site of assignment expressions, this allows us to implement RawPointers and unsafe. The other major piece of work has been [[https://doc.rust-lang.org/rust-by-example/types/cast.html][TypeCasts]] which are almost like coercions but they are distinct such that casts can change any number type regardless of truncation and pointers and references can ignore mutability. The TypeCast work has coincided with the fantastic [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]] fixing issues in the parser to support unsafe and casts. The TypeCasts and TypeBounds work have been an ongoing task throughout traits and are close to getting merged.
+
+In other news the [[https://github.com/rust-lang/blog.rust-lang.org/pull/869][Rustc compiler]] is now close to stabalizing [[https://rust-lang.github.io/rfcs/1598-generic_associated_types.html][GAT's]] (Generic Associated Types) this is something I did not factor into my Traits milestone but ideally it would be best to tackle this now instead of later. So I will need to spend some time to look at what is missing in gccrs and try to estimate how difficult this piece of work will be, as well as think about how this affects my timeline.
+
+*** Google Summer of Code
+
+**** Cargo Support
+
+[[https://github.com/CohenArthur][Arthur Cohen]] has two remaining issues to fix before the Google summer of code project will be complete, which are about decoupling the data structures and code. This will allow him to move onto get more experience with the compiler proper.
+
+**** Static Analysis
+
+[[https://github.com/thomasyonug][Wenzhang Yang]] since he has completed the goals of his GSoC and the other features are blocked since gccrs has not implemented mattern matching yet we have scoped out more work and this needed time to research the best approch to fix our unused variables scan.
+
+** Detailed changelog
+
+*** Raw Pointers and Coercions
+
+In rust you cannot implement pointers untill you have implemented type coercions. For example:
+
+#+BEGIN_SRC rust
+pub fn main() {
+    let mut num = 2;
+    let a: *const i32 = &num;
+}
+#+END_SRC
+
+The borrow expression of num signifies a Reference (int&) but to get a pointer we need to explicitly say we want 'a' to be a pointer and the assignment statement is not an assignment it is a [[https://doc.rust-lang.org/stable/reference/type-coercions.html#coercion-sites][coercion-site]] this allows the compiler to make a coercion of (int&) into (const int*). Coercion sites allow to move from mutable references to const references but not the other way round. This is explicitly different to TypeCasts using 'as' keyword which allows you ignore mutability.
+
+*** Initial support for unsafe
+
+We now support compiling unsafe blocks such as:
+
+#+BEGIN_SRC rust
+pub fn main() {
+    let mut num = 2;
+    let r1: *const i32 = &num;
+    let r2 = unsafe { *r1 } + unsafe { *r1 };
+    let r3 = num;
+    num = 4;
+    let r4 = num + unsafe { *r1 } * r3;
+    let _eightteen = r2 + r3 + r4;
+}
+#+END_SRC
+
+Currently this fixes the ICE we had and does not implement the rules for error checking that raw pointer dereferences must be inside unsafe this will come later on.
+
+** Completed Activities
+
+- Assignments are a type of coercion site [[https://github.com/Rust-GCC/gccrs/pull/577][PR577]]
+- Add lowering and typechecking for unsafe blocks [[https://github.com/Rust-GCC/gccrs/pull/582][PR582]] [[https://github.com/Rust-GCC/gccrs/pull/587][PR587]]
+- Raw pointers [[https://github.com/Rust-GCC/gccrs/pull/579][PR579]] [[https://github.com/Rust-GCC/gccrs/pull/589][PR589]]
+- Support byte string literals [[https://github.com/Rust-GCC/gccrs/pull/594][PR594]]
+- Fix bug parsing unsafe in expressions [[https://github.com/Rust-GCC/gccrs/pull/591][PR591]]
+- Fix parser bug in ranges [[https://github.com/Rust-GCC/gccrs/pull/593][PR593]]
+- Fix parser bug in unions [[https://github.com/Rust-GCC/gccrs/pull/590][PR590]]
+- Cleanup [[https://github.com/Rust-GCC/gccrs/pull/578][PR578]] [[https://github.com/Rust-GCC/gccrs/pull/585][PR585]] [[https://github.com/Rust-GCC/gccrs/pull/586][PR586]]
+
+*** Contributors this Week
+
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        87 |     86    |   -1  |
+| In Progress |         8 |     9     |   +1  |
+| Completed   |       166 |     173   |   +7  |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      3402 |      3529 |  +127 |
+| XFAIL     |        15 |        14 |    -1 |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        20 |        19 |    -1 |
+| In Progress |         3 |         3 |     - |
+| Completed   |        53 |        58 |    +5 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       54% |       64% | +10%  | 20th May 2021 | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 2 |            4 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Finish TypeCastExpr work
+- Finish cleanup of typebounds branch with super traits
