@@ -1,6 +1,6 @@
 #+title:  Weekly Report for 12th July to 19th July 2021
 #+author: Philip Herron
-#+date:   2021-19-12
+#+date:   2021-07-19
 
 ** Overview
 
