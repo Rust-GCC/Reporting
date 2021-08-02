@@ -1,0 +1,358 @@
+#+title:  Monthly Report for July 2021
+#+author: Philip Herron
+#+date:   2021-08-02
+
+** July Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+The month of July saw good progress getting through some of the bigger tickets. I was hoping to get my TypeBounds branch merged, which will allow us to make more useful generic code such as:
+
+#+BEGIN_SRC rust
+trait Foo {
+    fn default() -> i32;
+    fn get(self) -> i32;
+}
+
+fn type_bound_test<T: Foo>(a: T) -> i32 {
+    T::default() + a.get()
+}
+#+END_SRC
+
+I had a bereavement in my family, which means I lost a few days. So my focus will be to get this work closed out this week as it should be the last big PR to get merged. In completing the Traits work, the remaining tasks will be building upon this PR, such as optional type bounds, where clauses, default (optional) trait items and operator overloading. 
+
+**** Generic Associated Types
+
+In other news the [[https://github.com/rust-lang/blog.rust-lang.org/pull/869][Rustc compiler]] is now close to stabalizing [[https://rust-lang.github.io/rfcs/1598-generic_associated_types.html][GAT's]] (Generic Associated Types) this is something I did not factor into my Traits milestone. Since GCC Rust does not support [[https://rust-lang.github.io/rfcs/2000-const-generics.html][const generics]] yet, it seems like a better idea to tackle this as part of that milestone down the line. If I extend the timeline of the traits milestone now and start working on this it might hurt progress, since this feature will still need more work down the line to support const generics anyway.
+
+**** Is the milestone on track?
+
+As part of investigating the Generic Associated Types work, I realised we had a few tasks scoped within the traits milestone, which are actually to do with pattern matching, not traits, such as the ref keyword within match arms and destructuring.
+
+Overall, I feel a lot more comfortable with the remaining time and if I do go over the target date, I believe it will be limited to 1 or 2 weeks. As I have stated before, Traits within Rust are very subtle and affect everything within the type system, making it a complex milestone to hit. I am aiming in the future to release some blog posts on some of the exciting cases within rust, which should detail some of the more undocumented behaviour within the Rustc compiler that has caught me out a few times, such as autoderefs and method resolution. https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=eaea790fd1fa506c7fb2b65941c3ea26
+
+*** Monthly Community Call
+
+We will be having our 5th community call as the first Friday of the month:
+
+- Date and Time 6th August 2021 at: 1000 (BST which is UTC+1)
+- Agenda: https://hackmd.io/MWIG5A4zTYGx2U1FCT_how?both please feel free to add agenda items you wish to see discussed.
+- Jitsi: https://meet.jit.si/259057065581073
+
+*** Google Summer of Code
+
+Both students have been passed [[https://github.com/thomasyonug][Wenzhang Yang]], [[https://github.com/CohenArthur][Arthur Cohen]] the first review as part of the GSoC program and will continue their work until August 16th and we hope they wish to continue contributing to GCC Rust.
+
+** Detailed changelog
+
+*** Hello World
+
+In order to compile the offical Rustc Hello world gccrust must support libcore, libstd and macros which is a little bit further down the line but what we can now support are extern "C" blocks which allow us to call printf such as:
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+fn main() -> i32 {
+    unsafe {
+        let a = "Hello World %i\n";
+        let b = a as *const str;
+        let c = b as *const i8;
+
+        printf(c, 123);
+    }
+    0
+}
+#+END_SRC
+
+This is a crucial milestone as it tests casts as well as allowing us to call into libc which lets us output variables to check the compiled logic in automated tests. 
+
+*** Union support
+
+[[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]] has produced a series of patches which adds union support such as:
+
+#+BEGIN_SRC rust
+union U
+{
+  f1: u8
+}
+
+union V
+{
+  f1: u8,
+  f2: u16,
+  f3: i32,
+}
+
+struct S
+{
+  f1: U,
+  f2: V
+}
+
+fn main ()
+{
+  let u = U { f1: 16 };
+  let v = V { f2: 365 };
+  let s = S { f1: u, f2: v };
+  let _v125 = unsafe
+    { let mut uv: u64;
+      uv = s.f1.f1 as u64;
+      uv += s.f2.f1 as u64;
+      uv += s.f2.f2 as u64;
+      uv -= s.f2.f3 as u64;
+      uv
+    };
+}
+#+END_SRC
+
+The remaining piece is to add dead-code scanning for unions which can be easily done via [[https://github.com/thomasyonug][Wenzhang Yang]] google summer of code work in the DeadCode pass.
+
+*** Handle doc comments
+
+Our parser failed to handle inner and outer doc comments which is now fixed and example is below.
+
+#+BEGIN_SRC rust
+// comment line not a doc
+/* comment block not a doc                   */
+
+//! inner line comment for most outer crate
+/*! inner block comment for most outer crate */
+
+// comment line not a doc
+/* comment block not a doc                   */
+
+/// outer doc line for module
+/** outer doc block for module               */
+pub mod module
+{
+  //!  inner line doc
+  //!! inner line doc!
+  /*!  inner block doc  */
+  /*!! inner block doc! */
+
+  //   line comment
+  ///  outer line doc
+  //// line comment
+
+  /*   block comment   */
+  /**  outer block doc */
+  /*** block comment   */
+
+  mod block_doc_comments
+  {
+    /*   /* */  /** */  /*! */  */
+    /*!  /* */  /** */  /*! */  */
+    /**  /* */  /** */  /*! */  */
+    mod item { }
+  }
+
+  pub mod empty
+  {
+    //!
+    /*!*/
+    //
+
+    ///
+    mod doc { }
+    /**/
+    /***/
+  }
+}
+
+#+END_SRC
+
+*** Associated Type Errors
+
+Extending from last week the placeholder types are not updated as part of the Trait impl block resolution so we can enforce rules where the TypePath to Self::A is properly enforced such as:
+
+#+BEGIN_SRC rust
+trait Foo {
+    type A;
+
+    fn baz(a: Self::A) -> Self::A;
+}
+
+struct Bar<T>(T);
+
+impl<T> Foo for Bar<T> {
+    type A = i32;
+
+    fn baz(a: f32) -> f32 {
+        // { dg-error "expected .i32. got .f32." "" { target *-*-* } .-1 }
+        // { dg-error "method .baz. has an incompatible type for trait .Foo." "" { target *-*-* } .-2 }
+        a
+    }
+}
+
+fn main() {
+    let a;
+    a = Bar::<i32>::baz(123f32);
+}
+#+END_SRC
+
+#+BEGIN_SRC
+test.rs:12:15: error: expected [i32] got [f32]
+    4 |     fn baz(a: Self::A) -> Self::A;
+      |               ~
+......
+   12 |     fn baz(a: f32) -> f32 {
+      |               ^
+test.rs:12:5: error: method ‘baz’ has an incompatible type for trait ‘Foo’
+    4 |     fn baz(a: Self::A) -> Self::A;
+      |     ~
+......
+   12 |     fn baz(a: f32) -> f32 {
+      |     ^
+
+
+#+END_SRC
+
+*** Missing Trait Items within Impl Block
+
+#+BEGIN_SRC rust
+trait Foo {
+    const A: i32;
+
+    fn test(self);
+}
+
+struct Bar;
+impl Foo for Bar {}
+#+END_SRC
+
+#+BEGIN_SRC
+test.rs:8:1: error: missing A, test in implementation of trait ‘Foo’
+    2 |     const A: i32;
+      |     ~
+    3 | 
+    4 |     fn test(self);
+      |     ~
+......
+    8 | impl Foo for Bar {}
+      | ^
+#+END_SRC
+
+Some items are optional and should not cause this error for example a function with a block this does not cause this error.
+
+*** Raw Pointers and Coercions
+
+In rust you cannot implement pointers untill you have implemented type coercions. For example:
+
+#+BEGIN_SRC rust
+pub fn main() {
+    let mut num = 2;
+    let a: *const i32 = &num;
+}
+#+END_SRC
+
+The borrow expression of num signifies a Reference (int&) but to get a pointer we need to explicitly say we want 'a' to be a pointer and the assignment statement is not an assignment it is a [[https://doc.rust-lang.org/stable/reference/type-coercions.html#coercion-sites][coercion-site]] this allows the compiler to make a coercion of (int&) into (const int*). Coercion sites allow to move from mutable references to const references but not the other way round. This is explicitly different to TypeCasts using 'as' keyword which allows you ignore mutability.
+
+*** Initial support for unsafe
+
+We now support compiling unsafe blocks such as:
+
+#+BEGIN_SRC rust
+pub fn main() {
+    let mut num = 2;
+    let r1: *const i32 = &num;
+    let r2 = unsafe { *r1 } + unsafe { *r1 };
+    let r3 = num;
+    num = 4;
+    let r4 = num + unsafe { *r1 } * r3;
+    let _eightteen = r2 + r3 + r4;
+}
+#+END_SRC
+
+Currently this fixes the ICE we had and does not implement the rules for error checking that raw pointer dereferences must be inside unsafe this will come later on.
+
+
+** Completed Activities
+
+- Hello world [[https://github.com/Rust-GCC/gccrs/pull/596][PR596]] [[https://github.com/Rust-GCC/gccrs/pull/597][PR597]] [[https://github.com/Rust-GCC/gccrs/pull/598][PR598]]
+- Union support [[https://github.com/Rust-GCC/gccrs/pull/601][PR601]] [[https://github.com/Rust-GCC/gccrs/pull/590][PR590]] [[https://github.com/Rust-GCC/gccrs/pull/602][PR602]]
+- Fix location info for let while let expressions [[https://github.com/Rust-GCC/gccrs/pull/600][PR600]]
+- Add some documentation to DeadCode scan [[https://github.com/Rust-GCC/gccrs/pull/560][PR560]] [[https://github.com/Rust-GCC/gccrs/pull/559][PR559]]
+- Improve error handling in DeadCode scan [[https://github.com/Rust-GCC/gccrs/pull/558][PR558]] [[https://github.com/Rust-GCC/gccrs/pull/555][PR555]]
+- Cleanup warning messages in DeadCode scan [[https://github.com/Rust-GCC/gccrs/pull/554][PR554]]
+- Support shebang and UTF-8 BOM parsing [[https://github.com/Rust-GCC/gccrs/pull/546][PR546]] [[https://github.com/Rust-GCC/gccrs/pull/552][PR552]]
+- Initial building blocks for Associated Types and Constants [[https://github.com/Rust-GCC/gccrs/pull/551][PR551]]
+- Fix bug in GIMPLE naming for primitive types [[https://github.com/Rust-GCC/gccrs/pull/548][PR548]]
+- Cargo GCCRS cleanup  [[https://github.com/Rust-GCC/cargo-gccrs/pull/38][CARGO-PR38]] [[https://github.com/Rust-GCC/cargo-gccrs/pull/33][CARGO-PR33]]
+- Support enviroment variable flags in cargo [[https://github.com/Rust-GCC/cargo-gccrs/pull/32][CARGO-PR32]]
+- Support doc comments [[https://github.com/Rust-GCC/gccrs/pull/561][PR561]]
+- Cleanup and comments to DeadCode Pass [[https://github.com/Rust-GCC/gccrs/pull/571][PR571]] [[https://github.com/Rust-GCC/gccrs/pull/564][PR564]] [[https://github.com/Rust-GCC/gccrs/pull/562][PR562]]
+- Warn for unused impl items via DeadCode pass [[https://github.com/Rust-GCC/gccrs/pull/567][PR567]]
+- Add missing DefId mappings [[https://github.com/Rust-GCC/gccrs/pull/568][PR568]]
+- Add const modifier to TyTy equality interface [[https://github.com/Rust-GCC/gccrs/pull/572][PR572]]
+- Add missing test cases to close out unit-structs [[https://github.com/Rust-GCC/gccrs/pull/570][PR570]]
+- Some Trait items are optional and should not error [[https://github.com/Rust-GCC/gccrs/pull/569][PR569]]
+- Enforce mandatory trait items and placeholder type checking [[https://github.com/Rust-GCC/gccrs/pull/566][PR566]]
+- Assignments are a type of coercion site [[https://github.com/Rust-GCC/gccrs/pull/577][PR577]]
+- Add lowering and typechecking for unsafe blocks [[https://github.com/Rust-GCC/gccrs/pull/582][PR582]] [[https://github.com/Rust-GCC/gccrs/pull/587][PR587]]
+- Raw pointers [[https://github.com/Rust-GCC/gccrs/pull/579][PR579]] [[https://github.com/Rust-GCC/gccrs/pull/589][PR589]]
+- Support byte string literals [[https://github.com/Rust-GCC/gccrs/pull/594][PR594]]
+- Fix bug parsing unsafe in expressions [[https://github.com/Rust-GCC/gccrs/pull/591][PR591]]
+- Fix parser bug in ranges [[https://github.com/Rust-GCC/gccrs/pull/593][PR593]]
+- Cleanup [[https://github.com/Rust-GCC/gccrs/pull/578][PR578]] [[https://github.com/Rust-GCC/gccrs/pull/585][PR585]] [[https://github.com/Rust-GCC/gccrs/pull/586][PR586]]
+
+*** Contributors this month
+
+- [[https://github.com/thomasyonug][Wenzhang Yang]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
+- [[https://github.com/asakovets][asakovets]] (new contributor)
+
+Excluding merges, 4 authors have pushed 75 commits to master and 84 commits to all branches. On master, 146 files have changed and there have been 8,010 additions and 1,345 deletions.
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         86 |         83 |    -3 |
+| In Progress |          7 |          9 |    +2 |
+| Completed   |        157 |        177 |   +20 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   |       3027 |       3629 |  +602 |
+| XFAIL     |         15 |         14 |    -1 |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         19 |         19 |     - |
+| In Progress |          4 |          3 |    -1 |
+| Completed   |         51 |         59 |    +8 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |        40% |        80% | +40%  | 20th May 2021 | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |         0% |         0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |         0% |         0% | -     | -             | -               | TBD           |
+| Macros and cfg expansion          |         0% |         0% | -     | -             | -               | TBD           |
+| Const Generics                    |         0% |         0% | -     | -             | -               | TBD           |
+| Intrinsics                        |         0% |         0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 2 |            4 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Get Type bounds work merged
+- Add more test cases for casts and coercions
