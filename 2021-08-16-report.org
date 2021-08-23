@@ -1,0 +1,352 @@
+#+title:  Weekly Report for 16th to 23rd August 2021
+#+author: Philip Herron
+#+date:   2021-08-23
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+Traits have progressed well since the last report; associated types took some experimentation to implement the Placeholder Type correctly such that we resolve the relative type correctly. Now that we have a solid base of associated types and optional trait items, it is time to work on super traits that give rust inheritance via TypeBounds; this is important to complete before dynamic trait objects can be implemented.
+
+As I will be travelling and attending a conference in London this week, I am close to going over my initial deadline for traits. Therefore, I will need to use some extra time to complete the remaining work for this milestone.  My initial expectation is to target the 13th or 20th of September to complete this work.
+
+The community has done a stellar job recently by completing work such as module support and unions. They are even working on enum support now, which saves time in future milestones.
+
+As there was no report last week due to my vacation time, this report includes the work completed by the community since then. 
+
+**** Rust London BCS Conference
+
+I will be giving a talk in London at a hybrid event on the 25th of August 2021 which you can attend virtually by following the information here: https://ossg.bcs.org/blog/event/an_evening_with_the_london_rust_group/
+
+**** Linux Plumbers Conference 2021
+
+My proposal for the Refereed-track has been accepted, you can attend this virtual conference by following the information here: https://www.linuxplumbersconf.org/event/11/page/112-attend
+
+**** Abstract
+
+https://www.linuxplumbersconf.org/event/11/contributions/911/
+
+GCC Rust is a front-end project for the GNU toolchain, a work-in-progress alternative to the official Rustc compiler. Being part of GCC, the compiler benefits from the common compiler flags, available backend targets and provides insight into its distinct optimiser's impact on a modern language.
+
+This project dates back to 2014 where Rust was still ~0.8, but the language was subject to frequent change making an effort too challenging to keep up. More recently, the core language is stable, and in early 2019 the development restarted. Since then, the project has laid out the core milestone targets to create the initial MVP with freely available status reports and is part of Google Summer of Code 2021 under the GCC organisation.
+
+The GNU toolchain has been the foundation of the Linux ecosystem for years, but the official Rustc compiler takes advantage of LLVM for code generation; this leaves a gap in language availability between the toolchains. GCC Rust will eliminate this disparity and provide a compilation experience familiar to those who already use GCC.
+
+As of 2021, GCCRS gained sponsorship from Open Source Security, inc and Embecosm to drive the effort forward. With this support, the project has gained mentorship from the GCC and Rust community.
+
+In this talk, I will introduce the compiler, demonstrate its current state and discuss the goals and motivations for the project.
+
+** Detailed changelog
+*** Qualified Paths
+
+[[https://doc.rust-lang.org/reference/paths.html#qualified-paths][Qualified paths]] are similar to normal [[https://doc.rust-lang.org/reference/paths.html#paths-in-expressions][PathInExpressions]] in that they both contain a list of path segments but the qualified path binds a type and an associated trait to limit the scope of the path lookup to that paticular trait. This is important because there can be multiple impls with the same segment name leading to multiple candidate errors but because this projection limits the scope it should find a single candidate or nothing.
+
+Here in this example you can see how we use the qualified path to call the trait functions otherwise it would not be possible to call them using a normal path expression.
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+struct S;
+
+impl S {
+    fn f() {
+        unsafe {
+            let a = "S::f\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c);
+        }
+    }
+}
+
+trait T1 {
+    fn f() {
+        unsafe {
+            let a = "T1::f\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c);
+        }
+    }
+}
+impl T1 for S {}
+
+trait T2 {
+    fn f() {
+        unsafe {
+            let a = "T2::f\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c);
+        }
+    }
+}
+impl T2 for S {}
+
+pub fn main() {
+    S::f();
+    <S as T1>::f();
+    <S as T2>::f();
+}
+#+END_SRC
+
+*** Optional trait items
+
+Some items in a trait are considered optional for an impl block to implement since the trait provides a default implementation. The caveat is that if the impl block implements it, the impl will override the default behaviour. Such as here both paths will resolve to the constant 456 even the qualified path.
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+trait Foo {
+    const A: i32 = 123;
+}
+
+struct Bar;
+impl Foo for Bar {
+    const A: i32 = 456;
+}
+
+fn main() {
+    let a;
+    a = Bar::A;
+
+    unsafe {
+        let _a = "Bar::A = %i\n\0";
+        let _b = _a as *const str;
+        let _c = _b as *const i8;
+        printf(_c, a);
+    }
+
+    let b;
+    b = <Bar as Foo>::A;
+
+    unsafe {
+        let _a = "<Foo as Bar>::A = %i\n\0";
+        let _b = _a as *const str;
+        let _c = _b as *const i8;
+        printf(_c, b);
+    }
+}
+#+END_SRC
+
+*** Associated Types
+
+Some support for associated types were added to trait resolution last month, but this latest PR extends the support here. Given an optional function item a placeholder type almost acts like a generic TypeParam but the generic subsitutions are not bound via any generic parameters but are defined and substituted via the associated impl block.
+
+This example demonstrates that the optional trait function is almost like a generic function and the relative implementation is created for the associated path.
+
+#+BEGIN_SRC rust
+trait Foo {
+    type A;
+
+    fn test(a: Self::A) -> Self::A {
+        a
+    }
+}
+
+struct Bar(i32);
+impl Foo for Bar {
+    type A = i32;
+}
+
+struct Baz(f32);
+impl Foo for Baz {
+    type A = f32;
+}
+
+pub fn main() {
+    let a;
+    a = Bar(123);
+
+    let b;
+    b = Bar::test(a.0);
+
+    let c;
+    c = Baz(123f32);
+
+    let d;
+    d = Baz::test(c.0);
+}
+#+END_SRC
+
+*** Duplicate field names in structs and unions
+
+A new lint has been added to detect duplicate field names in algebraic data types which brings us inline to how rustc behaves.
+
+#+BEGIN_SRC rust
+struct S { a: i32, b: i32, c: u8, a: i128 }
+// { dg-error "duplicate field" "" { target *-*-* } .-1 }
+
+union U
+  {
+    a: i32,
+    b: i32,
+    c: u8,
+    b: char // { dg-error "duplicate field" "" { target *-*-* } }
+  }
+
+fn main ()
+{
+  struct SS { alpha: i32, beta: i32, gamma: u8, gamma: i128 }
+  // { dg-error "duplicate field" "" { target *-*-* } .-1 }
+
+  union UU
+    {
+      alpha: i32, beta: i32,
+      gamma: u8, beta: char
+      // { dg-error "duplicate field" "" { target *-*-* } .-1 }
+    }
+}
+#+END_SRC
+
+#+BEGIN_SRC
+<source>:9:5: error: duplicate field name 'b'
+    7 |     b: i32,
+      |     ~
+    8 |     c: u8,
+    9 |     b: char // { dg-error "duplicate field" "" { target *-*-* } }
+      |     ^
+#+END_SRC
+
+
+*** Allow bool and char to cast to any integer type
+
+We had some bugs in our cast code and this allows you to cast bools and chars to any integer type as we would expect. More testcases will be added to find more gaps.
+
+#+BEGIN_SRC rust
+extern "C" { fn abort (); }
+
+pub fn main ()
+{
+  let t = true;
+  let f = false;
+  let one = t as u8;
+  let zero = f as u8;
+
+  if one != 1 || zero != 0 { unsafe { abort (); } }
+
+  let isizeone = true as isize;
+  let usizezero = false as usize;
+
+  if isizeone != 1 || usizezero != 0 { unsafe { abort (); } }
+
+  let i32zero = f as i32;
+  let u128one = t as u128;
+
+  if u128one != 1 || i32zero != 0 { unsafe { abort (); } }
+
+  let a = 'a';
+  let b = 'b';
+  let ua = a as u8;
+  let ib = b as i32;
+
+  if (ua + 1) as i32 != ib { unsafe { abort (); } }
+
+  let tt = ua;
+  let aa = tt as char;
+
+  let ttt = tt + 1;
+  let ab = ttt as char;
+
+  if aa != 'a' || ab != 'b' { unsafe { abort (); } }
+}
+#+END_SRC
+
+*** Initial module support
+
+Thanks to  [[https://github.com/dkm][Marc Poulhiès]] ongoing work we are now able to compile modules with a body this is the initial building block before we can support multiple files within the compilation unit. This was a big change covering name resolution, HIR lowering, type resolution and code generation. This simple test case demonstrates how we can use the relative paths within the module as well as the full path including the modules to reference the items.
+
+#+BEGIN_SRC rust
+mod A {
+    pub mod B {
+        pub mod C {
+            pub struct Foo {
+                pub f: i32,
+            }
+            impl Foo {
+                pub fn new() -> Self {
+                    Foo {
+                        f: 23i32,
+                    }
+                }
+            }
+        }
+    }
+}
+
+fn main() -> i32 {
+    let a = A::B::C::Foo::new();
+    let b = A::B::C::Foo {
+        f: -23i32,
+    };
+
+    a.f - b.f
+}
+#+END_SRC
+
+** Completed Activities
+*** Contributors this week
+
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+
+Excluding merges, 4 authors have pushed 31 commits to master and 31 commits to all branches. On master, 80 files have changed and there have been 3,273 additions and 707 deletions. 
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        82 |        87 |    +5 |
+| In Progress |         9 |         7 |    -2 |
+| Completed   |       180 |       183 |    +3 |
+
+*** Test Cases
+    
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      3766 |      4064 | +298  |
+| XFAIL     |        21 |        21 | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        17 |        18 |    +1 |
+| In Progress |         4 |         3 |    -1 |
+| Completed   |        61 |        63 |    +2 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       83% |       88% | +5%   | 20th May 2021 | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | -             | -               | 29th Oct 2021 |
+| Imports and Visibility            |        0% |        0% | -     | -             | -               | TBD           |
+| Macros and cfg expansion          |        0% |        0% | -     | -             | -               | TBD           |
+| Const Generics                    |        0% |        0% | -     | -             | -               | TBD           |
+| Intrinsics                        |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 2 |            4 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Work on super-traits
+- Dyn trait types with vtable
