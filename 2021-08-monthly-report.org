@@ -1,0 +1,504 @@
+#+title:  Monthly Report for August 2021
+#+author: Philip Herron
+#+date:   2021-08-30
+
+** August Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+To complete the Traits milestone, I need to finish my work on super-traits, dynamic trait objects, and operator overloading support. The remaining items will be closed out by these higher-level features. Traits were always going to be the most challenging piece of work for me; I also expect gaps that may be missed, especially around auto-traits. I have also found interesting cases like qualified types, as I describe in a section below, that caused me to slow down a bit.
+
+Though I have gone over my initial deadline for traits, I will need to use some extra time to complete the remaining work for this milestone. My initial expectation is to target the 20th of September to complete this work. I believe this is ok considering conference prep work and failing to plan vacation time over the summer. Though the community has done a stellar job recently by completing work such as module support and unions. They are even working on enum support now, which saves time in future milestones. 
+
+Thank you to everyone who continues to support and work on the compiler.
+
+**** Monthly Community Call
+
+We will be having our 6th community call as the first Friday of the month:
+
+- Date and Time 3rd September 2021 at: 1000 (BST which is UTC+1)
+- Agenda: https://hackmd.io/wflqJlFvS6edEsqf1oo-Hg  please feel free to add agenda items you wish to see discussed.
+- Jitsi: https://meet.jit.si/259057065581073
+
+**** Qualified Type Paths
+
+As part of my work into traits this includes qualified paths. I have been investigating some test cases around qualified paths and this one had me confused: https://github.com/rust-lang/rust/blob/master/src/test/ui/qualified/qualified-path-params-2.rs
+
+The associated path <S as Tr>::A on its own will resolve to unit-struct S so when the final segment of ::f<u8> i would have assumed this would have resolved to the type of the impl function f substituted with u8. I don't see why this ambiguous. I have however received an explanation on the Rust Zulip server https://rust-lang.zulipchat.com/#narrow/stream/122651-general/topic/Ambiguous.20associated.20types/near/251210283
+
+Which is interesting since associated types are not supported on impl blocks the rustc compiler enforces that all associated types must come from QualifiedPaths to force the path to always be of the form <A as B>::C. When inherent associated types this will change.
+
+See: [[https://doc.rust-lang.org/reference/paths.html#qualified-paths][QualifiedPathInType]]
+
+**** Linux Plumbers 2021
+
+I will be giving a talk about GCC Rust on the 20th September 2021 at 0900 (us-pacific-time). Find more information over on https://linuxplumbersconf.org/event/11/contributions/911/
+
+Thanks to [[https://github.com/ojeda][Miguel Ojeda]] for reaching out to let me know about the Rust toolchain within the Kernel microconference: https://linuxplumbersconf.org/event/11/contributions/970/
+
+**** BCS Talk
+
+You can find a link to the Rust-London talk over on YouYube https://www.youtube.com/channel/UC2ElgB5iynAuG8GQIPfLj2A
+
+** Detailed changelog
+*** Type Bounds
+
+Last week the goal was to finally merge last big branch which adds the initial type-bounds support such as:
+
+#+BEGIN_SRC rust
+trait Foo {
+    fn default() -> i32;
+    fn get(self) -> i32;
+}
+
+struct Bar(i32);
+impl Foo for Bar {
+    fn default() -> i32 {
+        123
+    }
+
+    fn get(self) -> i32 {
+        self.0
+    }
+}
+
+fn type_bound_test<T: Foo>(a: T) -> i32 {
+    T::default() + a.get()
+}
+
+fn main() {
+    let a;
+    a = Bar(456);
+
+    let b;
+    b = type_bound_test(a);
+}
+#+END_SRC
+
+This includes checks for when a type does not support the type bound for example:
+
+#+BEGIN_SRC rust
+trait Foo {
+    fn default() -> i32;
+}
+
+trait Bar {
+    fn not_default() -> i32;
+}
+
+trait Baz {
+    fn cake() -> i32;
+}
+
+struct Test(i32);
+
+impl Foo for Test {
+    fn default() -> i32 {
+        1234
+    }
+}
+
+fn type_bound_test<T: Foo + Bar + Baz>() -> i32 {
+    T::default()
+}
+
+fn main() {
+    let a = type_bound_test::<Test>();
+}
+#+END_SRC
+
+Will return:
+
+#+BEGIN_SRC
+test.rs:26:31: error: bounds not satisfied for Test ‘Bar, Baz’ is not satisfied
+   21 | fn type_bound_test<T: Foo + Bar + Baz>() -> i32 {
+      |                             ~     ~
+......
+   26 |     let a = type_bound_test::<Test>();
+      |                               ^
+
+#+END_SRC
+
+*** Fix ICE when using f64 on 32 bit systems
+
+Thanks to our new contributor [[https://github.com/karcherm][Michael Karcher]] who has fixed an bug with how 64bit floats were handled on 32bit systems. GCC was automatically changing our f64 into float:80 which is the case when we need an excess precision type. The issue was that we were missing a gcc conversion for the new tree so the types are updated correctly.
+
+This means we now have fully passing builds on [[https://builder.wildebeest.org/buildbot/#/][Marks build farm]]:
+
+- debian arm64
+- fedora ppc64le
+- fedora ppc64
+- debian i386
+- fedora s390x
+
+Thanks to [[https://github.com/glaubitz][John Paul Adrian Glaubitz]] who has also completed the manual testing on:
+
+- debian hppa
+- debian m68k
+- debian s390x
+
+As part of GitHub automations we do not accept any PR which causes any regression to ubuntu-x86_64.
+
+*** Fix parser bug when using null terminator in strings
+
+With our recent examples showing HelloWorld working via printf, we noticed that the null terminator was not being respected when added to strings, this turned out to be a bug in the parser so we have added a new test case to catch this:
+
+#+BEGIN_SRC rust
+/* { dg-output "bar foo baz foobar\n" } */
+extern "C"
+{
+  fn printf(s: *const i8, ...);
+  fn memchr(s: *const i8, c: u8, n: usize) -> *const i8;
+}
+
+pub fn main ()
+{
+  let f = "%s %s %s %s\n\0";
+  let s = "bar\0\
+           foo\
+           \x00\
+           baz\u{0000}\
+           foobar\0";
+  let cf = f as *const str as *const i8;
+  let cs = s as *const str as *const i8;
+  unsafe
+    {
+      let cs2 = memchr (cs, b'f', 5);
+      let cs3 = memchr (cs2, b'b', 5);
+      let cs4 = memchr (cs3, b'f', 5);
+      printf (cf, cs, cs2, cs3, cs4);
+    }
+}
+#+END_SRC
+
+*** Qualified Paths
+
+[[https://doc.rust-lang.org/reference/paths.html#qualified-paths][Qualified paths]] are similar to normal [[https://doc.rust-lang.org/reference/paths.html#paths-in-expressions][PathInExpressions]] in that they both contain a list of path segments but the qualified path binds a type and an associated trait to limit the scope of the path lookup to that paticular trait. This is important because there can be multiple impls with the same segment name leading to multiple candidate errors but because this projection limits the scope it should find a single candidate or nothing.
+
+Here in this example you can see how we use the qualified path to call the trait functions otherwise it would not be possible to call them using a normal path expression.
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+struct S;
+
+impl S {
+    fn f() {
+        unsafe {
+            let a = "S::f\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c);
+        }
+    }
+}
+
+trait T1 {
+    fn f() {
+        unsafe {
+            let a = "T1::f\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c);
+        }
+    }
+}
+impl T1 for S {}
+
+trait T2 {
+    fn f() {
+        unsafe {
+            let a = "T2::f\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c);
+        }
+    }
+}
+impl T2 for S {}
+
+pub fn main() {
+    S::f();
+    <S as T1>::f();
+    <S as T2>::f();
+}
+#+END_SRC
+
+*** Optional trait items
+
+Some items in a trait are considered optional for an impl block to implement since the trait provides a default implementation. The caveat is that if the impl block implements it, the impl will override the default behaviour. Such as here both paths will resolve to the constant 456 even the qualified path.
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+trait Foo {
+    const A: i32 = 123;
+}
+
+struct Bar;
+impl Foo for Bar {
+    const A: i32 = 456;
+}
+
+fn main() {
+    let a;
+    a = Bar::A;
+
+    unsafe {
+        let _a = "Bar::A = %i\n\0";
+        let _b = _a as *const str;
+        let _c = _b as *const i8;
+        printf(_c, a);
+    }
+
+    let b;
+    b = <Bar as Foo>::A;
+
+    unsafe {
+        let _a = "<Foo as Bar>::A = %i\n\0";
+        let _b = _a as *const str;
+        let _c = _b as *const i8;
+        printf(_c, b);
+    }
+}
+#+END_SRC
+
+*** Associated Types
+
+Some support for associated types were added to trait resolution last month, but this latest PR extends the support here. Given an optional function item a placeholder type almost acts like a generic TypeParam but the generic subsitutions are not bound via any generic parameters but are defined and substituted via the associated impl block.
+
+This example demonstrates that the optional trait function is almost like a generic function and the relative implementation is created for the associated path.
+
+#+BEGIN_SRC rust
+trait Foo {
+    type A;
+
+    fn test(a: Self::A) -> Self::A {
+        a
+    }
+}
+
+struct Bar(i32);
+impl Foo for Bar {
+    type A = i32;
+}
+
+struct Baz(f32);
+impl Foo for Baz {
+    type A = f32;
+}
+
+pub fn main() {
+    let a;
+    a = Bar(123);
+
+    let b;
+    b = Bar::test(a.0);
+
+    let c;
+    c = Baz(123f32);
+
+    let d;
+    d = Baz::test(c.0);
+}
+#+END_SRC
+
+*** Duplicate field names in structs and unions
+
+A new lint has been added to detect duplicate field names in algebraic data types which brings us inline to how rustc behaves.
+
+#+BEGIN_SRC rust
+struct S { a: i32, b: i32, c: u8, a: i128 }
+// { dg-error "duplicate field" "" { target *-*-* } .-1 }
+
+union U
+  {
+    a: i32,
+    b: i32,
+    c: u8,
+    b: char // { dg-error "duplicate field" "" { target *-*-* } }
+  }
+
+fn main ()
+{
+  struct SS { alpha: i32, beta: i32, gamma: u8, gamma: i128 }
+  // { dg-error "duplicate field" "" { target *-*-* } .-1 }
+
+  union UU
+    {
+      alpha: i32, beta: i32,
+      gamma: u8, beta: char
+      // { dg-error "duplicate field" "" { target *-*-* } .-1 }
+    }
+}
+#+END_SRC
+
+#+BEGIN_SRC
+<source>:9:5: error: duplicate field name 'b'
+    7 |     b: i32,
+      |     ~
+    8 |     c: u8,
+    9 |     b: char // { dg-error "duplicate field" "" { target *-*-* } }
+      |     ^
+#+END_SRC
+
+*** Allow bool and char to cast to any integer type
+
+We had some bugs in our cast code and this allows you to cast bools and chars to any integer type as we would expect. More testcases will be added to find more gaps.
+
+#+BEGIN_SRC rust
+extern "C" { fn abort (); }
+
+pub fn main ()
+{
+  let t = true;
+  let f = false;
+  let one = t as u8;
+  let zero = f as u8;
+
+  if one != 1 || zero != 0 { unsafe { abort (); } }
+
+  let isizeone = true as isize;
+  let usizezero = false as usize;
+
+  if isizeone != 1 || usizezero != 0 { unsafe { abort (); } }
+
+  let i32zero = f as i32;
+  let u128one = t as u128;
+
+  if u128one != 1 || i32zero != 0 { unsafe { abort (); } }
+
+  let a = 'a';
+  let b = 'b';
+  let ua = a as u8;
+  let ib = b as i32;
+
+  if (ua + 1) as i32 != ib { unsafe { abort (); } }
+
+  let tt = ua;
+  let aa = tt as char;
+
+  let ttt = tt + 1;
+  let ab = ttt as char;
+
+  if aa != 'a' || ab != 'b' { unsafe { abort (); } }
+}
+#+END_SRC
+
+*** Initial module support
+
+Thanks to  [[https://github.com/dkm][Marc Poulhiès]] ongoing work we are now able to compile modules with a body this is the initial building block before we can support multiple files within the compilation unit. This was a big change covering name resolution, HIR lowering, type resolution and code generation. This simple test case demonstrates how we can use the relative paths within the module as well as the full path including the modules to reference the items.
+
+#+BEGIN_SRC rust
+mod A {
+    pub mod B {
+        pub mod C {
+            pub struct Foo {
+                pub f: i32,
+            }
+            impl Foo {
+                pub fn new() -> Self {
+                    Foo {
+                        f: 23i32,
+                    }
+                }
+            }
+        }
+    }
+}
+
+fn main() -> i32 {
+    let a = A::B::C::Foo::new();
+    let b = A::B::C::Foo {
+        f: -23i32,
+    };
+
+    a.f - b.f
+}
+#+END_SRC
+
+** Completed Activities
+
+- Typebounds support [[https://github.com/Rust-GCC/gccrs/pull/611][PR611]] [[https://github.com/Rust-GCC/gccrs/pull/612][PR612]]
+- Fix lexer bug with nul terminated strings [[https://github.com/Rust-GCC/gccrs/pull/615][PR615]]
+- Union support [[https://github.com/Rust-GCC/gccrs/pull/601][PR601]] [[https://github.com/Rust-GCC/gccrs/pull/602][PR602]]
+- Handle unsafe in liveness analysis [[https://github.com/Rust-GCC/gccrs/pull/604][PR604]]
+- Fix floating point issues with f64 on 32 bit systems [[https://github.com/Rust-GCC/gccrs/pull/614][PR614]]
+- Building blocks for multiple file support [[https://github.com/Rust-GCC/gccrs/pull/608][PR608]] [[https://github.com/Rust-GCC/gccrs/pull/605][PR605]]
+- Fix ICE in parser when identifier is nullptr [[https://github.com/Rust-GCC/gccrs/pull/606][PR606]]
+- Cleanup [[https://github.com/Rust-GCC/gccrs/pull/612][PR612]] [[https://github.com/Rust-GCC/gccrs/pull/610][PR610]] [[https://github.com/Rust-GCC/gccrs/pull/607][PR607]]
+- Location Fixups [[https://github.com/Rust-GCC/gccrs/pull/652][PR652]] [[https://github.com/Rust-GCC/gccrs/pull/649][PR649]]
+- Constant fold boolans and floats [[https://github.com/Rust-GCC/gccrs/pull/637][PR637]]
+- Desugar HIR::Modules [[https://github.com/Rust-GCC/gccrs/pull/638][PR638]]
+- Trait constsants [[https://github.com/Rust-GCC/gccrs/pull/640][PR640]] [[https://github.com/Rust-GCC/gccrs/pull/626][PR626]]
+- Fix name mangling for items: [[https://github.com/Rust-GCC/gccrs/pull/648][PR648]]
+- Module support: [[https://github.com/Rust-GCC/gccrs/pull/509][PR509]] [[https://github.com/Rust-GCC/gccrs/pull/619][PR619]] [[https://github.com/Rust-GCC/gccrs/pull/628][PR628]]
+- Reject dup field names [[https://github.com/Rust-GCC/gccrs/pull/642][PR642]]
+
+*** Contributors this month
+
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/karcherm][Michael Karcher]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+
+Excluding merges, 7 authors have pushed 85 commits to master and 91 commits to all branches. On master, 136 files have changed and there have been 6,606 additions and 2,316 deletions. 
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         83 |         89 |    +6 |
+| In Progress |          9 |          7 |    -2 |
+| Completed   |        177 |        184 |    +7 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   |       3629 |       4095 |  +466 |
+| XFAIL     |         14 |         21 |    +7 |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         19 |         18 |    -1 |
+| In Progress |          3 |          3 |     - |
+| Completed   |         59 |         64 |    +5 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |        80% |        88% | +8%   | 20th May 2021 | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |         0% |         0% | -     | -             | -               | 29th Nov 2021 |
+| Macros and cfg expansion          |         0% |         0% | -     | -             | -               | TBD           |
+| Imports and Visibility            |         0% |         0% | -     | -             | -               | TBD           |
+| Const Generics                    |         0% |         0% | -     | -             | -               | TBD           |
+| Intrinsics                        |         0% |         0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 2 |            4 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Complete QualifiedPaths
+- Finish super-traits work
