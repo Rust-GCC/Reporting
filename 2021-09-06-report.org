@@ -1,0 +1,141 @@
+#+title:  Weekly Report for August 30th to 6th September 2021
+#+author: Philip Herron
+#+date:   2021-09-06
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This week, I finally finished the Rustc Projection Type system for associated types that inherent generic arguments. This was a complex piece of work that ultimately shapes how we handle type-bounds for super-traits and where constraints in general. Now I am working on supporting the TypeBound type from Rustc and generics to detect if a generic type bound is satisfied. The current implementation for type-bounds was designed to be just enough for now to get to the point so we can sensibly work through generic associations. Overall I am on track to finish this core trait work by the end of next week. I think this has taught me a few lessons in my estimates for work in the future.
+
+**** Monthly Community Call
+
+We had our 6th community call on 3rd September 2021 you can find the meeting notes over here: https://github.com/Rust-GCC/Reporting/blob/main/2021-09-03-community-call.md
+
+**** Rust Compatibility
+
+With the recent thread on the [[https://github.com/Rust-GCC/gccrs/issues/653][compiler option strict aliasing]] we are investigating updating our FAQ on Rust compatability (Thanks to [[https://github.com/flip1995][Philipp Krones]]) to become:
+
+#+BEGIN_SRC markdown
+## What is the plan for inconsistencies in behaviour?
+
+**If gccrs interprets a program differently from rustc, this is considered a bug.**
+
+Once Rust-GCC can compile and verify all Rust programs, this can also help figure out any inconsistencies in the specification of features in the language. This should help to get features right in _both_ compilers before they are stabilized.
+
+The GCC Rust project is not and will not provide a shortcut for getting features into the Rust language. It will follow the well established processes, i.e. RFCs.
+#+END_SRC
+
+We believe that GCCRS should not bypass the Rustc process of getting new language features outside of the Rust processes. The question remains as to the definition of language features, from reading the different perspectives in threads, the definition seems to include common compiler options, warnings or errors, all the way to changing the syntax. So we will take our time before changing FAQ untill we are happy. For more context please read our community call notes.
+
+**** Linux Plumbers 2021
+
+I will be giving a talk about GCC Rust on the 20th September 2021 at 0900 (us-pacific-time). Find more information over on https://linuxplumbersconf.org/event/11/contributions/911/
+
+Thanks to [[https://github.com/ojeda][Miguel Ojeda]] for reaching out to let me know about the Rust toolchain within the Kernel microconference: https://linuxplumbersconf.org/event/11/contributions/970/
+
+** Detailed changelog
+
+*** Qualified Paths In Type
+
+In rust there are two types of qualified paths:
+
+- [[https://doc.rust-lang.org/reference/paths.html#qualified-paths][Qualified paths]] 
+- [[https://doc.rust-lang.org/reference/paths.html#paths-in-types][Qualified Path in Type]]
+
+These can also reference generic traits which can have generic associcated types. This is where rustc's [[https://doc.rust-lang.org/nightly/nightly-rustc/rustc_middle/ty/sty/struct.ProjectionTy.html][Type Projections]] come into play.
+
+#+BEGIN_SRC rust
+trait Foo<T> {
+    type A;
+
+    fn test(a: T, b: Self::A) -> (T, Self::A) {
+        (a, b)
+    }
+}
+
+struct Bar<T>(T);
+impl<T> Foo<T> for Bar<T> {
+    type A = T;
+}
+
+pub fn main() {
+    let a;
+    a = Bar(123);
+
+    let b: <Bar<i32> as Foo<i32>>::A;
+    b = 456;
+
+    let c;
+    c = <Bar<i32> as Foo<i32>>::test(a.0, 123);
+}
+#+END_SRC
+
+The difficultly in this test case is handling the generic associated type. Since the [[https://doc.rust-lang.org/nightly/nightly-rustc/rustc_middle/ty/struct.Placeholder.html][Placeholder Types]] don't support binding of substitutions it took me a while to figure out how to handle this. The only types in the compiler type system that support generic substitutions are algebraic data types and functions (so far). This means the type alias for the associated types needs a method to handle this and this is how projections bind the generic arguments in such a way that a recursive chain is formed to handle this case.
+
+See this commit for more info on the details: https://github.com/Rust-GCC/gccrs/commit/0798add3d3c1bf4b20ecc1b4fa1047ba4ba19759
+
+** Completed Activities
+
+- Generic Qualified Paths [[https://github.com/Rust-GCC/gccrs/pull/655][PR655]]
+- Add missing location info to struct fields and cleanup [[https://github.com/Rust-GCC/gccrs/pull/652][PR652]]
+- Cleanup Struct Expression classes [[https://github.com/Rust-GCC/gccrs/pull/654][PR654]]
+- Qualified Paths [[https://github.com/Rust-GCC/gccrs/pull/651][PR651]]
+
+*** Contributors this week
+
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+
+Excluding merges, 3 authors have pushed 12 commits to master and 15 commits to all branches. On master, 47 files have changed and there have been 928 additions and 1,524 deletions. 
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        89 |        89 |     - |
+| In Progress |         7 |         6 |    -1 |
+| Completed   |       184 |       186 |    +2 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      4095 |      4144 | +49   |
+| XFAIL     |        21 |        21 | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        18 |        18 | -     |
+| In Progress |         3 |         3 | -     |
+| Completed   |        63 |        64 | +1    |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       88% |       92% | +4%   | 20th May 2021 | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | -             | -               | 29th Nov 2021 |
+| Macros and cfg expansion          |        0% |        0% | -     | -             | -               | TBD           |
+| Imports and Visibility            |        0% |        0% | -     | -             | -               | TBD           |
+| Const Generics                    |        0% |        0% | -     | -             | -               | TBD           |
+| Intrinsics                        |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Copyright assignments |            2 |                 2 |            4 | Be up front on all PRs that the code is destined to be upstreamed to FSF |
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Finish super-traits work
+- type-bounds in super traits feeds into Where constraints
