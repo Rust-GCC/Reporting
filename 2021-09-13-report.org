@@ -1,0 +1,221 @@
+#+title:  Weekly Report for 6th to 13th September 2021
+#+author: Philip Herron
+#+date:   2021-09-13
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+Last week saw lots of great progress and collaboration within the community. As a result, we can now compile code that will require the expansion of multiple files, super trait support now enforces improved type-bounds handling, and we have initial support for some compiler intrinsics. Although compiler intrinsics are not part of the traits milestone, there are over 200 of them to implement and will be an excellent way for people to gain exposure to GCC and compiler development. 
+
+The remaining work to complete the traits milestone is about operator overloading and where constraints. The other related piece is that implementing the [[https://doc.rust-lang.org/nightly/nomicon/dot-operator.html#the-dot-operator][autoderef]] system for method resolution requires operator overloading to be done first since this system relies on the [[https://doc.rust-lang.org/std/ops/trait.Deref.html][Deref Trait]]. I will be moving this to the next control flow milestone.
+
+Since the community is making significant progress, I will be sticking to my original plan of going onto [[https://github.com/Rust-GCC/gccrs/milestone/5][control flow 2 (Pattern Matching)]] next. There is plenty of work here to help clean up the compiler in general before working on macros and expansions.
+
+**** Linux Plumbers 2021
+
+I will be giving a talk about GCC Rust on the 20th September 2021 at 0900 (us-pacific-time). Find more information over on https://linuxplumbersconf.org/event/11/contributions/911/
+
+Thanks to [[https://github.com/ojeda][Miguel Ojeda]] for reaching out to let me know about the Rust toolchain within the Kernel microconference: https://linuxplumbersconf.org/event/11/contributions/970/
+
+** Detailed changelog
+
+*** Super Traits
+
+Getting super traits working is a bit like lowering a trait definition like this:
+
+#+BEGIN_SRC rust
+trait A: B {}
+#+END_SRC
+
+#+BEGIN_SRC rust
+trait A where Self: B {}
+#+END_SRC
+
+Pretty much all of the items in a trait declaration are a bunch of generic functions with the implicit TypeParameter of Self which has the Bound of the super Trait. This example below demonstrates how we combine super traits and qualified paths. Thanks to [[https://github.com/flip1995][Philipp Krones]] for writing this test case.
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+trait A {
+    fn a() -> i32 {
+        123
+    }
+}
+
+trait B: A {
+    fn b() -> i32 {
+        <T as A>::a() + 456
+    }
+}
+
+struct T;
+impl A for T {
+    fn a() -> i32 {
+        321
+    }
+}
+
+struct S;
+impl A for S {}
+impl B for S {}
+
+fn main() -> i32 {
+    let aa = S::a();
+    let bb = S::b();
+
+    unsafe {
+        let a = "%i, %i\n\0";
+        let b = a as *const str;
+        let c = b as *const i8;
+
+        printf(c, aa, bb);
+    }
+    0
+}
+#+END_SRC
+
+*** ABI Options
+
+We have added the initial support for other ABI options for example:
+
+#+BEGIN_SRC rust
+extern "stdcall" {
+    pub fn test(a: i32) -> i32;
+}
+
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+fn main() -> i32 {
+    unsafe {
+        let a = 3;
+        let res = test(a);
+
+        let a = "%i\n\0";
+        let b = a as *const str;
+        let c = b as *const i8;
+
+        printf(c, res);
+    }
+    0
+}
+#+END_SRC
+
+Which can be linked against C code such as:
+
+#+BEGIN_SRC c
+__attribute__ ((stdcall)) int test(int x)  {
+  return x + 3;
+}
+#+END_SRC
+
+This ABI option can then be used by compiling like this:
+
+#+BEGIN_SRC
+$ gccrs -g -O0 -m32 -c test.rs -o test.o
+$ gcc -g -O0 -m32 -c lib.c -o lib.o
+$ gcc -m32 -o test test.o lib.o
+#+END_SRC
+
+*** Multiple File Parsing
+
+Thanks to [[https://github.com/dkm][Marc Poulhiès]] and [[https://github.com/CohenArthur][Arthur Cohen]] their combined efforts have now let the GCC Rust compiler expand modules 
+
+#+BEGIN_SRC rust
+#[path ="modules/valid_path.rs"]
+mod path_without_extra_equal;
+
+mod some_module;
+#+END_SRC
+
+Note we still do not have support for visibility modifiers.
+
+*** Intrinsics
+
+#+BEGIN_SRC rust
+extern "rust-intrinsic" {
+    pub fn sqrtf32(x: f32) -> f32;
+    pub fn sinf32(x: f32) -> f32;
+}
+
+fn main() {
+    let mut f32;
+
+    f32 = sqrtf32(5f32);
+    f32 = sinf32(39f32);
+}
+#+END_SRC
+
+We have only implemented some basic intrinsics so far there are alot work though see this [[https://github.com/Rust-GCC/gccrs/issues/658][checklist]]. Note that we have not implemented the feature gate around allowing users to define this rust-intrinsic block.
+
+** Completed Activities
+
+- Super Traits [[https://github.com/Rust-GCC/gccrs/pull/669][PR669]] [[https://github.com/Rust-GCC/gccrs/pull/666][PR666]] [[https://github.com/Rust-GCC/gccrs/pull/662][PR662]]
+- Support stdcall, fastcall, cdecl ABI options [[https://github.com/Rust-GCC/gccrs/pull/661][PR661]]
+- Multiple File Parsing Support [[https://github.com/Rust-GCC/gccrs/pull/663][PR663]] [[https://github.com/Rust-GCC/gccrs/pull/664][PR664]] [[https://github.com/Rust-GCC/gccrs/pull/639][PR639]] 
+- Initial Compiler Intrinsics [[https://github.com/Rust-GCC/gccrs/pull/659][PR659]] [[https://github.com/Rust-GCC/gccrs/pull/660][PR660]]
+- Add compiler switch for mangling options [[https://github.com/Rust-GCC/gccrs/pull/656][PR656]]
+- Initial building blocks for enum support [[https://github.com/Rust-GCC/gccrs/pull/657][PR657]]
+
+*** Contributors this week
+
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+
+Excluding merges, 5 authors have pushed 24 commits to master and 24 commits to all branches. On master, 52 files have changed and there have been 1,686 additions and 618 deletions. 
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        89 |        89 | -     |
+| In Progress |         6 |         6 | -     |
+| Completed   |       186 |       190 | +4    |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      4144 |      4309 | +165  |
+| XFAIL     |        21 |        21 | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        18 |        19 |    +1 |
+| In Progress |         3 |         3 |     - |
+| Completed   |        64 |        65 |    +1 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       92% |       95% | +3%   | 20th May 2021 | -               | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | -             | -               | 29th Nov 2021 |
+| Macros and cfg expansion          |        0% |        0% | -     | -             | -               | TBD           |
+| Imports and Visibility            |        0% |        0% | -     | -             | -               | TBD           |
+| Const Generics                    |        0% |        0% | -     | -             | -               | TBD           |
+| Intrinsics                        |        0% |        0% | -     | -             | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Dynamic trait objects
+- Where constraints
