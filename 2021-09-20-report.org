@@ -1,0 +1,231 @@
+#+title:  Weekly Report for 13th to 20th September 2021
+#+author: Philip Herron
+#+date:   2021-09-20
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+Now that we have pushed through the core of Trait Resolution, we need to move on to more control flow work, including pattern matching, closures and finishing off operator overloading. We also have a goal test case in mind for the end of this milestone https://github.com/BLAKE3-team/BLAKE3/blob/master/reference_impl/reference_impl.rs which with some work, we can remove the dependencies on rustc standard libs by compiling with no_core and no_sts; thanks to Mark Wielaard for finding this nice example which does not rely on macro/cfg expansions. The goal here is to find bugs with actual rust projects; if anyone knows of code that does not rely on the standard library much and has no expansions, we will be interested in testing our compiler against it.
+
+Overall, work on traits went well, even though I went over my initial estimate. It was valuable to stick with it to close out the remaining work. There are gaps here, such as the auto-traits and where constraints and operator overloading, but I found that these concepts need to be done as part of more control flow work since they deeply affect things like pattern matching and generic closures. Since I went over my initial estimate of September for core traits, I may need to rethink my initial target date for control flow two of the end of November this week as well.
+
+**** Linux Plumbers 2021
+
+I will be giving a talk about GCC Rust on the 20th September 2021 at 0900 (us-pacific-time). Find more information over on https://linuxplumbersconf.org/event/11/contributions/911/
+
+Thanks to [[https://github.com/ojeda][Miguel Ojeda]] for reaching out to let me know about the Rust toolchain within the Kernel microconference: https://linuxplumbersconf.org/event/11/contributions/970/
+
+** Detailed changelog
+
+*** Autodref for the dot operator
+
+This example looks similar to stuff we have been able to compile for a while, but we have added in support for the autoderef system such that we can compile this method if we have a reference or we don't, so the compiler will inject the correct adjustments for the method call for the self argument to be correct. For more information please read: https://doc.rust-lang.org/nightly/nomicon/dot-operator.html
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+struct Foo(i32);
+impl Foo {
+    fn bar(&self, i: i32) {
+        unsafe {
+            let a = "%i\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c, self.0 + i);
+        }
+    }
+}
+
+fn main() {
+    let a = Foo(123);
+    a.bar(1);
+
+    let b = &Foo(456);
+    b.bar(2);
+}
+#+END_SRC
+
+https://godbolt.org/z/1heerndbs
+
+*** Allow GCC to inline
+
+When the Rust for Linux project posted a compiler explorer example comparing compilers it was noticed GCC Rust was missing a case for optimization, see the bug: https://github.com/Rust-GCC/gccrs/issues/547. This was due to all functions in GCC Rust being marked wrongly with DECL_UNINLINEABLE which stops GCC from performing all optimizations required. This is a useful flag, and will likely be used for the main-shim in rust, this ensures on stack unwinding there is frame information left on the stack. See https://godbolt.org/z/4fcf1sv7z
+
+*** Dynamic Dispatch
+
+We have added initial support for dynamic dispatch which adds code generation for coercion sites such as assignments to generate the vtable and trait object. https://godbolt.org/z/bvxE95rzY
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+struct Foo(i32);
+trait Bar {
+    fn baz(&self);
+}
+
+impl Bar for Foo {
+    fn baz(&self) {
+        unsafe {
+            let a = "%i\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c, self.0);
+        }
+    }
+}
+
+fn static_dispatch<T: Bar>(t: &T) {
+    t.baz();
+}
+
+fn dynamic_dispatch(t: &dyn Bar) {
+    t.baz();
+}
+
+fn main() {
+    let a = &Foo(123);
+    static_dispatch(a);
+
+    let b: &dyn Bar = a;
+    dynamic_dispatch(b);
+}
+#+END_SRC
+
+*** Object Safety checks
+
+As part of doing dynamic dispatch rust enforces rules on what type of traits are deemed object safe for example see:
+
+#+BEGIN_SRC rust
+struct Foo(i32);
+
+trait Bar {
+    const A: i32 = 123;
+    fn B();
+    fn C(&self);
+}
+
+pub fn main() {
+    let a;
+    a = Foo(123);
+
+    let b: &dyn Bar = &a;
+}
+#+END_SRC
+
+Here the trait Bar contains two trait items which are not object safe and this results in this error:
+
+#+BEGIN_SRC
+<source>:13:13: error: trait bound is not object safe
+    4 |     const A: i32 = 123;
+      |     ~        
+    5 |     fn B();
+      |     ~        
+......
+   13 |     let b: &dyn Bar = &a;
+      |             ^
+#+END_SRC
+
+Here the trait B is object safe but its super-trait A is not so we result in an error such as:
+
+#+BEGIN_SRC rust
+struct Foo(i32);
+
+trait A {
+    const A: i32 = 123;
+    fn B();
+    fn C(&self);
+}
+
+trait B: A {
+    fn test(&self);
+}
+
+pub fn main() {
+    let a;
+    a = Foo(123);
+
+    let b: &dyn B = &a;
+}
+#+END_SRC
+
+#+BEGIN_SRC
+<source>:17:13: error: trait bound is not object safe
+    3 | trait A {
+      | ~            
+......
+   17 |     let b: &dyn B = &a;
+      |             ^
+#+END_SRC
+
+** Completed Activities
+
+- TraitObject Support [[https://github.com/Rust-GCC/gccrs/pull/684][PR684]] [[https://github.com/Rust-GCC/gccrs/pull/680][PR680]]
+- Autoderef [[https://github.com/Rust-GCC/gccrs/pull/672][PR672]] [[https://github.com/Rust-GCC/gccrs/pull/671][PR671]]
+- Fix bug with calling methods via type-bound [[https://github.com/Rust-GCC/gccrs/pull/679][PR679]]
+- Allow GCC to decide to inline [[https://github.com/Rust-GCC/gccrs/pull/673][PR673]]
+- Building blocks for V0 mangling support [[https://github.com/Rust-GCC/gccrs/pull/685][PR685]]
+- Fix bug with generics and unit-types [[https://github.com/Rust-GCC/gccrs/pull/674][PR674]]
+
+*** Contributors this week
+
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+
+Excluding merges, 2 authors have pushed 18 commits to master and 18 commits to all branches. On master, 49 files have changed and there have been 1,811 additions and 172 deletions. 
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        89 |        90 |    +1 |
+| In Progress |         6 |         6 |    +6 |
+| Completed   |       190 |       197 |    +7 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      4309 |      4425 | +116  |
+| XFAIL     |        21 |        21 | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        19 |        22 |    +3 |
+| In Progress |         3 |         3 |     - |
+| Completed   |        65 |        67 |    +2 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       95% |      100% | +5%   | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | 20th Sept 2021 | -               | 29th Nov 2021 |
+| Macros and cfg expansion          |        0% |        0% | -     | -              | -               | TBD           |
+| Imports and Visibility            |        0% |        0% | -     | -              | -               | TBD           |
+| Const Generics                    |        0% |        0% | -     | -              | -               | TBD           |
+| Intrinsics                        |        0% |        0% | -     | -              | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Give talk at LPC 2021
+- Plan out control flow 2
+- Begin work on closures
