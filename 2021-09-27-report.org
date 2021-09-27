@@ -1,0 +1,178 @@
+#+title:  Weekly Report for 20th to 27th September 2021
+#+author: Philip Herron
+#+date:   2021-09-27
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This week my focus was on the linux plumbers conference so I was not able to complete any tickets for the current milestone, though I have made some good progress in investigating closures in C++ and GO to gain understanding of how they are implemented in GCC. I expect to see progress this week.
+
+**** Monthly Community Call
+
+We will be having our 7th community call as the first Friday of the month:
+
+- Date and Time 1st October 2021 at: 09h00 UTC
+- Agenda: https://hackmd.io/FBNWz8LyQk2vOaEsQtex1g please feel free to add agenda items you wish to see discussed.
+- Jitsi: https://meet.jit.si/259057065581073
+
+**** Linux Plumbers 2021 Talk
+
+- Please find the video of my talk here: https://www.youtube.com/watch?v=ORwYx5_zmZo&t=8795s
+- The slides are also available here: https://linuxplumbersconf.org/event/11/contributions/911/
+
+**** Closure investigation
+
+Since rust closures are similar to C++ in that they can be moved, I though it makes sense to investigate how they work there first, for example a C++ closure such as:
+
+#+BEGIN_SRC c++
+int test() {
+    int capture = 456;
+    auto a = [&](int a) -> int {
+        return a + capture;
+    };
+    return a(123);
+}
+#+END_SRC
+
+Breaks down into the following:
+
+#+BEGIN_SRC c++
+int test ()
+{
+  int D.2400;
+  int capture;
+  struct ._anon_0 a;
+  typedef struct ._anon_0 ._anon_0;
+
+  try
+    {
+      capture = 456;
+      a.__capture = &capture;
+      D.2400 = test()::<lambda(int)>::operator() (&a, 123);
+      return D.2400;
+    }
+  finally
+    {
+      capture = {CLOBBER};
+      a = {CLOBBER};
+    }
+}
+
+int test()::<lambda(int)>::operator() (const struct ._anon_0 * const __closure, int a)
+{
+  int D.2403;
+  int & capture [value-expr: __closure->__capture];
+
+  _1 = __closure->__capture;
+  _2 = *_1;
+  D.2403 = a + _2;
+  return D.2403;
+}
+#+END_SRC
+
+This shows that you can break down a closure into a structure to hold onto captured data by reference. Then the actual lambda itself the variables which it captures are a type of "static chain" variable as you can see above. Where the capture variable was captured but refers to the parameter of the closure object's reference.
+
+** Detailed changelog
+
+*** Fix GCC Bootstrap builds
+
+Thanks to our whole community who have worked on this to eliminate all the compiler warnings which allows us to perform a full GCC bootstrap build. See our tracking issue for all related fixes to get this working: https://github.com/Rust-GCC/gccrs/issues/336
+
+We will need to add some automation to track compiler warnings in the CI build to catch regressions for bootstrap builds in PR's.
+
+*** Merge from upstream GCC
+
+Thanks to [[https://github.com/tschwinge][Thomas Schwinge]] we have merged with the latest upstream GCC. The last merge was completed in and around six months ago, this means we get all the relevant updates for DCO contributions and ensure our front-end code is not drifting to become unmergeable. See below before what the --version looked like:
+
+#+BEGIN_SRC
+gccrs (GCC) 11.0.1 20210325 (experimental)
+Copyright © 2021 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#+END_SRC
+
+After
+
+#+BEGIN_SRC
+gccrs (GCC) 12.0.0 20210917 (experimental)
+Copyright © 2021 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#+END_SRC
+
+*** Fix bug with out of range characters
+
+[[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]] identified a bug with our lexer which was incorrectly flagging byte with their high-bit set, this was due to a bad unsigned vs signed check.
+
+#+BEGIN_SRC
+bytecharstring.rs:3:14: error: ‘byte char’ ‘�’ out of range
+    3 |   let _bc = b'\x80';
+      |              ^
+bytecharstring.rs:4:14: error: character ‘�’ in byte string out of range
+    4 |   let _bs = b"foo\x80bar";
+      |              ^
+#+END_SRC
+
+** Completed Activities
+
+- Fix bootstrap build [[https://github.com/Rust-GCC/gccrs/pull/689][PR689]] [[https://github.com/Rust-GCC/gccrs/pull/690][PR690]] [[https://github.com/Rust-GCC/gccrs/pull/688][PR688]]
+- Fix bug in lexer for out of range characters [[https://github.com/Rust-GCC/gccrs/pull/687][PR687]]
+
+*** Contributors this week
+
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
+
+Excluding merges, 3 authors have pushed 6 commits to master and 6 commits to all branches. On master, 11,609 files have changed and there have been 673,665 additions and 375,942 deletions. 
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        90 |        90 |     - |
+| In Progress |         6 |         7 |    +1 |
+| Completed   |       197 |       198 |    +1 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      4425 |      4428 | +3    |
+| XFAIL     |        21 |        21 | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        22 |        21 |    -1 |
+| In Progress |         3 |         3 |     - |
+| Completed   |        67 |        68 |    +1 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |        0% |        0% | -     | 20th Sept 2021 | -               | 29th Nov 2021 |
+| Macros and cfg expansion          |        0% |        0% | -     | -              | -               | TBD           |
+| Imports and Visibility            |        0% |        0% | -     | -              | -               | TBD           |
+| Const Generics                    |        0% |        0% | -     | -              | -               | TBD           |
+| Intrinsics                        |        0% |        0% | -     | -              | -               | TBD           |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Continue work on closure types
+- Fix docker automation issues
+- Add compiler warning automation for GHA
