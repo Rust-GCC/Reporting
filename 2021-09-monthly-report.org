@@ -12,7 +12,9 @@ September was another great month for GCC Rust. We finished the trait resolution
 
 By December, we are aiming to try and compile our first real rust project: https://github.com/BLAKE3-team/BLAKE3/blob/master/reference_impl/reference_impl.rs
 
-If anyone has more suggestions for simple rust projects, please send them to us; this project, blake3, will require us to amend the program to remove the use statements and include this code ourselves, so we do not require the standard library. The goal here is to find as many gaps and bugs, and I would expect even if the compiler can compile the project, we likely have bugs to work through to compile it correctly. I have also completed more timeline planning for the next year of milestones and updated the planning spreadsheet to contain a chart displaying my plan to a working GCC front-end for rust. https://docs.google.com/spreadsheets/d/1B_JFzHgGclpdtPcQvnThkNJnP7Hh8fCIAU1rYFu_23M/edit?usp=sharing
+If anyone has more suggestions for simple rust projects, please send them to us; this project, blake3, will require us to amend the program to remove the use statements and include this code ourselves, so we do not require the standard library. The goal here is to find as many gaps and bugs, and I would expect even if the compiler can compile the project, we likely have bugs to work through to compile it correctly.
+
+I have also completed more timeline planning for the next year of milestones and updated the planning spreadsheet to contain a chart displaying my plan to a working GCC front-end for rust. https://docs.google.com/spreadsheets/d/1B_JFzHgGclpdtPcQvnThkNJnP7Hh8fCIAU1rYFu_23M/edit?usp=sharing. As the traits milestone ran over by two weeks, this means the current one is now at some risk, I will be tracking closely, and a clearer estimate of the risk will be understood in 2-3 weeks.
 
 Thank you to everyone who continues to support and work on the compiler.
 
@@ -26,7 +28,85 @@ It was a great chance to try and show the compiler I hope people found it intere
 
 We had our 7th community call on 1st October 2021 you can find the meeting notes over here: https://github.com/Rust-GCC/Reporting/blob/main/2021-10-01-community-call.md
 
+** Completed Activities
+
+*** Contributors this month
+
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         89 |         94 |    +5 |
+| In Progress |          7 |          9 |    +2 |
+| Completed   |        184 |        199 |   +15 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   |       4095 |       4468 | +373  |
+| XFAIL     |         21 |         21 | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         18 |         21 |    +3 |
+| In Progress |          3 |          4 |    +1 |
+| Completed   |         64 |         69 |    +5 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |        88% |       100% | +12%  | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |         0% |         7% | +7%   | 20th Sept 2021 | -               | 29th Nov 2021  |
+| Macros and cfg expansion          |         0% |         0% | -     | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |         0% |         0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |         0% |         0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+
+** Planned Activities
+
+- Fix bug in missing coercion site code generation
+- Continue work Closures
+
 ** Detailed changelog
+
+- Generic Qualified Paths [[https://github.com/Rust-GCC/gccrs/pull/655][PR655]]
+- Add missing location info to struct fields and cleanup [[https://github.com/Rust-GCC/gccrs/pull/652][PR652]]
+- Cleanup Struct Expression classes [[https://github.com/Rust-GCC/gccrs/pull/654][PR654]]
+- Qualified Paths [[https://github.com/Rust-GCC/gccrs/pull/651][PR651]]
+- Super Traits [[https://github.com/Rust-GCC/gccrs/pull/669][PR669]] [[https://github.com/Rust-GCC/gccrs/pull/666][PR666]] [[https://github.com/Rust-GCC/gccrs/pull/662][PR662]]
+- Support stdcall, fastcall, cdecl ABI options [[https://github.com/Rust-GCC/gccrs/pull/661][PR661]]
+- Multiple File Parsing Support [[https://github.com/Rust-GCC/gccrs/pull/663][PR663]] [[https://github.com/Rust-GCC/gccrs/pull/664][PR664]] [[https://github.com/Rust-GCC/gccrs/pull/639][PR639]] 
+- Initial Compiler Intrinsics [[https://github.com/Rust-GCC/gccrs/pull/659][PR659]] [[https://github.com/Rust-GCC/gccrs/pull/660][PR660]]
+- Add compiler switch for mangling options [[https://github.com/Rust-GCC/gccrs/pull/656][PR656]]
+- Initial building blocks for enum support [[https://github.com/Rust-GCC/gccrs/pull/657][PR657]]
+- TraitObject Support [[https://github.com/Rust-GCC/gccrs/pull/684][PR684]] [[https://github.com/Rust-GCC/gccrs/pull/680][PR680]]
+- Autoderef [[https://github.com/Rust-GCC/gccrs/pull/672][PR672]] [[https://github.com/Rust-GCC/gccrs/pull/671][PR671]]
+- Fix bug with calling methods via type-bound [[https://github.com/Rust-GCC/gccrs/pull/679][PR679]]
+- Allow GCC to decide to inline [[https://github.com/Rust-GCC/gccrs/pull/673][PR673]]
+- Building blocks for V0 mangling support [[https://github.com/Rust-GCC/gccrs/pull/685][PR685]]
+- Fix bug with generics and unit-types [[https://github.com/Rust-GCC/gccrs/pull/674][PR674]]
+- Fix bootstrap build [[https://github.com/Rust-GCC/gccrs/pull/689][PR689]] [[https://github.com/Rust-GCC/gccrs/pull/690][PR690]] [[https://github.com/Rust-GCC/gccrs/pull/688][PR688]]
+- Fix bug in lexer for out of range characters [[https://github.com/Rust-GCC/gccrs/pull/687][PR687]]
+- Implement Byte Strings [[https://github.com/Rust-GCC/gccrs/pull/698][PR698]]
 
 *** Qualified Paths In Type
 
@@ -395,79 +475,3 @@ fn main() {
 }
 #+END_SRC
 
-
-** Completed Activities
-
-- Generic Qualified Paths [[https://github.com/Rust-GCC/gccrs/pull/655][PR655]]
-- Add missing location info to struct fields and cleanup [[https://github.com/Rust-GCC/gccrs/pull/652][PR652]]
-- Cleanup Struct Expression classes [[https://github.com/Rust-GCC/gccrs/pull/654][PR654]]
-- Qualified Paths [[https://github.com/Rust-GCC/gccrs/pull/651][PR651]]
-- Super Traits [[https://github.com/Rust-GCC/gccrs/pull/669][PR669]] [[https://github.com/Rust-GCC/gccrs/pull/666][PR666]] [[https://github.com/Rust-GCC/gccrs/pull/662][PR662]]
-- Support stdcall, fastcall, cdecl ABI options [[https://github.com/Rust-GCC/gccrs/pull/661][PR661]]
-- Multiple File Parsing Support [[https://github.com/Rust-GCC/gccrs/pull/663][PR663]] [[https://github.com/Rust-GCC/gccrs/pull/664][PR664]] [[https://github.com/Rust-GCC/gccrs/pull/639][PR639]] 
-- Initial Compiler Intrinsics [[https://github.com/Rust-GCC/gccrs/pull/659][PR659]] [[https://github.com/Rust-GCC/gccrs/pull/660][PR660]]
-- Add compiler switch for mangling options [[https://github.com/Rust-GCC/gccrs/pull/656][PR656]]
-- Initial building blocks for enum support [[https://github.com/Rust-GCC/gccrs/pull/657][PR657]]
-- TraitObject Support [[https://github.com/Rust-GCC/gccrs/pull/684][PR684]] [[https://github.com/Rust-GCC/gccrs/pull/680][PR680]]
-- Autoderef [[https://github.com/Rust-GCC/gccrs/pull/672][PR672]] [[https://github.com/Rust-GCC/gccrs/pull/671][PR671]]
-- Fix bug with calling methods via type-bound [[https://github.com/Rust-GCC/gccrs/pull/679][PR679]]
-- Allow GCC to decide to inline [[https://github.com/Rust-GCC/gccrs/pull/673][PR673]]
-- Building blocks for V0 mangling support [[https://github.com/Rust-GCC/gccrs/pull/685][PR685]]
-- Fix bug with generics and unit-types [[https://github.com/Rust-GCC/gccrs/pull/674][PR674]]
-- Fix bootstrap build [[https://github.com/Rust-GCC/gccrs/pull/689][PR689]] [[https://github.com/Rust-GCC/gccrs/pull/690][PR690]] [[https://github.com/Rust-GCC/gccrs/pull/688][PR688]]
-- Fix bug in lexer for out of range characters [[https://github.com/Rust-GCC/gccrs/pull/687][PR687]]
-- Implement Byte Strings [[https://github.com/Rust-GCC/gccrs/pull/698][PR698]]
-
-*** Contributors this month
-
-- [[https://github.com/CohenArthur][Arthur Cohen]]
-- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
-- [[https://github.com/tschwinge][Thomas Schwinge]]
-
-*** Overall Task Status
-
-| Category    | Last Month | This Month | Delta |
-|-------------+------------+------------+-------|
-| TODO        |         89 |         94 |    +5 |
-| In Progress |          7 |          9 |    +2 |
-| Completed   |        184 |        199 |   +15 |
-
-*** Test Cases
-
-| TestCases | Last Month | This Month | Delta |
-|-----------+------------+------------+-------|
-| Passing   |       4095 |       4468 | +373  |
-| XFAIL     |         21 |         21 | -     |
-
-*** Bugs
-
-| Category    | Last Month | This Month | Delta |
-|-------------+------------+------------+-------|
-| TODO        |         18 |         21 |    +3 |
-| In Progress |          3 |          4 |    +1 |
-| Completed   |         64 |         69 |    +5 |
-
-*** Milestones Progress
-
-| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target         |
-|-----------------------------------+------------+------------+-------+----------------+-----------------+----------------|
-| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
-| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
-| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
-| Data Structures 3 - Traits        |        88% |       100% | +12%  | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
-| Control Flow 2 - Pattern Matching |         0% |         7% | +7%   | 20th Sept 2021 | -               | 29th Nov 2021  |
-| Macros and cfg expansion          |         0% |         0% | -     | 1st Dec 2021   | -               | 28th Mar 2022  |
-| Imports and Visibility            |         0% |         0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
-| Const Generics                    |         0% |         0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
-| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
-
-*** Risks
-
-| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
-|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
-| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
-
-** Planned Activities
-
-- Fix bug in missing coercion site code generation
-- Continue work Closures
