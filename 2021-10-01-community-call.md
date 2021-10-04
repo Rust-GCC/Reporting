@@ -16,7 +16,7 @@
 
 ## Project Status
 
-Monthly Report for August 2021: TODO
+Monthly Report for September 2021: https://github.com/Rust-GCC/Reporting/blob/main/2021-09-monthly-report.org
 
 New timeline included with planning spreadsheet:
 
@@ -34,7 +34,7 @@ I propose moving this meetings time slot to 1600UTC for every 2nd meeting to all
 
 ## GCC Merge
 
-Thanks to Thomas for the GCC merge from upstream everything seemed to go well. Were there many merge conflicts?
+Thanks to Thomas for the GCC merge from upstream everything seemed to go well. Were there many merge conflicts? Marks build farm is green so far.
 
 ## Working GCC Bootstrap
 
