@@ -1,0 +1,467 @@
+#+title:  Monthly Report for September 2021
+#+author: Philip Herron
+#+date:   2021-10-04
+
+** September Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+TODO
+
+Thank you to everyone who continues to support and work on the compiler.
+
+**** Linux Plumbers 2021
+
+You can find my talk over on the Linux Plumbers YouTube channel: https://youtu.be/ORwYx5_zmZo?t=8903
+
+**** Monthly Community Call
+
+We had our 7th community call on 1st October 2021 you can find the meeting notes over here: https://github.com/Rust-GCC/Reporting/blob/main/2021-10-01-community-call.md
+
+** Detailed changelog
+
+*** Qualified Paths In Type
+
+In rust there are two types of qualified paths:
+
+- [[https://doc.rust-lang.org/reference/paths.html#qualified-paths][Qualified paths]] 
+- [[https://doc.rust-lang.org/reference/paths.html#paths-in-types][Qualified Path in Type]]
+
+These can also reference generic traits which can have generic associcated types. This is where rustc's [[https://doc.rust-lang.org/nightly/nightly-rustc/rustc_middle/ty/sty/struct.ProjectionTy.html][Type Projections]] come into play.
+
+#+BEGIN_SRC rust
+trait Foo<T> {
+    type A;
+
+    fn test(a: T, b: Self::A) -> (T, Self::A) {
+        (a, b)
+    }
+}
+
+struct Bar<T>(T);
+impl<T> Foo<T> for Bar<T> {
+    type A = T;
+}
+
+pub fn main() {
+    let a;
+    a = Bar(123);
+
+    let b: <Bar<i32> as Foo<i32>>::A;
+    b = 456;
+
+    let c;
+    c = <Bar<i32> as Foo<i32>>::test(a.0, 123);
+}
+#+END_SRC
+
+The difficultly in this test case is handling the generic associated type. Since the [[https://doc.rust-lang.org/nightly/nightly-rustc/rustc_middle/ty/struct.Placeholder.html][Placeholder Types]] don't support binding of substitutions it took me a while to figure out how to handle this. The only types in the compiler type system that support generic substitutions are algebraic data types and functions (so far). This means the type alias for the associated types needs a method to handle this and this is how projections bind the generic arguments in such a way that a recursive chain is formed to handle this case.
+
+See this commit for more info on the details: https://github.com/Rust-GCC/gccrs/commit/0798add3d3c1bf4b20ecc1b4fa1047ba4ba19759
+
+*** Super Traits
+
+Getting super traits working is a bit like lowering a trait definition like this:
+
+#+BEGIN_SRC rust
+trait A: B {}
+#+END_SRC
+
+#+BEGIN_SRC rust
+trait A where Self: B {}
+#+END_SRC
+
+Pretty much all of the items in a trait declaration are a bunch of generic functions with the implicit TypeParameter of Self which has the Bound of the super Trait. This example below demonstrates how we combine super traits and qualified paths. Thanks to [[https://github.com/flip1995][Philipp Krones]] for writing this test case.
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+trait A {
+    fn a() -> i32 {
+        123
+    }
+}
+
+trait B: A {
+    fn b() -> i32 {
+        <T as A>::a() + 456
+    }
+}
+
+struct T;
+impl A for T {
+    fn a() -> i32 {
+        321
+    }
+}
+
+struct S;
+impl A for S {}
+impl B for S {}
+
+fn main() -> i32 {
+    let aa = S::a();
+    let bb = S::b();
+
+    unsafe {
+        let a = "%i, %i\n\0";
+        let b = a as *const str;
+        let c = b as *const i8;
+
+        printf(c, aa, bb);
+    }
+    0
+}
+#+END_SRC
+
+*** ABI Options
+
+We have added the initial support for other ABI options for example:
+
+#+BEGIN_SRC rust
+extern "stdcall" {
+    pub fn test(a: i32) -> i32;
+}
+
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+fn main() -> i32 {
+    unsafe {
+        let a = 3;
+        let res = test(a);
+
+        let a = "%i\n\0";
+        let b = a as *const str;
+        let c = b as *const i8;
+
+        printf(c, res);
+    }
+    0
+}
+#+END_SRC
+
+Which can be linked against C code such as:
+
+#+BEGIN_SRC c
+__attribute__ ((stdcall)) int test(int x)  {
+  return x + 3;
+}
+#+END_SRC
+
+This ABI option can then be used by compiling like this:
+
+#+BEGIN_SRC
+$ gccrs -g -O0 -m32 -c test.rs -o test.o
+$ gcc -g -O0 -m32 -c lib.c -o lib.o
+$ gcc -m32 -o test test.o lib.o
+#+END_SRC
+
+*** Multiple File Parsing
+
+Thanks to [[https://github.com/dkm][Marc Poulhiès]] and [[https://github.com/CohenArthur][Arthur Cohen]] their combined efforts have now let the GCC Rust compiler expand modules 
+
+#+BEGIN_SRC rust
+#[path ="modules/valid_path.rs"]
+mod path_without_extra_equal;
+
+mod some_module;
+#+END_SRC
+
+Note we still do not have support for visibility modifiers.
+
+*** Intrinsics
+
+#+BEGIN_SRC rust
+extern "rust-intrinsic" {
+    pub fn sqrtf32(x: f32) -> f32;
+    pub fn sinf32(x: f32) -> f32;
+}
+
+fn main() {
+    let mut f32;
+
+    f32 = sqrtf32(5f32);
+    f32 = sinf32(39f32);
+}
+#+END_SRC
+
+We have only implemented some basic intrinsics so far there are alot work though see this [[https://github.com/Rust-GCC/gccrs/issues/658][checklist]]. Note that we have not implemented the feature gate around allowing users to define this rust-intrinsic block.
+
+*** Autodref for the dot operator
+
+This example looks similar to stuff we have been able to compile for a while, but we have added in support for the autoderef system such that we can compile this method if we have a reference or we don't, so the compiler will inject the correct adjustments for the method call for the self argument to be correct. For more information please read: https://doc.rust-lang.org/nightly/nomicon/dot-operator.html
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+struct Foo(i32);
+impl Foo {
+    fn bar(&self, i: i32) {
+        unsafe {
+            let a = "%i\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c, self.0 + i);
+        }
+    }
+}
+
+fn main() {
+    let a = Foo(123);
+    a.bar(1);
+
+    let b = &Foo(456);
+    b.bar(2);
+}
+#+END_SRC
+
+https://godbolt.org/z/1heerndbs
+
+*** Allow GCC to inline
+
+When the Rust for Linux project posted a compiler explorer example comparing compilers it was noticed GCC Rust was missing a case for optimization, see the bug: https://github.com/Rust-GCC/gccrs/issues/547. This was due to all functions in GCC Rust being marked wrongly with DECL_UNINLINEABLE which stops GCC from performing all optimizations required. This is a useful flag, and will likely be used for the main-shim in rust, this ensures on stack unwinding there is frame information left on the stack. See https://godbolt.org/z/4fcf1sv7z
+
+*** Dynamic Dispatch
+
+We have added initial support for dynamic dispatch which adds code generation for coercion sites such as assignments to generate the vtable and trait object. https://godbolt.org/z/bvxE95rzY
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+struct Foo(i32);
+trait Bar {
+    fn baz(&self);
+}
+
+impl Bar for Foo {
+    fn baz(&self) {
+        unsafe {
+            let a = "%i\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c, self.0);
+        }
+    }
+}
+
+fn static_dispatch<T: Bar>(t: &T) {
+    t.baz();
+}
+
+fn dynamic_dispatch(t: &dyn Bar) {
+    t.baz();
+}
+
+fn main() {
+    let a = &Foo(123);
+    static_dispatch(a);
+
+    let b: &dyn Bar = a;
+    dynamic_dispatch(b);
+}
+#+END_SRC
+
+*** Object Safety checks
+
+As part of doing dynamic dispatch rust enforces rules on what type of traits are deemed object safe for example see:
+
+#+BEGIN_SRC rust
+struct Foo(i32);
+
+trait Bar {
+    const A: i32 = 123;
+    fn B();
+    fn C(&self);
+}
+
+pub fn main() {
+    let a;
+    a = Foo(123);
+
+    let b: &dyn Bar = &a;
+}
+#+END_SRC
+
+Here the trait Bar contains two trait items which are not object safe and this results in this error:
+
+#+BEGIN_SRC
+<source>:13:13: error: trait bound is not object safe
+    4 |     const A: i32 = 123;
+      |     ~        
+    5 |     fn B();
+      |     ~        
+......
+   13 |     let b: &dyn Bar = &a;
+      |             ^
+#+END_SRC
+
+Here the trait B is object safe but its super-trait A is not so we result in an error such as:
+
+#+BEGIN_SRC rust
+struct Foo(i32);
+
+trait A {
+    const A: i32 = 123;
+    fn B();
+    fn C(&self);
+}
+
+trait B: A {
+    fn test(&self);
+}
+
+pub fn main() {
+    let a;
+    a = Foo(123);
+
+    let b: &dyn B = &a;
+}
+#+END_SRC
+
+#+BEGIN_SRC
+<source>:17:13: error: trait bound is not object safe
+    3 | trait A {
+      | ~            
+......
+   17 |     let b: &dyn B = &a;
+      |             ^
+#+END_SRC
+
+*** Fix GCC Bootstrap builds
+
+Thanks to our whole community who have worked on this to eliminate all the compiler warnings which allows us to perform a full GCC bootstrap build. See our tracking issue for all related fixes to get this working: https://github.com/Rust-GCC/gccrs/issues/336
+
+We will need to add some automation to track compiler warnings in the CI build to catch regressions for bootstrap builds in PR's.
+
+*** Merge from upstream GCC
+
+Thanks to [[https://github.com/tschwinge][Thomas Schwinge]] we have merged with the latest upstream GCC. The last merge was completed in and around six months ago, this means we get all the relevant updates for DCO contributions and ensure our front-end code is not drifting to become unmergeable. See below before what the --version looked like:
+
+#+BEGIN_SRC
+gccrs (GCC) 11.0.1 20210325 (experimental)
+Copyright © 2021 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#+END_SRC
+
+After
+
+#+BEGIN_SRC
+gccrs (GCC) 12.0.0 20210917 (experimental)
+Copyright © 2021 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#+END_SRC
+
+*** Fix bug with out of range characters
+
+[[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]] identified a bug with our lexer which was incorrectly flagging byte with their high-bit set, this was due to a bad unsigned vs signed check.
+
+#+BEGIN_SRC
+bytecharstring.rs:3:14: error: ‘byte char’ ‘�’ out of range
+    3 |   let _bc = b'\x80';
+      |              ^
+bytecharstring.rs:4:14: error: character ‘�’ in byte string out of range
+    4 |   let _bs = b"foo\x80bar";
+      |              ^
+#+END_SRC
+
+*** Byte Strings
+
+GCC Rust used a fall though case to implement byte strings as normal str types which was wrong. Byte strings are actually arrays of u8's for example:
+
+#+BEGIN_SRC rust
+fn main() {
+    let a: &[u8; 4];
+    a = b"test";
+}
+#+END_SRC
+
+
+** Completed Activities
+
+- Generic Qualified Paths [[https://github.com/Rust-GCC/gccrs/pull/655][PR655]]
+- Add missing location info to struct fields and cleanup [[https://github.com/Rust-GCC/gccrs/pull/652][PR652]]
+- Cleanup Struct Expression classes [[https://github.com/Rust-GCC/gccrs/pull/654][PR654]]
+- Qualified Paths [[https://github.com/Rust-GCC/gccrs/pull/651][PR651]]
+- Super Traits [[https://github.com/Rust-GCC/gccrs/pull/669][PR669]] [[https://github.com/Rust-GCC/gccrs/pull/666][PR666]] [[https://github.com/Rust-GCC/gccrs/pull/662][PR662]]
+- Support stdcall, fastcall, cdecl ABI options [[https://github.com/Rust-GCC/gccrs/pull/661][PR661]]
+- Multiple File Parsing Support [[https://github.com/Rust-GCC/gccrs/pull/663][PR663]] [[https://github.com/Rust-GCC/gccrs/pull/664][PR664]] [[https://github.com/Rust-GCC/gccrs/pull/639][PR639]] 
+- Initial Compiler Intrinsics [[https://github.com/Rust-GCC/gccrs/pull/659][PR659]] [[https://github.com/Rust-GCC/gccrs/pull/660][PR660]]
+- Add compiler switch for mangling options [[https://github.com/Rust-GCC/gccrs/pull/656][PR656]]
+- Initial building blocks for enum support [[https://github.com/Rust-GCC/gccrs/pull/657][PR657]]
+- TraitObject Support [[https://github.com/Rust-GCC/gccrs/pull/684][PR684]] [[https://github.com/Rust-GCC/gccrs/pull/680][PR680]]
+- Autoderef [[https://github.com/Rust-GCC/gccrs/pull/672][PR672]] [[https://github.com/Rust-GCC/gccrs/pull/671][PR671]]
+- Fix bug with calling methods via type-bound [[https://github.com/Rust-GCC/gccrs/pull/679][PR679]]
+- Allow GCC to decide to inline [[https://github.com/Rust-GCC/gccrs/pull/673][PR673]]
+- Building blocks for V0 mangling support [[https://github.com/Rust-GCC/gccrs/pull/685][PR685]]
+- Fix bug with generics and unit-types [[https://github.com/Rust-GCC/gccrs/pull/674][PR674]]
+- Fix bootstrap build [[https://github.com/Rust-GCC/gccrs/pull/689][PR689]] [[https://github.com/Rust-GCC/gccrs/pull/690][PR690]] [[https://github.com/Rust-GCC/gccrs/pull/688][PR688]]
+- Fix bug in lexer for out of range characters [[https://github.com/Rust-GCC/gccrs/pull/687][PR687]]
+- Implement Byte Strings [[https://github.com/Rust-GCC/gccrs/pull/698][PR698]]
+
+*** Contributors this month
+
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         89 |         94 |    +5 |
+| In Progress |          7 |          9 |    +2 |
+| Completed   |        184 |        199 |   +15 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   |       4095 |       4468 | +373  |
+| XFAIL     |         21 |         21 | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         18 |         21 |    +3 |
+| In Progress |          3 |          4 |    +1 |
+| Completed   |         64 |         69 |    +5 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |        88% |       100% | +12%  | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |         0% |         7% | +7%   | 20th Sept 2021 | -               | 29th Nov 2021  |
+| Macros and cfg expansion          |         0% |         0% | -     | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |         0% |         0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |         0% |         0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                  | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                               |
+|-----------------------+--------------+-------------------+--------------+--------------------------------------------------------------------------|
+| Rust Language Changes |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis                |
+
+** Planned Activities
+
+- Fix bug in missing coercion site code generation
+- Continue work Closures Types
