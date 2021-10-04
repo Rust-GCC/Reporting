@@ -8,13 +8,19 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-TODO
+September was another great month for GCC Rust. We finished the trait resolution milestone and have now moved onto control flow two, which focuses on pattern matching semantics; this milestone should also serve to clean up some general aspects of the compiler.
+
+By December, we are aiming to try and compile our first real rust project: https://github.com/BLAKE3-team/BLAKE3/blob/master/reference_impl/reference_impl.rs
+
+If anyone has more suggestions for simple rust projects, please send them to us; this project, blake3, will require us to amend the program to remove the use statements and include this code ourselves, so we do not require the standard library. The goal here is to find as many gaps and bugs, and I would expect even if the compiler can compile the project, we likely have bugs to work through to compile it correctly. I have also completed more timeline planning for the next year of milestones and updated the planning spreadsheet to contain a chart displaying my plan to a working GCC front-end for rust. https://docs.google.com/spreadsheets/d/1B_JFzHgGclpdtPcQvnThkNJnP7Hh8fCIAU1rYFu_23M/edit?usp=sharing
 
 Thank you to everyone who continues to support and work on the compiler.
 
 **** Linux Plumbers 2021
 
 You can find my talk over on the Linux Plumbers YouTube channel: https://youtu.be/ORwYx5_zmZo?t=8903
+
+It was a great chance to try and show the compiler I hope people found it interesting and if people have questions please join us on [[https://gcc-rust.zulipchat.com/][zulip]] or the [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing list]].
 
 **** Monthly Community Call
 
@@ -464,4 +470,4 @@ fn main() {
 ** Planned Activities
 
 - Fix bug in missing coercion site code generation
-- Continue work Closures Types
+- Continue work Closures
