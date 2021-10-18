@@ -1,0 +1,140 @@
+#+title:  Weekly Report for 11th to 18th Oct 2021
+#+author: Philip Herron
+#+date:   2021-10-18
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+Since Wednesday last week, I have been back from vacation, but we have still made significant progress in the current milestone thanks to the community working so hard. The pattern matching milestone includes cleaning up our code standards, such as getting rid of C++ Lambda's, which created unnecessary complexity in handling error conditions where a simple for loop made was the simpler solution. All of this cleanup will bring gccrs closer to the GCC coding standards. The milestone also includes fixing known bugs required for the goal test case, but my work into [[https://doc.rust-lang.org/rust-by-example/fn/closures.html][closures]] is blocked pending some work into rust's lang item system. Lang items are a way of mapping behaviour defined in libcore directly to the compiler, such as the built-in impl's for primitive types or operator overloading. Closures rely on the higher-ranked trait bounds of the rust [[https://doc.rust-lang.org/beta/unstable-book/language-features/lang-items.html][lang item]] of 'fn'. This work on lang items is required for our [[https://github.com/Rust-GCC/gccrs/issues/682][goal test]] case to compile Blake3, so all of this work still feeds into our end goals of this milestone.
+
+Regarding timing, I still have outstanding vacations to use, but the community has made a lot of progress in fixing bugs required for this milestone, so it is still hard to tell if I will make up the lost time from the previous milestone or not. However, I think it is likely that I might be one week out, making up just over half of the lost time from the traits milestone.
+
+**** Hacktoberfest 2021
+
+https://hacktoberfest.digitalocean.com/ we have marked out repository as part of the hacktoberfest community event feel free to join in, there are plenty of good first PR's to tackle: https://github.com/Rust-GCC/gccrs/issues?q=is%3Aissue+is%3Aopen+label%3Agood-first-pr
+
+** Completed Activities
+
+- Bug fix missing code generation at coercion sites [[https://github.com/Rust-GCC/gccrs/pull/710][PR710]]
+- Add missing constant folding to array expressions [[https://github.com/Rust-GCC/gccrs/pull/725][PR725]] [[https://github.com/Rust-GCC/gccrs/pull/748][PR748]]
+- Remove lambda's as part of code standards cleanup [[https://github.com/Rust-GCC/gccrs/pull/727][PR727]] [[https://github.com/Rust-GCC/gccrs/pull/728][PR728]]
+- Implement new Mutability enum for code cleanup [[https://github.com/Rust-GCC/gccrs/pull/729][PR729]] [[https://github.com/Rust-GCC/gccrs/pull/738][PR738]]
+- Update PR template and contributor guidelines for DCO sign-off [[https://github.com/Rust-GCC/gccrs/pull/730][PR730]]
+- Add building blocks for Closure's [[https://github.com/Rust-GCC/gccrs/pull/740][PR740]]
+- Implement base62 building blocks for V0 symbol mangling [[https://github.com/Rust-GCC/gccrs/pull/747][PR747]]
+
+*** Contributors this week
+
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/dafaust][David Faust]] (new contributor)
+- [[https://github.com/rodrigovalle][Rodrigo Valle]] (new contributor)
+- [[https://github.com/wan-nyan-wan][wan-nyan-wan]] (new contributor)
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        94 |       108 |   +14 |
+| In Progress |         9 |        15 |    +6 |
+| Completed   |       199 |       213 |   +14 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      4468 |      4568 | +100  |
+| XFAIL     |        21 |        21 | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        21 |        22 |    +1 |
+| In Progress |         4 |         8 |    +4 |
+| Completed   |        69 |        72 |    +3 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |        7% |       20% | +13%  | 20th Sept 2021 | -               | 29th Nov 2021  |
+| Macros and cfg expansion          |        0% |        0% | -     | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |        0% |        0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+
+** Planned Activities
+
+- Fix some path resolution bugs listed here https://github.com/Rust-GCC/gccrs/issues/682
+- investigate lang-items required for goal-test case and closures
+
+** Detailed changelog
+
+*** Array Expression Const folding
+
+Constant folding is an interesting thing in Rust which is similar in some regards to c++ constexpr. Constants must be folded as part of the type checking system since Array's themselves have a constant expression of capacity for example. GCCRS has missing visitor's for each of the possible constant folding cases. Here we have extended it to ArrayExpressions thanks to [[https://github.com/rodrigovalle][Rodrigo Valle]].
+
+#+BEGIN_SRC rust
+const SIZE: usize = 14 + 2;
+const TEST: [i32; SIZE] = [2; SIZE];
+#+END_SRC
+
+*** Coercion sites bug
+
+When we have coercion sites such as passing arguments to a function, these are chances for missing conversions.
+
+#+BEGIN_SRC rust
+fn static_dispatch<T: Bar>(t: &T) {
+    t.baz();
+}
+
+fn dynamic_dispatch(t: &dyn Bar) {
+    t.baz();
+}
+
+fn main() {
+    let a;
+    a = &Foo(123);
+
+    static_dispatch(a);
+    dynamic_dispatch(a);
+}
+#+END_SRC
+
+In this example 'a' is of type &Foo which is fine as an argument to static_dispatch but for dynamic dispatch this needs to be converted into a vtable object. This is the same for the case when we have:
+
+#+BEGIN_SRC rust
+fn main() {
+    let a;
+    a = &Foo(123);
+
+    let b: &dyn Bar = a;
+}
+#+END_SRC
+
+The bug in the compiler is that this coercion_site was not being called for argument passing to implicitly convert the orginal argument.
+
+*** Code cleanup
+
+Thanks to all who are cleaning up the coding standards within the compiler this is including new enums such as [[https://rust-analyzer.github.io/rust-analyzer/hir/enum.Mutability.html][Mutability]] which is much easier to use than using boolean flags: 
+
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/rodrigovalle][Rodrigo Valle]]
+- [[https://github.com/wan-nyan-wan][wan-nyan-wan]]
