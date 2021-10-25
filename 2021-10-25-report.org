@@ -1,0 +1,192 @@
+#+title:  Weekly Report for 18th to 25th Oct 2021
+#+author: Philip Herron
+#+date:   2021-10-25
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+[[https://github.com/Rust-GCC/Reporting/blob/main/2021-10-18-report.org#milestone-progress][Last week's report]] discussed how I had been blocked on my work into [[https://github.com/Rust-GCC/gccrs/issues/195][closures]] as we are missing support for Rust's lang-item system, which we knew we needed for the [[https://github.com/Rust-GCC/gccrs/issues/682][goal test case]].  This week, I have been thinking about the steps we need to take to work with lang items and fixing known bugs associated with this milestone to continue making progress. From reading through the [[https://github.com/rust-lang/rust/tree/master/src/test/ui][rustc test suite]], this [[https://github.com/rust-lang/rust/blob/c34ac8747ca96d09cb08b8f5adddead826e77c06/src/test/ui/higher-rank-trait-bounds/hrtb-fn-like-trait.rs][test case]] has rattled out quite a few issues, though there is one final issue to fix before compiling this test case properly to do with the specified constraints. However, overall I am making steady progress, and I am on track to win back about half the lost time from the previous milestone.
+
+**** Hacktoberfest 2021
+
+https://hacktoberfest.digitalocean.com/ we have marked out repository as part of the hacktoberfest community event feel free to join in, there are plenty of good first PR's to tackle: https://github.com/Rust-GCC/gccrs/issues?q=is%3Aissue+is%3Aopen+label%3Agood-first-pr
+
+**** Monthly Community Call
+
+We will be having our 8th community call as the first Friday of the month:
+
+- Date and Time 5th November 2021 at: 15h00 UTC
+- Agenda: https://hackmd.io/GhC6flQqQNOYzzz3Vq7ufg please feel free to add agenda items you wish to see discussed.
+- Jitsi: https://meet.jit.si/259057065581073
+
+** Completed Activities
+
+- Fix ICE in trait resolution [[https://github.com/Rust-GCC/gccrs/pull/752][PR752]] [[https://github.com/Rust-GCC/gccrs/pull/758][PR758]] [[https://github.com/Rust-GCC/gccrs/pull/759][PR759]] [[https://github.com/Rust-GCC/gccrs/pull/760][PR760]]
+- Add new unsafety enum instead of bool fields [[https://github.com/Rust-GCC/gccrs/pull/754][PR754]]
+- Use const to enforce pointer ownership within the type checker [[https://github.com/Rust-GCC/gccrs/pull/756][PR756]]
+- Support generic associated TypePaths via the type-bounds [[https://github.com/Rust-GCC/gccrs/pull/757][PR757]]
+- Fix bootstrap build [[https://github.com/Rust-GCC/gccrs/pull/761][PR761]]
+- Add missing coercion code generation for arguments in MethodCallExpr [[https://github.com/Rust-GCC/gccrs/pull/762][PR762]]
+- Fix naming of generic function symbols in gimple [[https://github.com/Rust-GCC/gccrs/pull/763][PR763]]
+- Update copyright years [[https://github.com/Rust-GCC/gccrs/pull/764][PR764]]
+
+*** Contributors this week
+
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/npate012][Nirmal Patel]] (new contributor)
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       108 |       106 |    -2 |
+| In Progress |        15 |        12 |    -3 |
+| Completed   |       213 |       223 |   +10 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      4568 |      4760 | +192  |
+| XFAIL     |        21 |        21 | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        22 |        23 |    +1 |
+| In Progress |         8 |         3 |    -5 |
+| Completed   |        72 |        80 |    +8 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |       20% |       40% | +20%  | 20th Sept 2021 | -               | 29th Nov 2021  |
+| Macros and cfg expansion          |        0% |        0% | -     | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |        0% |        0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+
+** Planned Activities
+
+- Continue fixing known bugs for goal testcase https://github.com/Rust-GCC/gccrs/issues/682
+- Begin lang-items work to unblock closure work
+
+** Detailed changelog
+
+*** Support generic associated TypePaths
+
+Traits can have associated types like we have seen before in previous reports, but for generic functions for example we can specify bounds on the type 'T' in this case which means that [[https://doc.rust-lang.org/stable/reference/paths.html?highlight=type%20path#paths-in-types][TypePath's]] need to support looking up associated types via 'probing' the bounds of the type to find that the [[https://doc.rust-lang.org/nightly/nightly-rustc/rustc_middle/ty/type.PlaceholderType.html][placeholder]] type 'A' exists. Which will get setup with the apropriate [[https://doc.rust-lang.org/nightly/nightly-rustc/rustc_middle/ty/sty/struct.ProjectionTy.html][projection]] at [[https://en.wikipedia.org/wiki/Monomorphization][monomorphization]].
+
+#+BEGIN_SRC rust
+trait Foo {
+  type A;
+   ...
+}
+
+fn test<T:Foo>(a:T) -> T::A { .. }
+#+END_SRC
+
+*** Fix ICE in autoderef for generic MethodCallExpr
+
+When we have generic functions such as:
+
+#+BEGIN_SRC rust
+pub trait Foo {
+    type A;
+
+    fn bar(&self) -> Self::A;
+}
+
+fn test_bar<T: Foo>(x: T) -> T::A {
+    x.bar()
+}
+#+END_SRC
+
+The method call here requires an implict borrow ('&') to be able to call bar correctly. The compiler was unable to distinguish the difference between the type parameter T and the expected &self so it was unable to generate the implicit adjustment of adding the borrow but this is now fixed.
+
+*** Fix bug in typechecking of associated types
+
+#+BEGIN_SRC rust
+pub trait Foo {
+    type A;
+
+    fn bar(&self) -> Self::A;
+}
+
+struct S(i32);
+impl Foo for S {
+    type A = i32;
+
+    fn bar(&self) -> Self::A {
+        self.0
+    }
+}
+
+fn test_bar<T: Foo>(x: T) -> T::A {
+    x.bar()
+}
+#+END_SRC
+
+We had a bug when using associated types within generic functions. The compiler wrongly associated impl's of traits together for generic types. This means that when you used a Path to call a method this means it would automatically project all of the associated types with the impl we found, which resulted in errors like this which don't make any sense to the programmer.
+
+#+BEGIN_SRC rust
+test.rs:15:5: error: expected [i32] got [<Projection=::i32>]
+   15 |     type A = i32;
+      |     ^        ~
+#+END_SRC
+
+The bug here is that when we probe the bounds of a type we don't have any associated impl's to project the placeholder associated types.
+
+*** Ensure arguments to MethodCallExpr emit code for coercion-sites
+
+When we have coercion sites such as passing arguments to a function, these are chances for missing conversions.
+
+#+BEGIN_SRC rust
+struct S;
+impl S {
+    fn dynamic_dispatch(self, t: &dyn Bar) {
+        t.baz();
+    }
+}
+
+fn main() {
+    let a;
+    a = &Foo(123);
+
+    let b;
+    b = S;
+
+    b.dynamic_dispatch(a);
+}
+#+END_SRC
+
+In this example 'a' is of type &Foo which is fine as an argument to static_dispatch but for dynamic dispatch this needs to be converted into a vtable object. This is the same for the case when we have:
+
+#+BEGIN_SRC rust
+fn main() {
+    let a;
+    a = &Foo(123);
+
+    let b: &dyn Bar = a;
+}
+#+END_SRC
+
+The bug in the compiler is that this coercion_site was not being called for argument passing to implicitly convert the orginal argument.
