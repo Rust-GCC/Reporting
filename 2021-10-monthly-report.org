@@ -1,0 +1,351 @@
+#+title:  Monthly Report for October 2021
+#+author: Philip Herron
+#+date:   2021-11-01
+
+** October Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+October, we moved onto control flow two, which was a milestone to focus on adding support for the [[https://doc.rust-lang.org/rust-by-example/flow_control/match.html][match statement]], [[https://doc.rust-lang.org/book/ch06-01-defining-an-enum.html][enums]], attempt [[https://doc.rust-lang.org/rust-by-example/fn/closures.html][closures]], and fixing [[https://github.com/Rust-GCC/gccrs/issues?q=is%3Aissue+is%3Aopen+label%3Abug][known bugs]]. Finally, we can attempt to test the compiler out on an actual rust project closeout 2021. The [[https://github.com/Rust-GCC/gccrs/issues/682][goal]] of trying the compiler on [[https://github.com/BLAKE3-team/BLAKE3/blob/master/reference_impl/reference_impl.rs][actual rust code]] is that we don't expect gccrs to compile the project yet successfully, but we want to find as many bugs/missing-features as possible in the process and assess the state of the front-end.
+
+During development, I began investigating closures early on as it is a complex one to get right when you consider move semantics and how to encapsulate the scope, overall it seemed ok to tackle this from reading how the C++ works. But I ran into a problem with the type system early on to specify the TypePath for closures since the same TypePath is used for function pointers and closures, which means it's a particular case that involves the usage of [[https://doc.rust-lang.org/beta/unstable-book/language-features/lang-items.html][lang-items]]. This means my work on closures is blocked until we get some support for specifying lang items within the compilers, and I have some patches which are in progress to unblock this.
+
+To continue making progress, we already have a list of known bugs for the goal test case. I have been making my way through them since many of them are test cases from the existing rust test-suite and small extractions of code from libcore all of this feed into getting the compiler into a state where we can attempt to compile Blake3.
+
+The other avenue is that thanks to [[https://gnu.wildebeest.org/blog/mjw/][Mark's]] work into enums, I have been able to [[https://github.com/Rust-GCC/gccrs/pull/781][review it]]. We have already merged parser, name-resolution, and hir lowering the remaining pieces are type-resolution and code-generation, which he has already done a lot of work here. The key component that makes enum's interesting is that an Enum is an algebraic data type but one with many variants. In contrast, a struct or tuple struct is an algebraic data type with a single variant. This means that we have one canonical path in the compiler for algebraic data types in general, which should help with static analysis in general. Enums must be merged first before the match statement work since the match statement similar to a switch statement in C/C++ is the simplest case to add error handling to ensure all variants have a match-arm.
+
+This month saw ten contributors from worldwide, Asia, Europe and America, and I want to thank you so much. The compiler is still in an early state; this means there is a lot of low hanging fruit to help fix and a lot of error handling code still to write, never mind language features.
+
+Overall I believe the milestone is on track to attempt to make back half of the lost time from the previous milestone all going well, and I am aiming to take some more vacation time this month as well.
+
+Thank you to everyone who continues to support and work on the compiler.
+
+**** Monthly Community Call
+
+We will be having our 8th community call as the first Friday of the month:
+
+- Date and Time 5th November 2021 at: 15h00 UTC
+- Agenda: https://hackmd.io/GhC6flQqQNOYzzz3Vq7ufg please feel free to add agenda items you wish to see discussed.
+- Jitsi: https://meet.jit.si/259057065581073
+
+**** Hacktoberfest 2021
+
+https://hacktoberfest.digitalocean.com/ we marked our repository as part of the hacktoberfest community event which greatly helped us tackle our long list of technical debt over here: https://github.com/Rust-GCC/gccrs/issues?q=is%3Aissue+is%3Aopen+label%3Agood-first-pr
+
+**** LWN Article
+
+[[https://lwn.net/][LWN]] wrote an article covering both [[https://github.com/rust-lang/rustc_codegen_gcc][GCC codegen]] and [[https://github.com/Rust-GCC/gccrs][GCC Rust]] from the recent [[https://linuxplumbersconf.org/][Linux Plumbers Conference]]. It seemed to be well received thank you to the author Jonathan Corbet and the readers. You can read the article here: https://lwn.net/Articles/871283/
+
+** Completed Activities
+
+- Bug fix missing code generation at coercion sites [[https://github.com/Rust-GCC/gccrs/pull/710][PR710]]
+- Add missing constant folding to array expressions [[https://github.com/Rust-GCC/gccrs/pull/725][PR725]] [[https://github.com/Rust-GCC/gccrs/pull/748][PR748]]
+- Remove lambda's as part of code standards cleanup [[https://github.com/Rust-GCC/gccrs/pull/727][PR727]] [[https://github.com/Rust-GCC/gccrs/pull/728][PR728]]
+- Implement new Mutability enum for code cleanup [[https://github.com/Rust-GCC/gccrs/pull/729][PR729]] [[https://github.com/Rust-GCC/gccrs/pull/738][PR738]]
+- Update PR template and contributor guidelines for DCO sign-off [[https://github.com/Rust-GCC/gccrs/pull/730][PR730]]
+- Add building blocks for Closure's [[https://github.com/Rust-GCC/gccrs/pull/740][PR740]]
+- Implement base62 building blocks for V0 symbol mangling [[https://github.com/Rust-GCC/gccrs/pull/747][PR747]]
+- Fix ICE in trait resolution [[https://github.com/Rust-GCC/gccrs/pull/752][PR752]] [[https://github.com/Rust-GCC/gccrs/pull/758][PR758]] [[https://github.com/Rust-GCC/gccrs/pull/759][PR759]] [[https://github.com/Rust-GCC/gccrs/pull/760][PR760]]
+- Add new unsafety enum instead of bool fields [[https://github.com/Rust-GCC/gccrs/pull/754][PR754]]
+- Use const to enforce pointer ownership within the type checker [[https://github.com/Rust-GCC/gccrs/pull/756][PR756]]
+- Support generic associated TypePaths via the type-bounds [[https://github.com/Rust-GCC/gccrs/pull/757][PR757]]
+- Fix bootstrap build [[https://github.com/Rust-GCC/gccrs/pull/761][PR761]]
+- Add missing coercion code generation for arguments in MethodCallExpr [[https://github.com/Rust-GCC/gccrs/pull/762][PR762]]
+- Fix naming of generic function symbols in gimple [[https://github.com/Rust-GCC/gccrs/pull/763][PR763]]
+- Update copyright years [[https://github.com/Rust-GCC/gccrs/pull/764][PR764]]
+- Code Cleanup [[https://github.com/Rust-GCC/gccrs/pull/767][PR767]] [[https://github.com/Rust-GCC/gccrs/pull/768][PR768]] [[https://github.com/Rust-GCC/gccrs/pull/772][PR772]] [[https://github.com/Rust-GCC/gccrs/pull/774][PR774]]
+- Add missing Location info to WhereClauseItems [[https://github.com/Rust-GCC/gccrs/pull/769][PR769]] [[https://github.com/Rust-GCC/gccrs/pull/778][PR778]]
+- Refactor boolean polarity into enum [[https://github.com/Rust-GCC/gccrs/pull/770][PR770]]
+- Higher Ranked Trait bounds [[https://github.com/Rust-GCC/gccrs/pull/771][PR771]]
+- Support const evaluation within blocks [[https://github.com/Rust-GCC/gccrs/pull/775][PR775]]
+- Mark rust_assert with no side effects [[https://github.com/Rust-GCC/gccrs/pull/780][PR780]]
+- Fix lifetime parser bug [[https://github.com/Rust-GCC/gccrs/pull/771][PR771]]
+
+*** Contributors this month
+
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/dafaust][David Faust]] (new contributor)
+- [[https://github.com/rodrigovalle][Rodrigo Valle]] (new contributor)
+- [[https://github.com/wan-nyan-wan][wan-nyan-wan]] (new contributor)
+- [[https://github.com/npate012][Nirmal Patel]] (new contributor)
+- [[https://github.com/mathstuf][Ben Boeckel]] (new contributor)
+- [[https://github.com/diohabara][TKadoi]] (new contributor)
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         94 |         99 |    +5 |
+| In Progress |          9 |         12 |    +3 |
+| Completed   |        199 |        234 |   +35 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   |       4468 |       4844 | +376  |
+| XFAIL     |         21 |         21 | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         21 |         22 |    +1 |
+| In Progress |          4 |          3 |    -1 |
+| Completed   |         69 |         84 |   +15 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |         7% |        55% | +48%  | 20th Sept 2021 | -               | 29th Nov 2021  |
+| Macros and cfg expansion          |         0% |         0% | -     | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |         0% |         0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |         0% |         0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Continue lang-items work to unblock closure work
+- Finish work on adding enum support
+
+** Detailed changelog
+
+*** Array Expression Const folding
+
+Constant folding is an interesting thing in Rust which is similar in some regards to c++ constexpr. Constants must be folded as part of the type checking system since Array's themselves have a constant expression of capacity for example. GCCRS has missing visitor's for each of the possible constant folding cases. Here we have extended it to ArrayExpressions thanks to [[https://github.com/rodrigovalle][Rodrigo Valle]].
+
+#+BEGIN_SRC rust
+const SIZE: usize = 14 + 2;
+const TEST: [i32; SIZE] = [2; SIZE];
+#+END_SRC
+
+*** Coercion sites bug
+
+When we have coercion sites such as passing arguments to a function, these are chances for missing conversions.
+
+#+BEGIN_SRC rust
+fn static_dispatch<T: Bar>(t: &T) {
+    t.baz();
+}
+
+fn dynamic_dispatch(t: &dyn Bar) {
+    t.baz();
+}
+
+fn main() {
+    let a;
+    a = &Foo(123);
+
+    static_dispatch(a);
+    dynamic_dispatch(a);
+}
+#+END_SRC
+
+In this example 'a' is of type &Foo which is fine as an argument to static_dispatch but for dynamic dispatch this needs to be converted into a vtable object. This is the same for the case when we have:
+
+#+BEGIN_SRC rust
+fn main() {
+    let a;
+    a = &Foo(123);
+
+    let b: &dyn Bar = a;
+}
+#+END_SRC
+
+The bug in the compiler is that this coercion_site was not being called for argument passing to implicitly convert the orginal argument.
+
+*** Code cleanup
+
+Thanks to all who are cleaning up the coding standards within the compiler this is including new enums such as [[https://rust-analyzer.github.io/rust-analyzer/hir/enum.Mutability.html][Mutability]] which is much easier to use than using boolean flags: 
+
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/rodrigovalle][Rodrigo Valle]]
+- [[https://github.com/wan-nyan-wan][wan-nyan-wan]]
+- [[https://github.com/npate012][Nirmal Patel]]
+- [[https://github.com/mathstuf][Ben Boeckel]]
+- [[https://github.com/diohabara][TKadoi]]
+
+*** Support generic associated TypePaths
+
+Traits can have associated types like we have seen before in previous reports, but for generic functions for example we can specify bounds on the type 'T' in this case which means that [[https://doc.rust-lang.org/stable/reference/paths.html?highlight=type%20path#paths-in-types][TypePath's]] need to support looking up associated types via 'probing' the bounds of the type to find that the [[https://doc.rust-lang.org/nightly/nightly-rustc/rustc_middle/ty/type.PlaceholderType.html][placeholder]] type 'A' exists. Which will get setup with the apropriate [[https://doc.rust-lang.org/nightly/nightly-rustc/rustc_middle/ty/sty/struct.ProjectionTy.html][projection]] at [[https://en.wikipedia.org/wiki/Monomorphization][monomorphization]].
+
+#+BEGIN_SRC rust
+trait Foo {
+  type A;
+   ...
+}
+
+fn test<T:Foo>(a:T) -> T::A { .. }
+#+END_SRC
+
+*** Fix ICE in autoderef for generic MethodCallExpr
+
+When we have generic functions such as:
+
+#+BEGIN_SRC rust
+pub trait Foo {
+    type A;
+
+    fn bar(&self) -> Self::A;
+}
+
+fn test_bar<T: Foo>(x: T) -> T::A {
+    x.bar()
+}
+#+END_SRC
+
+The method call here requires an implict borrow ('&') to be able to call bar correctly. The compiler was unable to distinguish the difference between the type parameter T and the expected &self so it was unable to generate the implicit adjustment of adding the borrow but this is now fixed.
+
+*** Fix bug in typechecking of associated types
+
+#+BEGIN_SRC rust
+pub trait Foo {
+    type A;
+
+    fn bar(&self) -> Self::A;
+}
+
+struct S(i32);
+impl Foo for S {
+    type A = i32;
+
+    fn bar(&self) -> Self::A {
+        self.0
+    }
+}
+
+fn test_bar<T: Foo>(x: T) -> T::A {
+    x.bar()
+}
+#+END_SRC
+
+We had a bug when using associated types within generic functions. The compiler wrongly associated impl's of traits together for generic types. This means that when you used a Path to call a method this means it would automatically project all of the associated types with the impl we found, which resulted in errors like this which don't make any sense to the programmer.
+
+#+BEGIN_SRC rust
+test.rs:15:5: error: expected [i32] got [<Projection=::i32>]
+   15 |     type A = i32;
+      |     ^        ~
+#+END_SRC
+
+The bug here is that when we probe the bounds of a type we don't have any associated impl's to project the placeholder associated types.
+
+*** Ensure arguments to MethodCallExpr emit code for coercion-sites
+
+When we have coercion sites such as passing arguments to a function, these are chances for missing conversions.
+
+#+BEGIN_SRC rust
+struct S;
+impl S {
+    fn dynamic_dispatch(self, t: &dyn Bar) {
+        t.baz();
+    }
+}
+
+fn main() {
+    let a;
+    a = &Foo(123);
+
+    let b;
+    b = S;
+
+    b.dynamic_dispatch(a);
+}
+#+END_SRC
+
+In this example 'a' is of type &Foo which is fine as an argument to static_dispatch but for dynamic dispatch this needs to be converted into a vtable object. This is the same for the case when we have:
+
+#+BEGIN_SRC rust
+fn main() {
+    let a;
+    a = &Foo(123);
+
+    let b: &dyn Bar = a;
+}
+#+END_SRC
+
+The bug in the compiler is that this coercion_site was not being called for argument passing to implicitly convert the orginal argument.
+
+**** Fix parser handling of generic arguments with a single lifetime
+
+We had a bug in our parser where generic arguments with a single lifetime argument as below was parsed an type bounds object.
+
+#+BEGIN_SRC rust
+trait Foo<'a> {}
+
+trait Bar {
+    type Item: for<'a> Foo<'a>;
+                        // ^^
+}
+#+END_SRC
+
+This was a good bug to find as it initially looked as though it was a type resolution bug, but in the end the parser had a bug.
+
+**** Initial support for higher ranked trait bounds
+
+We have added support for rusts higher ranked trait bounds using the where syntax. This shows that gccrs is starting to compile some more complex Rust code which is a good sign that the front-end is progressing.
+
+This test case is from the rust-testsuite: https://github.com/rust-lang/rust/blob/master/src/test/ui/higher-rank-trait-bounds/hrtb-fn-like-trait.rs
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+trait FnLike<A, R> {
+    fn call(&self, arg: A) -> R;
+}
+
+struct S;
+impl<'a, T> FnLike<&'a T, &'a T> for S {
+    fn call(&self, arg: &'a T) -> &'a T {
+        arg
+    }
+}
+
+fn indirect<F>(f: F)
+where
+    F: for<'a> FnLike<&'a isize, &'a isize>,
+{
+    let x = 3;
+    let y = f.call(&x);
+
+    unsafe {
+        let a = "%i\n\0";
+        let b = a as *const str;
+        let c = b as *const i8;
+
+        printf(c, *y);
+    }
+}
+
+fn main() -> i32 {
+    indirect(S);
+
+    0
+}
+#+END_SRC
+
+The key thing here is that unlike normal TypeBound syntax such as:
+
+#+BEGIN_SRC rust
+fn indirect<F>(f: F:Bound<&isize, &isize>)
+#+END_SRC
+
+We check that the type 'F' conforms to the the bound and specify that it must inherit these bounds as well.
