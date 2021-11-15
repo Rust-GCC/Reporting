@@ -1,0 +1,154 @@
+#+title:  Weekly Report for 1st to 15th November 2021
+#+author: Philip Herron
+#+date:   2021-11-15
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This report covers work completed since the 1st of November as I took the last week of the 8th off to use some vacation time. During that week, I cracked the problem of handling/managing rust's [[https://doc.rust-lang.org/beta/unstable-book/language-features/lang-items.html][lang-item system]] within gccrs; this unblocked my branch on operator overloading to demonstrate it; thanks to all the bug fixes last month, this seems to be working smoothly. Before [[https://github.com/Rust-GCC/gccrs/pull/801][operator overloading]] can be merged, the PR needs to be split up into smaller commits and rebased on top of the recent changes from the community; the DefId change comes to mind as we use this to differentiate between traits.
+
+The community has made a significant dent into all of the lower hanging fruit of [[https://github.com/Rust-GCC/gccrs/issues?q=is%3Aissue+is%3Aopen+label%3Agood-first-pr][good-first-pr's]]; there are many more issues like this one the way soon, so keep your eye out if you wish to find your feet to get involved.
+
+So far, I feel like the pace of [[https://github.com/Rust-GCC/gccrs/milestone/5][this milestone]] is going well, and I am still on track to be about one week over the target date. This leaves us to close out the year by testing the compiler in anger on [[https://github.com/Rust-GCC/gccrs/issues/682][Blake3]] to see how well we get on. Aside from that, I am working on an upcoming blog post reviewing GCC Rust as a project and visiting the major accomplishments along the way in 2021, so keep your eye out for this one.
+
+Thank you to everyone who continues to support and work on the compiler.
+
+**** Monthly Community Call
+
+We had our 8th community call on 5th November 2021 you can find the meeting notes over here: https://github.com/Rust-GCC/Reporting/blob/main/2021-11-05-community-call.md
+
+** Completed Activities
+
+- Tag 'rust_fatal_error' as 'noreturn' [[https://github.com/Rust-GCC/gccrs/pull/777][PR777]] [[https://github.com/Rust-GCC/gccrs/pull/780][PR780]]
+- Add location info in AST::TypeBoundWhereClauseItem and HIR::TypeBoundWhereClauseItem [[https://github.com/Rust-GCC/gccrs/pull/778][PR778]]
+- Add new rust_internal_error for specific ICE's [[https://github.com/Rust-GCC/gccrs/pull/779][PR779]]
+- Merge Type Checking code for enums [[https://github.com/Rust-GCC/gccrs/pull/781][PR781]]
+- Refactor TyTy::ADTType into one which can contain multiple variants  [[https://github.com/Rust-GCC/gccrs/pull/781][PR781]]
+- Get rid of lambda in AST::TypePath [[https://github.com/Rust-GCC/gccrs/pull/783][PR783]]
+- Track inline module scopes for path module imports [[https://github.com/Rust-GCC/gccrs/pull/785][PR785]]
+- Save make check-rust artifacts for GHA [[https://github.com/Rust-GCC/gccrs/pull/787][PR787]]
+- Add new -frust-crate option to specify crate name [[https://github.com/Rust-GCC/gccrs/pull/788][PR788]]
+- Get rid of lambda TyTy::TupleType iterate fields [[https://github.com/Rust-GCC/gccrs/pull/791][PR791]]
+- Change DefId from uint64_t with bitmask into a struct [[https://github.com/Rust-GCC/gccrs/pull/792][PR792]]
+- Fix unhandled TypeBounds [[https://github.com/Rust-GCC/gccrs/pull/794][PR794]]
+- Documentation for clang-format usage [[https://github.com/Rust-GCC/gccrs/pull/795][PR795]] [[https://github.com/Rust-GCC/gccrs/pull/802][PR802]] [[https://github.com/Rust-GCC/gccrs/pull/803][PR803]]
+- Handle forward declared items within blocks [[https://github.com/Rust-GCC/gccrs/pull/796][PR796]]
+- Fix some missing cases of constant folding [[https://github.com/Rust-GCC/gccrs/pull/798][PR798]]
+
+*** Contributors this month
+
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/mathstuf][Ben Boeckel]]
+- [[https://github.com/cls][Connor Lane Smith]] (new contributor)
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         99 |         93 |    -6 |
+| In Progress |         12 |         14 |    +2 |
+| Completed   |        234 |        244 |   +10 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   |       4844 |       4931 | +87   |
+| XFAIL     |         21 |         21 | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         22 |         23 |    +1 |
+| In Progress |          3 |          4 |    +1 |
+| Completed   |         84 |         86 |    +2 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |        55% |        70% | +15%  | 20th Sept 2021 | -               | 29th Nov 2021  |
+| Macros and cfg expansion          |         0% |         0% | -     | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |         0% |         0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |         0% |         0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Merge lang-items work
+- Merge operator overloading work
+- Finish work on adding enum support
+
+** Detailed changelog
+
+*** Refactor TyTy::ADTType
+
+In order to support enums, we could have implemented a new TyTy module for this, to then subsequently update the typechecking code. But in alot of ways enum's are just another type of algebraic data type which also has the side effect of canonicalizing the flow of how we work with these types instead of inventing new paths in the compiler. The change here was that the ADT Type was originally designed for unit-structs, structs and tuple structs. But really an enum is an ADT with multiple variants and struts, tuple structs are ADT's with a single variant and finally a unit-struct is one with no variants. This change was rather large to decouple and refactor ADT's into variants but has helped tackle some technical debt along the way. Thanks to @flip1995 for point us in this direction.
+
+*** Add new rust_internal_error
+
+This new API is designed to distinguish between internal compiler errors and actual program errors. Assertions are good but somtimes you want to be able to provide extra contextural information.
+
+*** Handle forward declared items within blocks
+
+Rust allows for Items such as functions to be declared at the bottom of a BlockExpr which can be referenced at any point within that conxtext such as: https://godbolt.org/z/PGqnz1nve
+
+#+BEGIN_SRC rust
+pub fn main() {
+    let a;
+    a = foo { a: 123, b: 456f32 };
+
+    let mut a = 123;
+    a = bar(a);
+
+    let mut b = 456f32;
+    b = bar(b);
+
+    let aa = X;
+
+    let bb:[i32; X];
+
+    fn bar<T>(x: T) -> T {
+        x
+    }
+
+    struct foo {
+        a: i32,
+        b: f32,
+    };
+
+    const X:usize = 2;
+}
+#+END_SRC
+
+*** Fix unhandled TypeBounds
+
+This test case qithin the rust testsuite https://github.com/rust-lang/rust/blob/d5a0c7cb036032288a4a5443b54ba061ec12ee26/src/test/ui/higher-rank-trait-bounds/hrtb-fn-like-trait-object.rs raised bugs with unhandled type bounds for TypeAlises:
+
+#+BEGIN_SRC rust
+type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;
+#+END_SRC
+
+The bug here was that we had two ways in HIR to represent bounds here, and we had an opertunity to desugar our AST from two types:
+
+- AST::TraitObjectType
+- AST::TraitObjectTypeOneBound
+
+Into a single HIR::TraitObjectType
