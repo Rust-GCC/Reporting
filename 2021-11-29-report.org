@@ -10,7 +10,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 As the previous traits milestone ran over by three weeks, I aim to close out this control flow milestone by the end of this week (3rd December); this means we will get back two of those weeks to avoid skewing the following milestone targets for the upcoming year.
 
-This week I merged bug fixes around the type system and qualified paths, support for array index access via indirection of references and support for the dereference operator overloading. The remaining tasks are merging enum code generation and initial pattern matching support for enum access. Pattern matching will be an ongoing task since it requires a lot of static analysis, but this analysis is not necessary to generate code. The exciting thing about enums is that we are using the qualified_union_type from GCC, which is only used in the ADA front-end, which makes me want to investigate ADA someday.
+This week I merged bug fixes around the type system and qualified paths, support for array index access via indirection of references and support for the dereference operator overloading. The remaining tasks are merging enum code generation and initial pattern matching support for enum access. Pattern matching will be an ongoing task since it requires a lot of static analysis, but this analysis is not necessary to generate code. The exciting thing about enums is that we are using the qualified_union_type from GCC, which is only used in the Ada front-end, which makes me want to investigate Ada someday.
 
 See: https://gcc.gnu.org/onlinedocs/gccint/Types.html.
 
