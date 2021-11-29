@@ -1,0 +1,248 @@
+#+title:  Weekly Report for 22th to 29nd November 2021
+#+author: Philip Herron
+#+date:   2021-11-29
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+As the previous traits milestone ran over by three weeks, I aim to close out this control flow milestone by the end of this week (3rd December); this means we will get back two of those weeks to avoid skewing the following milestone targets for the upcoming year.
+
+This week I merged bug fixes around the type system and qualified paths, support for array index access via indirection of references and support for the dereference operator overloading. The remaining tasks are merging enum code generation and initial pattern matching support for enum access. Pattern matching will be an ongoing task since it requires a lot of static analysis, but this analysis is not necessary to generate code. The exciting thing about enums is that we are using the qualified_union_type from GCC, which is only used in the ADA front-end, which makes me want to investigate ADA someday.
+
+See: https://gcc.gnu.org/onlinedocs/gccint/Types.html.
+
+Thank you to everyone who continues to support and work on the compiler.
+
+**** Monthly Community Call
+
+We will be having our 8th community call as the first Friday of the month:
+
+- Date and Time 3rd December 2021 at: 14h00 UTC
+- Agenda: https://hackmd.io/gp1sm9foR3upyyvPhJ5ZLg please feel free to add agenda items you wish to see discussed.
+- Jitsi: https://meet.jit.si/259057065581073
+
+** Completed Activities
+
+- Deref Operator Overloading support [[https://github.com/Rust-GCC/gccrs/pull/818][PR818]] [[https://github.com/Rust-GCC/gccrs/pull/821][PR821]] [[https://github.com/Rust-GCC/gccrs/pull/823][PR823]]
+- BugFix QualifiedPath's within traits [[https://github.com/Rust-GCC/gccrs/pull/812][PR812]] [[https://github.com/Rust-GCC/gccrs/pull/813][PR813]]
+- BugFix name mangling on QualifiedPaths [[https://github.com/Rust-GCC/gccrs/pull/819][PR819]]
+- BugFix mutability within the type system for reference and pointer types [[https://github.com/Rust-GCC/gccrs/pull/820][PR820]] [[https://github.com/Rust-GCC/gccrs/pull/817][PR817]]
+- GCC requires TREE_ADDRESSABLE on declarations that require address operations [[https://github.com/Rust-GCC/gccrs/pull/814][PR814]]
+- Cleanup generic substitution code [[https://github.com/Rust-GCC/gccrs/pull/822][PR822]]
+
+*** Contributors this month
+
+- [[https://github.com/mvvsmk][Manoj Kumar]] (new contributor)
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         93 |         93 |     - |
+| In Progress |         17 |         14 |    -3 |
+| Completed   |        246 |        251 |    +5 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   |       5106 | 5337       | +231  |
+| XFAIL     |         21 | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         23 |         24 |    +1 |
+| In Progress |          4 |          4 |     - |
+| Completed   |         86 |         90 |    +4 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |        80% |        94% | +14%  | 20th Sept 2021 | -               | 29th Nov 2021  |
+| Macros and cfg expansion          |         0% |         0% | -     | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |         0% |         0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |         0% |         0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Merge code generation for enums
+- Pattern matching on enums
+
+** Detailed changelog
+
+*** GCC TREE_ADDRESSABLE
+
+GCC requires VAR_DECL's and PARAM_DECL's to be marked with TREE_ADDRESSABLE when the declaration will be used in borrow's ('&' getting the address). This takes into account the implicit addresses when we do autoderef in method resolution/operator-overloading. TREE_ADDRESSABLE if not set allows the optimizers to use registers since no address in memory is required for this declaration, but this means we end up in cases like this:
+
+#+BEGIN_SRC rust
+#[lang = "add_assign"]
+pub trait AddAssign<Rhs = Self> {
+    fn add_assign(&mut self, rhs: Rhs);
+}
+
+impl AddAssign for i32 {
+    fn add_assign(&mut self, other: i32) {
+        *self += other
+    }
+}
+
+fn main() {
+    let mut a = 1;
+    a += 2;
+}
+#+END_SRC
+
+This generated GCC Generic IR such as:
+
+#+BEGIN_SRC rust
+i32 main ()
+{
+  i32 a.1; // <-- This is the copy
+  i32 D.86;
+  i32 a;
+
+  a = 1;
+  a.1 = a; // <-- Taking a copy
+
+  <i32 as AddAssign>::add_assign (&a.1, 2);
+  //                               ^
+  //                              ----
+
+  D.86 = 0;
+  return D.86;
+}
+#+END_SRC
+
+You can see GCC will automatically make a copy of the VAR_DECL resulting bad code-generation. But with the TREE_ADDRESSABLE set this looks like this:
+
+#+BEGIN_SRC rust
+i32 main ()
+{
+  i32 D.86;
+  i32 a;
+
+  a = 1;
+  <i32 as AddAssign>::add_assign (&a, 2);
+  D.86 = 0;
+  return D.86;
+}
+#+END_SRC
+
+The fix here now marks the declarations apropriately for when we need their address or not which then allows the GCC optimizers to work as we expect. For more info see this useful comment https://github.com/Rust-GCC/gccrs/blob/0024bc2f028369b871a65ceb11b2fddfb0f9c3aa/gcc/tree.h#L634-L649
+
+*** Qualified Path BugFix
+
+We found that the implementation of qualified paths in was reliant on some implictly injected names within the name-resolution process so that we could try and at least resolve the root of the qualified path. This implementation was never going to hold up but served as a simple hack to get the type system off the ground during the traits milestone. These hacks and implict names are now removed and qualified paths are now just like TypePaths resolved durin the type checking pass. The bug here was that the qualified path of "<Self as Foo>::A" was unable to resolve the root "<Self as Foo>" since no implicit name was generated here, but now the type system is able to properly project Self as Foo to then probe for A which means the type system is able to handle more complex qualified paths.
+
+#+BEGIN_SRC rust
+pub trait Foo {
+    type A;
+
+    fn boo(&self) -> <Self as Foo>::A;
+}
+
+fn foo2<I: Foo>(x: I) {
+    x.boo();
+}
+#+END_SRC
+
+*** Add implicit indirection to array access
+
+When we have an array-index expr rust allows the array to be a fat-pointer reference and the compiler is required to add in the required implicit indirection. Note: Rust supports this implict indirection in tuple and struct access also.
+
+#+BEGIN_SRC rust
+fn foo(state: &mut [u32; 16], a: usize) {
+    state[a] = 1;
+}
+#+END_SRC
+
+*** Support Dereference operator overloading
+
+Deref operator overloading is a core piece of Rusts control flow mechanism, it adds in support for more complex method resolution cases as part of the autoderef mechanism. It also has served as a good test of the current state of the type system so far. 
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+#[lang = "deref"]
+pub trait Deref {
+    type Target;
+
+    fn deref(&self) -> &Self::Target;
+}
+
+impl<T> Deref for &T {
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        *self
+    }
+}
+
+impl<T> Deref for &mut T {
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        *self
+    }
+}
+
+struct Foo<T>(T);
+impl<T> Deref for Foo<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+fn main() -> i32 {
+    let foo: Foo<i32> = Foo(123);
+    let bar: i32 = *foo;
+
+    unsafe {
+        let a = "%i\n\0";
+        let b = a as *const str;
+        let c = b as *const i8;
+
+        printf(c, bar);
+    }
+
+    0
+}
+#+END_SRC
+
+The interesting piece about dereferences is that the actual deref method that is implemented _always_ returns a reference to the associated type 'Target', this implicitly requires the compiler call this method and because the trait and type checking ensures that the result is a reference it means it can safely be dereferenced by the compiler implicitly. I point this out because simply because the function prototype:
+
+#+BEGIN_SRC rust
+fn deref(&self) -> &Self::Target {
+    &self.0
+}
+#+END_SRC
+
+Here the function type is: 
+
+#+BEGIN_SRC rust
+fn deref(self: &Foo<T>) -> &T { &self.0 }
+#+END_SRC
+
+So the dereference operation even on custom types is always going to return a reference. So the dereference operator overloading is a two step mechanism.
