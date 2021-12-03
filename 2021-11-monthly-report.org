@@ -106,7 +106,7 @@ TODO
 
 *** Refactor TyTy::ADTType
 
-In order to support enums, we could have implemented a new TyTy module for this, to then subsequently update the typechecking code. But in alot of ways enum's are just another type of algebraic data type which also has the side effect of canonicalizing the flow of how we work with these types instead of inventing new paths in the compiler. The change here was that the ADT Type was originally designed for unit-structs, structs and tuple structs. But really an enum is an ADT with multiple variants and struts, tuple structs are ADT's with a single variant and finally a unit-struct is one with no variants. This change was rather large to decouple and refactor ADT's into variants but has helped tackle some technical debt along the way. Thanks to [[https://github.com/flip1995][flip1995]] for point us in this direction.
+In order to support enums, we could have implemented a new TyTy module for this, to then subsequently update the typechecking code. But in alot of ways enum's are just another type of algebraic data type which also has the side effect of canonicalizing the flow of how we work with these types instead of inventing new paths in the compiler. The change here was that the ADT Type was originally designed for unit-structs, structs and tuple structs. But really an enum is an ADT with multiple variants and structs, tuple structs are ADT's with a single variant and finally a unit-struct is one with no variants. This change was rather large to decouple and refactor ADT's into variants but has helped tackle some technical debt along the way. Thanks to [[https://github.com/flip1995][flip1995]] for pointing us in this direction.
 
 *** Add new rust_internal_error
 
