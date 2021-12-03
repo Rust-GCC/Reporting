@@ -315,7 +315,7 @@ The fix here now marks the declarations apropriately for when we need their addr
 
 *** Qualified Path BugFix
 
-We found that the implementation of qualified paths in was reliant on some implictly injected names within the name-resolution process so that we could try and at least resolve the root of the qualified path. This implementation was never going to hold up but served as a simple hack to get the type system off the ground during the traits milestone. These hacks and implict names are now removed and qualified paths are now just like TypePaths resolved durin the type checking pass. The bug here was that the qualified path of "<Self as Foo>::A" was unable to resolve the root "<Self as Foo>" since no implicit name was generated here, but now the type system is able to properly project Self as Foo to then probe for A which means the type system is able to handle more complex qualified paths.
+We found that the implementation of qualified paths in was reliant on some implictly injected names within the name-resolution process so that we could try and at least resolve the root of the qualified path. This implementation was never going to hold up but served as a simple hack to get the type system off the ground during the traits milestone. These hacks and implicit names are now removed and qualified paths are now just like TypePaths resolved during the type checking pass. The bug here was that the qualified path of "<Self as Foo>::A" was unable to resolve the root "<Self as Foo>" since no implicit name was generated here, but now the type system is able to properly project Self as Foo to then probe for A which means the type system is able to handle more complex qualified paths.
 
 #+BEGIN_SRC rust
 pub trait Foo {
