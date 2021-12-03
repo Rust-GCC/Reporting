@@ -161,7 +161,7 @@ Into a single HIR::TraitObjectType
 
 *** Operator Overloading
 
-Rust supports operator overloading of many different operations, we have added support for all the regular arithmetic operators (+,-,*,/,%), compound assignments such as (+=, ...), the unary negation operators (!x, and -x). There is support for the deref operations but there are a few bugs to work though there to get it right. Since we cannot compile libcore yet we require you to define the lang items you want to use within your crate, we have taken the same traits from libcore to be sure that we can compile the correctly.
+Rust supports operator overloading of many different operations, we have added support for all the regular arithmetic operators (+,-,*,/,%), compound assignments such as (+=, ...), the unary negation operators (!x, and -x). There is support for the deref operations but there are a few bugs to work though there to get it right. Since we cannot compile libcore yet we require you to define the lang items you want to use within your crate, we have taken the same traits from libcore to be sure that we can compile them correctly.
 
 #+BEGIN_SRC rust
 extern "C" {
