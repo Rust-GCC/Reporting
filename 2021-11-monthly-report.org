@@ -152,7 +152,7 @@ This test case within the rust testsuite https://github.com/rust-lang/rust/blob/
 type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;
 #+END_SRC
 
-The bug here was that we had two ways in HIR to represent bounds here, and we had an opertunity to desugar our AST from two types:
+The bug here was that we had two ways in HIR to represent bounds here, and we had an opportunity to desugar our AST from two types:
 
 - AST::TraitObjectType
 - AST::TraitObjectTypeOneBound
