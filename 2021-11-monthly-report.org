@@ -110,7 +110,7 @@ In order to support enums, we could have implemented a new TyTy module for this,
 
 *** Add new rust_internal_error
 
-This new API is designed to distinguish between internal compiler errors and actual program errors. Assertions are good but somtimes you want to be able to provide extra contextural information.
+This new API is designed to distinguish between internal compiler errors and actual program errors. Assertions are good but sometimes you want to be able to provide extra contextural information.
 
 *** Handle forward declared items within blocks
 
