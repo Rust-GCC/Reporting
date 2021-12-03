@@ -146,7 +146,7 @@ pub fn main() {
 
 *** Fix unhandled TypeBounds
 
-This test case qithin the rust testsuite https://github.com/rust-lang/rust/blob/d5a0c7cb036032288a4a5443b54ba061ec12ee26/src/test/ui/higher-rank-trait-bounds/hrtb-fn-like-trait-object.rs raised bugs with unhandled type bounds for TypeAlises:
+This test case within the rust testsuite https://github.com/rust-lang/rust/blob/d5a0c7cb036032288a4a5443b54ba061ec12ee26/src/test/ui/higher-rank-trait-bounds/hrtb-fn-like-trait-object.rs raised bugs with unhandled type bounds for TypeAliases:
 
 #+BEGIN_SRC rust
 type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;
