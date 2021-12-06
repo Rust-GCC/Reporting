@@ -1,0 +1,423 @@
+#+title:  Monthly Report for November 2021
+#+author: Philip Herron
+#+date:   2021-11-06
+
+** November Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+November was a busy month where we added lang item's and operator overloading, particularly dereference operator overloading, which is critical in terms of a control flow for method resolution. The remaining tasks are merging enum code generation and initial pattern matching support for enum access. Pattern matching will be an ongoing task after this milestone since it requires a lot of static analysis in the match arms, but it is not necessary to generate code. The exciting thing about enums is that we use the QUAL_UNION_TYPE from GCC, which is only used in the Ada front-end, a kind of GCC specific tree similar to a tagged union you might write in C. Ada is an interesting front-end as it also contains many similarities to Rust in that it even contains overflow traps: https://godbolt.org/z/5oTh79hnx
+
+I was trying to close out this milestone on 3rd December 2021 but have missed this target, so it will likely be 8th December 2021 when I finish and merge the lesser cleanup's on the enum and pattern matching work. However, this still means we have won back nearly two weeks of the lost time from the previous traits milestone.
+
+To close out the year, I will be testing GCC Rust in anger on some actual rust code (https://github.com/Rust-GCC/gccrs/issues/682), finding bugs as early as possible is crucial to the project timeline. Since we don't support macro's yet, Philipp Krones has kindly been porting this project to compile with no_std and no_core; this means porting in all the lang items from libcore required for this project. So, in turn, it means we are testing much of the functionality from libcore, which is exciting. So when we finish the next milestone of macros and cfg expansion, we should be getting very close to compiling and using libcore.
+
+Thank you to everyone who continues to support and work on the compiler.
+
+**** Monthly Community Call
+
+We had out 9th community call on 3rd December 2021 and you can find the meeting notes here: https://github.com/Rust-GCC/Reporting/blob/main/2021-12-03-community-call.md on 10th December 2021.
+
+**** Huawei - Modern Compilers and Languages Technologies 2021 Conference
+
+Philip will be giving a talk with Philipp Krones and Jeremy Bennet on "The Rust Ecosystem and GCC-rs" 
+
+** Completed Activities
+
+- Tag 'rust_fatal_error' as 'noreturn' [[https://github.com/Rust-GCC/gccrs/pull/777][PR777]] [[https://github.com/Rust-GCC/gccrs/pull/780][PR780]]
+- Add location info in AST::TypeBoundWhereClauseItem and HIR::TypeBoundWhereClauseItem [[https://github.com/Rust-GCC/gccrs/pull/778][PR778]]
+- Add new rust_internal_error for specific ICE's [[https://github.com/Rust-GCC/gccrs/pull/779][PR779]]
+- Merge Type Checking code for enums [[https://github.com/Rust-GCC/gccrs/pull/781][PR781]]
+- Refactor TyTy::ADTType into one which can contain multiple variants  [[https://github.com/Rust-GCC/gccrs/pull/781][PR781]]
+- Get rid of lambda in AST::TypePath [[https://github.com/Rust-GCC/gccrs/pull/783][PR783]]
+- Track inline module scopes for path module imports [[https://github.com/Rust-GCC/gccrs/pull/785][PR785]]
+- Save make check-rust artifacts for GHA [[https://github.com/Rust-GCC/gccrs/pull/787][PR787]]
+- Add new -frust-crate option to specify crate name [[https://github.com/Rust-GCC/gccrs/pull/788][PR788]]
+- Get rid of lambda TyTy::TupleType iterate fields [[https://github.com/Rust-GCC/gccrs/pull/791][PR791]]
+- Change DefId from uint64_t with bitmask into a struct [[https://github.com/Rust-GCC/gccrs/pull/792][PR792]]
+- Fix unhandled TypeBounds [[https://github.com/Rust-GCC/gccrs/pull/794][PR794]]
+- Documentation for clang-format usage [[https://github.com/Rust-GCC/gccrs/pull/795][PR795]] [[https://github.com/Rust-GCC/gccrs/pull/802][PR802]] [[https://github.com/Rust-GCC/gccrs/pull/803][PR803]]
+- Handle forward declared items within blocks [[https://github.com/Rust-GCC/gccrs/pull/796][PR796]]
+- Fix some missing cases of constant folding [[https://github.com/Rust-GCC/gccrs/pull/798][PR798]]
+- Merge LangItems work and operator overloading support [[https://github.com/Rust-GCC/gccrs/pull/801][PR801]]
+- Remove Btype, Bexpression, etc. abstractions over gcc trees [[https://github.com/Rust-GCC/gccrs/pull/805][PR805]]
+- Fix MethodCalls for covariant impl blocks [[https://github.com/Rust-GCC/gccrs/pull/810][PR810]]
+- Remove implicit name hack for trait associated types [[https://github.com/Rust-GCC/gccrs/pull/811][PR811]]
+- Deref Operator Overloading support [[https://github.com/Rust-GCC/gccrs/pull/818][PR818]] [[https://github.com/Rust-GCC/gccrs/pull/821][PR821]] [[https://github.com/Rust-GCC/gccrs/pull/823][PR823]]
+- BugFix QualifiedPath's within traits [[https://github.com/Rust-GCC/gccrs/pull/812][PR812]] [[https://github.com/Rust-GCC/gccrs/pull/813][PR813]]
+- BugFix name mangling on QualifiedPaths [[https://github.com/Rust-GCC/gccrs/pull/819][PR819]]
+- BugFix mutability within the type system for reference and pointer types [[https://github.com/Rust-GCC/gccrs/pull/820][PR820]] [[https://github.com/Rust-GCC/gccrs/pull/817][PR817]]
+- GCC requires TREE_ADDRESSABLE on declarations that require address operations [[https://github.com/Rust-GCC/gccrs/pull/814][PR814]]
+- Cleanup generic substitution code [[https://github.com/Rust-GCC/gccrs/pull/822][PR822]]
+
+*** Contributors this month
+
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/mathstuf][Ben Boeckel]] (new contributor)
+- [[https://github.com/cls][Connor Lane Smith]] (new contributor)
+- [[https://github.com/mvvsmk][Manoj Kumar]] (new contributor)
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         99 |         93 |    -6 |
+| In Progress |         12 |         14 |    +2 |
+| Completed   |        234 |        251 |   +17 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   |       4844 |       5337 | +493  |
+| XFAIL     |         21 |         21 | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         22 |         24 |    +2 |
+| In Progress |          3 |          4 |    +1 |
+| Completed   |         84 |         90 |    +6 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |        55% |        97% | +42%  | 20th Sept 2021 | -               | 29th Nov 2021  |
+| Macros and cfg expansion          |         0% |         0% | -     | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |         0% |         0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |         0% |         0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Merge enum work
+- Merge pattern matching
+- Testing GCC Rust on https://github.com/Rust-GCC/gccrs/issues/682
+
+** Detailed changelog
+
+*** Refactor TyTy::ADTType
+
+In order to support enums, we could have implemented a new TyTy module for this, to then subsequently update the typechecking code. But in alot of ways enum's are just another type of algebraic data type which also has the side effect of canonicalizing the flow of how we work with these types instead of inventing new paths in the compiler. The change here was that the ADT Type was originally designed for unit-structs, structs and tuple structs. But really an enum is an ADT with multiple variants and structs, tuple structs are ADT's with a single variant and finally a unit-struct is one with no variants. This change was rather large to decouple and refactor ADT's into variants but has helped tackle some technical debt along the way. Thanks to [[https://github.com/flip1995][flip1995]] for pointing us in this direction.
+
+*** Add new rust_internal_error
+
+This new API is designed to distinguish between internal compiler errors and actual program errors. Assertions are good but sometimes you want to be able to provide extra contextural information.
+
+*** Handle forward declared items within blocks
+
+Rust allows for Items such as functions to be declared at the bottom of a BlockExpr which can be referenced at any point within that conxtext such as: https://godbolt.org/z/PGqnz1nve
+
+#+BEGIN_SRC rust
+pub fn main() {
+    let a;
+    a = foo { a: 123, b: 456f32 };
+
+    let mut a = 123;
+    a = bar(a);
+
+    let mut b = 456f32;
+    b = bar(b);
+
+    let aa = X;
+
+    let bb:[i32; X];
+
+    fn bar<T>(x: T) -> T {
+        x
+    }
+
+    struct foo {
+        a: i32,
+        b: f32,
+    };
+
+    const X:usize = 2;
+}
+#+END_SRC
+
+*** Fix unhandled TypeBounds
+
+This test case within the rust testsuite https://github.com/rust-lang/rust/blob/d5a0c7cb036032288a4a5443b54ba061ec12ee26/src/test/ui/higher-rank-trait-bounds/hrtb-fn-like-trait-object.rs raised bugs with unhandled type bounds for TypeAliases:
+
+#+BEGIN_SRC rust
+type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;
+#+END_SRC
+
+The bug here was that we had two ways in HIR to represent bounds here, and we had an opportunity to desugar our AST from two types:
+
+- AST::TraitObjectType
+- AST::TraitObjectTypeOneBound
+
+Into a single HIR::TraitObjectType
+
+*** Operator Overloading
+
+Rust supports operator overloading of many different operations, we have added support for all the regular arithmetic operators (+,-,*,/,%), compound assignments such as (+=, ...), the unary negation operators (!x, and -x). There is support for the deref operations but there are a few bugs to work though there to get it right. Since we cannot compile libcore yet we require you to define the lang items you want to use within your crate, we have taken the same traits from libcore to be sure that we can compile them correctly.
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+#[lang = "add"]
+pub trait Add<Rhs = Self> {
+    type Output;
+
+    fn add(self, rhs: Rhs) -> Self::Output;
+}
+
+impl Add for i32 {
+    type Output = i32;
+
+    fn add(self, other: i32) -> i32 {
+        self + other
+    }
+}
+
+struct Foo(i32);
+impl Add for Foo {
+    type Output = Foo;
+
+    fn add(self, other: Foo) -> Foo {
+        Foo(self.0 + other.0)
+    }
+}
+
+
+fn main() {
+    let res;
+    res = Foo(1) + Foo(2);
+
+    unsafe {
+        let a = "%i\n\0";
+        let b = a as *const str;
+        let c = b as *const i8;
+
+        printf(c, res.0);
+    }
+}
+#+END_SRC
+
+The purpose of this test case is to ensure that when we add the Foo structure together that it will break down into calling the operator overload for i32. It should be noted that when you turn on optimizations these function calls are fully inlined just like C++ operator overloads.
+
+See compiler explorer for more information https://godbolt.org/z/95bc4eWPW
+
+*** Covariant Self's within impl blocks
+
+Impl blocks on rust support all types without bounds. Which mens the specified Self type for an impl block in this examples case is a reference to a generic type parameter. This means when we do a method call we must handle this case. Method resolution breaks down into two phases, the candidate probe then the actual resolution from the candidates. The first is about searching for a function named correctly which matches the impl block Self type then we use the autoderef mechanism to match the self parameter to find the candidate. Probing for candidates in method calls is a little bit unclear to me yet, but I believe the correct mechanism is meant to be looking for any impl block with a function named correctly then check via autodref if our receiver can be autoderef'd to the impl blocks implicit Self type to find all the potential candidates. Then we autoderef on small self.
+
+#+BEGIN_SRC rust
+
+pub trait Foo {
+    type Target;
+
+    fn bar(&self) -> &Self::Target;
+}
+
+impl<T> Foo for &T {
+    type Target = T;
+
+    fn bar(&self) -> &T {
+        *self
+    }
+}
+
+pub fn main() {
+    let a: i32 = 123;
+    let b: &i32 = &a;
+
+    b.bar();
+}
+#+END_SRC
+
+*** Remove GCC abstraction types
+
+- The goal of GCC Rust has always been to make a GCC quality front-end for Rust.
+  - This means this goal comes first before any long term goal of porting the code to new compiler platforms etc.
+- The GCC IR is very suitable for further static analysis, and the abstractions will make this very awkward.
+  - In the long term, we could potentially look at building a borrow checker at the GENERIC tree level, which might have some interesting code to share with wider GCC.
+- Constant Folding
+  - Const Generics will be very awkward until this is removed.
+  - The abstraction requires features such as constant Folding, which does not fit very well right now.
+
+So overall removing the abstraction is going to make some things much easier to work with. For example, in the short term, code generation for unions/ADTs/match-expr could be simplified a lot if we remove this. It also might help attract more GCC people to work with the backend code generation piece to clean up the code here.
+
+See: https://github.com/Rust-GCC/gccrs/issues/412
+
+*** GCC TREE_ADDRESSABLE
+
+GCC requires VAR_DECL's and PARAM_DECL's to be marked with TREE_ADDRESSABLE when the declaration will be used in borrow's ('&' getting the address). This takes into account the implicit addresses when we do autoderef in method resolution/operator-overloading. TREE_ADDRESSABLE if not set allows the optimizers to use registers since no address in memory is required for this declaration, but this means we end up in cases like this:
+
+#+BEGIN_SRC rust
+#[lang = "add_assign"]
+pub trait AddAssign<Rhs = Self> {
+    fn add_assign(&mut self, rhs: Rhs);
+}
+
+impl AddAssign for i32 {
+    fn add_assign(&mut self, other: i32) {
+        *self += other
+    }
+}
+
+fn main() {
+    let mut a = 1;
+    a += 2;
+}
+#+END_SRC
+
+This generated GCC Generic IR such as:
+
+#+BEGIN_SRC rust
+i32 main ()
+{
+  i32 a.1; // <-- This is the copy
+  i32 D.86;
+  i32 a;
+
+  a = 1;
+  a.1 = a; // <-- Taking a copy
+
+  <i32 as AddAssign>::add_assign (&a.1, 2);
+  //                               ^
+  //                              ----
+
+  D.86 = 0;
+  return D.86;
+}
+#+END_SRC
+
+You can see GCC will automatically make a copy of the VAR_DECL resulting bad code-generation. But with the TREE_ADDRESSABLE set this looks like this:
+
+#+BEGIN_SRC rust
+i32 main ()
+{
+  i32 D.86;
+  i32 a;
+
+  a = 1;
+  <i32 as AddAssign>::add_assign (&a, 2);
+  D.86 = 0;
+  return D.86;
+}
+#+END_SRC
+
+The fix here now marks the declarations apropriately for when we need their address or not which then allows the GCC optimizers to work as we expect. For more info see this useful comment https://github.com/Rust-GCC/gccrs/blob/0024bc2f028369b871a65ceb11b2fddfb0f9c3aa/gcc/tree.h#L634-L649
+
+*** Qualified Path BugFix
+
+We found that the implementation of qualified paths in was reliant on some implictly injected names within the name-resolution process so that we could try and at least resolve the root of the qualified path. This implementation was never going to hold up but served as a simple hack to get the type system off the ground during the traits milestone. These hacks and implicit names are now removed and qualified paths are now just like TypePaths resolved during the type checking pass. The bug here was that the qualified path of "<Self as Foo>::A" was unable to resolve the root "<Self as Foo>" since no implicit name was generated here, but now the type system is able to properly project Self as Foo to then probe for A which means the type system is able to handle more complex qualified paths.
+
+#+BEGIN_SRC rust
+pub trait Foo {
+    type A;
+
+    fn boo(&self) -> <Self as Foo>::A;
+}
+
+fn foo2<I: Foo>(x: I) {
+    x.boo();
+}
+#+END_SRC
+
+*** Add implicit indirection to array access
+
+When we have an array-index expr rust allows the array to be a fat-pointer reference and the compiler is required to add in the required implicit indirection. Note: Rust supports this implict indirection in tuple and struct access also.
+
+#+BEGIN_SRC rust
+fn foo(state: &mut [u32; 16], a: usize) {
+    state[a] = 1;
+}
+#+END_SRC
+
+*** Support Dereference operator overloading
+
+Deref operator overloading is a core piece of Rusts control flow mechanism, it adds in support for more complex method resolution cases as part of the autoderef mechanism. It also has served as a good test of the current state of the type system so far. 
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+#[lang = "deref"]
+pub trait Deref {
+    type Target;
+
+    fn deref(&self) -> &Self::Target;
+}
+
+impl<T> Deref for &T {
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        *self
+    }
+}
+
+impl<T> Deref for &mut T {
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        *self
+    }
+}
+
+struct Foo<T>(T);
+impl<T> Deref for Foo<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+fn main() -> i32 {
+    let foo: Foo<i32> = Foo(123);
+    let bar: i32 = *foo;
+
+    unsafe {
+        let a = "%i\n\0";
+        let b = a as *const str;
+        let c = b as *const i8;
+
+        printf(c, bar);
+    }
+
+    0
+}
+#+END_SRC
+
+The interesting piece about dereferences is that the actual deref method that is implemented _always_ returns a reference to the associated type 'Target', this implicitly requires the compiler call this method and because the trait and type checking ensures that the result is a reference it means it can safely be dereferenced by the compiler implicitly. I point this out because simply because the function prototype:
+
+#+BEGIN_SRC rust
+fn deref(&self) -> &Self::Target {
+    &self.0
+}
+#+END_SRC
+
+Here the function type is: 
+
+#+BEGIN_SRC rust
+fn deref(self: &Foo<T>) -> &T { &self.0 }
+#+END_SRC
+
+So the dereference operation even on custom types is always going to return a reference. So the dereference operator overloading is a two step mechanism.
