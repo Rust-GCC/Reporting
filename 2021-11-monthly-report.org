@@ -8,13 +8,22 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-TODO
+November was a busy month where we added lang item's and operator overloading, particularly dereference operator overloading, which is critical in terms of a control flow for method resolution. The remaining tasks are merging enum code generation and initial pattern matching support for enum access. Pattern matching will be an ongoing task after this milestone since it requires a lot of static analysis in the match arms, but it is not necessary to generate code. The exciting thing about enums is that we use the QUAL_UNION_TYPE from GCC, which is only used in the Ada front-end, a kind of GCC specific tree similar to a tagged union you might write in C. 
+
+I was trying to close out this milestone on 3rd December 2021 but have missed this target, so it will likely be 8th December 2021 when I finish and merge the lesser cleanup's on the enum and pattern matching work. However, this still means we have won back nearly two weeks of the lost time from the previous traits milestone.
+
+To close out the year, I will be testing GCC Rust in anger on some actual rust code (https://github.com/Rust-GCC/gccrs/issues/682), finding bugs as early as possible is crucial to the project timeline. Since we don't support macro's yet, Philipp Krones has kindly been porting this project to compile with no_std and no_core; this means porting in all the lang items from libcore required for this project. So, in turn, it means we are testing much of the functionality from libcore, which is exciting. So when we finish the next milestone of macros and cfg expansion, we should be getting very close to compiling and using libcore.
 
 Thank you to everyone who continues to support and work on the compiler.
 
 **** Monthly Community Call
 
-TODO
+We had out 9th community call on 3rd December 2021 and you can find the meeting notes here: https://github.com/Rust-GCC/Reporting/blob/main/2021-12-03-community-call.md
+
+**** Huawei - Modern Compilers and Languages Technologies 2021 Conference
+
+
+Philip will be giving a talk with Philippp Krones and Jeremy Bennet on "The Rust Ecosystem and GCC-rs"
 
 ** Completed Activities
 
@@ -58,24 +67,24 @@ TODO
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |         99 |            |       |
-| In Progress |         12 |            |       |
-| Completed   |        234 |            |       |
+| TODO        |         99 |         93 |    -6 |
+| In Progress |         12 |         14 |    +2 |
+| Completed   |        234 |        251 |   +17 |
 
 *** Test Cases
 
 | TestCases | Last Month | This Month | Delta |
 |-----------+------------+------------+-------|
-| Passing   |       4844 |            |       |
-| XFAIL     |         21 |            |       |
+| Passing   |       4844 |       5337 | +493  |
+| XFAIL     |         21 |         21 | -     |
 
 *** Bugs
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |         22 |            |       |
-| In Progress |          3 |            |       |
-| Completed   |         84 |            |       |
+| TODO        |         22 |         24 |    +2 |
+| In Progress |          3 |          4 |    +1 |
+| Completed   |         84 |         90 |    +6 |
 
 *** Milestones Progress
 
@@ -85,7 +94,7 @@ TODO
 | Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
 | Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
 | Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
-| Control Flow 2 - Pattern Matching |        55% |            |       | 20th Sept 2021 | -               | 29th Nov 2021  |
+| Control Flow 2 - Pattern Matching |        55% |        97% | +42%  | 20th Sept 2021 | -               | 29th Nov 2021  |
 | Macros and cfg expansion          |         0% |         0% | -     | 1st Dec 2021   | -               | 28th Mar 2022  |
 | Imports and Visibility            |         0% |         0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
 | Const Generics                    |         0% |         0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
@@ -100,7 +109,9 @@ TODO
 
 ** Planned Activities
 
-
+- Merge enum work
+- Merge pattern matching
+- Testing GCC Rust on https://github.com/Rust-GCC/gccrs/issues/682
 
 ** Detailed changelog
 
