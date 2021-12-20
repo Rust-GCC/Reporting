@@ -32,7 +32,7 @@ The Rust for Linux project is a major for Linux, in my opinion, regardless of GC
 - GCC Rust will have a slower pace of change than Rustc
 - Support all GCC backends
 - Gain access to all GCC flags and optimizers
-- Provide contracts to LLVM in benchmarks
+- Provide contrast to LLVM in benchmarks
 - Investment into the GCC toolchain is preserved
  - Vendors already invested in GCC will gain GCC support automatically
  - Backporting the front-end onto older GCC's
