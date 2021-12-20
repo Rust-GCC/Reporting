@@ -1,0 +1,434 @@
+#+title:  GCC Rust in 2021
+#+author: Philip Herron
+#+date:   2021-12-17
+
+* Overview
+  
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+** GCC Rust in 2021
+
+GCC Rust is a project dating back to 2014, when Rust was still in flux. It became tough to keep up with everything, so the project stalled out. It wasn't until early 2019 I joined forces with Joel, who wrote a new lexer, parser and AST, which vastly helped get the project off the ground again. During 2019 we started making steady progress getting the project going again in terms of getting the compile pipeline setup and initial proof of concepts on some type checking and code generation.
+
+Come late 2020, I went full time with the sponsorship from Open Source Security, inc and Embecosm. With the mutual connections in the GCC Steering Committee, I have been fortunate to be surrounded by so much experience to keep me right and the chance to work with such talented people. Of course, there is always the risk of how much you don't know in large projects, so to mitigate this, I have tried to keep milestones as short as possible with clear goals of the Rust code we want to support at each phase. My personal aim has always been to maximize the funding and trust as best I can from those who sponsor me to the community that this compiler is part of. This is why my status reports are freely available.
+
+My personal motivation has always been that Rust is a fascinating language primarily because of the Type System and modern features like the Match Expression being available in a native language without a garbage collector. The project initially started because I love working with GCC front-end code, and it was a proof of concept to try and clean the language in deep detail.
+
+Progressively it began to evolve into an idea that we could have someday a complete GCC quality front-end for Rust. The Rust for Linux project seems more a question of time than Rusts capabilities at this point. Upon merging the Rust support into the Linux kernel, it will mean a few issues will arise:
+
+1. Linux is compiled mainly with GCC, but the Rustc toolchain is LLVM based
+2. Since its inception, it will not be possible to build Linux with a full GPL-based toolchain for the first time.
+3. GCC Plugins within the kernel tree
+4. Mixed binaries (GCC vs LLVM) will lose the support of both CFI, LTO
+
+The Rust for Linux project is a major for Linux, in my opinion, regardless of GCC Rust. Though I believe GCC Rust will fill in these gaps and provide some more benefits.
+
+- Eliminate the mixed binary problem as this is a full GCC based toolchain for Rust.
+ - https://www.cs.ucy.ac.cy/~eliasathan/papers/tops20.pdf
+- Provide support for GCC plugins on Rust code
+- GCC Plugins access
+ - Many security passes are based on GCC plugins
+- GPL based toolchain
+- GCC Rust will have a slower pace of change than Rustc
+- Support all GCC backends
+- Gain access to all GCC flags and optimizers
+- Provide contracts to LLVM in benchmarks
+- Investment into the GCC toolchain is preserved
+ - Vendors already invested in GCC will gain GCC support automatically
+ - Backporting the front-end onto older GCC's
+- Architectures support
+
+Thanks to the [[https://www.reddit.com/user/matthieum/][matthieum]] (https://www.reddit.com/r/rust/comments/racv8r/gcc_rust_monthly_report_12_november_2021/hnm99pb/?context=3) for these additional points:
+
+1. A GCC front-end grants instantaneous recognition to a language.
+2. GCC is the default compiler that most Linux distributions ship. This lowers the bar for Rust adoption.
+3. It's easier to convince distribution maintainers to enable another front-end by default in a project than to set up another toolchain.
+
+Overall we maintain that GCC Rust is not in competition with Rustc but will live alongside Rustc as an alternative that people may prefer depending on their situation or requirements. However, it must also be said we do not wish to be a mechanism to bypass the Rust RFC process for language changes.
+
+Moving forward into next year, we again hope to be part of Google Summer of Code 2022 and to push forward and compile the Rust standard library and begin testing the Rustc test suite this time next year.
+
+*** Thanks
+
+Thanks so much to all the contributors of GCC Rust, precisely:
+
+1. Brad Spengler from Open Source Security, inc.
+2. Jeremy Bennett from Embecosm.
+3. David Edelsohn from GCC steering committee.
+
+You have made 2021 a fantastic year for me in particular, and I aim to continue working hard to maximise your faith in this project. Each of you has decades of experience, which is vital for the project's future success.
+
+#+CAPTION: GCC Rust Mug
+#+NAME:   fig:mug
+[[./gccrs-mug.png]]
+
+** Achievements
+
+*** GSOC 2021
+
+Even though GCC Rust is still in an early development phase, I give regular updates to the GCC steering committee, which has provided two major benefits.
+
+- Getting project advice from those who have decades of experience 
+- Providing the privilege of being part of Google Summer of Code 2021
+
+Two student proposals stood out to me:
+
+- Dead Code Analysis
+- Cargo integration
+
+The dead-code analysis is a crucial pass in any language that helps clean up code. Although the compiler is not complete, Thomas Young has provided a solid framework to enhance over time. When people use Rust, they rarely invoke the compiler directly but use the Rust build tool called Cargo. This tool is a key component that we must have as part of our toolchain. Arthur had a clever proposal to take advantage of the internals of Cargo to add gccrs as a subcommand.
+
+See: https://summerofcode.withgoogle.com/archive/2021/organizations/5653860256841728
+
+*** Talks
+
+- Rust Bash: https://youtu.be/Gm6gw1fqMwA?t=4035
+- BCS and Rust London: (used to be on youtube)
+- LPC 2021: https://www.youtube.com/watch?v=chs9LxT9PAg
+- Huawei - Modern Compilers and Languages Technologies 2021 Conference: Private
+
+*** Technical
+
+Below are just some of the technical achievements I wish to write about.
+
+**** Unions and Enums
+
+Mark Wielaard has been an active contributor through 2021 and successfully navigated an early code base, which was not an easy task to give us union support within the compiler. This was just one of those occasions that made my week. Knowing that the compiler code was at least navigatable by others. He was able to take this forward into enums which were big tasks involving a refactor of our Algebraic data type system to support multiple variants. Still, he was able to do a great job. Thanks, Mark.
+
+**** Module's
+
+We have another Marc who joined in the craic early on. One of his major contributions has been the module keyword in Rust. This complex change involved hitting many issues with our Path resolution system. It was still pretty naive early on but tackling this rattled out the bugs pretty early, which is key to keeping to a tight timeline. He is also the driving force behind adding all the alternative Rust implementations onto compiler explorer and rapidly fixing any bugs, and supporting any new contributors to GCC Rust in general. Thanks, Marc.
+
+**** GDB debugging
+
+Upon starting this project, we tried our best to track location info from the get-go within the AST. This is then preserved during HIR lowering. When creating our gimple, the location info enhances all types and statement/expression info, so we already have working GDB support. However, there are many gaps and places where we can improve this from missing location info and getting proper rust gdb integration.
+
+#+BEGIN_SRC bash
+(gdb) start
+Temporary breakpoint 1 at 0x40126a: file ../gccrs/gcc/testsuite/rust/compile/torture/generics9.rs, line 14.
+Starting program: /home/philbert/workspace/gcc/gccrs-build/test 
+Temporary breakpoint 1, main () at ../gccrs/gcc/testsuite/rust/compile/torture/generics9.rs:14
+14          let a: GenericStruct<i32> = GenericStruct::<i32>::new(123, 456);
+(gdb) n
+15          let aa: i32 = a.get();
+(gdb) p a
+$1 = {0: 123, 1: 456}
+(gdb) n
+18          let b: GenericStruct<u32> = GenericStruct::<_>::new(123, 456);
+(gdb) s
+TestCrate::GenericStruct<u32>::new (a=123, b=456) at ../gccrs/gcc/testsuite/rust/compile/torture/generics9.rs:5
+5               GenericStruct(a, b)
+#+END_SRC
+
+We have had help from GDB developers to get our integrations spot on such as the tuple structs where fields must be prefixed with a double underscore for example.
+
+**** Hello World
+
+Hello World is always a vital piece of any milestone of a compiler. For GCC Rust we have not implemented macro's yet; however, we have taken advantage of unsafe blocks calling into the C ABI printf. This was key so we could enhance our test suite with execution tests to match output.
+
+**** Traits and dynamic dispatch
+
+Type-bound and dynamic dispatch were both aspects of Rust I was anxious about because it involves virtual dispatch, and the second requires compile-time resolution. These are key things to get right moving forward in the type system and code generation.
+
+#+BEGIN_SRC rust
+fn static_dispatch<T: Bar>(t: &T) {
+    t.baz();
+}
+
+fn dynamic_dispatch(t: &dyn Bar) {
+    t.baz();
+}
+
+fn main() {
+    let a;
+    a = &Foo(123);
+
+    static_dispatch(a);
+    dynamic_dispatch(a);
+}
+#+END_SRC
+
+see: https://godbolt.org/z/71vhWsY4z
+
+*** Road Bumps
+
+Below are some of Rust's more exciting parts that have made me look twice before implementing them. Some of which I think could benefit from more detailed documentation.
+
+**** Tuple Struct initialisation
+
+#+BEGIN_SRC rust
+struct Foo(i64 bool);
+ 
+pub fn main() {
+   let a;
+   a = Foo{0: 123, 1: true};
+}
+#+END_SRC
+
+We hit this test case early on when trying different constructor variants for ADT's; TupleStructs are usually constructed using the regular Tuple syntax, though this test case demonstrates how the compiler implicitly creates implicit field names of the index. So it is almost an implementation detail that this works the way it does rather than being specified in the syntax of the language, which is pretty neat.
+
+see: https://godbolt.org/z/PEGEWae4f
+
+**** Qualified Paths
+
+As part of my work into traits, this includes qualified paths. I have been investigating some test cases around qualified paths, and this one had me confused: https://github.com/rust-lang/rust/blob/master/src/test/ui/qualified/qualified-path-params-2.rs.
+
+The associated path <S as Tr>::A on its own will resolve to unit-struct S so when the final segment of ::f<u8> i would have assumed this would have resolved to the type of the impl function f substituted with u8. I don't see why this is ambiguous. I have, however, received an explanation on the Rust Zulip server https://rust-lang.zulipchat.com/#narrow/stream/122651-general/topic/Ambiguous.20associated.20types/near/251210283.
+
+This is interesting since associated types are not supported on impl blocks; the rustc compiler will enforce that all associated types must come from QualifiedPaths. This is to force the path to always be of the form <A as B>::C. When inherently associated types are stabilized, this will need some work. The GCC Rust implementation currently ICE's for this test case see https://github.com/Rust-GCC/gccrs/issues/843.
+
+See: [[https://doc.rust-lang.org/reference/paths.html#qualified-paths][QualifiedPathInType]]
+
+**** Never Type
+
+Rust has a never type which is pretty interesting. In c/c++, you can use the attribute no_return to signify that this function is never going to return. In Rust, they take this concept to its full with the never type, so for example, below: 
+
+#+BEGIN_SRC rust
+fn test() {
+   let a = return;
+   let b = a + 123;
+   a = 456;
+}
+#+END_SRC
+
+You can see 'a' is equal to the return expression, which will, in this context, never return. So even though everything after the first assignment will never get executed because of the return expression, Rust can fully type this function.  The interesting piece is if you remove the final assignment it will fail to compile. The functionality here is down to a key piece of the type system, which is more evident in closures than here. Still, in the above 'b = a + 123', the types here are never type plus an integer inference variable, and there is no implementation of never type plus integer; here Rust actually returns another inference variable with a specified type-bound that requires the ability to add numbers together. This means the final assignment allows the type system to know that 'a' is an integer, albeit an uninitialized one, but this code is still safe because of the return expression.
+
+**** Method resolution 
+
+Method resolution is a multi-variant task; it involves the autoderef mechanism, but more importantly, there is an implicit ordering of the candidates that is key as plain old Impl block methods are always prefered over trait's. 
+
+#+BEGIN_SRC rust
+struct Foo {}
+
+trait Bar where Self:Sized {
+  fn bar(self) {
+      println!("In trait def!")
+  }
+}
+
+impl Foo {
+  fn bar(self) {
+    println!("In struct impl!")
+  }
+}
+
+impl Bar for Foo {
+  fn bar(self) {
+    println!("In trait impl!")
+  }
+}
+
+fn main() {
+  let mut f = Foo{};
+  f.bar();
+}
+#+END_SRC
+
+This test case is all about showing even though there are two duplicate methods here, we enforce that the impl block method is prefered first. Much of this is lacking documentation can relies on reading the Rustc source-code.
+
+see:
+https://rustc-dev-guide.rust-lang.org/method-lookup.html
+https://doc.rust-lang.org/nightly/nomicon/dot-operator.html
+
+**** Add check for duplicate overlapping impl-items
+
+Rust allows multiple impl blocks to give a generic data type specialization. But suppose the programmer adds a generic impl for a duplicate method. In that case, it will become impossible to distinguish the method 'bar' in each of these specialized impl blocks for method resolution. Since your receiver could be Foo<_ (inference variable)> which could resolve to Foo<isize> or Foo<char>. see: rustc --explain E0592
+
+#+BEGIN_SRC rust
+struct Foo<A>(A);
+
+impl Foo<isize> {
+    fn bar(self) -> isize {
+        self.0
+    }
+}
+
+impl Foo<char> {
+    fn bar(self) -> char {
+        self.0
+    }
+}
+
+impl<T> Foo<T> {
+    fn bar(self) -> T {
+        self.0
+    }
+}
+#+END_SRC
+
+**** Support Dereference operator overloading
+
+Deref operator overloading is a core piece of Rusts control flow mechanism, it adds in support for more complex method resolution cases as part of the autoderef mechanism. It also has served as a good test of the current state of the type system so far. 
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+#[lang = "deref"]
+pub trait Deref {
+    type Target;
+
+    fn deref(&self) -> &Self::Target;
+}
+
+impl<T> Deref for &T {
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        *self
+    }
+}
+
+impl<T> Deref for &mut T {
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        *self
+    }
+}
+
+struct Foo<T>(T);
+impl<T> Deref for Foo<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+fn main() -> i32 {
+    let foo: Foo<i32> = Foo(123);
+    let bar: i32 = *foo;
+
+    unsafe {
+        let a = "%i\n\0";
+        let b = a as *const str;
+        let c = b as *const i8;
+
+        printf(c, bar);
+    }
+
+    0
+}
+#+END_SRC
+
+The interesting piece about dereferences is that the actual deref method that is implemented _always_ returns a reference to the associated type 'Target', this implicitly requires the compiler call this method and because the trait and type checking ensures that the result is a reference it means it can safely be dereferenced by the compiler implicitly. I point this out because simply because the function prototype:
+
+#+BEGIN_SRC rust
+fn deref(&self) -> &Self::Target {
+    &self.0
+}
+#+END_SRC
+
+Here the function type is: 
+
+#+BEGIN_SRC rust
+fn deref(self: &Foo<T>) -> &T { &self.0 }
+#+END_SRC
+
+So the dereference operation even on custom types is always going to return a reference. So the dereference operator overloading is a two step mechanism.
+
+
+** Overall Status
+
+Gource: https://www.youtube.com/watch?v=QkdGY9VljTc
+
+*** Contributors this year
+
+- [[https://github.com/philberty/][Philip Herron]] 437
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]] 60
+- [[https://github.com/thomasyonug][Thomas Young]] 40
+- [[https://github.com/CohenArthur][Arthur Cohen]] 39
+- [[https://github.com/tschwinge][Thomas Schwinge]] 30
+- [[https://github.com/dkm][Marc Poulhiès]]  28
+- [[https://github.com/SimplyTheOther][Joel]] 19
+- [[https://github.com/YizhePKU][Yizhe]] 18
+- [[https://github.com/dafaust][David Faust]] 15
+- [[https://github.com/tromey][Tom Tromey]]  8
+- [[https://github.com/npate012][Nirmal Patel]] 7
+- [[https://github.com/mathstuf][Ben Boeckel]] 6
+- [[https://github.com/lrh2000][lrh2000]] 4
+- [[https://github.com/humancalico][Akshat Agarwal]] 3
+- [[https://github.com/unseddd][Nym Seddon]] 2
+- [[https://github.com/NalaGinrut][Nala Ginrut]] 2
+- [[https://github.com/teromene][Lyra]] 2
+- [[https://github.com/rodrigovalle][Rodrigo Valle]] 2
+- [[https://github.com/asakovets][Alexey Sakovets]] 1
+- [[https://github.com/karcherm][Michael Karcher]] 1
+- Christophe Lyon <christophe.lyon@linaro.org> 1
+- [[https://github.com/cls][Connor Lane Smith]] 1
+- [[https://github.com/wan-nyan-wan][wan-nyan-wan]] 1
+- [[https://github.com/therealansh][therealansh]] 2
+- [[https://github.com/diohabara][TKadoi]] 1
+
+*** Lines of Code (LOC)
+
+#+CAPTION: Graph of contributions over the year
+#+NAME:   fig:contributions
+[[./2021-contributor-graph.png]]
+
+- average lines added per week: 1260.058
+- average lines deleted per week: 530.942
+
+| Language                  | files | blank | comment |  code |
+|---------------------------+-------+-------+---------+-------|
+| C/C++ Header              |   128 | 13393 |   10071 | 52291 |
+| C++                       |    40 |  5097 |    3695 | 24736 |
+| Rust                      |   416 |  1195 |     820 |  5433 |
+| Markdown                  |     2 |    50 |       0 |   119 |
+| C                         |     1 |    38 |      46 |   113 |
+| Bourne Shell              |     1 |    16 |      12 |   101 |
+| Windows Module Definition |     1 |    15 |       0 |    74 |
+| TOML                      |     7 |    19 |       7 |    64 |
+| Expect                    |     5 |    35 |     127 |    35 |
+| YAML                      |     1 |     9 |       0 |    34 |
+|---------------------------+-------+-------+---------+-------|
+| SUM:                      |   602 | 19867 |   14778 | 83000 |
+
+*** Overall Task Status
+
+| Category    | Dec 2020 | Dec 2021 | Delta |
+|-------------+----------+----------+-------|
+| TODO        |       35 |       88 |   +53 |
+| In Progress |        4 |       16 |   +12 |
+| Completed   |        6 |      257 |  +251 |
+
+*** Test Cases
+
+| TestCases | Dec 2020 | Dec 2021 | Delta |
+|-----------+----------+----------+-------|
+| Passing   | 40       | 5411     | +5371 |
+| Failed    | 4        | -        |    -4 |
+| XFAIL     | -        | 21       |   +21 |
+| XPASS     | -        | -        |     - |
+
+*** Bugs
+
+| Category    | Dec 2020 | Dec 2021 | Delta |
+|-------------+----------+----------+-------|
+| TODO        | n/a      |       24 |   +24 |
+| In Progress | n/a      |        4 |    +4 |
+| Completed   | n/a      |       90 |   +90 |
+
+*** Milestones Progress
+
+| Milestone                         | Dec 2020 | Dec2021 | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+----------+---------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      61% |    100% | +39%  | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |       0% |    100% | +100% | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |       0% |    100% | +100% | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |       0% |    100% | +100% | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |       0% |    100% | +100% | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |       0% |      0% | -     | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |       0% |      0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |       0% |      0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |       0% |      0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
