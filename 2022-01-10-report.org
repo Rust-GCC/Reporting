@@ -1,0 +1,201 @@
+#+title:  Weekly Report for 3rd to 10th Janurary 2022
+#+author: Philip Herron
+#+date:   2022-01-10
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+It's 2022, and it is back to business for GCC Rust. We are now focusing on macros and config expansions, the last prominent missing feature preventing us attempting to compile libcore. Macro expansion in Rust is very powerful combined with config expansions, Rust can generate complex code and, like a C/C++ preprocessor branch code based on conditional statements. The milestone is not thoroughly planned yet as we already have some code in place, and I am assessing what we need to do and what we can leverage. For example, the name resolution pass could be split into name resolution and name resolution late like the Rust compiler to resolve macros.
+
+We also hope to be part of GSoC 2022 this year, so I will be spending some time considering different example projects this year and updating our wiki's in due course.
+
+**** Goal Testcase
+
+After finishing up the previous milestone to add initial support for the match expression, I tested our goal test case (https://github.com/Rust-GCC/gccrs/issues/682), this has been very useful, and we will be continuing to test this continuously. The prominent missing features to compile the program are slices that include range-based for loops. Overall if we isolate the code outside of the usage of slices, we can compile this when we pull in the libcore impl block for u32 so that we have access to the methods wrapping_add and rotate_right. To track the effort going on here, I have been adding issues/pr's to the task list of that GitHub issue so we can see over time all the effort it took to get this working. Many of the bugs found have already been fixed, but most importantly, this time spent testing informs how the compiler progresses and finds any bias or missed features early.
+
+**** Monthly Community Call
+
+We usually have this on the first Friday of the month but since it was the new year I decided to push it back to allow people to get back into routine. See details below for details:
+
+- Date and Time 14th Janurary 2022 at: 14h00 UTC
+- Agenda: https://hackmd.io/DsFmFtzEQ1STDkXdDNlUXQ  please feel free to add agenda items you wish to see discussed.
+- Jitsi: https://meet.jit.si/ArtificialPantsFlashNeither
+
+** Completed Activities
+
+- HIR Visitor refactor and cleanup [[https://github.com/Rust-GCC/gccrs/pull/846][PR846]]
+- Bug Fix duplicate symbol generation [[https://github.com/Rust-GCC/gccrs/pull/847][PR847]]
+- Add support bitwise operator overloading [[https://github.com/Rust-GCC/gccrs/pull/848][PR848]]
+- Fix ICE on generic enum which contained dataless variants [[https://github.com/Rust-GCC/gccrs/pull/859][PR859]]
+- Add overflow checking on integer and floating point literals [[https://github.com/Rust-GCC/gccrs/pull/860][PR860]]
+- Support Wildcard patterns in match expressions [[https://github.com/Rust-GCC/gccrs/pull/866][PR866]]
+- Bug Fix using wildcard bindings in let statements [[https://github.com/Rust-GCC/gccrs/pull/868][PR868]]
+
+*** Contributors this Week
+
+- [[https://github.com/dkm][Marc Poulhiès]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        88 |        99 |   +11 |
+| In Progress |        16 |        19 |    +3 |
+| Completed   |       257 |       262 |    +5 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 5411      | 5521      | +110  |
+| Failed    | -         | -         | -     |
+| XFAIL     | 21        | 21        | -     |
+| XPASS     | -         | -         | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        24 |        33 |    +9 |
+| In Progress |         4 |         6 |    +2 |
+| Completed   |        90 |        94 |    +4 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |        0% |        0% | -     | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |        0% |        0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Finish planning work for CFG and Macro expansion
+- Plan some GSoC 2022 projects
+- Complete bug fixes for Method Resolution
+- Begin work on Slices
+
+** Detailed changelog
+
+*** Add overflow checking on Literal's
+
+This checks that the literal value is within the bounds of their respective types. I have omitted code fixing the other issue in the bug report that overflow/max_val integers should be saturated to infinity when cast to REAL_TYPE's this seems like something we really should have documentation to reference in the code as to why this is the correct Rust behaviour.
+
+#+BEGIN_SRC rust
+fn test() -> i32 {
+    return 10000000000000000000000000000000000000000000;
+}
+#+END_SRC
+
+#+BEGIN_SRC
+<source>:2:12: error: integer overflows the respective type 'i32'
+    2 |     return 10000000000000000000000000000000000000000000;
+      |            ^
+#+END_SRC
+
+*** Support wildcard bindings within let statements
+
+In modern languages its common to sometimes need to be able to ignore bindings, its most commonly used in lambda's or tuple destructuring, which we do not support yet. This patch now allows us not to ICE when we use wildcard bindings in general.
+
+#+BEGIN_SRC rust
+fn test(a: i32, _: i32) {
+    let _ = 42 + a;
+}
+#+END_SRC
+
+*** Support wildcard within Match Expression
+
+The wildcard pattern '_' acts akin to the default case within a switch statement in other languages. GCC CASE_LABEL_EXPR's contain operand 0 and 1, operand 0 is used for the low value of a case label and operand 1 for a high value. So with this CASE_LABEL_EXPR is is possible to support a range of values from low->high if set apropriately, but for the wildcard case this is effectively a default case which means we set both operand 0 and 1 to NULL_TREE.
+
+#+BEGIN_SRC rust
+fn inspect(f: Foo) {
+    match f {
+        Foo::A => unsafe {
+            let a = "Foo::A\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c);
+        },
+        Foo::D { x, y } => unsafe {
+            let a = "Foo::D %i %i\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c, x, y);
+        },
+        _ => unsafe {
+            let a = "wildcard\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c);
+        },
+    }
+}
+#+END_SRC
+
+*** Bitwise operator overloading
+
+We missed the mappings for the following lang items which are used for all bitwise arithmetic.
+
+- bitand: libcore/ops/bit.rs
+- bitor: libcore/ops/bit.rs
+- bitxor: libcore/ops/bit.rs
+- shl: libcore/ops/bit.rs
+- shr: libcore/ops/bit.rs
+- bitand_assign: libcore/ops/bit.rs
+- bitor_assign: libcore/ops/bit.rs
+- bitxor_assign: libcore/ops/bit.rs
+- shl_assign: libcore/ops/bit.rs
+- shr_assign: libcore/ops/bit.rs
+
+Now that these mappings are added we can compile code such as:
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+#[lang = "bitand_assign"]
+pub trait BitAndAssign<Rhs = Self> {
+    fn bitand_assign(&mut self, rhs: Rhs);
+}
+
+impl BitAndAssign for i32 {
+    fn bitand_assign(&mut self, other: i32) {
+        *self &= other;
+
+        unsafe {
+            let a = "%i\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c, *self);
+        }
+    }
+}
+
+fn main() -> i32 {
+    let mut a = 1;
+    a &= 1;
+
+    0
+}
+#+END_SRC
