@@ -1,0 +1,131 @@
+#+title:  Weekly Report for 10th to 17th Janurary 2022
+#+author: Philip Herron
+#+date:   2022-01-17
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+Before starting any development on macros, I have been working through the branches of code I have sitting around before they go stale. So I merged the constexpr work, which begins the port of the C++ frontend's constexpr support. I have two remaining branches, one implementing slices needed for our goal test case and another, which fixes up our method resolution, which I want to get merged this week so we can get stuck into macros without hangover branches which could get lost. Apart from that, I found there were already quite a few issues relating to macros and config expansion we had already created, which has helped plan our macros milestone. However, some details need to be filled in, but this has bootstrapped our milestone planning.
+
+*** Google Summer of Code 2022
+
+As part of the GCC organisation we hope to be accepted for Google Summer of Code 2022 this year if you wish to find out more information please read:
+
+- https://gcc.gnu.org/wiki/SummerOfCode
+- https://github.com/Rust-GCC/gccrs/wiki/Google-Summer-of-Code-2022
+
+*** Community Call
+
+We had our community call on 14th Jan 2022 you can find the meeting notes over here: https://github.com/Rust-GCC/Reporting/blob/main/2022-01-14-community-call.md
+
+** Completed Activities
+
+- Add constant folding to const functions [[https://github.com/Rust-GCC/gccrs/pull/870][PR870]]
+- Track begin and end location info on block expressions improving debug information [[https://github.com/Rust-GCC/gccrs/pull/874][PR874]]
+
+*** Contributors this Week
+
+- [[https://github.com/dafaust][David Faust]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        99 |        99 |     - |
+| In Progress |        19 |        18 |    -1 |
+| Completed   |       262 |       266 |    +4 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 5521      | 5549      | +28   |
+| Failed    | -         | -         | -     |
+| XFAIL     | 21        | 21        | -     |
+| XPASS     | -         | -         | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        33 |        34 |    +1 |
+| In Progress |         6 |         5 |    -1 |
+| Completed   |        94 |        97 |    +3 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |        0% |        9% | +9%   | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |        0% |        0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Complete work on Slices
+- Complete bug fixes for Method Resolution
+
+** Detailed changelog
+
+*** Initial support for constant evaluation of const functions
+
+Rust supports constant evaluation of constants including constant functions. Below is an example of this:
+
+#+BEGIN_SRC rust
+const A: i32 = 1;
+const B: i32 = { A + 2 };
+
+const fn test() -> i32 {
+    B
+}
+
+const C: i32 = {
+    const a: i32 = 4;
+    test() + a
+};
+
+fn main() -> i32 {
+    C - 7
+}
+#+END_SRC
+
+In Rust this compilation unit is expected to evaluate the main function to return zero always. This is evident when you evaluate the constants, the problem for GCC Rust arose when you consider this example using arrays:
+
+#+BEGIN_SRC rust
+const fn const_fn() -> usize {
+    4
+}
+
+const FN_TEST: usize = const_fn();
+
+const TEST: usize = 2 + FN_TEST;
+
+fn main() -> i32 {
+    let a: [_; 12] = [5; TEST * 2];
+    a[6] - 5
+}
+#+END_SRC
+
+Arrays in rust always have a constant capacity to disallow any variable length arrays. This means we need to be able to type check that the array capacities match correctly. In GCC this compilation unit can be optimized and folded when optimizations are enabled, but in Rustc this still works regardless of optimization level. So GCC Rust needed the same behaviour and it turns out constexpr in C++ is very similar to this, and we are now reusing the C++ front-ends constexpr code to get this support. Now that we are reusing this C++ front-end code we can get the array capacity checking as well so when we get a case where the capacities are bad we get the folllowing error message:
+
+#+BEGIN_SRC
+<source>:2:21: error: expected an array with a fixed size of 5 elements, found one with 3 elements
+    2 |     let a:[i32;5] = [1;3];
+      |                     ^
+#+END_SRC
