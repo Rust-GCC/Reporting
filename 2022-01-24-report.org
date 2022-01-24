@@ -1,0 +1,177 @@
+#+title:  Weekly Report for 17th to 24th Janurary 2022
+#+author: Philip Herron
+#+date:   2022-01-24
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This week we have started ramping up the progress and have merged our update to Method Resolution to support autoderef properly by respecting the deref lang items. This is a crucial feature of the Rust language, which allows methods to be resolved at compile-time without a vtable when types are hidden via indirection of boxing. I have one last branch of work implementing slices that need tidying up and rebasing, letting us compile even more of the goal test case. Timeline-wise, we are lucky as much of the mechanics and boiler pate for this new expand pass for macros, and cfg expansion is already in place, so this shouldn't affect the timeline. 
+
+Next, I will be merging this work on Slices and beginning the work on cfg-expansion, so we take advantage of the existing expansion code to strip code as required from name resolution and hir lowering/desugaring.
+
+** Completed Activities
+
+- BugFix location info on RECORD and UNION types [[https://github.com/Rust-GCC/gccrs/pull/879][PR879]]
+- Fix the gimple names of generic methods [[https://github.com/Rust-GCC/gccrs/pull/880][PR880]]
+- Add enum TraitItemKind to HIR TraitItems [[https://github.com/Rust-GCC/gccrs/pull/881][PR881]]
+- New hir mappings helper to iterate trait items [[https://github.com/Rust-GCC/gccrs/pull/882][PR882]]
+- Extract new AsyncConstStatus to be shared with AST and HIR [[https://github.com/Rust-GCC/gccrs/pull/883][PR883]]
+- Improve error message on failure to find a method [[https://github.com/Rust-GCC/gccrs/pull/885][PR885]]
+- Method Resolution should use the lang_item deref to autoderef [[https://github.com/Rust-GCC/gccrs/pull/873][PR873]]
+- Merge from upstream GCC
+
+*** Contributors this Week
+
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        99 |       100 |    +1 |
+| In Progress |        18 |        19 |    +1 |
+| Completed   |       266 |       270 |    +4 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 5549      | 5605      | +56   |
+| Failed    | -         | -         | -     |
+| XFAIL     | 21        | 21        | -     |
+| XPASS     | -         | -         | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        34 |        34 |     - |
+| In Progress |         5 |         6 |    +1 |
+| Completed   |        97 |       101 |    +4 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |        9% |       10% | +1%   | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |        0% |        0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Mark for strip should strip the nodes in name-resolution + HIR lowering
+- Add cfg command line argument to add a config option similar to GCC -D
+  - https://doc.rust-lang.org/rustc/command-line-arguments.html#--cfg-configure-the-compilation-environment
+
+** Detailed changelog
+
+Autoderef includes calling into the deref operator overloads so for example.
+
+#+BEGIN_SRC rust
+pub trait Deref {
+    type Target;
+
+    fn deref(&self) -> &Self::Target;
+}
+
+impl<T> Deref for &T {
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        *self
+    }
+}
+
+struct Bar(i32);
+impl Bar {
+    fn foobar(self) -> i32 {
+        self.0
+    }
+}
+
+struct Foo<T>(T);
+impl<T> Deref for Foo<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+fn main() {
+    let bar = Bar(123);
+    let foo: Foo<&Bar> = Foo(&bar);
+    let foobar: i32 = foo.foobar();
+}
+#+END_SRC
+
+You can see here we have a nested structure of Foo<&Bar> and Foo is a generic structure, and we have a method call of foo.foobar(). This is an interesting case of method resolution showing how rust allows for multiple dereference to find the apropriate method of foobar. In this method call expression foo is of type Foo<&Bar> the generic structure is a covariant Reference Type (&) of the structure Bar. The method foobar has a receiver type of a simple Bar being passed by value. So in order for this function to be called the method resolution system has an algorithm of:
+
+- reciever = Foo<&Bar>
+- Find all methods named foobar
+- try and match the receiver (self) with this reciever
+- so that means we have Foo<&Bar> vs Bar which does not match
+- Go back to the start and try by taking an immutable refernece
+- &Foo<&Bar> does not match Bar
+- Go back to the start and try by taking a mutable reference
+- &mut Foo<&Bar> does not match Bar
+- Try and dereference the original receiver Foo<&Bar>
+- Do we have the deref lang item defined
+- if yes resolve the method by the same mechanism for Foo<&Bar> for deref
+- Get the result type of this function which is &&Bar do the dereference
+- Now we have &Bar and a new adjustment for the original receiver
+- Try and match &Bar to the foobar method reciever of Bar
+- Try taking an immutable reference &&Bar
+- Try taking a mutable reference &mut &Bar
+- Try and deref &Bar we have the generic implementation of deref for &T
+- Call this derefernece like before to get down to Bar
+- Now try Bar on the foobar reciever Bar and it matches
+
+We have now resolved the method with two dereference adjustments so the function call becomes:
+
+#+BEGIN_SRC c
+i32 main ()
+{
+  i32 D.103;
+  const struct Bar bar;
+  const struct Foo<&Bar> foo;
+  const i32 foobar;
+
+  try
+    {
+      bar.0 = 123;
+      foo.0 = &bar;
+      _1 = <Foo as Deref>::deref<&Bar> (&foo);
+      _2 = <&T as Deref>::deref<Bar> (_1);
+      foobar = Bar::foobar (*_2);
+      D.103 = foobar + -123;
+      return D.103;
+    }
+  finally
+    {
+      bar = {CLOBBER};
+      foo = {CLOBBER};
+    }
+}
+#+END_SRC
+
+Obviously GCC will optimize this with -O2 so that it does not require function calls but the gimple will show us what is actually going on. As far as I am aware rustc pre-optimizes this regardless of optimizations being turned on or not, these lang item functions are easily inlineable so it makes more sense to me to let GCC's middle-end take care of this for us.
+
+see https://godbolt.org/z/qjnq6Yoxb
