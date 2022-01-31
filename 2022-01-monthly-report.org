@@ -1,0 +1,358 @@
+#+title:  Monthly Report for Janurary 2022
+#+author: Philip Herron
+#+date:   2022-01-31
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+January was a busy month for GCC Rust. In December, we had spent a lot of time testing our goal-test case, which helped us find many bugs and gaps early. Part of my focus this month was closing out any existing branches from 2021 to avoid code going stale. These branches of code improved our method resolution, operator overloading system, and redesign of the constant folding to reuse code from the CPP front-end, which implements constexpr regardless of optimisation level in GCC. This means we can support function calls within constant blocks; more work is needed here in both error handling and support, which will come later in the year when looking at bugs and the const generics in the latest rust versions.
+
+One neat trick we have found is that GDB is a treasure trove of information on type layouts in Rust. GDB has code to support reading in the dwarf type information of Rust programs and formating this into more language-specific outputs; this code has helped us figure out how to implement slices and begin aligning our debug information appropriately.
+
+Concerning this Macros and Cfg expansion milestone, we have found much of the boilerplate and logic was already in place to implement Cfg expansion. Recently we have merged adding the command line option of -frust-cfg= akin to rustc -cfg= for specifying config options. To close out cfg expansion, we need to add more test cases and make the implementation a little more generic to handle all the cases in Rustc to effectively ifdef code blocks.
+
+**** Monthly Community Call
+
+Its time for our next community call, feel free to join in! :)
+
+- Date and Time 4th Feburary 2022 at: 14h00 UTC
+- Agenda: https://hackmd.io/yMJ3HSz0TSWm1EW1-kCs7Q please feel free to add agenda items you wish to see discussed.
+- Jitsi: https://meet.jit.si/ArtificialPantsFlashNeither
+
+** Completed Activities
+
+- HIR Visitor refactor and cleanup [[https://github.com/Rust-GCC/gccrs/pull/846][PR846]]
+- Bug Fix duplicate symbol generation [[https://github.com/Rust-GCC/gccrs/pull/847][PR847]]
+- Add support bitwise operator overloading [[https://github.com/Rust-GCC/gccrs/pull/848][PR848]]
+- Fix ICE on generic enum which contained dataless variants [[https://github.com/Rust-GCC/gccrs/pull/859][PR859]]
+- Add overflow checking on integer and floating point literals [[https://github.com/Rust-GCC/gccrs/pull/860][PR860]]
+- Support Wildcard patterns in match expressions [[https://github.com/Rust-GCC/gccrs/pull/866][PR866]]
+- Bug Fix using wildcard bindings in let statements [[https://github.com/Rust-GCC/gccrs/pull/868][PR868]]
+- Add constant folding to const functions [[https://github.com/Rust-GCC/gccrs/pull/870][PR870]]
+- Track begin and end location info on block expressions improving debug information [[https://github.com/Rust-GCC/gccrs/pull/874][PR874]]
+- BugFix location info on RECORD and UNION types [[https://github.com/Rust-GCC/gccrs/pull/879][PR879]]
+- Fix the gimple names of generic methods [[https://github.com/Rust-GCC/gccrs/pull/880][PR880]]
+- Add enum TraitItemKind to HIR TraitItems [[https://github.com/Rust-GCC/gccrs/pull/881][PR881]]
+- New hir mappings helper to iterate trait items [[https://github.com/Rust-GCC/gccrs/pull/882][PR882]]
+- Extract new AsyncConstStatus to be shared with AST and HIR [[https://github.com/Rust-GCC/gccrs/pull/883][PR883]]
+- Improve error message on failure to find a method [[https://github.com/Rust-GCC/gccrs/pull/885][PR885]]
+- Method Resolution should use the lang_item deref to autoderef [[https://github.com/Rust-GCC/gccrs/pull/873][PR873]]
+- Merge from upstream GCC
+- Cleanup [[https://github.com/Rust-GCC/gccrs/pull/891][PR891]] [[https://github.com/Rust-GCC/gccrs/pull/892][PR892]] [[https://github.com/Rust-GCC/gccrs/pull/897][PR897]]
+- Canonical Path should contain the respective crate name [[https://github.com/Rust-GCC/gccrs/pull/894][PR894]]
+- Add mappings for deref_mut lang item [[https://github.com/Rust-GCC/gccrs/pull/898][PR898]]
+- Add -frust-cfg= option similar to rustc --cfg= to specify cfg options [[https://github.com/Rust-GCC/gccrs/pull/899][PR899]]
+
+*** Contributors this month
+
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         88 |        101 |   +13 |
+| In Progress |         16 |         19 |    +3 |
+| Completed   |        257 |        273 |   +16 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 5411       | 5617       | +206  |
+| Failed    | -          | -          | -     |
+| XFAIL     | 21         | 21         | -     |
+| XPASS     | -          | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         24 |         34 |   +10 |
+| In Progress |          4 |          5 |    +1 |
+| Completed   |         90 |        102 |   +12 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |         0% |        18% | +18%  | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |         0% |         0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |         0% |         0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Tidy tasks for cfg expansion
+- Check currently assigned tasks are currently in progress or not
+- Continue work on cfg expansion
+
+** Detailed changelog
+
+*** Add overflow checking on Literal's
+
+This checks that the literal value is within the bounds of their respective types. I have omitted code fixing the other issue in the bug report that overflow/max_val integers should be saturated to infinity when cast to REAL_TYPE's this seems like something we really should have documentation to reference in the code as to why this is the correct Rust behaviour.
+
+#+BEGIN_SRC rust
+fn test() -> i32 {
+    return 10000000000000000000000000000000000000000000;
+}
+#+END_SRC
+
+#+BEGIN_SRC
+<source>:2:12: error: integer overflows the respective type 'i32'
+    2 |     return 10000000000000000000000000000000000000000000;
+      |            ^
+#+END_SRC
+
+*** Support wildcard bindings within let statements
+
+In modern languages its common to sometimes need to be able to ignore bindings, its most commonly used in lambda's or tuple destructuring, which we do not support yet. This patch now allows us not to ICE when we use wildcard bindings in general.
+
+#+BEGIN_SRC rust
+fn test(a: i32, _: i32) {
+    let _ = 42 + a;
+}
+#+END_SRC
+
+*** Support wildcard within Match Expression
+
+The wildcard pattern '_' acts akin to the default case within a switch statement in other languages. GCC CASE_LABEL_EXPR's contain operand 0 and 1, operand 0 is used for the low value of a case label and operand 1 for a high value. So with this CASE_LABEL_EXPR is is possible to support a range of values from low->high if set apropriately, but for the wildcard case this is effectively a default case which means we set both operand 0 and 1 to NULL_TREE.
+
+#+BEGIN_SRC rust
+fn inspect(f: Foo) {
+    match f {
+        Foo::A => unsafe {
+            let a = "Foo::A\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c);
+        },
+        Foo::D { x, y } => unsafe {
+            let a = "Foo::D %i %i\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c, x, y);
+        },
+        _ => unsafe {
+            let a = "wildcard\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c);
+        },
+    }
+}
+#+END_SRC
+
+*** Bitwise operator overloading
+
+We missed the mappings for the following lang items which are used for all bitwise arithmetic.
+
+- bitand: libcore/ops/bit.rs
+- bitor: libcore/ops/bit.rs
+- bitxor: libcore/ops/bit.rs
+- shl: libcore/ops/bit.rs
+- shr: libcore/ops/bit.rs
+- bitand_assign: libcore/ops/bit.rs
+- bitor_assign: libcore/ops/bit.rs
+- bitxor_assign: libcore/ops/bit.rs
+- shl_assign: libcore/ops/bit.rs
+- shr_assign: libcore/ops/bit.rs
+
+Now that these mappings are added we can compile code such as:
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+#[lang = "bitand_assign"]
+pub trait BitAndAssign<Rhs = Self> {
+    fn bitand_assign(&mut self, rhs: Rhs);
+}
+
+impl BitAndAssign for i32 {
+    fn bitand_assign(&mut self, other: i32) {
+        *self &= other;
+
+        unsafe {
+            let a = "%i\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c, *self);
+        }
+    }
+}
+
+fn main() -> i32 {
+    let mut a = 1;
+    a &= 1;
+
+    0
+}
+#+END_SRC
+
+*** Initial support for constant evaluation of const functions
+
+Rust supports constant evaluation of constants including constant functions. Below is an example of this:
+
+#+BEGIN_SRC rust
+const A: i32 = 1;
+const B: i32 = { A + 2 };
+
+const fn test() -> i32 {
+    B
+}
+
+const C: i32 = {
+    const a: i32 = 4;
+    test() + a
+};
+
+fn main() -> i32 {
+    C - 7
+}
+#+END_SRC
+
+In Rust this compilation unit is expected to evaluate the main function to return zero always. This is evident when you evaluate the constants, the problem for GCC Rust arose when you consider this example using arrays:
+
+#+BEGIN_SRC rust
+const fn const_fn() -> usize {
+    4
+}
+
+const FN_TEST: usize = const_fn();
+
+const TEST: usize = 2 + FN_TEST;
+
+fn main() -> i32 {
+    let a: [_; 12] = [5; TEST * 2];
+    a[6] - 5
+}
+#+END_SRC
+
+Arrays in rust always have a constant capacity to disallow any variable length arrays. This means we need to be able to type check that the array capacities match correctly. In GCC this compilation unit can be optimized and folded when optimizations are enabled, but in Rustc this still works regardless of optimization level. So GCC Rust needed the same behaviour and it turns out constexpr in C++ is very similar to this, and we are now reusing the C++ front-ends constexpr code to get this support. Now that we are reusing this C++ front-end code we can get the array capacity checking as well so when we get a case where the capacities are bad we get the folllowing error message:
+
+#+BEGIN_SRC
+<source>:2:21: error: expected an array with a fixed size of 5 elements, found one with 3 elements
+    2 |     let a:[i32;5] = [1;3];
+      |                     ^
+#+END_SRC
+
+*** Method resolution and deref operator overloads
+
+Autoderef includes calling into the deref operator overloads so for example.
+
+#+BEGIN_SRC rust
+pub trait Deref {
+    type Target;
+
+    fn deref(&self) -> &Self::Target;
+}
+
+impl<T> Deref for &T {
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        *self
+    }
+}
+
+struct Bar(i32);
+impl Bar {
+    fn foobar(self) -> i32 {
+        self.0
+    }
+}
+
+struct Foo<T>(T);
+impl<T> Deref for Foo<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+fn main() {
+    let bar = Bar(123);
+    let foo: Foo<&Bar> = Foo(&bar);
+    let foobar: i32 = foo.foobar();
+}
+#+END_SRC
+
+You can see here we have a nested structure of Foo<&Bar> and Foo is a generic structure, and we have a method call of foo.foobar(). This is an interesting case of method resolution showing how rust allows for multiple dereference to find the apropriate method of foobar. In this method call expression foo is of type Foo<&Bar> the generic structure is a covariant Reference Type (&) of the structure Bar. The method foobar has a receiver type of a simple Bar being passed by value. So in order for this function to be called the method resolution system has an algorithm of:
+
+- reciever = Foo<&Bar>
+- Find all methods named foobar
+- try and match the receiver (self) with this reciever
+- so that means we have Foo<&Bar> vs Bar which does not match
+- Go back to the start and try by taking an immutable refernece
+- &Foo<&Bar> does not match Bar
+- Go back to the start and try by taking a mutable reference
+- &mut Foo<&Bar> does not match Bar
+- Try and dereference the original receiver Foo<&Bar>
+- Do we have the deref lang item defined
+- if yes resolve the method by the same mechanism for Foo<&Bar> for deref
+- Get the result type of this function which is &&Bar do the dereference
+- Now we have &Bar and a new adjustment for the original receiver
+- Try and match &Bar to the foobar method reciever of Bar
+- Try taking an immutable reference &&Bar
+- Try taking a mutable reference &mut &Bar
+- Try and deref &Bar we have the generic implementation of deref for &T
+- Call this derefernece like before to get down to Bar
+- Now try Bar on the foobar reciever Bar and it matches
+
+We have now resolved the method with two dereference adjustments so the function call becomes:
+
+#+BEGIN_SRC c
+i32 main ()
+{
+  i32 D.103;
+  const struct Bar bar;
+  const struct Foo<&Bar> foo;
+  const i32 foobar;
+
+  try
+    {
+      bar.0 = 123;
+      foo.0 = &bar;
+      _1 = <Foo as Deref>::deref<&Bar> (&foo);
+      _2 = <&T as Deref>::deref<Bar> (_1);
+      foobar = Bar::foobar (*_2);
+      D.103 = foobar + -123;
+      return D.103;
+    }
+  finally
+    {
+      bar = {CLOBBER};
+      foo = {CLOBBER};
+    }
+}
+#+END_SRC
+
+Obviously GCC will optimize this with -O2 so that it does not require function calls but the gimple will show us what is actually going on. As far as I am aware rustc pre-optimizes this regardless of optimizations being turned on or not, these lang item functions are easily inlineable so it makes more sense to me to let GCC's middle-end take care of this for us.
+
+see https://godbolt.org/z/qjnq6Yoxb
+
