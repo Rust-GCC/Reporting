@@ -44,7 +44,7 @@ Its time for our next community call, feel free to join in! :)
 - Cleanup [[https://github.com/Rust-GCC/gccrs/pull/891][PR891]] [[https://github.com/Rust-GCC/gccrs/pull/892][PR892]] [[https://github.com/Rust-GCC/gccrs/pull/897][PR897]]
 - Canonical Path should contain the respective crate name [[https://github.com/Rust-GCC/gccrs/pull/894][PR894]]
 - Add mappings for deref_mut lang item [[https://github.com/Rust-GCC/gccrs/pull/898][PR898]]
-- Add -frust-cfg= option similar to rustc -cfg= to specify cfg options [[https://github.com/Rust-GCC/gccrs/pull/899][PR899]]
+- Add -frust-cfg= option similar to rustc --cfg= to specify cfg options [[https://github.com/Rust-GCC/gccrs/pull/899][PR899]]
 
 *** Contributors this month
 
