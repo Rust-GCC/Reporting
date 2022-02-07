@@ -1,0 +1,180 @@
+#+title:  Weekly Report for 31st Jan to 7th Feb 2022
+#+author: Philip Herron
+#+date:   2022-02-07
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+Last week's focus was finishing config expansion as much of this code had already been in place and needed to be tidied together to complete it. We merged support for the predicates of any, not, and all and ensured the rest of the crate strips the nodes accordingly. Now that this is in place, we can move onto macros, which can interact with cfg-expansion for example, derive macros on structures with some fields marked for strip.
+
+The community was busy this week and set up our front-end with the GCC self-test unit-testing framework, which is critical in helping make the front-end code cleaner by decoupling components, making them unit-testable. Sometimes it's more accessible to unit-test code than make full dejagnu test cases. For example, our HIR graph is missing some location info on some nodes. Thanks to new contributions, this has continued to improve over time; location info is the driving force to enable debugging support for the resultant binaries.
+
+*** Monthly Community Call
+
+We had our regular community-call on Feb 4th 2022 you can find the meeting notes over here: https://github.com/Rust-GCC/Reporting/blob/main/2022-02-04-community-call.md
+
+** Completed Activities
+
+- Bug Fix canonical-path of impl blocks nested under modules [[https://github.com/Rust-GCC/gccrs/pull/900][PR900]]
+- Bug Fix enum discriminant values to use constexpr code  [[https://github.com/Rust-GCC/gccrs/pull/902][PR902]]
+- Apply cfg expansion to the rest of the crate [[https://github.com/Rust-GCC/gccrs/pull/904][PR904]]
+- Track canonical-path and location into as part of the type-check pass [[https://github.com/Rust-GCC/gccrs/pull/903][PR903]]
+- Apply .c to .cc rename as part of merge from upstream [[https://github.com/Rust-GCC/gccrs/pull/906][PR906]]
+- Support any,not,all predicates in cfg-expansion [[https://github.com/Rust-GCC/gccrs/pull/907][PR907]]
+- Enable GCC self-test framework [[https://github.com/Rust-GCC/gccrs/pull/751][PR751]]
+- Fix diagnostic formatting issues -Wformat-diag  [[https://github.com/Rust-GCC/gccrs/pull/908][PR908]]
+- Improve location info on match-arms [[https://github.com/Rust-GCC/gccrs/pull/888][PR888]]
+- Support key value pairs being passed in -frust-cfg [[https://github.com/Rust-GCC/gccrs/pull/909][PR909]]
+
+*** Contributors this Week
+
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/mvvsmk][Manoj Kumar]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       100 |       106 |    +6 |
+| In Progress |        19 |        11 |    -8 |
+| Completed   |       270 |       279 |    +9 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 5605      | 5686      | +81   |
+| Failed    | -         | -         | -     |
+| XFAIL     | 21        | 21        | -     |
+| XPASS     | -         | -         | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        34 |        38 |    +4 |
+| In Progress |         6 |         1 |    -5 |
+| Completed   |       101 |       105 |    +4 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |       18% |       45% | +27%  | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |        0% |        0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Test target host cfg options
+- Begin work on macros
+- Add more good-first-pr issues with guides
+
+** Detailed changelog
+
+*** Canonical-paths
+
+We have improved our canonical-path tracking so that we can build up paths for the legacy mangling scheme. So for example impl blocks nested under modules are given a prefix of impl in their path.
+
+#+BEGIN_SRC rust
+struct Foo(i32);
+
+mod A {
+    impl Foo {
+        fn test(&self) -> i32 {
+            self.0
+        }
+    }
+}
+
+fn test() {
+    let a = Foo(123);
+    let b:i32 = a.test();
+}
+#+END_SRC
+
+As you can see we have the crate-name of example -> structure A -> impl block for example::A -> function name test.
+
+#+BEGIN_SRC c
+i32 example::A::<impl example::Foo>::test (const struct example::Foo & const self)
+{
+  i32 D.85;
+
+  D.85 = self->0;
+  return D.85;
+}
+
+
+void example::test ()
+{
+  const struct example::Foo a;
+  const i32 b;
+
+  try
+    {
+      a.0 = 123;
+      b = example::A::<impl example::Foo>::test (&a);
+    }
+  finally
+    {
+      a = {CLOBBER};
+    }
+}
+#+END_SRC
+
+see: https://godbolt.org/z/P94an5f5W
+
+*** cfg expansion with predicates
+
+We added support for any, all and not predicates on cfg expansions so in this example this ensures that both A and B are specified for the all predicate.
+
+#+BEGIN_SRC rust
+struct Foo;
+impl Foo {
+    #[cfg(all(A, B))]
+    fn test(&self) {}
+}
+
+fn main() {
+    let a = Foo;
+    a.test();
+}
+#+END_SRC
+
+see: https://godbolt.org/z/sW9K19EqE
+
+*** Key-value cfg-expansion
+
+Rust allows us to specify key-value pairs for config expansion this is mostly associated with host/os/cpu options such as os = "linux" for example but here is an example below you can try in compiler explorer.
+
+#+BEGIN_SRC rust
+struct Foo;
+impl Foo {
+    #[cfg(A = "B")]
+    fn test(&self) {}
+}
+
+fn main() {
+    let a = Foo;
+    a.test();
+}
+#+END_SRC
+
+see: https://godbolt.org/z/7YT1jMMMz
