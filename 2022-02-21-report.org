@@ -139,10 +139,10 @@ Here we take into account the context of the macro invocation and parse it into 
 
 More error handling has been added for when the transcribed rule actually is not fully used so for example:
 
-```
+#+BEGIN_SRC
 <source>:4:9: error: tokens here and after are unparsed
     4 |         struct BAD($b);
       |         ^
-```
+#+END_SRC
 
 see: https://godbolt.org/z/TK3qdG56n
