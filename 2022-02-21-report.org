@@ -12,7 +12,7 @@ This is a milestone week for GCC Rust; our previous Google Summer of Code studen
 
 Concerning our macro expansion milestone, this week saw a big push forward with the boilerplate merged; many simple macros are now working. This work includes appropriately matching rules and taking into account the fragment types such as 'expr' and 'ty' for example, this allows a kind of type checking in macro invocations.
 
-Thanks to Mark Wielaard for his build farm, helping us catch issues early, and lending access to his build bots when we find issues on different architectures. 
+Thanks to Mark Wielaard for his build farm, helping us catch issues early, and lending access to his build bots where we find issues on different architectures. 
 
 ** Completed Activities
 
