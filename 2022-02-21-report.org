@@ -1,0 +1,148 @@
+#+title:  Weekly Report for 14th to 21st Feb 2022
+#+author: Philip Herron
+#+date:   2022-02-21
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This is a milestone week for GCC Rust; our previous Google Summer of Code student Arthur Cohen joins us in Embecosm, Germany, working on the compiler full time. With the additional resource, we can split up work and delegate tasks allowing multiple streams of complex work to take place, which free's Philip up to work on Slice's and bugs in the type system. 
+
+Concerning our macro expansion milestone, this week saw a big push forward with the boilerplate merged; many simple macros are now working. This work includes appropriately matching rules and taking into account the fragment types such as 'expr' and 'ty' for example, this allows a kind of type checking in macro invocations.
+
+Thanks to Mark Wielaard for his build farm, helping us catch issues early, and lending access to his build bots where we find issues on different architectures. 
+
+** Completed Activities
+
+- Add Macro expansion tests [[https://github.com/Rust-GCC/gccrs/pull/926][PR926]]
+- BugFix CFG expansion values require quotes [[https://github.com/Rust-GCC/gccrs/pull/931][PR931]] [[https://github.com/Rust-GCC/gccrs/pull/935][PR935]]
+- Add cargo-gccrs to our DockerFile [[https://github.com/Rust-GCC/gccrs/pull/937][PR937]]
+- Add missing location into to macros [[https://github.com/Rust-GCC/gccrs/pull/934][PR934]] [[https://github.com/Rust-GCC/gccrs/pull/933][PR933]] [[https://github.com/Rust-GCC/gccrs/pull/932][PR932]]
+- Add support for Macro Expansion [[https://github.com/Rust-GCC/gccrs/pull/938][PR938]]
+- Add missing location into to AST [[https://github.com/Rust-GCC/gccrs/pull/940][PR940]]
+- replace lambda with std::vector reference in AST::PathPattern [[https://github.com/Rust-GCC/gccrs/pull/942][PR942]]
+- Add clear_errors to make parser reuseable for macro expansion [[https://github.com/Rust-GCC/gccrs/pull/944][PR944]]
+- Support matching macro repetition rules [[https://github.com/Rust-GCC/gccrs/pull/950][PR950]]
+- Add name resolution for slice's [[https://github.com/Rust-GCC/gccrs/pull/951][PR951]]
+
+*** Contributors this Week
+
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/mvvsmk][Manoj Kumar]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       105 |       108 |    +3 |
+| In Progress |        11 |        16 |    +5 |
+| Completed   |       284 |       291 |    +7 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 5746      | 5849      | +103  |
+| Failed    | -         | -         | -     |
+| XFAIL     | 21        | 21        | -     |
+| XPASS     | -         | -         | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        38 |        36 |    -2 |
+| In Progress |         1 |         6 |    +5 |
+| Completed   |       107 |       108 |    +1 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |       50% |       63% | +13%  | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |        0% |        0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Continue Macro repetition pattern support
+- Complete Slice support and retest goal test case
+
+** Detailed changelog
+
+*** Declarative Macro Expansion
+
+We have merged our first pass of the macro expansion pass. The approach taken here is that we reuse our existing parser to call the apropriate functions as specified as part of the MacroFragmentType enum if the parser does not have errors parsing that item then it must be a match. Then once we match a rule we have a map of the token begin/end offsets for each fragment match, this is then used to adjust and create a new token stream for the macro rule definition so that when we feed it to the parser the tokens are already substituted. The resulting expression or item is then attached to the respective macro invocation and this is then name resolved and used for hir lowering.
+
+In this example the macro has two rules so we demonstrate that we match the apropriate rule and transcribe it respectively.
+
+#+BEGIN_SRC rust
+macro_rules! add {
+    ($a:expr,$b:expr) => {
+        $a + $b
+    };
+    ($a:expr) => {
+        $a
+    };
+}
+
+fn main() -> i32 {
+    let mut x = add!(1);
+    x += add!(2, 3);
+
+    x - 6
+}
+#+END_SRC
+
+Another exmaple:
+
+#+BEGIN_SRC rust
+macro_rules! Test {
+    ($a:ident, $b:ty) => {
+        struct $a($b);
+    };
+}
+
+Test!(Foo, i32);
+
+fn main() -> i32 {
+    let a = Foo(123);
+    a.0 - 123
+}
+#+END_SRC
+
+Here we take into account the context of the macro invocation and parse it into AST::Items. In the even of failure to match a rule the compiler error looks like the following:
+
+#+BEGIN_SRC
+<source>:11:17: error: Failed to match any rule within macro
+    1 | macro_rules! add {
+      | ~                
+......
+   11 |     let mut x = add!(1, 2, 3);
+      |                 ^
+#+END_SRC
+
+More error handling has been added for when the transcribed rule actually is not fully used so for example:
+
+#+BEGIN_SRC
+<source>:4:9: error: tokens here and after are unparsed
+    4 |         struct BAD($b);
+      |         ^
+#+END_SRC
+
+see: https://godbolt.org/z/TK3qdG56n
