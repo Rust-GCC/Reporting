@@ -1,0 +1,466 @@
+#+title:  Monthly Report for February 2022
+#+author: Philip Herron
+#+date:   2022-02-28
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+February was a big month for GCC Rust; our previous Google Summer of Code student Arthur Cohen joins us in Embecosm, Germany, working on the compiler full time. With the additional resource, we can split up work and delegate tasks allowing multiple streams of complex work to take place, which frees Philip up to work on Slice's and bugs in the type system. 
+
+Concerning our macro expansion milestone, we have the building blocks in place and support most declarative macros though there are some quirks and bugs to work through still. The remaining time of this milestone will be spent on setting up the builtin macros and fixing bugs.
+
+Other than macros, there has been a focus on code cleanup and bug fixing in February, which has been fruitful.
+
+**** Monthly Community Call
+
+Its time for our next community call, feel free to join in! :)
+
+- Date and Time 4th March 2022 at: 14h00 UTC
+- Agenda: https://hackmd.io/KkrXwApIQgWwaUL8fl1Yrg please feel free to add agenda items you wish to see discussed.
+- Jitsi: https://meet.jit.si/ArtificialPantsFlashNeither
+
+** Completed Activities
+
+- Bug Fix canonical-path of impl blocks nested under modules [[https://github.com/Rust-GCC/gccrs/pull/900][PR900]]
+- Bug Fix enum discriminant values to use constexpr code  [[https://github.com/Rust-GCC/gccrs/pull/902][PR902]]
+- Apply cfg expansion to the rest of the crate [[https://github.com/Rust-GCC/gccrs/pull/904][PR904]]
+- Track canonical-path and location into as part of the type-check pass [[https://github.com/Rust-GCC/gccrs/pull/903][PR903]]
+- Apply .c to .cc rename as part of merge from upstream [[https://github.com/Rust-GCC/gccrs/pull/906][PR906]]
+- Support any,not,all predicates in cfg-expansion [[https://github.com/Rust-GCC/gccrs/pull/907][PR907]]
+- Enable GCC self-test framework [[https://github.com/Rust-GCC/gccrs/pull/751][PR751]]
+- Fix diagnostic formatting issues -Wformat-diag  [[https://github.com/Rust-GCC/gccrs/pull/908][PR908]]
+- Improve location info on match-arms [[https://github.com/Rust-GCC/gccrs/pull/888][PR888]]
+- Support key value pairs being passed in -frust-cfg [[https://github.com/Rust-GCC/gccrs/pull/909][PR909]]
+- Refactor TypeKind ToString from header to implementation [[https://github.com/Rust-GCC/gccrs/pull/911][PR911]]
+- Bug Fix multiple generic substitution on path expressions [[https://github.com/Rust-GCC/gccrs/pull/912][PR912]]
+- Support the inline attribute [[https://github.com/Rust-GCC/gccrs/pull/916][PR916]] [[https://github.com/Rust-GCC/gccrs/pull/922][PR922]]
+- Reuse C/C++ front-end mark_addressable code [[https://github.com/Rust-GCC/gccrs/pull/917][PR917]]
+- Cleanup code generation to remove duplication [[https://github.com/Rust-GCC/gccrs/pull/918][PR918]]
+- Support deref_mut lang item during method resolution [[https://github.com/Rust-GCC/gccrs/pull/920][PR920]]
+- Add Macro expansion tests [[https://github.com/Rust-GCC/gccrs/pull/926][PR926]]
+- BugFix CFG expansion values require quotes [[https://github.com/Rust-GCC/gccrs/pull/931][PR931]] [[https://github.com/Rust-GCC/gccrs/pull/935][PR935]]
+- Add cargo-gccrs to our DockerFile [[https://github.com/Rust-GCC/gccrs/pull/937][PR937]]
+- Add missing location into to macros [[https://github.com/Rust-GCC/gccrs/pull/934][PR934]] [[https://github.com/Rust-GCC/gccrs/pull/933][PR933]] [[https://github.com/Rust-GCC/gccrs/pull/932][PR932]]
+- Add support for Macro Expansion [[https://github.com/Rust-GCC/gccrs/pull/938][PR938]]
+- Add missing location into to AST [[https://github.com/Rust-GCC/gccrs/pull/940][PR940]]
+- replace lambda with std::vector reference in AST::PathPattern [[https://github.com/Rust-GCC/gccrs/pull/942][PR942]]
+- Add clear_errors to make parser reuseable for macro expansion [[https://github.com/Rust-GCC/gccrs/pull/944][PR944]]
+- Support matching macro repetition rules [[https://github.com/Rust-GCC/gccrs/pull/950][PR950]]
+- Add name resolution for slice's [[https://github.com/Rust-GCC/gccrs/pull/951][PR951]]
+- Repetition macros [[https://github.com/Rust-GCC/gccrs/pull/955][PR955]] [[https://github.com/Rust-GCC/gccrs/pull/965][PR965]] [[https://github.com/Rust-GCC/gccrs/pull/956][PR956]]
+- Fix unresolved test-case [[https://github.com/Rust-GCC/gccrs/pull/964][PR964]]
+- Refactor lang item mappings [[https://github.com/Rust-GCC/gccrs/pull/953][PR953]]
+- Add builtin macro framework [[https://github.com/Rust-GCC/gccrs/pull/969][PR969]]
+- Add Support for index and Range lang items and boiler plate for Slice typechecking [[https://github.com/Rust-GCC/gccrs/pull/974][PR974]]
+- Add file! builtin macro [[https://github.com/Rust-GCC/gccrs/pull/970][PR970]]
+
+*** Contributors this month
+
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/mvvsmk][Manoj Kumar]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        101 |        118 |   +17 |
+| In Progress |         19 |         17 |    -2 |
+| Completed   |        273 |        297 |   +24 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 5617       | 6068       | +451  |
+| Failed    | -          | -          | -     |
+| XFAIL     | 21         | 21         | -     |
+| XPASS     | -          | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         34 |         40 |    +6 |
+| In Progress |          5 |          5 |     - |
+| Completed   |        102 |        109 |    +7 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |        18% |        65% | +47%  | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |         0% |         0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |         0% |         0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Continue work on builtin macros
+- Continue work into Slices
+- Support the mutable context during type checking for dereference or array index operations
+- Create more good-first-pr's
+ 
+** Detailed changelog
+
+*** Canonical-paths
+
+We have improved our canonical-path tracking so that we can build up paths for the legacy mangling scheme. So for example impl blocks nested under modules are given a prefix of impl in their path.
+
+#+BEGIN_SRC rust
+struct Foo(i32);
+
+mod A {
+    impl Foo {
+        fn test(&self) -> i32 {
+            self.0
+        }
+    }
+}
+
+fn test() {
+    let a = Foo(123);
+    let b:i32 = a.test();
+}
+#+END_SRC
+
+As you can see we have the crate-name of example -> structure A -> impl block for example::A -> function name test.
+
+#+BEGIN_SRC c
+i32 example::A::<impl example::Foo>::test (const struct example::Foo & const self)
+{
+  i32 D.85;
+
+  D.85 = self->0;
+  return D.85;
+}
+
+
+void example::test ()
+{
+  const struct example::Foo a;
+  const i32 b;
+
+  try
+    {
+      a.0 = 123;
+      b = example::A::<impl example::Foo>::test (&a);
+    }
+  finally
+    {
+      a = {CLOBBER};
+    }
+}
+#+END_SRC
+
+see: https://godbolt.org/z/P94an5f5W
+
+*** cfg expansion with predicates
+
+We added support for any, all and not predicates on cfg expansions so in this example this ensures that both A and B are specified for the all predicate.
+
+#+BEGIN_SRC rust
+struct Foo;
+impl Foo {
+    #[cfg(all(A, B))]
+    fn test(&self) {}
+}
+
+fn main() {
+    let a = Foo;
+    a.test();
+}
+#+END_SRC
+
+see: https://godbolt.org/z/sW9K19EqE
+
+*** Key-value cfg-expansion
+
+Rust allows us to specify key-value pairs for config expansion this is mostly associated with host/os/cpu options such as os = "linux" for example but here is an example below you can try in compiler explorer.
+
+#+BEGIN_SRC rust
+struct Foo;
+impl Foo {
+    #[cfg(A = "B")]
+    fn test(&self) {}
+}
+
+fn main() {
+    let a = Foo;
+    a.test();
+}
+#+END_SRC
+
+see: https://godbolt.org/z/7YT1jMMMz
+
+*** inline attributes
+
+In Rust the inline attribute takes three forms:
+
+- #[inline]
+- #[inline(always)]
+- #[inline(never)]
+
+Inline without any option is analogous to C style inline keyword giving a hint to the compiler that this function is a good candidate for inlining. Inline always can be acheived with GCC's inline always attribute: https://gcc.gnu.org/onlinedocs/gcc/Inline.html. Finally never we can mark functions as DECL_UNINLINEABLE. The one difference is that inline optimizations require optimizations to be enabled. So when compiling at -O0 no inlining will occur, any level greater than this, the inline pass will be enforced.
+
+We have always added some simple error handling for bad inline options such as:
+
+#+BEGIN_SRC rust
+#[inline(A)]
+fn test() {}
+#+END_SRC
+
+#+BEGIN_SRC
+test.rs:2:3: error: unknown inline option
+    2 | #[inline(A)]
+      |   ^
+#+END_SRC
+
+#+BEGIN_SRC rust
+#[inline(A,B)]
+fn test() {}
+#+END_SRC
+
+#+BEGIN_SRC
+test.rs:5:3: error: invalid number of arguments
+    5 | #[inline(A, B)]
+      |   ^
+#+END_SRC
+
+*** deref_mut lang item
+
+Work on method resolution has continued steadily and we now support the deref_mut lang item so that for methods that require a &mut self reference we try to lookup any relevant deref_mut lang item to get the indirection required from the receiver.
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+                                           
+#[lang = "deref"]
+pub trait Deref {
+    type Target;
+
+    fn deref(&self) -> &Self::Target;
+}
+
+#[lang = "deref_mut"]
+pub trait DerefMut: Deref {
+    fn deref_mut(&mut self) -> &mut Self::Target;
+}
+
+impl<T> Deref for &T {
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        *self
+    }
+}
+
+impl<T> Deref for &mut T {
+    type Target = T;
+    fn deref(&self) -> &T {
+        *self
+    }
+}
+
+pub struct Bar(i32);      
+impl Bar {
+    pub fn foobar(&mut self) -> i32 {
+        self.0  
+    }
+}
+
+pub struct Foo<T>(T);
+impl<T> Deref for Foo<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl<T> DerefMut for Foo<T> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        unsafe {
+            let a = "mut_deref\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c);
+        }
+
+        &mut self.0
+    }
+}
+
+pub fn main() -> i32 {
+    let bar = Bar(123);
+    let mut foo: Foo<Bar> = Foo(bar);
+    let foobar = foo.foobar();
+
+    foobar - 123
+}
+#+END_SRC
+
+See https://godbolt.org/z/xcM9ohcjK
+
+*** Declarative Macro Expansion
+
+We have merged our first pass of the macro expansion pass. The approach taken here is that we reuse our existing parser to call the apropriate functions as specified as part of the MacroFragmentType enum if the parser does not have errors parsing that item then it must be a match. Then once we match a rule we have a map of the token begin/end offsets for each fragment match, this is then used to adjust and create a new token stream for the macro rule definition so that when we feed it to the parser the tokens are already substituted. The resulting expression or item is then attached to the respective macro invocation and this is then name resolved and used for hir lowering.
+
+In this example the macro has two rules so we demonstrate that we match the apropriate rule and transcribe it respectively.
+
+#+BEGIN_SRC rust
+macro_rules! add {
+    ($a:expr,$b:expr) => {
+        $a + $b
+    };
+    ($a:expr) => {
+        $a
+    };
+}
+
+fn main() -> i32 {
+    let mut x = add!(1);
+    x += add!(2, 3);
+
+    x - 6
+}
+#+END_SRC
+
+Another exmaple:
+
+#+BEGIN_SRC rust
+macro_rules! Test {
+    ($a:ident, $b:ty) => {
+        struct $a($b);
+    };
+}
+
+Test!(Foo, i32);
+
+fn main() -> i32 {
+    let a = Foo(123);
+    a.0 - 123
+}
+#+END_SRC
+
+Here we take into account the context of the macro invocation and parse it into AST::Items. In the even of failure to match a rule the compiler error looks like the following:
+
+#+BEGIN_SRC
+<source>:11:17: error: Failed to match any rule within macro
+    1 | macro_rules! add {
+      | ~                
+......
+   11 |     let mut x = add!(1, 2, 3);
+      |                 ^
+#+END_SRC
+
+More error handling has been added for when the transcribed rule actually is not fully used so for example:
+
+#+BEGIN_SRC
+<source>:4:9: error: tokens here and after are unparsed
+    4 |         struct BAD($b);
+      |         ^
+#+END_SRC
+
+see: https://godbolt.org/z/TK3qdG56n
+
+*** Range Lang items
+
+In rust ranges are turned into structs so what seems like piece of syntax to specify some kind of constraint is actually something which can be assigned and manipulated. This is one of the building blocks in our journey to support slices.
+
+#+BEGIN_SRC rust
+#[lang = "RangeFull"]
+pub struct RangeFull;
+
+#[lang = "Range"]
+pub struct Range<Idx> {
+    pub start: Idx,
+    pub end: Idx,
+}
+
+#[lang = "RangeFrom"]
+pub struct RangeFrom<Idx> {
+    pub start: Idx,
+}
+
+#[lang = "RangeTo"]
+pub struct RangeTo<Idx> {
+    pub end: Idx,
+}
+
+#[lang = "RangeInclusive"]
+pub struct RangeInclusive<Idx> {
+    pub start: Idx,
+    pub end: Idx,
+}
+
+fn test() {
+    let a = 1..2; // range
+    let b = 1..; // range from
+    let c = ..3; // range to
+    let d = 0..=2; // range inclusive
+}
+#+END_SRC
+
+See: https://doc.rust-lang.org/std/ops/struct.Range.html
+
+*** Index Lang items
+
+Another building block to support macros is the ability to suport the index lang item core::ops::index so that a range can be an argument and the code in core::slice::index can actually become the starting point in giving us a slice from an array.
+
+#+BEGIN_SRC rust
+#[lang = "index"]
+trait Index<Idx> {
+    type Output;
+
+    fn index(&self, index: Idx) -> &Self::Output;
+}
+
+struct Foo(i32, i32);
+impl Index<isize> for Foo {
+    type Output = i32;
+
+    fn index(&self, index: isize) -> &i32 {
+        if index == 0 {
+            &self.0
+        } else {
+            &self.1
+        }
+    }
+}
+
+fn main() -> i32 {
+    let a = Foo(1, 2);
+    let b = a[0];
+    let c = a[1];
+
+    c - b - 1
+}
+#+END_SRC
+
+See: https://doc.rust-lang.org/core/ops/trait.Index.html
+
+*** Repetition Macro's
+
+TODO @Arthur
+
+*** Builtin Macro's
+
+TODO @Arthur
