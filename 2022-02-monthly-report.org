@@ -457,10 +457,86 @@ fn main() -> i32 {
 
 See: https://doc.rust-lang.org/core/ops/trait.Index.html
 
-*** Repetition Macro's
+*** Repetition Macros
 
-TODO @Arthur
+**** Matching macro repetitions
 
-*** Builtin Macro's
+Macro match arms can contain repetition operators, which indicate the possibilty of passing multiple instances of a single token or metavariable.
 
-TODO @Arthur
+You can denote such repetitions using Kleene operators: Three variants are available, `?`, `+` and `*`. Each corresponds to varying bounds on the amount of tokens associated with the operator, similarly to regular expressions.
+
+#+BEGIN_SRC rust
+macro_rules! kleene {
+    ($a:ident $(,)?) => {{ }};
+    ($($i:literal tok)+) => {{ }};
+    ($($e:expr)*) => {{ }};
+}
+#+END_SRC
+
+The declaration above contains three possible matching invocations:
+
+1/ Either a singular identifier, with zero or one commas (pattern: `,`, kleene operator: `?` (0 -> 1))
+2/ One or more literal followed by the separator `tok` (pattern `\$i:literal, tok`, kleene operator: `+` (1 -> `+inf`))
+3/ Zero or more expressions `tok` (pattern `\$e:expr`, kleene operator: `*` (0 -> `+inf`))
+
+The first of implementing macro repetitions comes in matching the actual patterns given to the users. We are now able to match simple repetitions, with a few limitations and bugs still. For example, the Rust reference specifies valid separators to use after fragment specifiers, which we do not check yet. It is for example forbidden to add an identifier after an `$<>:expr` specifier, since that could cause ambiguity: The only allowed separators after an expression are thus `=>`, `,` or `;`.
+
+See: https://doc.rust-lang.org/reference/macros-by-example.html#follow-set-ambiguity-restrictions
+
+Once those repetition patterns are matched, it is easy to figure out how many repetitions of said pattern were given by the user. We store this data alongside the rest of the fragment, to make sure that we expand said pattern a correct amount of times when transcribing.
+
+Given the following match arm:
+#+BEGIN_SRC rust
+macro_rules! lit_plus_tok {
+    ($($e:literal tok)*) => {}
+}
+#+END_SRC
+And the following invocation:
+#+BEGIN_SRC rust
+lit_plus_tok!("rustc" tok 'v' tok 1.59 tok);
+#+END_SRC
+we will have matched the repetition 3 times, and attributed a repetition amount of 3 to the `$e` meta-variable.
+
+See: https://doc.rust-lang.org/rust-by-example/macros/repeat.html and https://doc.rust-lang.org/reference/macros-by-example.html#repetitions
+
+**** Expanding macro repetitions
+
+Following the matching of these repetitions, we can recursively expand all tokens contained in the pattern.
+
+Considering once again the previous declaration and invocation, we can parse the following pattern as the one to expand:
+#+BEGIN_SRC rust
+    ($e:literal tok)
+#+END_SRC
+
+This pattern is then recursively expanded as if it was a regular macro invocation. In order to make sure that each meta-variable gets expanded correctly, we only give a subset of the matched fragments to the new subsitution context.
+
+#+BEGIN_SRC rust
+macro_rules! lit_plus_tok {
+    ($($e:literal tok)*) => {}
+}
+
+lit_plus_tok!("rustc" tok 'v' tok 1.59 tok);
+
+// Original matched fragments: { "lit": ["rustc", 'v', 1.59] }
+// We then expand the repetition pattern once with { "lit": ["rustc"] },
+// once with { "lit": ['v'] },
+// and finally once with { "lit": [1.59] },
+#+END_SRC
+
+Once again, certain restrictions apply, which we have yet to implement: Some specifiers get expanded eagerly, while some stay under the form inputted by the user.
+
+See: https://doc.rust-lang.org/reference/macros-by-example.html#transcribing
+
+Likewise, not all repetition patterns are covered properly. Some issues remain to be ironed out for a complete and correct implementation.
+
+*** Builtin macros
+
+In order to implement some specific behavior, the rust standard library requires some macros to be built into the compiler. You can find a full list [here](https://github.com/Rust-GCC/gccrs/issues/927).
+
+`gccrs` should implement to allow for the compilation of the standard rust library, as both `core` and `std` depend on a multitude of them.
+
+These macros are defined as empty within the core library, and their transcriber is provided in the compiler as a simple function. We implement those builtins in `gccrs` as functions returning fragments of abstract syntax trees, which are inserted during the macro-expansion phase and then lowered to an intermediate representation alongside the rest of the user's code.
+
+We have a long list of macros ahead of us, some of which we should be able to implement easily. If you are interested in contributing, we have opened 3 good first issues regarding builtin macros with detailed guides on how to solve them.
+
+Thanks a lot to [[https://github.com/bjorn3][bjorn3]] for all the help regarding builtin macros and their implementation details.
