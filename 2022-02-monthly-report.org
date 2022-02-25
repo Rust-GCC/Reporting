@@ -423,7 +423,7 @@ See: https://doc.rust-lang.org/std/ops/struct.Range.html
 
 *** Index Lang items
 
-Another building block to support macros is the ability to suport the index lang item core::ops::index so that a range can be an argument and the code in core::slice::index can actually become the starting point in giving us a slice from an array.
+Another building block to support slices is the ability to suport the index lang item core::ops::index so that a range can be an argument and the code in core::slice::index can actually become the starting point in giving us a slice from an array.
 
 #+BEGIN_SRC rust
 #[lang = "index"]
