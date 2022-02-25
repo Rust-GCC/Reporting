@@ -463,7 +463,7 @@ See: https://doc.rust-lang.org/core/ops/trait.Index.html
 
 Macro match arms can contain repetition operators, which indicate the possibilty of passing multiple instances of a single token or metavariable.
 
-You can denote such repetitions using Kleene operators: Three variants are available, `?`, `+` and `*`. Each corresponds to varying bounds on the amount of tokens associated with the operator, similarly to regular expressions.
+You can denote such repetitions using Kleene operators: Three variants are available, ~?~, ~+~ and ~*~. Each corresponds to varying bounds on the amount of tokens associated with the operator, similarly to regular expressions.
 
 #+BEGIN_SRC rust
 macro_rules! kleene {
@@ -475,11 +475,11 @@ macro_rules! kleene {
 
 The declaration above contains three possible matching invocations:
 
-1/ Either a singular identifier, with zero or one commas (pattern: `,`, kleene operator: `?` (0 -> 1))
-2/ One or more literal followed by the separator `tok` (pattern `\$i:literal, tok`, kleene operator: `+` (1 -> `+inf`))
-3/ Zero or more expressions `tok` (pattern `\$e:expr`, kleene operator: `*` (0 -> `+inf`))
+1. Either a singular identifier, with zero or one commas (pattern: ~<comma>~, kleene operator: ~?~ (0 -> 1))
+2. One or more literal followed by the separator ~tok~ (pattern ~$i:literal tok~, kleene operator: ~+~ (1 -> ~+inf~))
+3. Zero or more expressions ~tok~ (pattern ~$e:expr~, kleene operator: ~*~ (0 -> ~+inf~))
 
-The first of implementing macro repetitions comes in matching the actual patterns given to the users. We are now able to match simple repetitions, with a few limitations and bugs still. For example, the Rust reference specifies valid separators to use after fragment specifiers, which we do not check yet. It is for example forbidden to add an identifier after an `$<>:expr` specifier, since that could cause ambiguity: The only allowed separators after an expression are thus `=>`, `,` or `;`.
+The first of implementing macro repetitions comes in matching the actual patterns given to the users. We are now able to match simple repetitions, with a few limitations and bugs still. For example, the Rust reference specifies valid separators to use after fragment specifiers, which we do not check yet. It is for example forbidden to add an identifier after an ~$<>:expr~ specifier, since that could cause ambiguity: The only allowed separators after an expression are thus ~=>~, ~<comma>~ or ~;~.
 
 See: https://doc.rust-lang.org/reference/macros-by-example.html#follow-set-ambiguity-restrictions
 
@@ -495,7 +495,7 @@ And the following invocation:
 #+BEGIN_SRC rust
 lit_plus_tok!("rustc" tok 'v' tok 1.59 tok);
 #+END_SRC
-we will have matched the repetition 3 times, and attributed a repetition amount of 3 to the `$e` meta-variable.
+we will have matched the repetition 3 times, and attributed a repetition amount of 3 to the ~$e~ meta-variable.
 
 See: https://doc.rust-lang.org/rust-by-example/macros/repeat.html and https://doc.rust-lang.org/reference/macros-by-example.html#repetitions
 
@@ -531,11 +531,11 @@ Likewise, not all repetition patterns are covered properly. Some issues remain t
 
 *** Builtin macros
 
-In order to implement some specific behavior, the rust standard library requires some macros to be built into the compiler. You can find a full list [here](https://github.com/Rust-GCC/gccrs/issues/927).
+In order to implement some specific behavior, the rust standard library requires some macros to be built into the compiler. You can find a full list [[https://github.com/Rust-GCC/gccrs/issues/927][here]].
 
-`gccrs` should implement to allow for the compilation of the standard rust library, as both `core` and `std` depend on a multitude of them.
+~gccrs~ should implement to allow for the compilation of the standard rust library, as both ~core~ and ~std~ depend on a multitude of them.
 
-These macros are defined as empty within the core library, and their transcriber is provided in the compiler as a simple function. We implement those builtins in `gccrs` as functions returning fragments of abstract syntax trees, which are inserted during the macro-expansion phase and then lowered to an intermediate representation alongside the rest of the user's code.
+These macros are defined as empty within the core library, and their transcriber is provided in the compiler as a simple function. We implement those builtins in ~gccrs~ as functions returning fragments of abstract syntax trees, which are inserted during the macro-expansion phase and then lowered to an intermediate representation alongside the rest of the user's code.
 
 We have a long list of macros ahead of us, some of which we should be able to implement easily. If you are interested in contributing, we have opened 3 good first issues regarding builtin macros with detailed guides on how to solve them.
 
