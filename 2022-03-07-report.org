@@ -25,7 +25,7 @@ We had our regular community call on 4th March 2022, please find our meeting not
 - Add must_use attribute support [[https://github.com/Rust-GCC/gccrs/pull/990][PR990]]
 - Bug fix parsing macro invocation with semicolon's during statement contexts [[https://github.com/Rust-GCC/gccrs/pull/985][PR985]]
 - Fix ICE during recursive macro invocations [[https://github.com/Rust-GCC/gccrs/pull/986][PR986]]
-- Support match seperators '|' in macro rules [[https://github.com/Rust-GCC/gccrs/pull/991][PR991]]
+- Support repetition separators in macro rules [[https://github.com/Rust-GCC/gccrs/pull/991][PR991]]
 - Refactor HIR visitor and split it up in stmt, vis-item, pattern, external-item, impl, type and expression visitors [[https://github.com/Rust-GCC/gccrs/pull/954][PR954]]
 
 *** Contributors this month
