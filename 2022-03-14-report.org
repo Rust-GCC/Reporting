@@ -10,10 +10,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 TODO
 
-
 ** Completed Activities
-
-
 
 *** Contributors this month
 
@@ -68,9 +65,81 @@ TODO
 
 ** Planned Activities
 
-- Continue work on macros
+- Finish supporting in place macro expansion
 - Merge final PR for Slices
 - Fix dynamic traits to support inheritance
  
 ** Detailed changelog
 
+*** Implement proper repetition separators
+
+Rust allows users to define separators to use in macro repetitions. These separators help in making repeating macro invocations cleaner, and avoid this:
+#+BEGIN_SRC rust
+macro_rules! add0 {
+    ($a:literal) => { $a };
+    ($a:literal $($b:literal)+) => { $a + add0!($($b)*) }
+}
+
+macro_rules! add1 {
+    ($a:literal,) => { $a };
+    ($a:literal, $($b:literal,)+) => { $a + add1!($($b ,)*) }
+}
+
+add0!(1 2 3 4 67); // no separator
+add1!(1, 2, 3, 4, 67,); // extra separator
+#+END_SRC
+
+Macro repetition separators are made of one token and positionned just before the repetition operator (~?~, ~*~ or ~+~). We can now parse them, match them and expand them properly:
+
+#+BEGIN_SRC rust
+macro_rules! add {
+    ($a:literal) => { $a };
+    ($a:literal, $($b:literal),+) => { $a + add!($($b),*) }
+}
+
+add!(1, 2, 3, 4, 67);
+#+END_SRC
+
+*** Defining items and statements through macros
+
+Macros can be used to avoid boilerplate and repetitive code, such as defining a large amount of types and their implementation should they all be similar.
+
+This can be seen in the standard rust library in various builtin-types related code:
+
+#+BEGIN_SRC rust
+// Reduced version.
+// This implements the `Sub` trait for all builtin number types
+// The implementation is always the same, so macros help
+pub trait Sub<Rhs = Self> {
+    type Output;
+    fn sub(self, rhs: Rhs) -> Self::Output;
+}
+
+macro_rules! sub_impl {
+    ($($t:ty)*) => ($(
+        impl Sub for $t {
+            type Output = $t;
+
+            #[inline]
+            fn sub(self, other: $t) -> $t { self - other }
+        }
+    )*)
+}
+
+sub_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
+#+END_SRC
+
+This expands to a proper implementation of the ~Sub~ trait for all types mentioned, with proper expansion of the ~sub~ method and associated ~Output~ type. We are now able to parse those items correctly and expand them in place.
+
+Likewise, macro invocations can also be expanded to multiple statements inside a block:
+#+BEGIN_SRC rust
+macro_rules! define_vars {
+    ($([ $name:ident $value:literal ])*) => {
+        $(let $name = $value;)*
+    }
+}
+
+fn needs_lots_of_locals() {
+    define_vars!([pear 14] [apple 'm'] [mango "Pi"]);
+}
+#+END_SRC
