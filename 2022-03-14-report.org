@@ -8,7 +8,11 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-TODO
+We are nearing the end of declarative macro expansion, with only a few more cases to support. Furthermore, support for slices is almost complete with more language items being added and supported. We have also started utilizing existing gcc infrastructure in order to implement helpful rust constructs, which will become very useful as we start supporting more attributes and built-ins.
+
+Two weeks remain before the end of the Macro Expansion deadline, which does not contain any significant difficulties to overcome.
+
+We will keep on working on adding support for the various constructs used in the core library, which we would like to start compiling soon.
 
 ** Completed Activities
 
@@ -65,8 +69,9 @@ TODO
 
 ** Planned Activities
 
-- Finish supporting in place macro expansion
 - Merge final PR for Slices
+- Finish supporting in place macro expansion
+- Improve error messages and edge case handling for declarative macros
 - Fix dynamic traits to support inheritance
  
 ** Detailed changelog
