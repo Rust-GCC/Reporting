@@ -10,40 +10,57 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 We are nearing the end of declarative macro expansion, with only a few more cases to support. Furthermore, support for slices is almost complete with more language items being added and supported. We have also started utilizing existing gcc infrastructure in order to implement helpful rust constructs, which will become very useful as we start supporting more attributes and built-ins.
 
-Two weeks remain before the end of the Macro Expansion deadline, which does not contain any significant difficulties to overcome.
+Two weeks remain before the end of the Macro Expansion deadline, which does not contain any significant difficulties to overcome. We will keep on working on adding support for the various constructs used in the core library, which we would like to start compiling soon.
 
-We will keep on working on adding support for the various constructs used in the core library, which we would like to start compiling soon.
+Note this week there is a drop in the passing tests for our test-suite. We have no removed any tests but in dejagnu we had many bad/duplicate unused code warnings these are now fixed by reusing CPP unused variable detection code. It also removed our old AST unused code scan and improves our existing dead-code scan pass.
 
 ** Completed Activities
+
+- Fix bad unused code warnings [[https://github.com/Rust-GCC/gccrs/pull/992][PR992]]
+- Macros can allow any delimiters for the innovcation [[https://github.com/Rust-GCC/gccrs/pull/997][PR997]]
+- Fix bugs in parsing macro repetitions [[https://github.com/Rust-GCC/gccrs/pull/994][PR994]]
+- Refactor ABI options into an enum during HIR lowering [[https://github.com/Rust-GCC/gccrs/pull/999][PR999]]
+- Handle macro invocations as statements vs expressions [[https://github.com/Rust-GCC/gccrs/pull/998][PR998]]
+- Cleanup how multiple matches are handled [[https://github.com/Rust-GCC/gccrs/pull/1002][PR1002]]
+- Refactor how builtins/intrinsics are handled and add unreachable, abort, size_of and offset  [[https://github.com/Rust-GCC/gccrs/pull/1003][PR1003]]
+- Bug fix ICE on impl blocks for arrays or slices [[https://github.com/Rust-GCC/gccrs/pull/1007][PR1007]]
+- Add missing generic substitution for covariants types slices and arrays [[https://github.com/Rust-GCC/gccrs/pull/1009][PR1009]]
+- Add const_ptr lang item mappings [[https://github.com/Rust-GCC/gccrs/pull/1008][PR1008]]
+- Implement HIR lowering for AST::SliceType [[https://github.com/Rust-GCC/gccrs/pull/1016][PR1016]]
+- Refactor attribute visitor into its own file [[https://github.com/Rust-GCC/gccrs/pull/1017][PR1017]]
+- Add more documentation for builtin macros [[https://github.com/Rust-GCC/gccrs/pull/1018][PR1018]]
+- Generate GCC code for the libcore FatPtr/SliceType [[https://github.com/Rust-GCC/gccrs/pull/1015][PR1015]]
+- Implement the builtin column! macro [[https://github.com/Rust-GCC/gccrs/pull/1004][PR1004]]
 
 *** Contributors this month
 
 - [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/mvvsmk][Manoj Kumar]]
 
 *** Overall Task Status
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |       113 |           |       |
-| In Progress |        17 |           |       |
-| Completed   |       306 |           |       |
+| TODO        |       113 |       109 |    -4 |
+| In Progress |        17 |        22 |    +5 |
+| Completed   |       306 |       317 |   +11 |
 
 *** Test Cases
 
 | TestCases | Last Week | This Week | Delta |
 |-----------+-----------+-----------+-------|
-| Passing   | 6177      |           |       |
-| Failed    | -         |           |       |
-| XFAIL     | 21        |           |       |
-| XPASS     | -         |           |       |
+| Passing   | 6177      | 5467      | -710  |
+| Failed    | -         | -         | -     |
+| XFAIL     | 21        | 21        | 21    |
+| XPASS     | -         | -         | -     |
 
 *** Bugs
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |        38 |           |       |
-| In Progress |         6 |           |       |
-| Completed   |       112 |           |       |
+| TODO        |        38 |        35 |    -3 |
+| In Progress |         6 |        10 |    +4 |
+| Completed   |       112 |       118 |    +6 |
 
 *** Milestones Progress
 
@@ -54,7 +71,7 @@ We will keep on working on adding support for the various constructs used in the
 | Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
 | Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
 | Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
-| Macros and cfg expansion          |       70% |           |       | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Macros and cfg expansion          |       70% |       78% | +8%   | 1st Dec 2021   | -               | 28th Mar 2022  |
 | Imports and Visibility            |        0% |        0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
 | Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
 | Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
@@ -148,3 +165,4 @@ fn needs_lots_of_locals() {
     define_vars!([pear 14] [apple 'm'] [mango "Pi"]);
 }
 #+END_SRC
+
