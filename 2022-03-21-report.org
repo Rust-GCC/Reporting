@@ -1,0 +1,175 @@
+#+title:  Weekly Report for the 14th to 21st March of 2022
+#+author: Arthur Cohen
+#+date:   2022-03-16
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+1/ What we did
+2/ What's left
+3/ What's next
+
+We are nearing the end of declarative macro expansion, with only a few more cases to support. Furthermore, support for slices is almost complete with more language items being added and supported. We have also started utilizing existing gcc infrastructure in order to implement helpful rust constructs, which will become very useful as we start supporting more attributes and built-ins.
+
+Two weeks remain before the end of the Macro Expansion deadline, which does not contain any significant difficulties to overcome. We will keep on working on adding support for the various constructs used in the core library, which we would like to start compiling soon.
+
+Note this week there is a drop in the passing tests for our test-suite. We have no removed any tests but in dejagnu we had many bad/duplicate unused code warnings these are now fixed by reusing CPP unused variable detection code. It also removed our old AST unused code scan and improves our existing dead-code scan pass.
+
+** Completed Activities
+
+
+*** Contributors this month
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       109 |           |       |
+| In Progress |        22 |           |       |
+| Completed   |       317 |           |       |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 5467      |           |       |
+| Failed    | -         |           |       |
+| XFAIL     | 21        |           |       |
+| XPASS     | -         |           |       |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        35 |           |       |
+| In Progress |        10 |           |       |
+| Completed   |       118 |           |       |
+
+*** Milestones Progress
+
+**** FIXME: Add milestone progress, it's well hidden in the table
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |       78% |           |       | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |        0% |        0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            2 |                 5 |           10 | Maintain status reports and issue tracking to stakeholders |
+
+
+** Planned Activities
+
+** Detailed changelog
+
+*** Expanding macros in more contexts
+
+Last week's macro improvements were focused on adding a base for in-place macro expansion. We worked on getting them properly expanded in two places, namely block statements and as crate items. However, macros can be used in many more ways:
+
+#+BEGIN_QUOTE
+A macro invocation expands a macro at compile time and replaces the invocation with the result of the macro. Macros may be invoked in the following situations:
+   1. Expressions and statements
+   2. Patterns
+   3. Types
+   4. Items including associated items
+   5. macro_rules transcribers
+   6. External blocks
+#+END_QUOTE
+
+You can now call macros from inside `impl` blocks, external blocks and trait definitions or implementations. If you've been following the Rust-for-Linux effort, you might have seen this pattern [[https://github.com/Rust-for-Linux/linux/blob/486c2cde073e5d91d78f85d0adf9a911dd6775fa/samples/rust/rust_miscdev.rs#L58][when defining file operations for a type]]. This allows defining your own function or relying on the kernel's defaults safely.
+
+#+BEGIN_SRC rust
+macro_rules! c_fn {
+    (int $name:ident ( const char_ptr $arg_name:ident)) => {
+        fn $name($arg_name: *const i8) -> i32;
+    };
+}
+
+extern "C" {
+    c_fn! {int puts (const char_ptr s)}
+}
+
+macro_rules! add_distract_fn {
+    () => {
+        fn distract() {
+            unsafe {
+                puts("wait this isn't C\0" as *const str as *const i8);
+            }
+        }
+    };
+}
+
+struct Abstract;
+
+impl Abstract {
+    add_distract_fn!();
+}
+
+macro_rules! require_proc {
+    ($fn_name:ident) => {
+        fn $fn_name();
+    };
+}
+
+trait Abstractable {
+    require_proc!(extract);
+}
+
+macro_rules! extract {
+    ($fn_block:block) => {
+        fn extract() $fn_block
+    }
+}
+
+impl Abstractable for Abstract {
+    extract! {{ Abstract::distract(); }}
+}
+#+END_SRC
+
+*** Relaxed parsing rules in macro definitions and invocations
+
+To improve usability, parsing rules when expanding macro nodes are a little more relaxed. As an example, this is completely valid rust code:
+
+#+BEGIN_SRC rust
+macro_rules! take_stmt {
+    ($s:stmt) => {
+        $s
+    };
+}
+
+fn f() -> i32 {
+    16
+}
+
+macro_rules! expand_to_stmt_or_expr {
+    () => {
+        f()
+    };
+}
+
+fn main() {
+    take_stmt!(let a1 = 15);
+
+    let a2 = {
+        expand_to_stmt_or_expr!(); // f is called as an expression-statement
+        expand_to_stmt_or_expr!() // f is called as a tail expression
+    };
+}
+
+#+END_SRC
+
+This is now handled properly and makes for prettier macros and invocations, and avoids the necessity of adding extra semicolons in some cases.
