@@ -8,20 +8,37 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
+Almost all valid rust macro syntax is now supported, with some error cases still remaining unchecked.
+
+More importantly, we are now able to properly utilize the code responsible for creating slices, at least pre-rust 1.50.0 as we cannot yet support const generics.
+
 1/ What we did
+
+- Support for slices is almost ready
+- Support for almost all of the macro syntax is done
+
 2/ What's left
-3/ What's next
 
-We are nearing the end of declarative macro expansion, with only a few more cases to support. Furthermore, support for slices is almost complete with more language items being added and supported. We have also started utilizing existing gcc infrastructure in order to implement helpful rust constructs, which will become very useful as we start supporting more attributes and built-ins.
-
-Two weeks remain before the end of the Macro Expansion deadline, which does not contain any significant difficulties to overcome. We will keep on working on adding support for the various constructs used in the core library, which we would like to start compiling soon.
-
-Note this week there is a drop in the passing tests for our test-suite. We have no removed any tests but in dejagnu we had many bad/duplicate unused code warnings these are now fixed by reusing CPP unused variable detection code. It also removed our old AST unused code scan and improves our existing dead-code scan pass.
+- Fixing macro bugs
+- Handling more macro edge/error cases
 
 ** Completed Activities
 
+- Support placeholders becoming slices [[https://github.com/rust-gcc/gccrs/pulls/1037][PR1037]]
+- Handle -fsyntax-only [[https://github.com/rust-gcc/gccrs/pulls/1035][PR1035]]
+- Fix bad copy-past in can equal interface for pointer types [[https://github.com/rust-gcc/gccrs/pulls/1033][PR1033]]
+- Add AST kind information [[https://github.com/rust-gcc/gccrs/pulls/1032][PR1032]]
+- Rewrite our unconstrained type-param error checking [[https://github.com/rust-gcc/gccrs/pulls/1030][PR1030]]
+- Macro in trait impl block [[https://github.com/rust-gcc/gccrs/pulls/1029][PR1029]]
+- Allow parsing statements without closing semicolon [[https://github.com/rust-gcc/gccrs/pulls/1027][PR1027]]
+- Fix memory corruption in generation of builtin functions [[https://github.com/rust-gcc/gccrs/pulls/1025][PR1025]]
+- Fix spurious stripping of tail expression [[https://github.com/rust-gcc/gccrs/pulls/1022][PR1022]]
+- Do not try and re-expand macros if depth has exceeded recursion limit [[https://github.com/rust-gcc/gccrs/pulls/1021][PR1021]]
 
-*** Contributors this month
+*** Contributors this week
+
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
 
 *** Overall Task Status
 
@@ -50,8 +67,6 @@ Note this week there is a drop in the passing tests for our test-suite. We have 
 
 *** Milestones Progress
 
-**** FIXME: Add milestone progress, it's well hidden in the table
-
 | Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
 |-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
 | Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
@@ -59,7 +74,7 @@ Note this week there is a drop in the passing tests for our test-suite. We have 
 | Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
 | Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
 | Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
-| Macros and cfg expansion          |       78% |           |       | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Macros and cfg expansion          |       78% |       89% |       | 1st Dec 2021   | -               | 28th Mar 2022  |
 | Imports and Visibility            |        0% |        0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
 | Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
 | Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
