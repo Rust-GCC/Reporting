@@ -1,6 +1,6 @@
 #+title:  Weekly Report for the 14th to 21st March of 2022
-#+author: Arthur Cohen
-#+date:   2022-03-16
+#+author: Arthur Cohen + Philip Herron
+#+date:   2022-03-21
 
 ** Overview
 
@@ -8,19 +8,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-Almost all valid rust macro syntax is now supported, with some error cases still remaining unchecked.
-
-More importantly, we are now able to properly utilize the code responsible for creating slices, at least pre-rust 1.50.0 as we cannot yet support const generics.
-
-1/ What we did
-
-- Support for slices is almost ready
-- Support for almost all of the macro syntax is done
-
-2/ What's left
-
-- Fixing macro bugs
-- Handling more macro edge/error cases
+Almost all valid rust macro syntax is supported, with some error cases remaining unchecked. We will continue to use the time of the milestone to improve this. In relation to our slices we are very close to having this working; there are three outstanding pieces of work to finish before libcore 1.49.0's implementation of slices will work, Unsized method resolution, a bug with type-checking generic pointers and finally, an issue with generic associated types from higher-ranked trait bounds. Slices in rust (1.49.0) are pretty interesting and complex so we will write a blog post on this later in the year and the differences in later rustc versions.
 
 ** Completed Activities
 
@@ -37,33 +25,32 @@ More importantly, we are now able to properly utilize the code responsible for c
 
 *** Contributors this week
 
-- [[https://github.com/tschwinge][Thomas Schwinge]]
 - [[https://github.com/CohenArthur][Arthur Cohen]]
 
 *** Overall Task Status
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |       109 |           |       |
-| In Progress |        22 |           |       |
-| Completed   |       317 |           |       |
+| TODO        |       109 |       110 |    +1 |
+| In Progress |        22 |        18 |    -4 |
+| Completed   |       317 |       327 |   +10 |
 
 *** Test Cases
 
 | TestCases | Last Week | This Week | Delta |
 |-----------+-----------+-----------+-------|
-| Passing   | 5467      |           |       |
-| Failed    | -         |           |       |
-| XFAIL     | 21        |           |       |
-| XPASS     | -         |           |       |
+| Passing   | 5467      | 5511      | +44   |
+| Failed    | -         | -         | -     |
+| XFAIL     | 21        | 22        | +1    |
+| XPASS     | -         | -         | -     |
 
 *** Bugs
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |        35 |           |       |
-| In Progress |        10 |           |       |
-| Completed   |       118 |           |       |
+| TODO        |        35 |        34 |    -1 |
+| In Progress |        10 |         8 |    -2 |
+| Completed   |       118 |       125 |    +7 |
 
 *** Milestones Progress
 
@@ -74,7 +61,7 @@ More importantly, we are now able to properly utilize the code responsible for c
 | Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
 | Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
 | Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
-| Macros and cfg expansion          |       78% |       89% |       | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Macros and cfg expansion          |       78% |       87% | +9%   | 1st Dec 2021   | -               | 28th Mar 2022  |
 | Imports and Visibility            |        0% |        0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
 | Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
 | Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
@@ -88,6 +75,10 @@ More importantly, we are now able to properly utilize the code responsible for c
 
 
 ** Planned Activities
+
+- Merge unsized method resolution
+- Fix bug in generic associated types for slices
+- Continue work on error cases with macros
 
 ** Detailed changelog
 
