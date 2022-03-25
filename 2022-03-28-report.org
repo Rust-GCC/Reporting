@@ -12,7 +12,7 @@ One main complex feature remains to be implemented for the Macro Expansion miles
 
 Macros have gotten more correct as more restrictions have been implemented, such as the verification of [[https://doc.rust-lang.org/reference/macro-ambiguity.html][follow-set ambiguities]]. Rust 1.49.0 slices will soon be entirely supported, with only some cleanup of the various implementations remaining to be performed. We will start drafting some issues for the next milestone, which concerns Imports and Visibilites. This includes source-code visibility (~pub~, ~pub(crate)~, ...) as well as metadata exports and proper handling of .rlib and .rmeta files.
 
-Finally, we have also started looking into improving our set of CI checks: Thanks to a new contributor Daniel del Castillo, we can now easily check that our frontend does not introduce new warnings, which would contradict with gcc's expectations of a full boostrapping build. We are also working on getting gccrs compilable using an older gcc version (4.8), which is a requirement for upstreaming as well as backporting.
+Finally, we have also started looking into improving our set of CI checks: Thanks to a new contributor [[https://github.com/CastilloDel][Daniel del Castillo]], we can now easily check that our frontend does not introduce new warnings, which would contradict with gcc's expectations of a full boostrapping build. We are also working on getting gccrs compilable using an older gcc version (4.8), which is a requirement for upstreaming as well as backporting.
 
 ** Completed Activities
 
@@ -115,7 +115,7 @@ macro_rules! include_bytes {
 
 While rust macros are extremely powerful, they are also heavily restricted to prevent ambiguities. These restrictions include sets of allowed fragments that can follow a certain metavariable fragment, which are referred to as follow-sets.
 
-As an example, the follow set of ~:expr~ fragments is { ~,~, ~;~, ~=>~ }. Any other token cannot follow an ~:expr~ fragment, as it might cause ambiguities in later versions of the langauge.
+As an example, the follow set of ~:expr~ fragments is { ~, (comma)~, ~; (semicolon)~, ~=> (match arrow)~ }. Any other token cannot follow an ~:expr~ fragment, as it might cause ambiguities in later versions of the langauge.
 
 This was previously not handled by gccrs at all. As a result, we had some test cases that contained ambiguous macro definitions that rustc rejected.
 
@@ -153,6 +153,8 @@ macro_rules! mac {
 The follow-set of ~:ty~ fragments allows the user to specify another fragment as follow-up, but only if this metavar fragment is a ~:block~ one.
 
 An interesting tidbit is that these checks are performed at the beginning of the expansion phase in rustc, while we go through them during parsing. This is not set in stone, and we'd love to perform them later if required.
+
+The remaining issues are marked as ~good-first-pr~ as they are simple and offer an entrypoint into the compiler's implementation of macros.
 
 *** Restrict merged repetitions to metavars with the same amount of repetitions
 
