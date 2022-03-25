@@ -1,0 +1,222 @@
+#+title:  Weekly Report for the 21st to 28th March of 2022
+#+author: Arthur Cohen
+#+date:   2022-03-28
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+One main complex feature remains to be implemented for the Macro Expansion milestone to be completed, which should be doable in time. Some small, non-blocking macro issues have been marked with the `good-first-pr` label for new contributors to make their mark. Feel free to ask us about it on our zulip or github!
+Macros have gotten more correct as more restrictions have been implemented, such as the verification of [[https://doc.rust-lang.org/reference/macro-ambiguity.html][follow-set ambiguities]]. Rust 1.49.0 slices will soon be entirely supported, with only some cleanup of the various implementations remaining to be performed. We will start drafting some issues for the next milestone, which concerns Imports and Visibilites. This includes source-code visibility (~pub~, ~pub(crate)~, ...) as well as metadata exports and proper handling of .rlib and .rmeta files.
+Finally, we have also started looking into improving our set of CI checks: Thanks to a new contributor Daniel del Castillo, we can now easily check that our frontend does not introduce new warnings which does not conform to gcc's expectations of a full boostrapping build. We are also working on getting gccrs compilable using an older gcc version (4.8), which is a requirement for upstreaming as well as backporting.
+
+** Completed Activities
+
+- Enable -Werror in CI [[https://github.com/rust-gcc/gccrs/pulls/1026][PR1026]]
+- Do not propagate parser errors in match_repetitions [[https://github.com/rust-gcc/gccrs/pulls/1040][PR1040]]
+- Only expand merged repetitions if they contain the same amount [[https://github.com/rust-gcc/gccrs/pulls/1041][PR1041]]
+- Implement include_bytes! and include_str! [[https://github.com/rust-gcc/gccrs/pulls/1043][PR1043]]
+- Restrict follow up tokens on :expr and :stmt [[https://github.com/rust-gcc/gccrs/pulls/1044][PR1044]]
+- Add helper function for subsituted tokens debugging [[https://github.com/rust-gcc/gccrs/pulls/1047][PR1047]]
+- Add better restrictions around semicolons in statements parsing [[https://github.com/rust-gcc/gccrs/pulls/1049][PR1049]]
+- Add remaining restrictions for follow-set restrictions [[https://github.com/rust-gcc/gccrs/pulls/1051][PR1051]]
+- Add hints for valid follow-set tokens [[https://github.com/rust-gcc/gccrs/pulls/1052][PR1052]]
+- Fix overzealous follow-set ambiguity [[https://github.com/rust-gcc/gccrs/pulls/1054][PR1054]]
+- Allow checking past zeroable matches for follow-set restrictions [[https://github.com/rust-gcc/gccrs/pulls/1055][PR1055]]
+- Fix #include <algorithm> [[https://github.com/rust-gcc/gccrs/pulls/1056][PR1056]]
+- Provide std::hash for Rust::AST::MacroFragSpec::Kind enum class [[https://github.com/rust-gcc/gccrs/pulls/1057][PR1057]]
+- Properly perform follow-set checking on matchers [[https://github.com/rust-gcc/gccrs/pulls/1062][PR1062]]
+- Handle :tt fragments properly [[https://github.com/rust-gcc/gccrs/pulls/1064][PR1064]]
+- Handle :meta fragments properly [[https://github.com/rust-gcc/gccrs/pulls/1063][PR1063]]
+
+*** Contributors this week
+
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/CastilloDel][Daniel del Castillo]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       109 |           |       |
+| In Progress |        22 |           |       |
+| Completed   |       317 |           |       |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 5511      | 5677      | +166  |
+| Failed    | -         | -         | -     |
+| XFAIL     | 22        | 22        | +0    |
+| XPASS     | -         | -         | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        35 |        34 |    -1 |
+| In Progress |        10 |         8 |    -2 |
+| Completed   |       118 |       125 |    +7 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |       87% |       95% | +8%   | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Imports and Visibility            |        0% |        0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            2 |                 5 |           10 | Maintain status reports and issue tracking to stakeholders |
+
+
+** Planned Activities
+
+- Finish working out the various quirks of macros
+- Make sure follow-set ambiguities are implemented properly
+- Merge unsized method resolution
+- Handle macro opacity properly
+
+** Detailed changelog
+
+*** Restrict merged repetitions to metavars with the same amount of repetitions
+
+1. Only expand merged repetitions if they contain the same amount [[https://github.com/rust-gcc/gccrs/pulls/1041][PR1041]]
+
+No longer possible
+
+2. Implement include_bytes! and include_str! [[https://github.com/rust-gcc/gccrs/pulls/1043][PR1043]]
+
+Very useful, many thanks!!!!
+
+3. Follow-set ambiguities
+
+All restrictions implemented properly?
+Hints are there
+Zeroable fragments are there
+
+4. Handle :tt fragments properly [[https://github.com/rust-gcc/gccrs/pulls/1064][PR1064]]
+
+Paves the way for tt munchers!
+
+The little book of rust macros tt muncher
+Almost implemented, just got one bug to figure out
+
+5. CI improvements
+
+-Werror
+older gcc build
+
+*** Expanding macros in more contexts
+
+Last week's macro improvements were focused on adding a base for in-place macro expansion. We worked on getting them properly expanded in two places, namely block statements and as crate items. However, macros can be used in many more ways:
+
+#+BEGIN_QUOTE
+A macro invocation expands a macro at compile time and replaces the invocation with the result of the macro. Macros may be invoked in the following situations:
+   1. Expressions and statements
+   2. Patterns
+   3. Types
+   4. Items including associated items
+   5. macro_rules transcribers
+   6. External blocks
+#+END_QUOTE
+
+You can now call macros from inside `impl` blocks, external blocks and trait definitions or implementations. If you've been following the Rust-for-Linux effort, you might have seen this pattern [[https://github.com/Rust-for-Linux/linux/blob/486c2cde073e5d91d78f85d0adf9a911dd6775fa/samples/rust/rust_miscdev.rs#L58][when defining file operations for a type]]. This allows defining your own function or relying on the kernel's defaults safely.
+
+#+BEGIN_SRC rust
+macro_rules! c_fn {
+    (int $name:ident ( const char_ptr $arg_name:ident)) => {
+        fn $name($arg_name: *const i8) -> i32;
+    };
+}
+
+extern "C" {
+    c_fn! {int puts (const char_ptr s)}
+}
+
+macro_rules! add_distract_fn {
+    () => {
+        fn distract() {
+            unsafe {
+                puts("wait this isn't C\0" as *const str as *const i8);
+            }
+        }
+    };
+}
+
+struct Abstract;
+
+impl Abstract {
+    add_distract_fn!();
+}
+
+macro_rules! require_proc {
+    ($fn_name:ident) => {
+        fn $fn_name();
+    };
+}
+
+trait Abstractable {
+    require_proc!(extract);
+}
+
+macro_rules! extract {
+    ($fn_block:block) => {
+        fn extract() $fn_block
+    }
+}
+
+impl Abstractable for Abstract {
+    extract! {{ Abstract::distract(); }}
+}
+#+END_SRC
+
+*** Relaxed parsing rules in macro definitions and invocations
+
+To improve usability, parsing rules when expanding macro nodes are a little more relaxed. As an example, this is completely valid rust code:
+
+#+BEGIN_SRC rust
+macro_rules! take_stmt {
+    ($s:stmt) => {
+        $s
+    };
+}
+
+fn f() -> i32 {
+    16
+}
+
+macro_rules! expand_to_stmt_or_expr {
+    () => {
+        f()
+    };
+}
+
+fn main() {
+    take_stmt!(let a1 = 15);
+
+    let a2 = {
+        expand_to_stmt_or_expr!(); // f is called as an expression-statement
+        expand_to_stmt_or_expr!() // f is called as a tail expression
+    };
+}
+
+#+END_SRC
+
+This is now handled properly and makes for prettier macros and invocations, and avoids the necessity of adding extra semicolons in some cases.
