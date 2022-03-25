@@ -8,9 +8,11 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-One main complex feature remains to be implemented for the Macro Expansion milestone to be completed, which should be doable in time. Some small, non-blocking macro issues have been marked with the `good-first-pr` label for new contributors to make their mark. Feel free to ask us about it on our zulip or github!
+One main complex feature remains to be implemented for the Macro Expansion milestone to be completed, which should be doable in time. Some small, non-blocking macro issues have been marked with the ~good-first-pr~ label for new contributors to make their mark. Feel free to ask about them on our Zulip or GitHub!
+
 Macros have gotten more correct as more restrictions have been implemented, such as the verification of [[https://doc.rust-lang.org/reference/macro-ambiguity.html][follow-set ambiguities]]. Rust 1.49.0 slices will soon be entirely supported, with only some cleanup of the various implementations remaining to be performed. We will start drafting some issues for the next milestone, which concerns Imports and Visibilites. This includes source-code visibility (~pub~, ~pub(crate)~, ...) as well as metadata exports and proper handling of .rlib and .rmeta files.
-Finally, we have also started looking into improving our set of CI checks: Thanks to a new contributor Daniel del Castillo, we can now easily check that our frontend does not introduce new warnings which does not conform to gcc's expectations of a full boostrapping build. We are also working on getting gccrs compilable using an older gcc version (4.8), which is a requirement for upstreaming as well as backporting.
+
+Finally, we have also started looking into improving our set of CI checks: Thanks to a new contributor Daniel del Castillo, we can now easily check that our frontend does not introduce new warnings, which would contradict with gcc's expectations of a full boostrapping build. We are also working on getting gccrs compilable using an older gcc version (4.8), which is a requirement for upstreaming as well as backporting.
 
 ** Completed Activities
 
