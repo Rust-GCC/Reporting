@@ -16,22 +16,22 @@ Finally, we have also started looking into improving our set of CI checks: Thank
 
 ** Completed Activities
 
-- Enable -Werror in CI [[https://github.com/rust-gcc/gccrs/pulls/1026][PR1026]]
-- Do not propagate parser errors in match_repetitions [[https://github.com/rust-gcc/gccrs/pulls/1040][PR1040]]
-- Only expand merged repetitions if they contain the same amount [[https://github.com/rust-gcc/gccrs/pulls/1041][PR1041]]
-- Implement include_bytes! and include_str! [[https://github.com/rust-gcc/gccrs/pulls/1043][PR1043]]
-- Restrict follow up tokens on :expr and :stmt [[https://github.com/rust-gcc/gccrs/pulls/1044][PR1044]]
-- Add helper function for subsituted tokens debugging [[https://github.com/rust-gcc/gccrs/pulls/1047][PR1047]]
-- Add better restrictions around semicolons in statements parsing [[https://github.com/rust-gcc/gccrs/pulls/1049][PR1049]]
-- Add remaining restrictions for follow-set restrictions [[https://github.com/rust-gcc/gccrs/pulls/1051][PR1051]]
-- Add hints for valid follow-set tokens [[https://github.com/rust-gcc/gccrs/pulls/1052][PR1052]]
-- Fix overzealous follow-set ambiguity [[https://github.com/rust-gcc/gccrs/pulls/1054][PR1054]]
-- Allow checking past zeroable matches for follow-set restrictions [[https://github.com/rust-gcc/gccrs/pulls/1055][PR1055]]
-- Fix #include <algorithm> [[https://github.com/rust-gcc/gccrs/pulls/1056][PR1056]]
-- Provide std::hash for Rust::AST::MacroFragSpec::Kind enum class [[https://github.com/rust-gcc/gccrs/pulls/1057][PR1057]]
-- Properly perform follow-set checking on matchers [[https://github.com/rust-gcc/gccrs/pulls/1062][PR1062]]
-- Handle :tt fragments properly [[https://github.com/rust-gcc/gccrs/pulls/1064][PR1064]]
-- Handle :meta fragments properly [[https://github.com/rust-gcc/gccrs/pulls/1063][PR1063]]
+- Enable -Werror in CI [[https://github.com/rust-gcc/gccrs/pull/1026][PR1026]]
+- Do not propagate parser errors in match_repetitions [[https://github.com/rust-gcc/gccrs/pull/1040][PR1040]]
+- Only expand merged repetitions if they contain the same amount [[https://github.com/rust-gcc/gccrs/pull/1041][PR1041]]
+- Implement include_bytes! and include_str! [[https://github.com/rust-gcc/gccrs/pull/1043][PR1043]]
+- Restrict follow up tokens on :expr and :stmt [[https://github.com/rust-gcc/gccrs/pull/1044][PR1044]]
+- Add helper function for subsituted tokens debugging [[https://github.com/rust-gcc/gccrs/pull/1047][PR1047]]
+- Add better restrictions around semicolons in statements parsing [[https://github.com/rust-gcc/gccrs/pull/1049][PR1049]]
+- Add remaining restrictions for follow-set restrictions [[https://github.com/rust-gcc/gccrs/pull/1051][PR1051]]
+- Add hints for valid follow-set tokens [[https://github.com/rust-gcc/gccrs/pull/1052][PR1052]]
+- Fix overzealous follow-set ambiguity [[https://github.com/rust-gcc/gccrs/pull/1054][PR1054]]
+- Allow checking past zeroable matches for follow-set restrictions [[https://github.com/rust-gcc/gccrs/pull/1055][PR1055]]
+- Fix #include <algorithm> [[https://github.com/rust-gcc/gccrs/pull/1056][PR1056]]
+- Provide std::hash for Rust::AST::MacroFragSpec::Kind enum class [[https://github.com/rust-gcc/gccrs/pull/1057][PR1057]]
+- Properly perform follow-set checking on matchers [[https://github.com/rust-gcc/gccrs/pull/1062][PR1062]]
+- Handle :tt fragments properly [[https://github.com/rust-gcc/gccrs/pull/1064][PR1064]]
+- Handle :meta fragments properly [[https://github.com/rust-gcc/gccrs/pull/1063][PR1063]]
 
 *** Contributors this week
 
@@ -115,7 +115,7 @@ macro_rules! include_bytes {
 
 While rust macros are extremely powerful, they are also heavily restricted to prevent ambiguities. These restrictions include sets of allowed fragments that can follow a certain metavariable fragment, which are referred to as follow-sets.
 
-As an example, the follow set of ~:expr~ fragments is { ~, (comma)~, ~; (semicolon)~, ~=> (match arrow)~ }. Any other token cannot follow an ~:expr~ fragment, as it might cause ambiguities in later versions of the langauge.
+As an example, the follow set of ~:expr~ fragments is { ~COMMA~, ~SEMICOLON~, ~MATCH_ARROW~ }. Any other token cannot follow an ~:expr~ fragment, as it might cause ambiguities in later versions of the language.
 
 This was previously not handled by gccrs at all. As a result, we had some test cases that contained ambiguous macro definitions that rustc rejected.
 
