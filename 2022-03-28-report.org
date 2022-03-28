@@ -8,7 +8,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-One main complex feature remains to be implemented for the Macro Expansion milestone to be completed, which should be doable in time. Some small, non-blocking macro issues have been marked with the ~good-first-pr~ label for new contributors to make their mark. Feel free to ask about them on our Zulip or GitHub!
+We are approaching the end of macro expansion, we have one outstanding issue on how we handle expansion around types. Apart from that, we have some small, non-blocking macro issues marked with the ~good-first-pr~ label for new contributors to make their mark. Feel free to ask about them on our Zulip or GitHub!
 
 Macros have gotten more correct as more restrictions have been implemented, such as the verification of [[https://doc.rust-lang.org/reference/macro-ambiguity.html][follow-set ambiguities]]. Rust 1.49.0 slices will soon be entirely supported, with only some cleanup of the various implementations remaining to be performed. We will start drafting some issues for the next milestone, which concerns Imports and Visibilites. This includes source-code visibility (~pub~, ~pub(crate)~, ...) as well as metadata exports and proper handling of .rlib and .rmeta files.
 
@@ -45,9 +45,9 @@ Finally, we have also started looking into improving our set of CI checks: Thank
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |       109 |           |       |
-| In Progress |        22 |           |       |
-| Completed   |       317 |           |       |
+| TODO        |       110 |       105 |    -5 |
+| In Progress |        18 |        23 |    +5 |
+| Completed   |       327 |       336 |    +9 |
 
 *** Test Cases
 
@@ -62,9 +62,9 @@ Finally, we have also started looking into improving our set of CI checks: Thank
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |        35 |        34 |    -1 |
-| In Progress |        10 |         8 |    -2 |
-| Completed   |       118 |       125 |    +7 |
+| TODO        |        34 |        35 |    +1 |
+| In Progress |         8 |        10 |    +2 |
+| Completed   |       125 |       129 |    +4 |
 
 *** Milestones Progress
 
@@ -75,7 +75,7 @@ Finally, we have also started looking into improving our set of CI checks: Thank
 | Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
 | Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
 | Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
-| Macros and cfg expansion          |       87% |       95% | +8%   | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Macros and cfg expansion          |       87% |       99% | +12%  | 1st Dec 2021   | -               | 28th Mar 2022  |
 | Imports and Visibility            |        0% |        0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
 | Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
 | Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
@@ -94,6 +94,7 @@ Finally, we have also started looking into improving our set of CI checks: Thank
 - Make sure follow-set ambiguities are implemented properly
 - Merge unsized method resolution
 - Handle macro opacity properly
+- Plan out next milestone
 
 ** Detailed changelog
 
