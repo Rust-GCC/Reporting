@@ -12,16 +12,16 @@ Almost all valid rust macro syntax is supported, with some error cases remaining
 
 ** Completed Activities
 
-- Support placeholders becoming slices [[https://github.com/rust-gcc/gccrs/pulls/1037][PR1037]]
-- Handle -fsyntax-only [[https://github.com/rust-gcc/gccrs/pulls/1035][PR1035]]
-- Fix bad copy-past in can equal interface for pointer types [[https://github.com/rust-gcc/gccrs/pulls/1033][PR1033]]
-- Add AST kind information [[https://github.com/rust-gcc/gccrs/pulls/1032][PR1032]]
-- Rewrite our unconstrained type-param error checking [[https://github.com/rust-gcc/gccrs/pulls/1030][PR1030]]
-- Macro in trait impl block [[https://github.com/rust-gcc/gccrs/pulls/1029][PR1029]]
-- Allow parsing statements without closing semicolon [[https://github.com/rust-gcc/gccrs/pulls/1027][PR1027]]
-- Fix memory corruption in generation of builtin functions [[https://github.com/rust-gcc/gccrs/pulls/1025][PR1025]]
-- Fix spurious stripping of tail expression [[https://github.com/rust-gcc/gccrs/pulls/1022][PR1022]]
-- Do not try and re-expand macros if depth has exceeded recursion limit [[https://github.com/rust-gcc/gccrs/pulls/1021][PR1021]]
+- Support placeholders becoming slices [[https://github.com/rust-gcc/gccrs/pull/1037][PR1037]]
+- Handle -fsyntax-only [[https://github.com/rust-gcc/gccrs/pull/1035][PR1035]]
+- Fix bad copy-past in can equal interface for pointer types [[https://github.com/rust-gcc/gccrs/pull/1033][PR1033]]
+- Add AST kind information [[https://github.com/rust-gcc/gccrs/pull/1032][PR1032]]
+- Rewrite our unconstrained type-param error checking [[https://github.com/rust-gcc/gccrs/pull/1030][PR1030]]
+- Macro in trait impl block [[https://github.com/rust-gcc/gccrs/pull/1029][PR1029]]
+- Allow parsing statements without closing semicolon [[https://github.com/rust-gcc/gccrs/pull/1027][PR1027]]
+- Fix memory corruption in generation of builtin functions [[https://github.com/rust-gcc/gccrs/pull/1025][PR1025]]
+- Fix spurious stripping of tail expression [[https://github.com/rust-gcc/gccrs/pull/1022][PR1022]]
+- Do not try and re-expand macros if depth has exceeded recursion limit [[https://github.com/rust-gcc/gccrs/pull/1021][PR1021]]
 
 *** Contributors this week
 
