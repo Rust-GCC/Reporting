@@ -14,6 +14,14 @@ Macros have gotten more correct as more restrictions have been implemented, such
 
 Finally, we have also started looking into improving our set of CI checks: Thanks to a new contributor [[https://github.com/CastilloDel][Daniel del Castillo]], we can now easily check that our frontend does not introduce new warnings, which would contradict with gcc's expectations of a full boostrapping build. We are also working on getting gccrs compilable using an older gcc version (4.8), which is a requirement for upstreaming as well as backporting.
 
+**** Monthly Community Call
+
+We will be having our regular community call as the first Friday of the month:
+
+- Date and Time 1st April 2022 at: 14h00 UTC
+- Agenda: https://hackmd.io/xsCkyWQ-Sp6jzczS6rz8RQ please feel free to add agenda items you wish to see discussed.
+- Jitsi: https://meet.jit.si/gccrs-community-call
+
 ** Completed Activities
 
 - Enable -Werror in CI [[https://github.com/rust-gcc/gccrs/pull/1026][PR1026]]
@@ -86,7 +94,6 @@ Finally, we have also started looking into improving our set of CI checks: Thank
 |-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
 | Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
 | Going over target dates |            2 |                 5 |           10 | Maintain status reports and issue tracking to stakeholders |
-
 
 ** Planned Activities
 
