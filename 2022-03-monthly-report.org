@@ -273,7 +273,7 @@ A macro invocation expands a macro at compile time and replaces the invocation w
    6. External blocks
 #+END_QUOTE
 
-You can now call macros from inside `impl` blocks, external blocks and trait definitions or implementations. If you've been following the Rust-for-Linux effort, you might have seen this pattern [[https://github.com/Rust-for-Linux/linux/blob/486c2cde073e5d91d78f85d0adf9a911dd6775fa/samples/rust/rust_miscdev.rs#L58][when defining file operations for a type]]. This allows defining your own function or relying on the kernel's defaults safely.
+You can now call macros from inside ~impl~ blocks, external blocks and trait definitions or implementations. If you've been following the Rust-for-Linux effort, you might have seen this pattern [[https://github.com/Rust-for-Linux/linux/blob/486c2cde073e5d91d78f85d0adf9a911dd6775fa/samples/rust/rust_miscdev.rs#L58][when defining file operations for a type]]. This allows defining your own function or relying on the kernel's defaults safely.
 
 #+BEGIN_SRC rust
 macro_rules! c_fn {
