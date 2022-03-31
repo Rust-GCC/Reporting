@@ -164,7 +164,7 @@ The error respects GCC -Wunused-result but this is turned on by default in the f
 
 see: https://godbolt.org/z/81j9G584e
 
-*** Recursive macros using seperators
+*** Recursive macros using separators
 
 Macros can be recusive resulting in new macro invocations which need to be expanded. They also can have matchers which are like regular expressions in their matchers which require n-number of arguments delimited by a single matcher to terminate the sequence. This looks very similar to bison grammer files which is pretty impressive how expressive macros are in rust.
 
