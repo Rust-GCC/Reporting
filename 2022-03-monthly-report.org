@@ -17,7 +17,7 @@ We had our regular community call on 1st April 2022, please find our meeting not
 ** Completed Activities
 
 - Refactor substitution context during macro expansion to be in its own file [[https://github.com/Rust-GCC/gccrs/pull/981][PR981]]
-- Enforce quites during command line cfg arguments [[https://github.com/Rust-GCC/gccrs/pull/983][PR983]]
+- Enforce quotes during command line cfg arguments [[https://github.com/Rust-GCC/gccrs/pull/983][PR983]]
 - Bugfix memory corruption of lexing string buffers [[https://github.com/Rust-GCC/gccrs/pull/988][PR988]]
 - Remove bad lambda from iteration of arguments on function types [[https://github.com/Rust-GCC/gccrs/pull/984][PR984]]
 - Add must_use attribute support [[https://github.com/Rust-GCC/gccrs/pull/990][PR990]]
