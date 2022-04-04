@@ -8,11 +8,47 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-TODO
+March was a big month for the project; with Arthur joining Embecosm, we have been able to split up milestone work together. With his expertise, he was able to take over the development of macros and allow Philbert to concentrate on working on the type-system. As a result, we have closed out the macros milestone, the remaining work here is completing built-in macros, but we see this as part of our ongoing builtin's/intrinsics milestone, which is ongoing anyway. Many of these builtins are pretty simple and are gateways for new developers to join the project as they see fit. 
+
+Note that there is a drop in the passing tests for our test suite. We have not removed any tests, but in dejagnu, we had many bad/duplicate unused code warnings; these are now fixed by reusing GCC infrastructure for unused variable detection code. It also removed our old AST unused code scan and improved our existing dead-code scan pass.
+
+We have added a new pass on the automation front to check that our front-end continues to compile with the minimum GCC version so that we don't break the bootstrap chain as we are using C++11. Thanks to the community and Thomas Schwinge for his work here.
+
+Moving onto our next milestone of imports and visibility, we see this as breaking down into two streams of work:
+
+- Metadata exports and use statements
+- privacy checks like rustc_privacy
+
+We are still working through how we will perform metadata exports and have been investigating:
+
+- CPP modules
+- LTO streaming
+- rolling our own
+
+This will be a great opportunity to clean up and refactor how we perform name resolution to incorporate use statements.
 
 **** Monthly Community Call
 
 We had our regular community call on 1st April 2022, please find our meeting notes over on: https://github.com/Rust-GCC/Reporting/blob/main/2022-04-01-community-call.md
+
+**** Testing Project
+
+Recently we have creted a new project under the Rust-GCC organisation for automated testing of gccrs in the wild. https://github.com/Rust-GCC/testing. The goal here is to allow for automated testing for more complex test-cases that don't have to be part of the automated dejagnu compiler testsuite.
+
+Currently we have automated testing for
+
+- Test gccrs with -fsyntax-only on rustc testsuite
+- Test rustc against gccrs dejagnu testsuite
+    - most failures are because we have not implemented the main-shim
+
+We are aiming to do more here with the aspiration to:
+
+- Test gccrs against rustc fully
+- Test gccrs against projects like https://github.com/Rust-GCC/gccrs/issues/682
+- Benchmarking research
+- code-generation comparison and research
+
+Leveraging automation allows us to track changes monthly without impacting development of the compiler directly allowing those who are interested to recreate the results locally.
 
 ** Completed Activities
 
@@ -80,26 +116,26 @@ We had our regular community call on 1st April 2022, please find our meeting not
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |        118 |            |       |
-| In Progress |         17 |            |       |
-| Completed   |        297 |            |       |
+| TODO        |        118 |        114 |    -4 |
+| In Progress |         17 |         23 |    +6 |
+| Completed   |        297 |        338 |   +41 |
 
 *** Test Cases
 
 | TestCases | Last Month | This Month | Delta |
 |-----------+------------+------------+-------|
-| Passing   | 6068       |            |       |
-| Failed    | -          |            |       |
-| XFAIL     | 21         |            |       |
-| XPASS     | -          |            |       |
+| Passing   | 6068       |       5701 | -367  |
+| Failed    | -          |          - | -     |
+| XFAIL     | 21         |         22 | +1    |
+| XPASS     | -          |            | -     |
 
 *** Bugs
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |         40 |            |       |
-| In Progress |          5 |            |       |
-| Completed   |        109 |            |       |
+| TODO        |         40 |         39 |    -1 |
+| In Progress |          5 |         10 |    +5 |
+| Completed   |        109 |        130 |   +21 |
 
 *** Milestones Progress
 
@@ -110,7 +146,7 @@ We had our regular community call on 1st April 2022, please find our meeting not
 | Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
 | Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
 | Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
-| Macros and cfg expansion          |        65% |            |       | 1st Dec 2021   | -               | 28th Mar 2022  |
+| Macros and cfg expansion          |        65% |       100% | +35%  | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
 | Imports and Visibility            |         0% |         0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
 | Const Generics                    |         0% |         0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
 | Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
@@ -123,9 +159,18 @@ We had our regular community call on 1st April 2022, please find our meeting not
 | Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
 | Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
 
+*** Rustc testsuite with -fsyntax-only
+
+| Category | Last Month | This Month | Delta |
+|----------+------------+------------+-------|
+| Passed   | -          |      10618 | -     |
+| Failed   | -          |       2436 | -     |
+
 ** Planned Activities
 
-
+- Continue research into rustc metadata exports
+- fix bugs with generic associated types
+- begin work on privacy pass akin to rustc_privacy
  
 ** Detailed changelog
 
