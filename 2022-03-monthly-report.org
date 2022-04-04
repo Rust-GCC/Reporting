@@ -1,0 +1,561 @@
+#+title:  Monthly Report for March 2022
+#+author: Philip Herron
+#+date:   2022-03-04
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+March was a big month for the project; with Arthur joining Embecosm, we have been able to split up milestone work together. With his expertise, he was able to take over the development of macros and allow Philbert to concentrate on working on the type-system. As a result, we have closed out the macros milestone, the remaining work here is completing built-in macros, but we see this as part of our ongoing builtin's/intrinsics milestone, which is ongoing anyway. Many of these builtins are pretty simple and are gateways for new developers to join the project as they see fit. 
+
+Note that there is a drop in the passing tests for our test suite. We have not removed any tests, but in dejagnu, we had many bad/duplicate unused code warnings; these are now fixed by reusing GCC infrastructure for unused variable detection code. It also removed our old AST unused code scan and improved our existing dead-code scan pass.
+
+We have added a new pass on the automation front to check that our front-end continues to compile with the minimum GCC version so that we don't break the bootstrap chain as we are using C++11. Thanks to the community and Thomas Schwinge for his work here.
+
+Moving onto our next milestone of imports and visibility, we see this as breaking down into two streams of work:
+
+- Metadata exports and use statements
+- privacy checks like rustc_privacy
+
+We are still working through how we will perform metadata exports and have been investigating:
+
+- CPP modules
+- LTO streaming
+- rolling our own
+
+This will be a great opportunity to clean up and refactor how we perform name resolution to incorporate use statements.
+
+**** Monthly Community Call
+
+We had our regular community call on 1st April 2022, please find our meeting notes over on: https://github.com/Rust-GCC/Reporting/blob/main/2022-04-01-community-call.md
+
+**** Testing Project
+
+Recently we have creted a new project under the Rust-GCC organisation for automated testing of gccrs in the wild. https://github.com/Rust-GCC/testing. The goal here is to allow for automated testing for more complex test-cases that don't have to be part of the automated dejagnu compiler testsuite.
+
+Currently we have automated testing for
+
+- Test gccrs with -fsyntax-only on rustc testsuite
+- Test rustc against gccrs dejagnu testsuite
+    - most failures are because we have not implemented the main-shim
+
+We are aiming to do more here with the aspiration to:
+
+- Test gccrs against rustc fully
+- Test gccrs against projects like https://github.com/Rust-GCC/gccrs/issues/682
+- Benchmarking research
+- code-generation comparison and research
+
+Leveraging automation allows us to track changes monthly without impacting development of the compiler directly allowing those who are interested to recreate the results locally.
+
+** Completed Activities
+
+- Refactor substitution context during macro expansion to be in its own file [[https://github.com/Rust-GCC/gccrs/pull/981][PR981]]
+- Enforce quotes during command line cfg arguments [[https://github.com/Rust-GCC/gccrs/pull/983][PR983]]
+- Bugfix memory corruption of lexing string buffers [[https://github.com/Rust-GCC/gccrs/pull/988][PR988]]
+- Remove bad lambda from iteration of arguments on function types [[https://github.com/Rust-GCC/gccrs/pull/984][PR984]]
+- Add must_use attribute support [[https://github.com/Rust-GCC/gccrs/pull/990][PR990]]
+- Bug fix parsing macro invocation with semicolon's during statement contexts [[https://github.com/Rust-GCC/gccrs/pull/985][PR985]]
+- Fix ICE during recursive macro invocations [[https://github.com/Rust-GCC/gccrs/pull/986][PR986]]
+- Support repetition separators in macro rules [[https://github.com/Rust-GCC/gccrs/pull/991][PR991]]
+- Refactor HIR visitor and split it up in stmt, vis-item, pattern, external-item, impl, type and expression visitors [[https://github.com/Rust-GCC/gccrs/pull/954][PR954]]
+- Fix bad unused code warnings [[https://github.com/Rust-GCC/gccrs/pull/992][PR992]]
+- Macros can allow any delimiters for the innovcation [[https://github.com/Rust-GCC/gccrs/pull/997][PR997]]
+- Fix bugs in parsing macro repetitions [[https://github.com/Rust-GCC/gccrs/pull/994][PR994]]
+- Refactor ABI options into an enum during HIR lowering [[https://github.com/Rust-GCC/gccrs/pull/999][PR999]]
+- Handle macro invocations as statements vs expressions [[https://github.com/Rust-GCC/gccrs/pull/998][PR998]]
+- Cleanup how multiple matches are handled [[https://github.com/Rust-GCC/gccrs/pull/1002][PR1002]]
+- Refactor how builtins/intrinsics are handled and add unreachable, abort, size_of and offset  [[https://github.com/Rust-GCC/gccrs/pull/1003][PR1003]]
+- Bug fix ICE on impl blocks for arrays or slices [[https://github.com/Rust-GCC/gccrs/pull/1007][PR1007]]
+- Add missing generic substitution for covariants types slices and arrays [[https://github.com/Rust-GCC/gccrs/pull/1009][PR1009]]
+- Add const_ptr lang item mappings [[https://github.com/Rust-GCC/gccrs/pull/1008][PR1008]]
+- Implement HIR lowering for AST::SliceType [[https://github.com/Rust-GCC/gccrs/pull/1016][PR1016]]
+- Refactor attribute visitor into its own file [[https://github.com/Rust-GCC/gccrs/pull/1017][PR1017]]
+- Add more documentation for builtin macros [[https://github.com/Rust-GCC/gccrs/pull/1018][PR1018]]
+- Generate GCC code for the libcore FatPtr/SliceType [[https://github.com/Rust-GCC/gccrs/pull/1015][PR1015]]
+- Implement the builtin column! macro [[https://github.com/Rust-GCC/gccrs/pull/1004][PR1004]]
+- Support placeholders becoming slices [[https://github.com/rust-gcc/gccrs/pull/1037][PR1037]]
+- Handle -fsyntax-only [[https://github.com/rust-gcc/gccrs/pull/1035][PR1035]]
+- Fix bad copy-past in can equal interface for pointer types [[https://github.com/rust-gcc/gccrs/pull/1033][PR1033]]
+- Add AST kind information [[https://github.com/rust-gcc/gccrs/pull/1032][PR1032]]
+- Rewrite our unconstrained type-param error checking [[https://github.com/rust-gcc/gccrs/pull/1030][PR1030]]
+- Macro in trait impl block [[https://github.com/rust-gcc/gccrs/pull/1029][PR1029]]
+- Allow parsing statements without closing semicolon [[https://github.com/rust-gcc/gccrs/pull/1027][PR1027]]
+- Fix memory corruption in generation of builtin functions [[https://github.com/rust-gcc/gccrs/pull/1025][PR1025]]
+- Fix spurious stripping of tail expression [[https://github.com/rust-gcc/gccrs/pull/1022][PR1022]]
+- Do not try and re-expand macros if depth has exceeded recursion limit [[https://github.com/rust-gcc/gccrs/pull/1021][PR1021]]
+- Enable -Werror in CI [[https://github.com/rust-gcc/gccrs/pull/1026][PR1026]]
+- Do not propagate parser errors in match_repetitions [[https://github.com/rust-gcc/gccrs/pull/1040][PR1040]]
+- Only expand merged repetitions if they contain the same amount [[https://github.com/rust-gcc/gccrs/pull/1041][PR1041]]
+- Implement include_bytes! and include_str! [[https://github.com/rust-gcc/gccrs/pull/1043][PR1043]]
+- Restrict follow up tokens on :expr and :stmt [[https://github.com/rust-gcc/gccrs/pull/1044][PR1044]]
+- Add helper function for subsituted tokens debugging [[https://github.com/rust-gcc/gccrs/pull/1047][PR1047]]
+- Add better restrictions around semicolons in statements parsing [[https://github.com/rust-gcc/gccrs/pull/1049][PR1049]]
+- Add remaining restrictions for follow-set restrictions [[https://github.com/rust-gcc/gccrs/pull/1051][PR1051]]
+- Add hints for valid follow-set tokens [[https://github.com/rust-gcc/gccrs/pull/1052][PR1052]]
+- Fix overzealous follow-set ambiguity [[https://github.com/rust-gcc/gccrs/pull/1054][PR1054]]
+- Allow checking past zeroable matches for follow-set restrictions [[https://github.com/rust-gcc/gccrs/pull/1055][PR1055]]
+- Fix #include <algorithm> [[https://github.com/rust-gcc/gccrs/pull/1056][PR1056]]
+- Provide std::hash for Rust::AST::MacroFragSpec::Kind enum class [[https://github.com/rust-gcc/gccrs/pull/1057][PR1057]]
+- Properly perform follow-set checking on matchers [[https://github.com/rust-gcc/gccrs/pull/1062][PR1062]]
+- Handle :tt fragments properly [[https://github.com/rust-gcc/gccrs/pull/1064][PR1064]]
+- Handle :meta fragments properly [[https://github.com/rust-gcc/gccrs/pull/1063][PR1063]]
+
+*** Contributors this month
+
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/CastilloDel][Daniel del Castillo]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/mvvsmk][Manoj Kumar]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        118 |        114 |    -4 |
+| In Progress |         17 |         23 |    +6 |
+| Completed   |        297 |        338 |   +41 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 6068       |       5701 | -367  |
+| Failed    | -          |          - | -     |
+| XFAIL     | 21         |         22 | +1    |
+| XPASS     | -          |            | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         40 |         39 |    -1 |
+| In Progress |          5 |         10 |    +5 |
+| Completed   |        109 |        130 |   +21 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |        65% |       100% | +35%  | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
+| Imports and Visibility            |         0% |         0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |         0% |         0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+| Borrow checking                   |         0% |         0% | -     | TBD            | -               | TBD            |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+*** Rustc testsuite with -fsyntax-only
+
+| Category | Last Month | This Month | Delta |
+|----------+------------+------------+-------|
+| Passed   | -          |      10618 | -     |
+| Failed   | -          |       2436 | -     |
+
+** Planned Activities
+
+- Continue research into rustc metadata exports
+- fix bugs with generic associated types
+- begin work on privacy pass akin to rustc_privacy
+ 
+** Detailed changelog
+
+*** must use attribute
+
+To support must use, the GCC CPP front-end already supports the C++ nodiscard attribute which is analogus to rust must use attribute. Rust also supports using must use on types which we still need to test/support but this is the building block to support this on functions which discard their results.
+
+#+BEGIN_SRC rust
+#[must_use = "TEST 1"]
+fn test1() -> i32 {
+    123
+}
+
+#[must_use = "TEST 2"]
+fn test2() -> i32 {
+    456
+}
+
+fn main() {
+    let _a = test1();
+
+    test2();
+}
+#+END_SRC
+
+The error respects GCC -Wunused-result but this is turned on by default in the front-end.
+
+#+BEGIN_SRC
+<source>:14:5: warning: ignoring return value of 'example::test2', that must be used: 'TEST 2' [-Wunused-result]
+   14 |     test2();
+      |     ^
+<source>:7:1: note: declared here
+    7 | fn test2() -> i32 {
+      | ^
+#+END_SRC
+
+see: https://godbolt.org/z/81j9G584e
+
+*** Recursive macros using separators
+
+Macros can be recusive resulting in new macro invocations which need to be expanded. They also can have matchers which are like regular expressions in their matchers which require n-number of arguments delimited by a single matcher to terminate the sequence. This looks very similar to bison grammer files which is pretty impressive how expressive macros are in rust.
+
+#+BEGIN_SRC rust
+macro_rules! add {
+        ($e:expr | $($es:expr) | *) => {
+            $e + add!($($es) | *)
+        };
+        ($e:expr) => {
+            $e
+        };
+    }
+
+fn test() -> i32 {
+    add!(1 | 2 | 3 | 4 | 5 | 6)
+}
+
+#+END_SRC
+
+see: https://godbolt.org/z/TfWrEovf3
+
+*** Implement proper repetition separators
+
+Rust allows users to define separators to use in macro repetitions. These separators help in making repeating macro invocations cleaner, and avoid this:
+#+BEGIN_SRC rust
+macro_rules! add0 {
+    ($a:literal) => { $a };
+    ($a:literal $($b:literal)+) => { $a + add0!($($b)*) }
+}
+
+macro_rules! add1 {
+    ($a:literal,) => { $a };
+    ($a:literal, $($b:literal,)+) => { $a + add1!($($b ,)*) }
+}
+
+add0!(1 2 3 4 67); // no separator
+add1!(1, 2, 3, 4, 67,); // extra separator
+#+END_SRC
+
+Macro repetition separators are made of one token and positionned just before the repetition operator (~?~, ~*~ or ~+~). We can now parse them, match them and expand them properly:
+
+#+BEGIN_SRC rust
+macro_rules! add {
+    ($a:literal) => { $a };
+    ($a:literal, $($b:literal),+) => { $a + add!($($b),*) }
+}
+
+add!(1, 2, 3, 4, 67);
+#+END_SRC
+
+*** Defining items and statements through macros
+
+Macros can be used to avoid boilerplate and repetitive code, such as defining a large amount of types and their implementation should they all be similar.
+
+This can be seen in the standard rust library in various builtin-types related code:
+
+#+BEGIN_SRC rust
+// Reduced version.
+// This implements the `Sub` trait for all builtin number types
+// The implementation is always the same, so macros help
+pub trait Sub<Rhs = Self> {
+    type Output;
+    fn sub(self, rhs: Rhs) -> Self::Output;
+}
+
+macro_rules! sub_impl {
+    ($($t:ty)*) => ($(
+        impl Sub for $t {
+            type Output = $t;
+
+            #[inline]
+            fn sub(self, other: $t) -> $t { self - other }
+        }
+    )*)
+}
+
+sub_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
+#+END_SRC
+
+This expands to a proper implementation of the ~Sub~ trait for all types mentioned, with proper expansion of the ~sub~ method and associated ~Output~ type. We are now able to parse those items correctly and expand them in place.
+
+Likewise, macro invocations can also be expanded to multiple statements inside a block:
+#+BEGIN_SRC rust
+macro_rules! define_vars {
+    ($([ $name:ident $value:literal ])*) => {
+        $(let $name = $value;)*
+    }
+}
+
+fn needs_lots_of_locals() {
+    define_vars!([pear 14] [apple 'm'] [mango "Pi"]);
+}
+#+END_SRC
+
+*** Expanding macros in more contexts
+
+Last week's macro improvements were focused on adding a base for in-place macro expansion. We worked on getting them properly expanded in two places, namely block statements and as crate items. However, macros can be used in many more ways:
+
+#+BEGIN_QUOTE
+A macro invocation expands a macro at compile time and replaces the invocation with the result of the macro. Macros may be invoked in the following situations:
+   1. Expressions and statements
+   2. Patterns
+   3. Types
+   4. Items including associated items
+   5. macro_rules transcribers
+   6. External blocks
+#+END_QUOTE
+
+You can now call macros from inside ~impl~ blocks, external blocks and trait definitions or implementations. If you've been following the Rust-for-Linux effort, you might have seen this pattern [[https://github.com/Rust-for-Linux/linux/blob/486c2cde073e5d91d78f85d0adf9a911dd6775fa/samples/rust/rust_miscdev.rs#L58][when defining file operations for a type]]. This allows defining your own function or relying on the kernel's defaults safely.
+
+#+BEGIN_SRC rust
+macro_rules! c_fn {
+    (int $name:ident ( const char_ptr $arg_name:ident)) => {
+        fn $name($arg_name: *const i8) -> i32;
+    };
+}
+
+extern "C" {
+    c_fn! {int puts (const char_ptr s)}
+}
+
+macro_rules! add_distract_fn {
+    () => {
+        fn distract() {
+            unsafe {
+                puts("wait this isn't C\0" as *const str as *const i8);
+            }
+        }
+    };
+}
+
+struct Abstract;
+
+impl Abstract {
+    add_distract_fn!();
+}
+
+macro_rules! require_proc {
+    ($fn_name:ident) => {
+        fn $fn_name();
+    };
+}
+
+trait Abstractable {
+    require_proc!(extract);
+}
+
+macro_rules! extract {
+    ($fn_block:block) => {
+        fn extract() $fn_block
+    }
+}
+
+impl Abstractable for Abstract {
+    extract! {{ Abstract::distract(); }}
+}
+#+END_SRC
+
+*** Relaxed parsing rules in macro definitions and invocations
+
+To improve usability, parsing rules when expanding macro nodes are a little more relaxed. As an example, this is completely valid rust code:
+
+#+BEGIN_SRC rust
+macro_rules! take_stmt {
+    ($s:stmt) => {
+        $s
+    };
+}
+
+fn f() -> i32 {
+    16
+}
+
+macro_rules! expand_to_stmt_or_expr {
+    () => {
+        f()
+    };
+}
+
+fn main() {
+    take_stmt!(let a1 = 15);
+
+    let a2 = {
+        expand_to_stmt_or_expr!(); // f is called as an expression-statement
+        expand_to_stmt_or_expr!() // f is called as a tail expression
+    };
+}
+
+#+END_SRC
+
+*** include bytes builtin
+
+This is now handled properly and makes for prettier macros and invocations, and avoids the necessity of adding extra semicolons in some cases.
+
+Two new macro builtins have been added to the compiler thanks to [[https://github.com/dafaust][David Faust]]: ~include_bytes!~ and ~include_str!~.
+They allow the user to include files at compilation time, either as bytes or valid UTF-8 strings. This can be extremely useful for anyone dealing with binary blobs, and adds even more code for new contributors to reuse when adding more builtin macros.
+
+Their definition is as follows:
+
+#+BEGIN_SRC rust
+macro_rules! include_str {
+    ($file:expr $(,)?) => {{ /* compiler built-in */ }};
+}
+macro_rules! include_bytes {
+    ($file:expr $(,)?) => {{ /* compiler built-in */ }};
+}
+#+END_SRC
+
+*** Follow-set ambiguities
+
+While rust macros are extremely powerful, they are also heavily restricted to prevent ambiguities. These restrictions include sets of allowed fragments that can follow a certain metavariable fragment, which are referred to as follow-sets.
+
+As an example, the follow set of ~:expr~ fragments is { ~COMMA~, ~SEMICOLON~, ~MATCH_ARROW~ }. Any other token cannot follow an ~:expr~ fragment, as it might cause ambiguities in later versions of the language.
+
+This was previously not handled by gccrs at all. As a result, we had some test cases that contained ambiguous macro definitions that rustc rejected.
+
+We dedicated some time this week to implement (almost!) all of these restrictions, including some complex cases involving repetitions:
+
+**** Looking past zeroable repetitions
+
+#+BEGIN_SRC rust
+macro_rules! invalid {
+  ($e:expr $(,)? $(;)* $(=>)* forbidden) => {{}};
+  //  1      2     3     4        5         (matches)
+}
+#+END_SRC
+
+Since matches ~2~, ~3~ and ~4~ might occur zero times (kleene operators ~*~ or ~?~), we need to check that the ~forbidden~ token is allowed to follow an ~:expr~ fragment, which is not the case since identifier tokens are not contained in its follow-set.
+
+On the other hand, this macro is perfectly valid since a comma, contained in the follow-set of ~:expr~, is required to appear at least once before any forbidden tokens
+
+#+BEGIN_SRC rust
+macro_rules! invalid {
+  ($e:expr $(;)* $(,)+ $(=>)* forbidden) => {{}};
+  // `+` kleen operator indicates one or more, meaning that there will always be at least one comma
+}
+#+END_SRC
+
+**** Metavar fragments following other metavar fragments
+
+#+BEGIN_SRC rust
+macro_rules! mac {
+  ($t:ty $lit:literal) => {{}}; // invalid
+  ($t:ty $lit:block) => {{}}; // valid
+}
+#+END_SRC
+
+The follow-set of ~:ty~ fragments allows the user to specify another fragment as follow-up, but only if this metavar fragment is a ~:block~ one.
+
+An interesting tidbit is that these checks are performed at the beginning of the expansion phase in rustc, while we go through them during parsing. This is not set in stone, and we'd love to perform them later if required.
+
+The remaining issues are marked as ~good-first-pr~ as they are simple and offer an entrypoint into the compiler's implementation of macros.
+
+*** Restrict merged repetitions to metavars with the same amount of repetitions
+
+Likewise, you cannot merge together repetitions which do not have the same amount of repetitions:
+
+#+BEGIN_SRC rust
+macro_rules! tuplomatron {
+  ($($e:expr),* ; $($f:expr),*) => { ( $( ( $e, $f ) ),* ) };
+}
+
+let tuple = tuplomatron!(1, 2, 3; 4, 5, 6); // valid
+let tuple = tuplomatron!(1, 2, 3; 4, 5); // invalid since both metavars do not have the same amount of repetitions
+#+END_SRC
+
+This gets expanded properly into one big tuple:
+
+#+BEGIN_SRC md
+ let tuple = TupleExpr:
+  outer attributes: none
+  inner attributes: none
+ Tuple elements:
+  TupleExpr:
+  outer attributes: none
+  inner attributes: none
+ Tuple elements:
+  1
+  4
+  TupleExpr:
+  outer attributes: none
+  inner attributes: none
+ Tuple elements:
+  2
+  5
+  TupleExpr:
+  outer attributes: none
+  inner attributes: none
+ Tuple elements:
+  3
+  6
+ final expression: none
+#+END_SRC
+
+*** Handle :tt fragments properly
+
+Having ~:tt~ fragments handled properly allows us to dwelve into the world of tt-munchers, a very powerful pattern which allows the implementation of extremely complex behaviors or DSLs. The target code we're using for this comes directly from [[https://veykril.github.io/tlborm/][The Little Book of Rust Macros]] by [[https://github.com/veykril][Lukas Wirth]], adapted to fit our non-println-aware compiler.
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(fmt: *const i8, ...);
+}
+
+fn print(name: &str, value: i32) {
+    unsafe {
+        printf(
+            "%s = %d\n\0" as *const str as *const i8,
+            name as *const str as *const i8,
+            value,
+        );
+    }
+}
+
+macro_rules! mixed_rules {
+    () => {{}};
+    (trace $name_str:literal $name:ident; $($tail:tt)*) => {
+        {
+            print($name_str, $name);
+            mixed_rules!($($tail)*);
+        }
+    };
+    (trace $name_str:literal $name:ident = $init:expr; $($tail:tt)*) => {
+        {
+            let $name = $init;
+            print($name_str, $name);
+            mixed_rules!($($tail)*);
+        }
+    };
+}
+
+fn main() {
+    mixed_rules! (trace "a\0" a = 14; trace "a\0" a; trace "b\0" b = 15;);
+}
+#+END_SRC
+
+This is now handled by gccrs, and produces the same output as rustc.
+
+#+BEGIN_SRC shell
+~/G/gccrs > rustc tt-muncher.rs
+~/G/gccrs > ./tt-muncher
+a = 14
+a = 14
+b = 15
+~/G/gccrs > gccrs tt-muncher.rs -o tt-muncher-gccrs
+~/G/gccrs > ./tt-muncher-gccrs
+a = 14
+a = 14
+b = 15
+#+END_SRC
