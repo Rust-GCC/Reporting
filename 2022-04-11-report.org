@@ -1,0 +1,83 @@
+#+title:  Weekly report for 4th to 11th March 2022
+#+author: Philip Herron
+#+date:   2022-04-11
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+TODO
+
+** Completed Activities
+
+- Bugfix makefile not installing compiler driver [[https://github.com/Rust-GCC/gccrs/pull/1092][PR1092]]
+- Fix out of memory issue on huge array constructors [[https://github.com/Rust-GCC/gccrs/pull/1087][PR1087]]
+- add compile_error! builtin macro [[https://github.com/Rust-GCC/gccrs/pull/1080][PR1080]]
+- Cleanup [[https://github.com/Rust-GCC/gccrs/pull/1083][PR1083]]
+
+*** Contributors this month
+
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/RomainNaour][Romain Naour]] (new-contributor)
+- [[https://github.com/liushuyu][liushuyu]] (new-contributor)
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       114 |           |       |
+| In Progress |        23 |           |       |
+| Completed   |       338 |           |       |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 5701      |           |       |
+| Failed    | -         |           |       |
+| XFAIL     | 22        |           |       |
+| XPASS     | -         |           |       |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        39 |           |       |
+| In Progress |        10 |           |       |
+| Completed   |       130 |           |       |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
+| Imports and Visibility            |        0% |           |       | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD            |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Continue work into privacy pass
+- Continue work on metadata exports
+ 
+** Detailed changelog
+
+*** Array Constructors
+
+<TODO>
