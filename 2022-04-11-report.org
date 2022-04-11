@@ -8,14 +8,23 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-TODO
+We have started working on the Imports and Visibility milestone of the project and are figuring out the various passes and visitors we need to add. Since the community had already worked on adding module support back in 2021, this part of the project is quasi-complete: We will need to add more tests and make sure it interacts nicely with the rest of the additions these next two months, but we don't expect module resolution to take too much of our time. Since this is the beginning of the milestone, we do not yet have a precise idea of how much work remains: We will have better input as the work progresses in the next few days.
+
+We have also started receiving GSoC draft proposals, which we are very excited about!
+
+1. Talk about GSoC?
+2. Talk about modules already implemented
+3. Talk about slices!
+4. What we've done -> Okay
+5. What we think -> Okay
+6. What we'll do
 
 ** Completed Activities
 
-- Bugfix makefile not installing compiler driver [[https://github.com/Rust-GCC/gccrs/pull/1092][PR1092]]
+- Bugfix makefile not installing compiler driver when cross-compiling [[https://github.com/Rust-GCC/gccrs/pull/1092][PR1092]]
 - Fix out of memory issue on huge array constructors [[https://github.com/Rust-GCC/gccrs/pull/1087][PR1087]]
-- add compile_error! builtin macro [[https://github.com/Rust-GCC/gccrs/pull/1080][PR1080]]
-- Cleanup [[https://github.com/Rust-GCC/gccrs/pull/1083][PR1083]]
+- Add compile_error! builtin macro [[https://github.com/Rust-GCC/gccrs/pull/1080][PR1080]]
+- Cleanup and bugfix of -frust-crate-name being overriden [[https://github.com/Rust-GCC/gccrs/pull/1083][PR1083]]
 
 *** Contributors this month
 
