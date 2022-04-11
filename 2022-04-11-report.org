@@ -1,0 +1,92 @@
+#+title:  Weekly report for 4th to 11th March 2022
+#+author: Philip Herron
+#+date:   2022-04-11
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+Last week we began work on imports/visibility; it was a quiet week of figuring things out since much of this milestone was started in the previous year by the community, including implementing module support and multiple files. However, this week, some work is needed to determine our milestone progress for these reports accurately so we have left the milestone as no progress change for now.
+
+In other news, we started receiving GSoC draft proposals from interested students on zulip, which we are very excited about!
+
+** Completed Activities
+
+- Bugfix makefile not installing compiler driver when cross-compiling [[https://github.com/Rust-GCC/gccrs/pull/1092][PR1092]]
+- Fix out of memory issue on huge array constructors [[https://github.com/Rust-GCC/gccrs/pull/1087][PR1087]]
+- Add compile_error! builtin macro [[https://github.com/Rust-GCC/gccrs/pull/1080][PR1080]]
+- Cleanup and bugfix of -frust-crate-name being overriden [[https://github.com/Rust-GCC/gccrs/pull/1083][PR1083]]
+
+*** Contributors this month
+
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/RomainNaour][Romain Naour]] (new-contributor)
+- [[https://github.com/liushuyu][liushuyu]] (new-contributor)
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       114 |       118 |    +4 |
+| In Progress |        23 |        24 |    +1 |
+| Completed   |       338 |       339 |    +1 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 5701      | 5735      | +34   |
+| Failed    | -         | -         | -     |
+| XFAIL     | 22        | 22        | -     |
+| XPASS     | -         | -         | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        39 |        41 |    +2 |
+| In Progress |        10 |        10 |     - |
+| Completed   |       130 |       131 |    +1 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
+| Imports and Visibility            |        0% |        0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD            |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Continue work into privacy pass
+- Continue work on metadata exports
+- Merge outstanding PR backlog
+- Iterators lang items
+ 
+** Detailed changelog
+
+*** Array Constructors
+
+Recently as part of our testing effort to use the rustc testsuite we hit upon a rustc testcase that tries to allocate a 4tb array on the stack. This testcase was designed to detect an out-of-memory case in the rustc compiler https://github.com/rust-lang/rust/issues/66342 we also had this failure in our implementation. The error here is due to the fact for copied array constructors we created a constructor expression of the specified number of elements. This means we create a huge vector in memory at compile time which is inefficent. Though if we follow how the GCC D front-end handles this we can use a loop to initilize the memory and allow the GCC middle-end to optimize this using a memset. The only caveat here is that this is not possible in a const context.
+
+For more information see:
+
+- https://github.com/Rust-GCC/gccrs/issues/1068
+
