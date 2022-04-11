@@ -8,16 +8,9 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-We have started working on the Imports and Visibility milestone of the project and are figuring out the various passes and visitors we need to add. Since the community had already worked on adding module support back in 2021, this part of the project is quasi-complete: We will need to add more tests and make sure it interacts nicely with the rest of the additions these next two months, but we don't expect module resolution to take too much of our time. Since this is the beginning of the milestone, we do not yet have a precise idea of how much work remains: We will have better input as the work progresses in the next few days.
+Last week we began work on imports/visibility; it was a quiet week of figuring things out since much of this milestone was started in the previous year by the community, including implementing module support and multiple files. However, this week, some work is needed to determine our milestone progress for these reports accurately so we have left the milestone as no progress change for now.
 
-We have also started receiving GSoC draft proposals, which we are very excited about!
-
-1. Talk about GSoC?
-2. Talk about modules already implemented
-3. Talk about slices!
-4. What we've done -> Okay
-5. What we think -> Okay
-6. What we'll do
+In other news, we started receiving GSoC draft proposals from interested students on zulip, which we are very excited about!
 
 ** Completed Activities
 
@@ -37,26 +30,26 @@ We have also started receiving GSoC draft proposals, which we are very excited a
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |       114 |           |       |
-| In Progress |        23 |           |       |
-| Completed   |       338 |           |       |
+| TODO        |       114 |       118 |    +4 |
+| In Progress |        23 |        24 |    +1 |
+| Completed   |       338 |       339 |    +1 |
 
 *** Test Cases
 
 | TestCases | Last Week | This Week | Delta |
 |-----------+-----------+-----------+-------|
-| Passing   | 5701      |           |       |
-| Failed    | -         |           |       |
-| XFAIL     | 22        |           |       |
-| XPASS     | -         |           |       |
+| Passing   | 5701      | 5735      | +34   |
+| Failed    | -         | -         | -     |
+| XFAIL     | 22        | 22        | -     |
+| XPASS     | -         | -         | -     |
 
 *** Bugs
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |        39 |           |       |
-| In Progress |        10 |           |       |
-| Completed   |       130 |           |       |
+| TODO        |        39 |        41 |    +2 |
+| In Progress |        10 |        10 |     - |
+| Completed   |       130 |       131 |    +1 |
 
 *** Milestones Progress
 
@@ -68,7 +61,7 @@ We have also started receiving GSoC draft proposals, which we are very excited a
 | Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
 | Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
 | Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
-| Imports and Visibility            |        0% |           |       | 29th Mar 2022  | -               | 27th May 2022  |
+| Imports and Visibility            |        0% |        0% | -     | 29th Mar 2022  | -               | 27th May 2022  |
 | Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
 | Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
 | Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD            |
@@ -84,9 +77,16 @@ We have also started receiving GSoC draft proposals, which we are very excited a
 
 - Continue work into privacy pass
 - Continue work on metadata exports
+- Merge outstanding PR backlog
+- Iterators lang items
  
 ** Detailed changelog
 
 *** Array Constructors
 
-<TODO>
+Recently as part of our testing effort to use the rustc testsuite we hit upon a rustc testcase that tries to allocate a 4tb array on the stack. This testcase was designed to detect an out-of-memory case in the rustc compiler https://github.com/rust-lang/rust/issues/66342 we also had this failure in our implementation. The error here is due to the fact for copied array constructors we created a constructor expression of the specified number of elements. This means we create a huge vector in memory at compile time which is inefficent. Though if we follow how the GCC D front-end handles this we can use a loop to initilize the memory and allow the GCC middle-end to optimize this using a memset. The only caveat here is that this is not possible in a const context.
+
+For more information see:
+
+- https://github.com/Rust-GCC/gccrs/issues/1068
+
