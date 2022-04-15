@@ -1,4 +1,4 @@
-#+title:  Weekly report for 11th to 18th March 2022
+#+title:  Weekly report for the 11th to the 18th of March 2022
 #+author: Philip Herron
 #+date:   2022-04-18
 
@@ -12,13 +12,32 @@ TODO
 
 ** Completed Activities
 
-TODO
+- Move `cfg!()` macro to builtins. Fixes #1039 [[https://github.com/rust-gcc/gccrs/pulls/1116][PR1116]]
+- rust: Use -Otarget when building and logging warnings [[https://github.com/rust-gcc/gccrs/pulls/1114][PR1114]]
+- macros: Add env! macro [[https://github.com/rust-gcc/gccrs/pulls/1113][PR1113]]
+- rust: Clang/macOS Testing [[https://github.com/rust-gcc/gccrs/pulls/1112][PR1112]]
+- Add AST Private Visibilities [[https://github.com/rust-gcc/gccrs/pulls/1111][PR1111]]
+- Add Reachability visitors for items with generics [[https://github.com/rust-gcc/gccrs/pulls/1110][PR1110]]
+- rust: Allow gccrs to build on x86_64-apple-darwin with clang/libc++ [[https://github.com/rust-gcc/gccrs/pulls/1109][PR1109]]
+- Add missing unify rules for inference variables [[https://github.com/rust-gcc/gccrs/pulls/1108][PR1108]]
+- macros: fix an infinite loop in `concat!` macro parser [[https://github.com/rust-gcc/gccrs/pulls/1106][PR1106]]
+- Lower AST::Visibility to HIR::Visibility properly [[https://github.com/rust-gcc/gccrs/pulls/1103][PR1103]]
+- Add helper as_string for DefIds [[https://github.com/rust-gcc/gccrs/pulls/1101][PR1101]]
+- Add known lang item const_slice_ptr mappings [[https://github.com/rust-gcc/gccrs/pulls/1100][PR1100]]
+- Fix bad inherent overlap error [[https://github.com/rust-gcc/gccrs/pulls/1099][PR1099]]
+- Ensure unsize method resolutions actually unsize [[https://github.com/rust-gcc/gccrs/pulls/1098][PR1098]]
+- Support mangling *const ptr and slices like *const [T] [[https://github.com/rust-gcc/gccrs/pulls/1097][PR1097]]
+- Add -frust-edition flag and possible values [[https://github.com/rust-gcc/gccrs/pulls/1091][PR1091]]
+- macros: add concat! macro [[https://github.com/rust-gcc/gccrs/pulls/1090][PR1090]]
+- rust-session-manager: better crate name handling logic [[https://github.com/rust-gcc/gccrs/pulls/1088][PR1088]]
+- Slice support [[https://github.com/rust-gcc/gccrs/pulls/1086][PR1086]]
+- Add base for privacy visitor [[https://github.com/rust-gcc/gccrs/pulls/1082][PR1082]]
 
-*** Contributors this month
+*** Contributors this week
 
 - [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/liushuyu][liushuyu]]
 - [[https://github.com/simonpcook][Simon Cook]] (new-contributor)
-- [[https://github.com/liushuyu][liushuyu]] (new-contributor)
 - [[https://github.com/omachota][Ondřej Machota]] (new-contributor)
 - [[https://github.com/antego][antego]] (new-contributor)
 
@@ -34,10 +53,10 @@ TODO
 
 | TestCases | Last Week | This Week | Delta |
 |-----------+-----------+-----------+-------|
-| Passing   | 5735      |           |       |
-| Failed    | -         |           |       |
-| XFAIL     | 22        |           |       |
-| XPASS     | -         |           |       |
+| Passing   | 5735      | 5845      |  +110 |
+| Failed    | -         | -         |       |
+| XFAIL     | 22        | 24        |    +2 |
+| XPASS     | -         | -         |       |
 
 *** Bugs
 
@@ -73,7 +92,7 @@ TODO
 
 - Continue work into privacy pass
 - Continue work on metadata exports
- 
+
 ** Detailed changelog
 
 TODO
