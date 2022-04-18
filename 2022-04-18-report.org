@@ -98,3 +98,33 @@ We have achieved a major step this week by merging the work required to get slic
 *** Slices support
 
 TODO
+
+*** More built-in macros
+
+Our first builtin macro, ~cfg!~, has been moved with the rest of the builtin macros: It can now benefit from the other helper functions we have developed in this module to help consuming tokens and generating AST fragments. Two new macros have also been added:
+
+1. ~concat!~, which allows the concatenation of literal tokens at compile-time
+
+#+BEGIN_SRC rust
+concat!("hey", 'n', 0, "w"); // expands to "heyn0w"
+#+END_SRC
+
+1. ~env!~, which allows fetching environment variables during compilation.
+
+#+BEGIN_SRC rust
+let path = env!("PATH");
+// expands to the content of the user's path when they invoked `gccrs`
+#+END_SRC
+
+~env!~ is interesting as it is one of the first built-in with an optional extra argument: You can specify an extra error message to display if the variable is not present.
+
+#+BEGIN_SRC rust
+macro_rules! env {
+    ($name:expr $(,)?) => { ... };
+    ($name:expr, $error_msg:expr $(,)?) => { ... };
+}
+#+END_SRC
+
+This enables us to start looking into properly checking for multiple "matchers" in builtins, and parse and fetch them accordingly.
+
+A lot of built-in macros remain to implement, and we'd love for you to have a go at them if you're interested! Feel free to drop by our Zulip or ask on GitHub for any question you might have.
