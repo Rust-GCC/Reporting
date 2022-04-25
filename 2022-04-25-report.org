@@ -8,7 +8,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-Last week we had several streams of work Philbert focused on bug fixing, new contributors added missing built-in attributes and macros; finally, Arthur continued his work on the privacy pass. More privacy pass primitives are being implemented, which will crossover with the handling of use statements since we need to support SimplePaths on visibility modifiers.
+Last week we had several streams of work Philbert focused on bug fixing, new contributors added missing built-in attributes and macros; finally, Arthur continued his work on the privacy pass. More privacy pass primitives are being implemented, which will crossover with the handling of use statements since we need to support restricted visibility modifiers (~pub (in <path>)~).
 
 ** Completed Activities
 
@@ -92,7 +92,7 @@ Last week we had several streams of work Philbert focused on bug fixing, new con
 
 *** Patterns in function parameters
 
-As part of our bug fixing this week we realiase we could unify the code paths for handling match arms such that we can support patterns everywhere. There are bugs in code-generation for more complex patterns which need to be fixed but we are correctly name and type resolving them which is the starting point. As our support for Match Expression improves over time so will our support for patterns.
+As part of our bug fixing this week we realized we could unify the code paths for handling match arms such that we can support patterns everywhere. There are bugs in code-generation for more complex patterns which need to be fixed but we are correctly name and type resolving them which is the starting point. As our support for Match Expression improves over time so will our support for patterns.
 
 #+BEGIN_SRC rust
 struct Pattern(i32);
