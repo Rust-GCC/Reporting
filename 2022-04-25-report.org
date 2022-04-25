@@ -1,0 +1,108 @@
+#+title:  Weekly report for the 18th to the 25th of April 2022
+#+author: Philip Herron
+#+date:   2022-04-25
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+Last week we had several streams of work Philbert focused on bug fixing, new contributors added missing built-in attributes and macros; finally, Arthur continued his work on the privacy pass. More privacy pass primitives are being implemented, which will crossover with the handling of use statements since we need to support SimplePaths on visibility modifiers.
+
+** Completed Activities
+
+- Implement the builtin include! macro [[https://github.com/Rust-GCC/gccrs/pull/1096][PR1096]]
+- Don't do docker image builds on forks [[https://github.com/Rust-GCC/gccrs/pull/1124][PR1124]]
+- Bug fix projection substitution [[https://github.com/Rust-GCC/gccrs/pull/1121][PR1121]]
+- Fix ICE during HIR lowering [[https://github.com/Rust-GCC/gccrs/pull/1134][PR1134]]
+- Refactor header and cleanup [[https://github.com/Rust-GCC/gccrs/pull/1137][PR1137]]
+- Support patterns in function signatures [[https://github.com/Rust-GCC/gccrs/pull/1138][PR1138]]
+- Add tests for cfg! macro [[https://github.com/Rust-GCC/gccrs/pull/1119][PR1119]]
+- Add name and type resolution to TuplePatterns [[https://github.com/Rust-GCC/gccrs/pull/1144][PR1144]]
+- Improve doc attribute support [[https://github.com/Rust-GCC/gccrs/pull/1139][PR1139]]
+- Fix bug with generic parameters in extern declarations [[https://github.com/Rust-GCC/gccrs/pull/1145][PR1145]]
+- Add missing coercion rule from array to slice [[https://github.com/Rust-GCC/gccrs/pull/1147][PR1147]]
+- Handle cold attribute [[https://github.com/Rust-GCC/gccrs/pull/1148][PR1148]]
+- Add support for isize and usize type hints on literals [[https://github.com/Rust-GCC/gccrs/pull/1154][PR1154]]
+- Add base for visibility pass [[https://github.com/Rust-GCC/gccrs/pull/1155][PR1155]]
+- Support link_section attribute [[https://github.com/Rust-GCC/gccrs/pull/1150][PR1150]]
+- Add support for simple visibility checks [[https://github.com/Rust-GCC/gccrs/pull/1157][PR1157]]
+- Support the no_mangle attribute [[https://github.com/Rust-GCC/gccrs/pull/1149][PR1149]]
+
+*** Contributors this week
+
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/liushuyu][liushuyu]]
+- [[https://github.com/antego][antego]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       128 |       127 |    -1 |
+| In Progress |        23 |        26 |    +3 |
+| Completed   |       346 |       353 |    +7 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 5845      |      5932 | +87   |
+| Failed    | -         |           | -     |
+| XFAIL     | 24        |        25 | +1    |
+| XPASS     | -         |           | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        49 |        47 |    -2 |
+| In Progress |        13 |        13 |     - |
+| Completed   |       133 |       139 |    +6 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
+| Imports and Visibility            |       35% |       45% | +10%  | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD            |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Continue work into privacy pass
+- Continue work on metadata exports
+
+** Detailed changelog
+
+*** Patterns in function parameters
+
+As part of our bug fixing this week we realiase we could unify the code paths for handling match arms such that we can support patterns everywhere. There are bugs in code-generation for more complex patterns which need to be fixed but we are correctly name and type resolving them which is the starting point. As our support for Match Expression improves over time so will our support for patterns.
+
+#+BEGIN_SRC rust
+struct Pattern(i32);
+
+fn pattern_as_arg(Pattern(value): Pattern) -> i32 {
+    value
+}
+
+fn main() -> i32 {
+    pattern_as_arg(Pattern(15)) - 15
+}
+#+END_SRC
+
