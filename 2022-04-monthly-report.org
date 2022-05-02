@@ -36,6 +36,30 @@ Its time for our next community call, feel free to join in! :)
 - Agenda: https://hackmd.io/ljuSwxP2Qn-oKf5jF_V2UA please feel free to add agenda items you wish to see discussed.
 - Jitsi: https://meet.jit.si/gccrs-community-call
 
+**** Testing project
+
+As announced last month, we have started working on a new project which allows us to test ~gccrs~ in a variety of scenarios.
+
+We have added three new passes to the project, which enable us to verify that ~gccrs~ can compile valid rust code:
+
+- Run ~gccrs~ on all valid test cases of ~rustc~'s testsuite (test cases without an ~ERROR~ directive)
+- Run ~gccrs~ on all valid ~#![no_std]~ cases.
+- Run ~gccrs~ on all valid ~#![no_core]~ cases.
+
+The last two passes are extremely important as we are not yet capable of compiling and adding the standard library to the rust code we compile.
+
+The results for all five passes as of this month are as follow:
+
+| Pass                  | Test cases | Passes | Failures |
+|-----------------------+------------+--------+----------|
+|gccrs parsing          |      15481 |  12783 |     2698 |
+|rustc dejagnu          |        563 |    390 |      173 |
+|gccrs success          |       6603 |    877 |     5726 |
+|gccrs success (no_std) |       2764 |    698 |     2066 |
+|gccrs success (no_core)|        178 |    145 |       33 |
+
+The project's source code is available [[https://github.com/rust-gcc/testing][here]]. It is still in its early days, and we'd love it if you found something to correct or enhance!
+
 ** Completed Activities
 
 - Bugfix makefile not installing compiler driver when cross-compiling [[https://github.com/Rust-GCC/gccrs/pull/1092][PR1092]]
