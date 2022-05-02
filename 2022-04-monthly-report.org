@@ -8,21 +8,23 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-Four months into 2022 that was quick! For gcc rust we have been working  diligently on our current milestone of imports and visibility as we have mentioned before this milestone breaks down into a few tracks:
+Four months into 2022, that was quick! For gcc rust we have been working diligently on our current milestone of imports and visibility. As we have mentioned before, this milestone breaks down into a few tracks:
 
-1. module support
-2. complex paths
-3. use statements
-4. metadata exports
-5.privacy checks
+1. Module support
+2. Complex paths
+3. ~use~ statements
+4. Metadata exports
+5. Privacy checks
 
-Much of this milestone was already completed by the community and from overlapping work in previous milestones. So the remaining work is:
+Some parts of this milestone were already started by the community and from overlapping work in previous milestones. So the remaining work includes:
 
-1. metadata exports
-2. privacy checks
-3. use statements
+1. Metadata exports
+2. Privacy checks
+3. ~use~ statements
 
-We have split the work up for the milestone between [[https://github.com/philberty][Philbert]] and [[https://github.com/CohenArthur][Arthur Cohen]] so that Arthur is working on Privacy checks which have overlapping work in use statements, so that we can handle AST::SimplePaths and resolve them. Philbert has taken advantage of the work Arthur is doing so that I could dedicate myself to bug fixing since Arthur is making good progress. This meant we got all the bugs fixed to allow us to support generating slices from arrays required for our goal test case. With more time for bug fixing, we hope to close this goal test case out soon. However, testing the compiler against actual code is very valuable to find the gaps early, and we want to continue to invest time into this as best we can.
+As well as fixing some more complex cases when it comes to module handling.
+
+We have split the work up for the milestone between [[https://github.com/philberty][Philbert]] and [[https://github.com/CohenArthur][Arthur Cohen]] so that Arthur is working on Privacy checks which have overlapping work in use statements, necessary for proper metadata handling. Philbert has taken advantage of the work Arthur is doing so that I could dedicate myself to bug fixing since Arthur is making good progress. This meant we got all the bugs fixed to allow us to support generating slices from arrays required for our goal test case: [[https://github.com/BLAKE3-team/BLAKE3/blob/master/reference_impl/reference_impl.rs][The rust blake3 implementation]]). With more time for bug fixing, we hope to close this goal test case out soon. However, testing the compiler against actual code is very valuable to find the gaps early, and we want to continue to invest time into this as best we can.
 
 We got quite a few new contributors this month who also tackled many bugs, including [[https://github.com/dafaust][David Faust]] adding support for repr options on algebraic data types. In addition, [[https://github.com/simonpcook][Simon Cook]] fixed our build issues on macOS. Or [[https://github.com/liushuyu][liushuyu]], who has fixed bugs all over the codebase. Thank you so much for all the contributions this month!
 
@@ -161,9 +163,7 @@ Its time for our next community call, feel free to join in! :)
 
 ** Planned Activities
 
-- continue work on privacy pass
-- metadata exports
-- bugs
+We plan on continuing to work on the various privacy parts: This includes linting for private items in public settings, using private items outside of their modules or reporting type privacy violations in complex traits and associated types. We will also work on implementing a first working version of metadata exports, which will allow us to start compiling multiple crates together. Finally, a lot of time will also be spent on fixing bugs in various areas of the compiler.
  
 ** Detailed changelog
 
@@ -319,7 +319,6 @@ macro_rules! env {
 This enables us to start looking into properly checking for multiple "matchers" in builtins, and parse and fetch them accordingly.
 
 A lot of built-in macros remain to implement, and we'd love for you to have a go at them if you're interested! Feel free to drop by our Zulip or ask on GitHub for any question you might have.
-
 
 *** Patterns in function parameters
 
