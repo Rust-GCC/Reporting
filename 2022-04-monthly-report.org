@@ -1,0 +1,390 @@
+#+title:  Monthly Report for April 2022
+#+author: Philip Herron
+#+date:   2022-05-02
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+Four months into 2022, that was quick! For gcc rust we have been working diligently on our current milestone of imports and visibility. As we have mentioned before, this milestone breaks down into a few tracks:
+
+1. Module support
+2. Complex paths
+3. ~use~ statements
+4. Metadata exports
+5. Privacy checks
+
+Some parts of this milestone were already started by the community and from overlapping work in previous milestones. So the remaining work includes:
+
+1. Metadata exports
+2. Privacy checks
+3. ~use~ statements
+
+As well as fixing some more complex cases when it comes to module handling.
+
+We have split the work up for the milestone between [[https://github.com/philberty][Philbert]] and [[https://github.com/CohenArthur][Arthur Cohen]] so that Arthur is working on Privacy checks which have overlapping work in use statements, necessary for proper metadata handling. Philbert has taken advantage of the work Arthur is doing to dedicate himself to bug fixing since Arthur is making good progress. This meant we got all the bugs fixed to allow us to support generating slices from arrays required for our goal test case: [[https://github.com/BLAKE3-team/BLAKE3/blob/master/reference_impl/reference_impl.rs][The rust blake3 implementation]]). With more time for bug fixing, we hope to close this goal test case out soon. However, testing the compiler against actual code is very valuable to find the gaps early, and we want to continue to invest time into this as best we can.
+
+We got quite a few new contributors this month who also tackled many bugs, including [[https://github.com/dafaust][David Faust]] adding support for repr options on algebraic data types. In addition, [[https://github.com/simonpcook][Simon Cook]] fixed our build issues on macOS. Or [[https://github.com/liushuyu][liushuyu]], who has fixed bugs all over the codebase. Thank you so much for all the contributions this month!
+
+**** Monthly Community Call
+
+Its time for our next community call, feel free to join in! :)
+
+- Date and Time 6th May 2022 at: 14h00 UTC
+- Agenda: https://hackmd.io/ljuSwxP2Qn-oKf5jF_V2UA please feel free to add agenda items you wish to see discussed.
+- Jitsi: https://meet.jit.si/gccrs-community-call
+
+** Completed Activities
+
+- Bugfix makefile not installing compiler driver when cross-compiling [[https://github.com/Rust-GCC/gccrs/pull/1092][PR1092]]
+- Fix out of memory issue on huge array constructors [[https://github.com/Rust-GCC/gccrs/pull/1087][PR1087]]
+- Add compile_error! builtin macro [[https://github.com/Rust-GCC/gccrs/pull/1080][PR1080]]
+- Cleanup and bugfix of -frust-crate-name being overriden [[https://github.com/Rust-GCC/gccrs/pull/1083][PR1083]]
+- Move `cfg!()` macro to builtins. Fixes #1039 [[https://github.com/rust-gcc/gccrs/pulls/1116][PR1116]]
+- rust: Use -Otarget when building and logging warnings [[https://github.com/rust-gcc/gccrs/pulls/1114][PR1114]]
+- macros: Add env! macro [[https://github.com/rust-gcc/gccrs/pulls/1113][PR1113]]
+- rust: Clang/macOS Testing [[https://github.com/rust-gcc/gccrs/pulls/1112][PR1112]]
+- Add AST Private Visibilities [[https://github.com/rust-gcc/gccrs/pulls/1111][PR1111]]
+- Add Reachability visitors for items with generics [[https://github.com/rust-gcc/gccrs/pulls/1110][PR1110]]
+- rust: Allow gccrs to build on x86_64-apple-darwin with clang/libc++ [[https://github.com/rust-gcc/gccrs/pulls/1109][PR1109]]
+- Add missing unify rules for inference variables [[https://github.com/rust-gcc/gccrs/pulls/1108][PR1108]]
+- macros: fix an infinite loop in `concat!` macro parser [[https://github.com/rust-gcc/gccrs/pulls/1106][PR1106]]
+- Lower AST::Visibility to HIR::Visibility properly [[https://github.com/rust-gcc/gccrs/pulls/1103][PR1103]]
+- Add helper as_string for DefIds [[https://github.com/rust-gcc/gccrs/pulls/1101][PR1101]]
+- Add known lang item const_slice_ptr mappings [[https://github.com/rust-gcc/gccrs/pulls/1100][PR1100]]
+- Fix bad inherent overlap error [[https://github.com/rust-gcc/gccrs/pulls/1099][PR1099]]
+- Ensure unsize method resolutions actually unsize [[https://github.com/rust-gcc/gccrs/pulls/1098][PR1098]]
+- Support mangling \*const ptr and slices like \*const [T] [[https://github.com/rust-gcc/gccrs/pulls/1097][PR1097]]
+- Add -frust-edition flag and possible values [[https://github.com/rust-gcc/gccrs/pulls/1091][PR1091]]
+- macros: add concat! macro [[https://github.com/rust-gcc/gccrs/pulls/1090][PR1090]]
+- rust-session-manager: better crate name handling logic [[https://github.com/rust-gcc/gccrs/pulls/1088][PR1088]]
+- Slice support [[https://github.com/rust-gcc/gccrs/pulls/1086][PR1086]]
+- Add base for privacy visitor [[https://github.com/rust-gcc/gccrs/pulls/1082][PR1082]]
+- Implement the builtin include! macro [[https://github.com/Rust-GCC/gccrs/pull/1096][PR1096]]
+- Don't do docker image builds on forks [[https://github.com/Rust-GCC/gccrs/pull/1124][PR1124]]
+- Bug fix projection substitution [[https://github.com/Rust-GCC/gccrs/pull/1121][PR1121]]
+- Fix ICE during HIR lowering [[https://github.com/Rust-GCC/gccrs/pull/1134][PR1134]]
+- Refactor header and cleanup [[https://github.com/Rust-GCC/gccrs/pull/1137][PR1137]]
+- Support patterns in function signatures [[https://github.com/Rust-GCC/gccrs/pull/1138][PR1138]]
+- Add tests for cfg! macro [[https://github.com/Rust-GCC/gccrs/pull/1119][PR1119]]
+- Add name and type resolution to TuplePatterns [[https://github.com/Rust-GCC/gccrs/pull/1144][PR1144]]
+- Improve doc attribute support [[https://github.com/Rust-GCC/gccrs/pull/1139][PR1139]]
+- Fix bug with generic parameters in extern declarations [[https://github.com/Rust-GCC/gccrs/pull/1145][PR1145]]
+- Add missing coercion rule from array to slice [[https://github.com/Rust-GCC/gccrs/pull/1147][PR1147]]
+- Handle cold attribute [[https://github.com/Rust-GCC/gccrs/pull/1148][PR1148]]
+- Add support for isize and usize type hints on literals [[https://github.com/Rust-GCC/gccrs/pull/1154][PR1154]]
+- Add base for visibility pass [[https://github.com/Rust-GCC/gccrs/pull/1155][PR1155]]
+- Support link_section attribute [[https://github.com/Rust-GCC/gccrs/pull/1150][PR1150]]
+- Add support for simple visibility checks [[https://github.com/Rust-GCC/gccrs/pull/1157][PR1157]]
+- Support the no_mangle attribute [[https://github.com/Rust-GCC/gccrs/pull/1149][PR1149]]
+- Refactor code from headers into impl files [[https://github.com/Rust-GCC/gccrs/pull/1160][PR1160]]
+- Fix bug in missing macro transcribing ComparisonExpr LazyBooleanExpr and AssignmentExpr  [[https://github.com/Rust-GCC/gccrs/pull/1161][PR1161]]
+- CI catch malformed test cases [[https://github.com/Rust-GCC/gccrs/pull/1162][PR1162]]
+- Handle crate_name attribute [[https://github.com/Rust-GCC/gccrs/pull/1163][PR1163]]
+- Add NodeId to AST::SimplePaths [[https://github.com/Rust-GCC/gccrs/pull/1164][PR1164]]
+- Support type inference of generic parameters on paths behind references [[https://github.com/Rust-GCC/gccrs/pull/1166][PR1166]]
+- Fix nullptr when resolving root of a path [[https://github.com/Rust-GCC/gccrs/pull/1167][PR1167]]
+- Refactor ResolveItem into impl file [[https://github.com/Rust-GCC/gccrs/pull/1168][PR1168]]
+- Implement macro expansion on IfExpr, IfExprConseqElse, IfExprConseqIf IfExprConseqIfLet [[https://github.com/Rust-GCC/gccrs/pull/1170][PR1170]]
+- CI Update base image for Dockerfile [[https://github.com/Rust-GCC/gccrs/pull/1171][PR1171]]
+- Resolve visibility paths [[https://github.com/Rust-GCC/gccrs/pull/1172][PR1172]]
+- Fix bad location info on SimplePaths [[https://github.com/Rust-GCC/gccrs/pull/1174][PR1174]]
+- Add mappings for SimplePathSegments [[https://github.com/Rust-GCC/gccrs/pull/1176][PR1176]]
+- Fix bad name resolution on path with generic segments [[https://github.com/Rust-GCC/gccrs/pull/1184][PR1184]]
+- Refactor ResolvePath into impl file [[https://github.com/Rust-GCC/gccrs/pull/1186][PR1186]]
+- Support align and packed repr options on ADTTypes [[https://github.com/Rust-GCC/gccrs/pull/1188][PR1188]]
+- Fix bad location info on SimplePaths [[https://github.com/Rust-GCC/gccrs/pull/1189][PR1189]]
+- Fix ICE in reachability pass [[https://github.com/Rust-GCC/gccrs/pull/1190][PR1190]]
+- Add assertion on peeking compile context [[https://github.com/Rust-GCC/gccrs/pull/1192][PR1192]]
+- Remove unused parameters on function calls to allow for more complex const calls [[https://github.com/Rust-GCC/gccrs/pull/1193][PR1193]]
+- Add support for transmute [[https://github.com/Rust-GCC/gccrs/pull/1194][PR1194]]
+- Resolve Simple path in use items [[https://github.com/Rust-GCC/gccrs/pull/1191][PR1191]]
+- Support recursive coercion sites [[https://github.com/Rust-GCC/gccrs/pull/1197][PR1197]]
+- Add new as_name interface for Dynamic types to improve debug names [[https://github.com/Rust-GCC/gccrs/pull/1199][PR1199]]
+
+*** Contributors this month
+
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/simonpcook][Simon Cook]] (new-contributor)
+- [[https://github.com/RomainNaour][Romain Naour]] (new-contributor)
+- [[https://github.com/liushuyu][liushuyu]] (new-contributor)
+- [[https://github.com/omachota][Ondřej Machota]] (new-contributor)
+- [[https://github.com/antego][antego]] (new-contributor)
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        114 |        131 |   +17 |
+| In Progress |         23 |         25 |    +2 |
+| Completed   |        338 |        366 |   +28 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 5701       | 6038       | +337  |
+| Failed    | -          | -          | -     |
+| XFAIL     | 22         | 25         | +3    |
+| XPASS     | -          | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         39 |         49 |   +10 |
+| In Progress |         10 |         12 |    +2 |
+| Completed   |        130 |        146 |   +16 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |       100% |       100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
+| Imports and Visibility            |         0% |        48% | +48%  | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |         0% |         0% | -     | 30th May 2022  | -               | 29th Aug 2022  |
+| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+| Borrow checking                   |         0% |         0% | -     | TBD            | -               | TBD            |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+We plan on continuing to work on the various privacy parts: This includes linting for private items in public settings, using private items outside of their modules or reporting type privacy violations in complex traits and associated types. We will also work on implementing a first working version of metadata exports, which will allow us to start compiling multiple crates together. Finally, a lot of time will also be spent on fixing bugs in various areas of the compiler.
+ 
+** Detailed changelog
+
+*** Array Constructors
+
+Recently as part of our testing effort to use the rustc testsuite we hit upon a rustc testcase that tries to allocate a 4tb array on the stack. This testcase was designed to detect an out-of-memory case in the rustc compiler https://github.com/rust-lang/rust/issues/66342 we also had this failure in our implementation. The error here is due to the fact for copied array constructors we created a constructor expression of the specified number of elements. This means we create a huge vector in memory at compile time which is inefficent. Though if we follow how the GCC D front-end handles this we can use a loop to initilize the memory and allow the GCC middle-end to optimize this using a memset. The only caveat here is that this is not possible in a const context.
+
+For more information see:
+
+- https://github.com/Rust-GCC/gccrs/issues/1068
+
+*** Slices support
+
+We finally got slice generation support merged, this is the extracted code from Rustc libcore 1.49.0. The key thing here is that this test-case exposed lots of bugs in our type resolution system so working through this was pretty key. We are working on a blog post to explain how this works, as slice generation is actually implemented via the trick of unsized method resolution and clever use of libcore. For now please review the code below and you can see the slice generation via passing a range to the array index expression kicks off the array index operator overload for a Range<usize> as the entry point which uses the generic higher ranked trait bound.
+
+#+BEGIN_SRC rust
+// { dg-additional-options "-w" }
+extern "rust-intrinsic" {
+    pub fn offset<T>(dst: *const T, offset: isize) -> *const T;
+}
+
+struct FatPtr<T> {
+    data: *const T,
+    len: usize,
+}
+
+union Repr<T> {
+    rust: *const [T],
+    rust_mut: *mut [T],
+    raw: FatPtr<T>,
+}
+
+#[lang = "Range"]
+pub struct Range<Idx> {
+    pub start: Idx,
+    pub end: Idx,
+}
+
+#[lang = "const_slice_ptr"]
+impl<T> *const [T] {
+    pub const fn len(self) -> usize {
+        let a = unsafe { Repr { rust: self }.raw };
+        a.len
+    }
+
+    pub const fn as_ptr(self) -> *const T {
+        self as *const T
+    }
+}
+
+#[lang = "const_ptr"]
+impl<T> *const T {
+    pub const unsafe fn offset(self, count: isize) -> *const T {
+        unsafe { offset(self, count) }
+    }
+
+    pub const unsafe fn add(self, count: usize) -> Self {
+        unsafe { self.offset(count as isize) }
+    }
+
+    pub const fn as_ptr(self) -> *const T {
+        self as *const T
+    }
+}
+
+const fn slice_from_raw_parts<T>(data: *const T, len: usize) -> *const [T] {
+    unsafe {
+        Repr {
+            raw: FatPtr { data, len },
+        }
+        .rust
+    }
+}
+
+#[lang = "index"]
+trait Index<Idx> {
+    type Output;
+
+    fn index(&self, index: Idx) -> &Self::Output;
+}
+
+pub unsafe trait SliceIndex<T> {
+    type Output;
+
+    unsafe fn get_unchecked(self, slice: *const T) -> *const Self::Output;
+
+    fn index(self, slice: &T) -> &Self::Output;
+}
+
+unsafe impl<T> SliceIndex<[T]> for Range<usize> {
+    type Output = [T];
+
+    unsafe fn get_unchecked(self, slice: *const [T]) -> *const [T] {
+        unsafe {
+            let a: *const T = slice.as_ptr();
+            let b: *const T = a.add(self.start);
+            slice_from_raw_parts(b, self.end - self.start)
+        }
+    }
+
+    fn index(self, slice: &[T]) -> &[T] {
+        unsafe { &*self.get_unchecked(slice) }
+    }
+}
+
+impl<T, I> Index<I> for [T]
+where
+    I: SliceIndex<[T]>,
+{
+    type Output = I::Output;
+
+    fn index(&self, index: I) -> &I::Output {
+        index.index(self)
+    }
+}
+
+fn main() -> i32 {
+    let a = [1, 2, 3, 4, 5];
+    let b = &a[1..3];
+
+    0
+}
+#+END_SRC
+
+see: https://godbolt.org/z/csn8hMej8
+
+*** More built-in macros
+
+Our first builtin macro, ~cfg!~, has been moved with the rest of the builtin macros: It can now benefit from the other helper functions we have developed in this module to help consuming tokens and generating AST fragments. Two new macros have also been added:
+
+1. ~concat!~, which allows the concatenation of literal tokens at compile-time
+
+#+BEGIN_SRC rust
+concat!("hey", 'n', 0, "w"); // expands to "heyn0w"
+#+END_SRC
+
+1. ~env!~, which allows fetching environment variables during compilation.
+
+#+BEGIN_SRC rust
+let path = env!("PATH");
+// expands to the content of the user's path when they invoked `gccrs`
+#+END_SRC
+
+~env!~ is interesting as it is one of the first built-in with an optional extra argument: You can specify an extra error message to display if the variable is not present.
+
+#+BEGIN_SRC rust
+macro_rules! env {
+    ($name:expr $(,)?) => { ... };
+    ($name:expr, $error_msg:expr $(,)?) => { ... };
+}
+#+END_SRC
+
+This enables us to start looking into properly checking for multiple "matchers" in builtins, and parse and fetch them accordingly.
+
+A lot of built-in macros remain to implement, and we'd love for you to have a go at them if you're interested! Feel free to drop by our Zulip or ask on GitHub for any question you might have.
+
+*** Patterns in function parameters
+
+As part of our bug fixing this week we realized we could unify the code paths for handling match arms such that we can support patterns everywhere. There are bugs in code-generation for more complex patterns which need to be fixed but we are correctly name and type resolving them which is the starting point. As our support for Match Expression improves over time so will our support for patterns.
+
+#+BEGIN_SRC rust
+struct Pattern(i32);
+
+fn pattern_as_arg(Pattern(value): Pattern) -> i32 {
+    value
+}
+
+fn main() -> i32 {
+    pattern_as_arg(Pattern(15)) - 15
+}
+#+END_SRC
+
+*** Transmute
+
+We added support for transmute which is an interesting intrinsic to allow the reinterpretation of types. This test case is a snippet from this bug report https://github.com/Rust-GCC/gccrs/issues/1130
+
+#+BEGIN_SRC rust
+mod mem {
+    extern "rust-intrinsic" {
+        fn size_of<T>() -> usize;
+        fn transmute<U, V>(_: U) -> V;
+    }
+}
+
+impl u16 {
+    fn to_ne_bytes(self) -> [u8; mem::size_of::<Self>()] {
+        unsafe { mem::transmute(self) }
+    }
+}
+
+pub trait Hasher {
+    fn finish(&self) -> u64;
+
+    fn write(&mut self, bytes: &[u8]);
+
+    fn write_u8(&mut self, i: u8) {
+        self.write(&[i])
+    }
+
+    fn write_i8(&mut self, i: i8) {
+        self.write_u8(i as u8)
+    }
+
+    fn write_u16(&mut self, i: u16) {
+        self.write(&i.to_ne_bytes())
+    }
+
+    fn write_i16(&mut self, i: i16) {
+        self.write_u16(i as u16)
+    }
+}
+
+pub struct SipHasher;
+
+impl Hasher for SipHasher {
+    #[inline]
+    fn write(&mut self, msg: &[u8]) {}
+
+    #[inline]
+    fn finish(&self) -> u64 {
+        0
+    }
+}
+#+END_SRC
