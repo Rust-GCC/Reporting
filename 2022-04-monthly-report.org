@@ -32,7 +32,7 @@ We got quite a few new contributors this month who also tackled many bugs, inclu
 
 Its time for our next community call, feel free to join in! :)
 
-- Date and Time 6th May 2022 at: 14h00 UTC
+- Date and Time 13th May 2022 at: 14h00 UTC
 - Agenda: https://hackmd.io/ljuSwxP2Qn-oKf5jF_V2UA please feel free to add agenda items you wish to see discussed.
 - Jitsi: https://meet.jit.si/gccrs-community-call
 
