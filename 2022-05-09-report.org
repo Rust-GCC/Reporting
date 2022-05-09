@@ -1,0 +1,140 @@
+#+title:  Weekly report for the 2nd to the 9th of May 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-05-09
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+We will soon be giving presentations and talks about Rust-GCC in various upcoming events, such as the [[https://live-embedded-event.carrd.co/][Live Embedded Event #3]] or [[https://www.embedded-world.de/en][Embedded World 2022]]. As a consequence, we spent a lot of time this week creating slides, organizing talks or making posters. Nonetheless, we kept progressing on our Imports and Visibility milestone: Philip kept fixing various bugs or oversights in the type system, bringing us closer and closer to compiling Rust's core library. Arthur kept working on visibilities, now allowing for the proper resolution of ~pub(restricted)~ items.
+
+** Completed Activities
+
+- Fix size used in unsized adjustments [[https://github.com/Rust-GCC/gccrs/pull/1217][PR1217]]
+- ast: lower: Refactor ASTLowerItem in its own source file [[https://github.com/Rust-GCC/gccrs/pull/1216][PR1216]]
+- Report ~pub restricted~ violations [[https://github.com/Rust-GCC/gccrs/pull/1215][PR1215]]
+- Replace SSH cloning with HTTPS cloning in README.md [[https://github.com/Rust-GCC/gccrs/pull/1214][PR1214]]
+- intrinsic: add rotate_left and rotate_right intrinsic [[https://github.com/Rust-GCC/gccrs/pull/1213][PR1213]]
+- intrinsic: add breakpoint intrinsic [[https://github.com/Rust-GCC/gccrs/pull/1212][PR1212]]
+- Preserve inside_loop context when type checking match [[https://github.com/Rust-GCC/gccrs/pull/1211][PR1211]]
+- Allow match on boolean expressions [[https://github.com/Rust-GCC/gccrs/pull/1209][PR1209]]
+- Use correct format specifiers for unisnged HOST_WIDE_INT [[https://github.com/Rust-GCC/gccrs/pull/1206][PR1206]]
+- Take advantage of OBJ_TYPE_REF'S in dyn calls [[https://github.com/Rust-GCC/gccrs/pull/1205][PR1205]]
+- Resolve module visibility properly [[https://github.com/Rust-GCC/gccrs/pull/1202][PR1202]]
+- Generic functions should not be TREE_PUBLIC [[https://github.com/Rust-GCC/gccrs/pull/1201][PR1201]]
+- Remove duplicated code for expansions of types and expressions [[https://github.com/Rust-GCC/gccrs/pull/1200][PR1200]]
+- Add new as_name interface for Dynamic types [[https://github.com/Rust-GCC/gccrs/pull/1199][PR1199]]
+- Support recursive coercion sites [[https://github.com/Rust-GCC/gccrs/pull/1197][PR1197]]
+- Resolve simple paths in use items [[https://github.com/Rust-GCC/gccrs/pull/1191][PR1191]]
+
+*** Contributors this week
+
+- [[https://github.com/Zopolis4][Maximilian Downey Twiss]] (new contributor)
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/liushuyu][liushuyu]]
+- [[https://github.com/antego][antego]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       131 |       133 |    +2 |
+| In Progress |        25 |        24 |    -1 |
+| Completed   |       366 |       373 |    +7 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 6038      |      6088 |   +50 |
+| Failed    | -         |         - |     - |
+| XFAIL     | 25        |        25 |     - |
+| XPASS     | -         |         - |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        49 |        49 |     - |
+| In Progress |        12 |        13 |    +1 |
+| Completed   |       146 |       150 |    +4 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
+| Imports and Visibility            |       48% |       52% | +4%   | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD            |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Add more linting and restrictions to our privacy pass
+- Continue bugfixing in aim of compiling our goal test case
+- Continue work on metadata exports
+
+** Detailed changelog
+
+*** Match on boolean expressions
+
+Thanks to [[https://github.com/dafaust][David Faust]], the compiler is now able to match on boolean expressions on top of patterns (which were already handled):
+
+#+BEGIN_SRC rust
+let a = false;
+
+match a {
+    true => { /* ... */ },
+    false => { /* ... */ },
+}
+#+END_SRC
+
+This adds reusable code for the remaining match arm possibilites to implement such as integers or strings.
+
+*** pub(restricted) lints
+
+As part of this milestone, it is important to resolve ~pub(restricted)~ items properly. ~pub(restricted)~ items refer to all items with a visibility modifier containing a path: This can be the often seen ~pub(crate)~ or more specific paths such as ~pub(in some::super::path)~.
+
+These restrictions can only refer to valid modules that are ancestor modules:
+#+BEGIN_SRC rust
+mod sain {
+    mod doux {
+	  mod graal { }
+
+	  struct A0;
+
+	  pub(in doux) struct A1; // valid
+	  pub(in sain::doux) struct A2; // valid
+
+	  pub(in sain::doux::A0) struct A3;
+	  // valid path, invalid restriction! This is a type, not a module
+
+	  pub(in sain::doux::graal) struct A4;
+	  // valid path, invalid restriction! This is a child module, not a parent
+
+	  pub(in not::exist::at_all) struct A5; // invalid path
+    }
+}
+#+END_SRC
+
+Note that we do not currently handle the differences betweens ~pub(restricted)~ in the 2015 and 2018 editions of the language: What we currently have is closer to the 2015 edition, and will keep on being worked on.
+
+*** More compiler intrinsics
+
+Thanks to the work done by [[https://github.com/liushuyu][liushuyu]], our backend keeps getting extended with new attributes and intrinsics. This week, the compiler gained support for ~breakpoint~, ~rotate_left~ and ~rotate_right~.
