@@ -41,9 +41,9 @@ We will soon be giving presentations and talks about Rust-GCC in various upcomin
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |       131 |           |       |
-| In Progress |        25 |           |       |
-| Completed   |       366 |           |       |
+| TODO        |       131 |       133 |    +2 |
+| In Progress |        25 |        24 |    -1 |
+| Completed   |       366 |       373 |    +7 |
 
 *** Test Cases
 
@@ -58,9 +58,9 @@ We will soon be giving presentations and talks about Rust-GCC in various upcomin
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |        49 |           |       |
-| In Progress |        12 |           |       |
-| Completed   |       146 |           |       |
+| TODO        |        49 |        49 |     - |
+| In Progress |        12 |        13 |    +1 |
+| Completed   |       146 |       150 |    +4 |
 
 *** Milestones Progress
 
@@ -72,7 +72,7 @@ We will soon be giving presentations and talks about Rust-GCC in various upcomin
 | Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
 | Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
 | Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
-| Imports and Visibility            |       48% |           |       | 29th Mar 2022  | -               | 27th May 2022  |
+| Imports and Visibility            |       48% |       52% | +4%   | 29th Mar 2022  | -               | 27th May 2022  |
 | Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
 | Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
 | Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD            |
