@@ -1,0 +1,127 @@
+#+title:  Weekly report for the 9th to the 16th of May 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-05-16
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+TODO
+
+*** Community Call
+
+We had our regular community call on 13th May 2022, please find our meeting notes over on:
+
+https://github.com/Rust-GCC/Reporting/blob/main/2022-05-13-community-call.md
+
+** Completed Activities
+
+- Lowe IfLet expression to HIR [[https://github.com/Rust-GCC/gccrs/pull/1218][PR1218]]
+- Add optional<T> for development in C++11 [[https://github.com/Rust-GCC/gccrs/pull/1219][PR1219]]
+- Apply coercion sites on unions [[https://github.com/Rust-GCC/gccrs/pull/1220][PR1220]]
+- Don't return error_mark_node on LoopExpr's [[https://github.com/Rust-GCC/gccrs/pull/1221][PR1221]]
+- Add destructure for generics on coercion sites [[https://github.com/Rust-GCC/gccrs/pull/1222][PR1222]]
+- Fix bad type resolution for associated types  [[https://github.com/Rust-GCC/gccrs/pull/1223][PR1223]]
+- Fix macro expansion on repetitions [[https://github.com/Rust-GCC/gccrs/pull/1225][PR1225]]
+- Fix tests on i386 [[https://github.com/Rust-GCC/gccrs/pull/1228][PR1228]]
+- Bit shifts need to cast the types [[https://github.com/Rust-GCC/gccrs/pull/1240][PR1240]]
+- Fix ICE in repition macro [[https://github.com/Rust-GCC/gccrs/pull/1242][PR1242]]
+- Integers can be casted to pointers [[https://github.com/Rust-GCC/gccrs/pull/1243][PR1243]]
+- Support match-expr on integers and chars [[https://github.com/Rust-GCC/gccrs/pull/1244][PR1244]]
+- Add name-resolution on IfLet expression [[https://github.com/Rust-GCC/gccrs/pull/1241][PR1241]]
+- Support reporting common privacy issues [[https://github.com/Rust-GCC/gccrs/pull/1246][PR1246]]
+- Support Range expression in match-arms [[https://github.com/Rust-GCC/gccrs/pull/1248][PR1248]]
+
+*** Contributors this week
+
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/antego][antego]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       133 |       140 |    +7 |
+| In Progress |        24 |        24 |     - |
+| Completed   |       373 |       379 |    +6 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 6088      | 6174      | +86   |
+| Failed    | -         | -         | -     |
+| XFAIL     | 25        | 25        | -     |
+| XPASS     | -         | -         | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        49 |        50 |    +1 |
+| In Progress |        13 |        13 |     - |
+| Completed   |       150 |       156 |    +6 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
+| Imports and Visibility            |       52% |       62% | +10%  | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD            |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Add more linting and restrictions to our privacy pass
+- Continue bugfixing in aim of compiling our goal test case
+- Continue work on metadata exports
+
+** Detailed changelog
+
+*** Match Expression
+
+ @dfaust
+
+
+*** Bit shift operations cast
+
+In rust arithmetic operations usually unify the types involved to resolve whats going on here. But bit shift operations are a special case where they actually cast their types.
+
+#+BEGIN_SRC rust
+fn foo() -> u8 {
+    1u8 << 2u32
+}
+#+END_SRC
+
+*** Support casting integers to pointers
+
+In embeded programming we often need to turn raw addresses into pointers. This required us to update our casting rules to support this.
+
+#+BEGIN_SRC rust
+const TEST: *mut u8 = 123 as *mut u8;
+
+fn test() {
+    let a = TEST;
+}
+#+END_SRC
+
+*** Privacy violations
+
+@arthur
