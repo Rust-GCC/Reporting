@@ -101,7 +101,56 @@ https://github.com/Rust-GCC/Reporting/blob/main/2022-05-13-community-call.md
 
 *** Match Expression
 
-@dfaust
+Thanks to [[https://github.com/dafaust][David Faust]] for adding more support in our Match expression so that we can now support matching integers, chars and reanges.
+
+#+BEGIN_SRC rust
+fn foo_u32 (x: u32) {
+    match x {
+        15 => {
+            let a = "fifteen!\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+            printf (c);
+        }
+
+        _ => {
+            let a = "other!\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+            printf (c);
+        }
+    }
+}
+
+const BIG_A: char = 'A';
+const BIG_Z: char = 'Z';
+
+fn bar (x: char) {
+    match x {
+
+        'a'..='z' => {
+            let a = "lowercase\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+            printf (c);
+        }
+        BIG_A..=BIG_Z => {
+            let a = "uppercase\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+            printf (c);
+        }
+        _ => {
+            let a = "other\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+            printf (c);
+        }
+    }
+}
+#+END_SRC
+
+More work is still to be done here to handle matching Tuples and ADT's.
 
 *** Bit shift operations cast
 
