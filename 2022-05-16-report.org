@@ -8,7 +8,11 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-TODO
+Once again, Philip spent a lot of time this week fixing various bugs in our type-system and generic resolution pass. We now have a cleaner, better interface with more functionality.
+We also gained back support for 32-bit architectures by being more careful of the various types and print formats used in our middle-end. You can see track builds on various architectures [[https://builder.sourceware.org/][here]], and we plan to add these badges to our CI soon.
+Thanks to [[https://github.com/bjorn3][bjorn3]] trying to compile a version of the core library using ~gccrs~ and reporting bugs, we also fixed some nasty bugs caused by undefined behavior. We are currently adding ~libcore-1.49~ as well as [[https://github.com/BLAKE3-team/BLAKE3/blob/master/reference_impl/reference_impl.rs][the BLAKE3 reference Rust implementation]] to our testing project and tracking our progress on these test cases.
+Thanks to our contributors, we are also gaining more pattern matching: [[https://github.com/dafaust][David Faust]] has worked on adding integers and chars, as well as ranges of those values, to the list of supported features, while [[https://github.com/antego][antego]] is currently working on supporting ~if let <pattern>~ constructs.
+We also gained our first visibility lint, reporting errors about private functions being used outside of their visibility scope. This gives us a good base on which to add more lints and errors.
 
 *** Community Call
 
@@ -97,8 +101,7 @@ https://github.com/Rust-GCC/Reporting/blob/main/2022-05-13-community-call.md
 
 *** Match Expression
 
- @dfaust
-
+@dfaust
 
 *** Bit shift operations cast
 
@@ -124,4 +127,35 @@ fn test() {
 
 *** Privacy violations
 
-@arthur
+All of the efforts regarding the privacy pass in the recent weeks have allowed us to have a solid privacy-reporting base. This will make it easy to report private items in public contexts, as well as have a variety of hints for good user experience.
+
+This first implementation concerns functions and function calls.
+
+#+BEGIN_SRC rust
+
+mod orange {
+    mod green {
+        fn sain() {}
+        pub fn doux() {}
+    }
+
+    fn brown() {
+        green::sain(); // error: The function definition is private in this context
+        green::doux();
+    }
+}
+#+END_SRC
+
+We also support ~pub(restricted)~ visibilities seamlessly thanks to the work done in the past few weeks regarding path resolution
+
+#+BEGIN_SRC rust
+mod foo {
+    mod bar {
+        pub(in foo) fn baz() {}
+    }
+
+    fn baz() {
+        bar::baz(); // no error, foo::bar::baz is public in foo
+    }
+}
+#+END_SRC
