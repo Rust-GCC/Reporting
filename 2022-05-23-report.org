@@ -1,0 +1,250 @@
+#+title:  Weekly report for the 16th to the 23rd of May 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-05-23
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This week saw a large progress on the privacy part of the milestone, as the last few weeks of development finally turned into a tangible error reporting pass. As the development of this pass was quite easy, this reassures us in the solidity of the privacy backbone we had been hacking at. We also gave a talk at the third edition of the Live Embedded Event, for which we will send the replay link once we have it. Preparing for it took a lot of time this week, but we also dedicated a lot of efforts to our testing project. We added two new passes, concering the ~Blake3~ project and compilation of ~libcore~. The entire test-suite, which contains around 24 000 test cases, is now run nightly. We are also working on an interactive dashboard to show these results and track our progress in a nice graph fashion, without requiring you to run it yourself.
+
+** Completed Activities
+
+*** Contributors this week
+
+- [[https://github.com/thomasyonug][Wenzhang Yang]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       140 |       147 |    +7 |
+| In Progress |        24 |        26 |    +2 |
+| Completed   |       379 |       381 |    +2 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 6174      | 6278      | +104  |
+| Failed    | -         | -         | -     |
+| XFAIL     | 25        | 25        | -     |
+| XPASS     | -         | -         | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        50 |        53 |    +3 |
+| In Progress |        13 |        13 |     - |
+| Completed   |       156 |       158 |    +2 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
+| Imports and Visibility            |       62% |       65% | +3%   | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 25th Jul 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2021  | -               | 30th Sept 2022 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD            |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Work on our testsuite dashboard
+- Reworking our AST dump
+- Continue work on metadata export
+- Continue bugfixing in aim of compiling our goal test case
+
+** Detailed changelog
+
+*** Privacy violations
+
+Last week, the work done on the privacy reporting visitor was but a stepping stone for the current privacy pass: It could only handle function calls in simple blocks, and not in ~let~ statements or loops.
+Similarly, the "valid ancestor check", that we were performing to see if an item's definition module was an ancestor of the current module where said item is referenced, would only go "one step down" in the ancestry tree. This meant that the following Rust code
+
+#+BEGIN_SRC rust
+fn parent() {}
+
+mod foo {
+    mod bar {
+        fn mega_child() {
+            crate::parent();
+        }
+    }
+}
+#+END_SRC
+
+Would cause errors in our privacy pass, despite being perfectly valid code. This is now handled and the ancestry checks are performed recursively as they should.
+
+On top of reporting privacy errors in more expression places (~if private_fn()~, ~let _ = private_fn()~...), we have also added privacy checks to explicit types.
+This means reporting errors for nice, simple private structures:
+
+#+BEGIN_SRC rust
+mod orange {
+    mod green {
+        struct Foo;
+        pub(in orange) struct Bar;
+        pub struct Baz;
+    }
+
+    fn brown() {
+        let _ = green::Foo; // privacy error
+        let _ = green::Bar;
+        let _ = green::Baz;
+
+        let _: green::Foo; // privacy error
+
+        fn any(a0: green::Foo, a1: green::Bar) {}
+        //         ^ privacy error
+    }
+}
+#+END_SRC
+
+As well as complex nested types inside arrays, tuples or function pointers.
+
+More work will be coming regarding trait visibility, associated types, opaque types and so on.
+
+*** Slice Type layout
+
+We got slices typechecking and code generation working a few reports ago, but there was an issue in actually running code that used them. It boils down to this function, where the range index trait function ends up creating us our new FatPtr which is the same layout of a Slice. The interesting part here is that we are creating a new FatPtr object which is inside a union, then we return the *const [T] variant to keep the typechecker happy. This code smells funny to C/C++ programmers since this object has been allocated on the stack.
+
+#+BEGIN_SRC rust
+struct FatPtr<T> {
+    data: *const T,
+    len: usize,
+}
+
+pub union Repr<T> {
+    rust: *const [T],
+    rust_mut: *mut [T],
+    raw: FatPtr<T>,
+}
+
+const fn slice_from_raw_parts<T>(data: *const T, len: usize) -> *const [T] {
+    unsafe {
+        Repr {
+            raw: FatPtr { data, len },
+        }
+        .rust
+    }
+}
+#+END_SRC
+
+It turns out that *const [T] or &mut [T] is _not_ a pointer to a slice. The layout of a slice is actually a structure. You can see from the GCC code-gen gimple dump: https://godbolt.org/z/Gq5EYdYcz that the result of a the slice_from_raw_parts is _not a pointer but a struct as well.
+
+Overall:
+
+- *const[T]
+- *mut [T]
+- &mut [T]
+- &[T]
+
+All have the same layout of struct { raw_data_ptr, len } which ends up being twice the size of a normal pointer so it can be easily handled by a compiler's code-generation. The other interesting piece we noticed during this investigation was that when you use GDB on Rust code and take the address of a normal array GDB treats this as a slice implicitly also:
+
+#+BEGIN_SRC rust
+fn main() {
+    let a = 123;
+    let b: *const i32 = &a;
+    let c = core::ptr::slice_from_raw_parts(b, 1);
+}
+#+END_SRC
+
+#+BEGIN_SRC rust
+Temporary breakpoint 1, rs_slice::main () at rs-slice.rs:2
+2           let a = 123;
+(gdb) n
+3           let b: *const i32 = &a;
+(gdb) n
+4           let c = core::ptr::slice_from_raw_parts(b, 1);
+(gdb) p a
+$1 = 123
+(gdb) p b
+$2 = (*mut i32) 0x7fffffffd9d4
+(gdb) n
+6           let d = 123;
+(gdb) p c
+$3 = *const [i32] {data_ptr: 0x7fffffffd9d4, length: 1}
+(gdb) p *c
+Attempt to take contents of a non-pointer value.
+#+END_SRC
+
+Also notice you cannot dereference this *const [i32] since its a non-pointer value.
+
+More info:
+
+https://github.com/Rust-GCC/gccrs/commit/cd39861da5e1113207193bb8b3e6fb3dde92895f
+https://doc.rust-lang.org/reference/dynamically-sized-types.html
+https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=672adac002939a2dab43b8d231adc1dc
+
+**** Intrinsic access support:
+
+The remaining issue we have is that Rusts libcore describes SliceIndex access like this:
+
+#+BEGIN_SRC rust
+unsafe impl<T> SliceIndex<[T]> for usize {
+    type Output = T;
+
+    fn get(self, slice: &[T]) -> Option<&T> {
+        unsafe { Option::Some(&*self.get_unchecked(slice)) }
+    }
+
+    unsafe fn get_unchecked(self, slice: *const [T]) -> *const T {
+        // SAFETY: the caller guarantees that `slice` is not dangling, so it
+        // cannot be longer than `isize::MAX`. They also guarantee that
+        // `self` is in bounds of `slice` so `self` cannot overflow an `isize`,
+        // so the call to `add` is safe.
+        unsafe { slice.as_ptr().add(self) }
+    }
+
+    fn index(self, slice: &[T]) -> &T {    
+        // It works if you change this to unsafe { &*self.get_unchecked(slice) }
+        // N.B., use intrinsic indexing
+        &(*slice)[self]        
+    }
+}
+#+END_SRC
+
+This ends up looking as though slice access is recursive but obviouslly this is not the case. Rust actually treats this as an intrinsic operation. For now we can work around this by chaning the rust code:
+
+#+BEGIN_SRC rust
+unsafe impl<T> SliceIndex<[T]> for usize {
+    type Output = T;
+
+    fn get(self, slice: &[T]) -> Option<&T> {
+        unsafe { Option::Some(&*self.get_unchecked(slice)) }
+    }
+
+    unsafe fn get_unchecked(self, slice: *const [T]) -> *const T {
+        // SAFETY: the caller guarantees that `slice` is not dangling, so it
+        // cannot be longer than `isize::MAX`. They also guarantee that
+        // `self` is in bounds of `slice` so `self` cannot overflow an `isize`,
+        // so the call to `add` is safe.
+        unsafe { slice.as_ptr().add(self) }
+    }
+
+    fn index(self, slice: &[T]) -> &T {
+        unsafe { &*self.get_unchecked(slice) }
+    }
+}
+#+END_SRC
+
+More info:
+
+https://users.rust-lang.org/t/why-this-does-not-lead-to-recursion/50306/3
+https://github.com/Rust-GCC/gccrs/issues/1269
