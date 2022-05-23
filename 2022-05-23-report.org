@@ -10,6 +10,15 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 This week saw a large progress on the privacy part of the milestone, as the last few weeks of development finally turned into a tangible error reporting pass. As the development of this pass was quite easy, this reassures us in the solidity of the privacy backbone we had been hacking at. We also gave a talk at the third edition of the Live Embedded Event, for which we will send the replay link once we have it. Preparing for it took a lot of time this week, but we also dedicated a lot of efforts to our testing project. We added two new passes, concering the ~Blake3~ project and compilation of ~libcore~. The entire test-suite, which contains around 24 000 test cases, is now run nightly. We are also working on an interactive dashboard to show these results and track our progress in a nice graph fashion, without requiring you to run it yourself.
 
+**** GSoC 2022
+
+Today we welcome our new google summer of code 2022 students:
+
+- [[https://github.com/abbasfaisal][Faisal Abbas]] who will be working with [[https://github.com/philberty][philbert]] on porting over the constexpr support from the cpp front-end
+- Andrew A.N will be working with [[https://github.com/CohenArthur][Arthur Cohen]] to develop our HIR dump which will aid in our compiler debugging experience
+
+Thanks Google! Good luck students :).
+
 ** Completed Activities
 
 *** Contributors this week
