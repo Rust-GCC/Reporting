@@ -21,6 +21,13 @@ Thanks Google! Good luck students :).
 
 ** Completed Activities
 
+- Report privacy violations [[https://github.com/Rust-GCC/gccrs/pull/1246][PR1246]]
+- Bug fix extern blocks defined within blocks [[https://github.com/Rust-GCC/gccrs/pull/1250][PR1250]]
+- Do not rely on endianness for the testsuite tests [[https://github.com/Rust-GCC/gccrs/pull/1254][PR1254]]
+- Handle more complex privacy violations [[https://github.com/Rust-GCC/gccrs/pull/1252][PR1252]]
+- Inspect expressions for privacy violations [[https://github.com/Rust-GCC/gccrs/pull/1255][PR1255]]
+- Report privacy violations within types [[https://github.com/Rust-GCC/gccrs/pull/1258][PR1258]]
+
 *** Contributors this week
 
 - [[https://github.com/thomasyonug][Wenzhang Yang]]
