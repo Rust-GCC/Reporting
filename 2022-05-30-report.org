@@ -1,0 +1,301 @@
+#+title:  Weekly report for the 23rd to the 30th of May 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-05-30
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This week we continued with steady progress. Unfortunately, many of the features we are working on are blocked until we fix our root path resolution with the crate and super keywords. Once this piece is in place, the remaining issues in our milestone will flow nicely. Notice the addition of new goal test case tables to track our progress on these. Tracking our progress purely from the milestone table does not tell the whole story, especially when we recently allocated so much time to bug fixing
+
+We allocated time to introduce our Google Summer of Code students to help them get set up and feel part of the community. Note Arthur was on vacation this week, and Philbert is on vacation from Friday until Tuesday.
+
+In terms of the progress for our imports and visibility milestone, as we have said previously, we will be going over by about two weeks from our target date, but this seems reasonable given the time spent on bug fixing has been very useful.
+
+** Completed Activities
+
+- Canonicalize types based on hashing [[https://github.com/Rust-GCC/gccrs/pull/1265][PR1265]]
+- Add dead-code analysis support to Match Expressions [[https://github.com/Rust-GCC/gccrs/pull/1267][PR1267]]
+- Make TyTy::destructure recursive with recursion guards [[https://github.com/Rust-GCC/gccrs/pull/1266][PR1266]]
+- Add name reoslution for IfLet expression [[https://github.com/Rust-GCC/gccrs/pull/1241][PR1241]]
+- Fix the Slice type layout [[https://github.com/Rust-GCC/gccrs/pull/1268][PR1268]]
+- Wrap unit-testing code in CHECKING_P guards [[https://github.com/Rust-GCC/gccrs/pull/1276][PR1276]]
+- Refactor array index expression [[https://github.com/Rust-GCC/gccrs/pull/1277][PR1277]]
+- Implement TypeChecking for IfLet expression [[https://github.com/Rust-GCC/gccrs/pull/1279][PR1279]]
+- Remove old hack for untyped bindings which is no longer required [[https://github.com/Rust-GCC/gccrs/pull/1275][PR1275]]
+- Refactor how we detect if we are inside a loop for error handling break/continue expression [[https://github.com/Rust-GCC/gccrs/pull/1278][PR1278]]
+- Add build badges for Marks build farm [[https://github.com/Rust-GCC/gccrs/pull/1282][PR1282]]
+- Add test case to show bug is fixed [[https://github.com/Rust-GCC/gccrs/pull/1281][PR1281]]
+- Str's have the same type layout as Slices [[https://github.com/Rust-GCC/gccrs/pull/1280][PR1280]]
+- Refactor const expr inteface [[https://github.com/Rust-GCC/gccrs/pull/1283][PR1283]]
+
+*** Contributors this week
+
+- [[https://github.com/abbasfaisal][Faisal Abbas]] (new-contributor)
+- [[https://github.com/antego][Antego]]
+- [[https://github.com/thomasyonug][Wenzhang Yang]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       147 |       146 |    -1 |
+| In Progress |        26 |        26 |     - |
+| Completed   |       381 |       387 |    +6 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 6278      | 6301      | +23   |
+| Failed    | -         | -         | -     |
+| XFAIL     | 25        | 23        | -2    |
+| XPASS     | -         | -         | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        53 |        54 |    +1 |
+| In Progress |        13 |        12 |    -1 |
+| Completed   |       158 |       163 |    +5 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
+| Imports and Visibility            |       65% |       72% | +7%   | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 29th Aug 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2022  | -               | 30th Sept 2022 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD            |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+*** Goal TestCases
+
+**** Blake3
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        | -         |     1     | -     |
+| In Progress | -         |     1     | -     |
+| Completed   | -         |    49     | -     |
+
+see: https://github.com/Rust-GCC/gccrs/issues/682
+
+**** Libcore SIP hasher
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        | -         |         5 | -     |
+| In Progress | -         |         0 | -     |
+| Completed   | -         |        11 | -     |
+
+see: https://github.com/Rust-GCC/gccrs/issues/1247
+
+** Planned Activities
+
+- Work on our testsuite dashboard
+- Reworking our AST dump
+- Continue work on metadata export
+- Continue bugfixing in aim of compiling our goal test case
+
+** Detailed changelog
+
+*** Slice Type Layout
+
+Slice's are a type of [[https://doc.rust-lang.org/reference/dynamically-sized-types.html][DST]] so as I mentioned in our previous report '*const [T]' or '&mut [T]' have the same layout which is twice the size of a pointer. We have updated the compiler to enforce this layout which which is represented by the FatPtr object in libcore. This layout is really important as the slice_from_raw_parts function needs to be able to maintain the data integrety of this structure which requires this or we end up with a reference to garbage data on the stack.
+
+See this compiler explorer link: https://godbolt.org/z/9xe4Wvs3e
+
+*** Str type layout
+
+[[https://doc.rust-lang.org/std/primitive.str.html][Str]] represents the raw string type in Rust which has specific type checking rules as it is another [[https://doc.rust-lang.org/reference/dynamically-sized-types.html][DST]] which happens to be the same layout of a Slice. Below is an example which shows Borrowing has no effect on type. The rules here are likely to affect all DST's in regards to borrows and dereferences.
+
+#+BEGIN_SRC rust
+let a:&str = "TEST 1";
+let b:&str = &"TEST 2";
+#+END_SRC
+
+When we have the same layout of a Slice we can actually get the length of the string by transmuting to a slice which is what libcore does:
+
+#+BEGIN_SRC rust
+mod mem {
+    extern "rust-intrinsic" {
+        fn transmute<T, U>(_: T) -> U;
+    }
+}
+
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+struct FatPtr<T> {
+    data: *const T,
+    len: usize,
+}
+
+pub union Repr<T> {
+    rust: *const [T],
+    rust_mut: *mut [T],
+    raw: FatPtr<T>,
+}
+
+impl<T> [T] {
+    pub const fn len(&self) -> usize {
+        unsafe { Repr { rust: self }.raw.len }
+    }
+}
+
+impl str {
+    pub const fn len(&self) -> usize {
+        self.as_bytes().len()
+    }
+
+    pub const fn as_bytes(&self) -> &[u8] {
+        unsafe { mem::transmute(self) }
+    }
+}
+
+fn main() -> i32 {
+    let t1: &str = "TEST1";
+    let t2: &str = &"TEST_12345";
+
+    let t1sz = t1.len();
+    let t2sz = t2.len();
+
+    unsafe {
+        let a = "t1sz=%i t2sz=%i\n";
+        let b = a as *const str;
+        let c = b as *const i8;
+
+        printf(c, t1sz as i32, t2sz as i32);
+    }
+
+    0
+}
+#+END_SRC
+
+Which in turn generates the following GIMPLE:
+
+#+BEGIN_SRC C
+__attribute__((cdecl))
+struct &[u8] str::as_bytes (const struct  self)
+{
+  struct &[u8] D.253;
+
+  {
+    RUSTTMP.2 = transmute<&str, &[u8]> (self);
+  }
+  D.253 = RUSTTMP.2;
+  return D.253;
+}
+
+
+struct &[u8] transmute<&str, &[u8]> (const struct  _)
+{
+  struct &[u8] D.255;
+
+  D.255 = VIEW_CONVERT_EXPR<struct &[u8]>(_);
+  return D.255;
+}
+
+
+__attribute__((cdecl))
+usize T::len<u8> (const struct &[u8] self)
+{
+  union 
+{
+  struct *const [u8] rust;
+  struct *mut [u8] rust_mut;
+  struct test::FatPtr<u8> raw;
+} D.257;
+  usize D.258;
+
+  {
+    D.257.rust = self;
+    RUSTTMP.4 = D.257.raw.len;
+  }
+  D.258 = RUSTTMP.4;
+  return D.258;
+}
+
+
+__attribute__((cdecl))
+usize str::len (const struct  self)
+{
+  usize D.260;
+  struct 
+{
+  u8 * data;
+  usize len;
+} D.261;
+
+  D.261 = str::as_bytes (self);
+  D.260 = T::len<u8> (D.261);
+  return D.260;
+}
+
+
+__attribute__((cdecl))
+i32 test::main ()
+{
+  i32 D.263;
+  const struct  t1;
+  const struct  t2;
+  const usize t1sz;
+  const usize t2sz;
+
+  try
+    {
+      t1.data = "TEST1";
+      t1.len = 5;
+      t2.data = "TEST_12345";
+      t2.len = 10;
+      t1sz = str::len (t1);
+      t2sz = str::len (t2);
+      {
+        const struct  a;
+        const struct  b;
+        const i8 * const c;
+
+        try
+          {
+            a.data = "t1sz=%i t2sz=%i\n";
+            a.len = 16;
+            b = a;
+            c = b.data;
+            _1 = (i32) t2sz;
+            _2 = (i32) t1sz;
+            printf (c, _2, _1);
+          }
+        finally
+          {
+            a = {CLOBBER};
+            b = {CLOBBER};
+          }
+      }
+      D.263 = 0;
+      return D.263;
+    }
+  finally
+    {
+      t1 = {CLOBBER};
+      t2 = {CLOBBER};
+    }
+}
+#+END_SRC
