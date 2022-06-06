@@ -1,0 +1,677 @@
+#+title:  Monthly Report for May 2022
+#+author: Philip Herron
+#+date:   2022-06-06
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+Another busy month for Rust GCC; we have made a lot of progress in many different areas, some of which we will discuss more in our reports over the summer. 
+
+This report was targeted to close out our imports and visibility milestone, but given that Philbert allocated time on bugs and, in particular, the goal test case of Blake3, we have not hit this target date. However, in a broader context, one of our Google Summer of Code student projects directly helps our next milestone with both Arthur and Philbert; which means we should be able to mitigate the impact of any skew.
+
+Tracking our progress with our milestone table does not tell the complete picture of the project's state. So on, going reports will be monitoring the status of our goal test cases and their respective issue trackers. Blake 3 is in a really good place right now; we have two open issues, one with the parser and one to finish implementing code generation for iterators. When we complete this milestone, we should have all the core features in place (minus bugs) to start trying to compile actual rust code, so more emphasis will begin to be placed on this and testing moving forward. This is critical to ensure we can have an accurate picture of the current status of the compiler so we can plan what needs to be done to make it useable.
+
+Also, keep an eye on this youtube channel https://www.youtube.com/c/LiveEmbeddedEvent/videos Philbert, and Arthur both gave a talk on the compiler here, and we hope to see the talk uploaded here soon.
+
+**** Monthly Community Call
+
+Its time for our next community call, feel free to join in! :)
+
+- Date and Time 10th June 2022 at: 09h00 UTC
+- Agenda: https://hackmd.io/xWN5fFdWTPWgFa-Tny-jNg please feel free to add agenda items you wish to see discussed.
+- Jitsi: https://meet.jit.si/gccrs-community-call
+
+**** GSoC 2022
+
+Today we welcome our new google summer of code 2022 students:
+
+- [[https://github.com/abbasfaisal][Faisal Abbas]] who will be working with [[https://github.com/philberty][philbert]] on porting over the constexpr support from the cpp front-end
+- Andrew A.N will be working with [[https://github.com/CohenArthur][Arthur Cohen]] to develop our HIR dump which will aid in our compiler debugging experience
+
+Thanks Google! Good luck students :).
+
+** Completed Activities
+
+- Fix size used in unsized adjustments [[https://github.com/Rust-GCC/gccrs/pull/1217][PR1217]]
+- ast: lower: Refactor ASTLowerItem in its own source file [[https://github.com/Rust-GCC/gccrs/pull/1216][PR1216]]
+- Report ~pub restricted~ violations [[https://github.com/Rust-GCC/gccrs/pull/1215][PR1215]]
+- Replace SSH cloning with HTTPS cloning in README.md [[https://github.com/Rust-GCC/gccrs/pull/1214][PR1214]]
+- intrinsic: add rotate_left and rotate_right intrinsic [[https://github.com/Rust-GCC/gccrs/pull/1213][PR1213]]
+- intrinsic: add breakpoint intrinsic [[https://github.com/Rust-GCC/gccrs/pull/1212][PR1212]]
+- Preserve inside_loop context when type checking match [[https://github.com/Rust-GCC/gccrs/pull/1211][PR1211]]
+- Allow match on boolean expressions [[https://github.com/Rust-GCC/gccrs/pull/1209][PR1209]]
+- Use correct format specifiers for unisnged HOST_WIDE_INT [[https://github.com/Rust-GCC/gccrs/pull/1206][PR1206]]
+- Take advantage of OBJ_TYPE_REF'S in dyn calls [[https://github.com/Rust-GCC/gccrs/pull/1205][PR1205]]
+- Resolve module visibility properly [[https://github.com/Rust-GCC/gccrs/pull/1202][PR1202]]
+- Generic functions should not be TREE_PUBLIC [[https://github.com/Rust-GCC/gccrs/pull/1201][PR1201]]
+- Remove duplicated code for expansions of types and expressions [[https://github.com/Rust-GCC/gccrs/pull/1200][PR1200]]
+- Add new as_name interface for Dynamic types [[https://github.com/Rust-GCC/gccrs/pull/1199][PR1199]]
+- Support recursive coercion sites [[https://github.com/Rust-GCC/gccrs/pull/1197][PR1197]]
+- Resolve simple paths in use items [[https://github.com/Rust-GCC/gccrs/pull/1191][PR1191]]
+- Lowe IfLet expression to HIR [[https://github.com/Rust-GCC/gccrs/pull/1218][PR1218]]
+- Add optional<T> for development in C++11 [[https://github.com/Rust-GCC/gccrs/pull/1219][PR1219]]
+- Apply coercion sites on unions [[https://github.com/Rust-GCC/gccrs/pull/1220][PR1220]]
+- Don't return error_mark_node on LoopExpr's [[https://github.com/Rust-GCC/gccrs/pull/1221][PR1221]]
+- Add destructure for generics on coercion sites [[https://github.com/Rust-GCC/gccrs/pull/1222][PR1222]]
+- Fix bad type resolution for associated types  [[https://github.com/Rust-GCC/gccrs/pull/1223][PR1223]]
+- Fix macro expansion on repetitions [[https://github.com/Rust-GCC/gccrs/pull/1225][PR1225]]
+- Fix tests on i386 [[https://github.com/Rust-GCC/gccrs/pull/1228][PR1228]]
+- Bit shifts need to cast the types [[https://github.com/Rust-GCC/gccrs/pull/1240][PR1240]]
+- Fix ICE in repition macro [[https://github.com/Rust-GCC/gccrs/pull/1242][PR1242]]
+- Integers can be casted to pointers [[https://github.com/Rust-GCC/gccrs/pull/1243][PR1243]]
+- Support match-expr on integers and chars [[https://github.com/Rust-GCC/gccrs/pull/1244][PR1244]]
+- Add name-resolution on IfLet expression [[https://github.com/Rust-GCC/gccrs/pull/1241][PR1241]]
+- Support reporting common privacy issues [[https://github.com/Rust-GCC/gccrs/pull/1246][PR1246]]
+- Support Range expression in match-arms [[https://github.com/Rust-GCC/gccrs/pull/1248][PR1248]]
+- Report privacy violations [[https://github.com/Rust-GCC/gccrs/pull/1246][PR1246]]
+- Bug fix extern blocks defined within blocks [[https://github.com/Rust-GCC/gccrs/pull/1250][PR1250]]
+- Do not rely on endianness for the testsuite tests [[https://github.com/Rust-GCC/gccrs/pull/1254][PR1254]]
+- Handle more complex privacy violations [[https://github.com/Rust-GCC/gccrs/pull/1252][PR1252]]
+- Inspect expressions for privacy violations [[https://github.com/Rust-GCC/gccrs/pull/1255][PR1255]]
+- Report privacy violations within types [[https://github.com/Rust-GCC/gccrs/pull/1258][PR1258]]
+- Support ArrayIndex expression in dead code analysis [[https://github.com/Rust-GCC/gccrs/pull/1284][PR1284]]
+- Add new AST dump visior [[https://github.com/Rust-GCC/gccrs/pull/1287][PR1287]]
+- Add compiler build info to the Docker image [[https://github.com/Rust-GCC/gccrs/pull/1288][PR1288]]
+- Fix bad name canonicalization in covariant types [[https://github.com/Rust-GCC/gccrs/pull/1293][PR1293]]
+- Add name resolution to for loops [[https://github.com/Rust-GCC/gccrs/pull/1292][PR1292]]
+- Add new mappings to support complex paths [[https://github.com/Rust-GCC/gccrs/pull/1294][PR1294]]
+- Fix bad impl overlap check [[https://github.com/Rust-GCC/gccrs/pull/1291][PR1291]]
+- Reformat copyright header [[https://github.com/Rust-GCC/gccrs/pull/1290][PR1290]]
+
+*** Contributors this month
+
+- [[https://github.com/Zopolis4][Maximilian Downey Twiss]] (new contributor)
+- [[https://github.com/abbasfaisal][Faisal Abbas]] (new-contributor)
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/liushuyu][liushuyu]]
+- [[https://github.com/antego][antego]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+- [[https://github.com/thomasyonug][Wenzhang Yang]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        131 |        145 |   +14 |
+| In Progress |         25 |         27 |    +2 |
+| Completed   |        366 |        389 |   +23 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 6038       | 6311       | +273  |
+| Failed    | -          | -          | -     |
+| XFAIL     | 25         | 23         | -2    |
+| XPASS     | -          | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         49 |         54 |    +5 |
+| In Progress |         12 |         12 |     - |
+| Completed   |        146 |        164 |   +18 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |       100% |       100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
+| Imports and Visibility            |        48% |        83% | +35%  | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |         0% |         0% | -     | 30th May 2022  | -               | 29th Aug 2022  |
+| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2022  | -               | 30th Sept 2022 |
+| Borrow checking                   |         0% |         0% | -     | TBD            | -               | TBD            |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+*** Cross testing project
+
+| Testsuite                     | Compiler            | Test cases | Passes | Failures |
+|-------------------------------+---------------------+------------+--------+----------|
+| rustc testsuite               | gccrs -fsyntax-only |      15481 |  12783 |     2698 |
+| gccrs testsuite               | rustc stable        |        563 |    390 |      173 |
+| rustc testsuite passing tests | gccrs               |       6603 |    877 |     5726 |
+| rustc testsuite (no_std)      | gccrs               |       2764 |    698 |     2066 |
+| rustc testsuite (no_core)     | gccrs               |        178 |    145 |       33 |
+
+*** System Integration Tests
+
+- Blake3 (missing iterator support) https://github.com/Rust-GCC/gccrs/issues/682
+- libcore SIP hasher https://github.com/Rust-GCC/gccrs/issues/1247
+
+** Planned Activities
+
+- Finsh complex path like super::super::super or crate keyword.
+- Apply this to use statements
+- Read in the export data and test linking
+ 
+** Detailed changelog
+
+*** Match on boolean expressions
+
+Thanks to [[https://github.com/dafaust][David Faust]], the compiler is now able to match on boolean expressions on top of patterns (which were already handled):
+
+#+BEGIN_SRC rust
+let a = false;
+
+match a {
+    true => { /* ... */ },
+    false => { /* ... */ },
+}
+#+END_SRC
+
+This adds reusable code for the remaining match arm possibilites to implement such as integers or strings.
+
+*** pub(restricted) lints
+
+As part of this milestone, it is important to resolve ~pub(restricted)~ items properly. ~pub(restricted)~ items refer to all items with a visibility modifier containing a path: This can be the often seen ~pub(crate)~ or more specific paths such as ~pub(in some::super::path)~.
+
+These restrictions can only refer to valid modules that are ancestor modules:
+#+BEGIN_SRC rust
+mod sain {
+    mod doux {
+	  mod graal { }
+
+	  struct A0;
+
+	  pub(in doux) struct A1; // valid
+	  pub(in sain::doux) struct A2; // valid
+
+	  pub(in sain::doux::A0) struct A3;
+	  // valid path, invalid restriction! This is a type, not a module
+
+	  pub(in sain::doux::graal) struct A4;
+	  // valid path, invalid restriction! This is a child module, not a parent
+
+	  pub(in not::exist::at_all) struct A5; // invalid path
+    }
+}
+#+END_SRC
+
+Note that we do not currently handle the differences betweens ~pub(restricted)~ in the 2015 and 2018 editions of the language: What we currently have is closer to the 2015 edition, and will keep on being worked on.
+
+*** More compiler intrinsics
+
+Thanks to the work done by [[https://github.com/liushuyu][liushuyu]], our backend keeps getting extended with new attributes and intrinsics. This week, the compiler gained support for ~breakpoint~, ~rotate_left~ and ~rotate_right~.
+
+*** Match Expression
+
+Thanks to [[https://github.com/dafaust][David Faust]] for adding more support in our Match expression so that we can now support matching integers, chars and reanges.
+
+#+BEGIN_SRC rust
+fn foo_u32 (x: u32) {
+    match x {
+        15 => {
+            let a = "fifteen!\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+            printf (c);
+        }
+
+        _ => {
+            let a = "other!\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+            printf (c);
+        }
+    }
+}
+
+const BIG_A: char = 'A';
+const BIG_Z: char = 'Z';
+
+fn bar (x: char) {
+    match x {
+
+        'a'..='z' => {
+            let a = "lowercase\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+            printf (c);
+        }
+        BIG_A..=BIG_Z => {
+            let a = "uppercase\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+            printf (c);
+        }
+        _ => {
+            let a = "other\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+            printf (c);
+        }
+    }
+}
+#+END_SRC
+
+More work is still to be done here to handle matching Tuples and ADT's.
+
+*** Bit shift operations cast
+
+In rust arithmetic operations usually unify the types involved to resolve whats going on here. But bit shift operations are a special case where they actually cast their types.
+
+#+BEGIN_SRC rust
+fn foo() -> u8 {
+    1u8 << 2u32
+}
+#+END_SRC
+
+*** Support casting integers to pointers
+
+In embeded programming we often need to turn raw addresses into pointers. This required us to update our casting rules to support this.
+
+#+BEGIN_SRC rust
+const TEST: *mut u8 = 123 as *mut u8;
+
+fn test() {
+    let a = TEST;
+}
+#+END_SRC
+
+*** Privacy violations
+
+All of the efforts regarding the privacy pass in the recent weeks have allowed us to have a solid privacy-reporting base. This will make it easy to report private items in public contexts, as well as have a variety of hints for good user experience.
+
+This first implementation concerns functions and function calls.
+
+#+BEGIN_SRC rust
+
+mod orange {
+    mod green {
+        fn sain() {}
+        pub fn doux() {}
+    }
+
+    fn brown() {
+        green::sain(); // error: The function definition is private in this context
+        green::doux();
+    }
+}
+#+END_SRC
+
+We also support ~pub(restricted)~ visibilities seamlessly thanks to the work done in the past few weeks regarding path resolution
+
+#+BEGIN_SRC rust
+mod foo {
+    mod bar {
+        pub(in foo) fn baz() {}
+    }
+
+    fn baz() {
+        bar::baz(); // no error, foo::bar::baz is public in foo
+    }
+}
+#+END_SRC
+
+*** Privacy violations
+
+Last week, the work done on the privacy reporting visitor was but a stepping stone for the current privacy pass: It could only handle function calls in simple blocks, and not in ~let~ statements or loops.
+Similarly, the "valid ancestor check", that we were performing to see if an item's definition module was an ancestor of the current module where said item is referenced, would only go "one step down" in the ancestry tree. This meant that the following Rust code
+
+#+BEGIN_SRC rust
+fn parent() {}
+
+mod foo {
+    mod bar {
+        fn mega_child() {
+            crate::parent();
+        }
+    }
+}
+#+END_SRC
+
+Would cause errors in our privacy pass, despite being perfectly valid code. This is now handled and the ancestry checks are performed recursively as they should.
+
+On top of reporting privacy errors in more expression places (~if private_fn()~, ~let _ = private_fn()~...), we have also added privacy checks to explicit types.
+This means reporting errors for nice, simple private structures:
+
+#+BEGIN_SRC rust
+mod orange {
+    mod green {
+        struct Foo;
+        pub(in orange) struct Bar;
+        pub struct Baz;
+    }
+
+    fn brown() {
+        let _ = green::Foo; // privacy error
+        let _ = green::Bar;
+        let _ = green::Baz;
+
+        let _: green::Foo; // privacy error
+
+        fn any(a0: green::Foo, a1: green::Bar) {}
+        //         ^ privacy error
+    }
+}
+#+END_SRC
+
+As well as complex nested types inside arrays, tuples or function pointers.
+
+More work will be coming regarding trait visibility, associated types, opaque types and so on.
+
+*** Slice Type layout
+
+We got slices typechecking and code generation working a few reports ago, but there was an issue in actually running code that used them. It boils down to this function, where the range index trait function ends up creating us our new FatPtr which is the same layout of a Slice. The interesting part here is that we are creating a new FatPtr object which is inside a union, then we return the *const [T] variant to keep the typechecker happy. This code smells funny to C/C++ programmers since this object has been allocated on the stack.
+
+#+BEGIN_SRC rust
+struct FatPtr<T> {
+    data: *const T,
+    len: usize,
+}
+
+pub union Repr<T> {
+    rust: *const [T],
+    rust_mut: *mut [T],
+    raw: FatPtr<T>,
+}
+
+const fn slice_from_raw_parts<T>(data: *const T, len: usize) -> *const [T] {
+    unsafe {
+        Repr {
+            raw: FatPtr { data, len },
+        }
+        .rust
+    }
+}
+#+END_SRC
+
+It turns out that *const [T] or &mut [T] is _not_ a pointer to a slice. The layout of a slice is actually a structure. You can see from the GCC code-gen gimple dump: https://godbolt.org/z/Gq5EYdYcz that the result of a the slice_from_raw_parts is _not a pointer but a struct as well.
+
+Overall:
+
+- *const[T]
+- *mut [T]
+- &mut [T]
+- &[T]
+
+All have the same layout of struct { raw_data_ptr, len } which ends up being twice the size of a normal pointer so it can be easily handled by a compiler's code-generation. The other interesting piece we noticed during this investigation was that when you use GDB on Rust code and take the address of a normal array GDB treats this as a slice implicitly also:
+
+#+BEGIN_SRC rust
+fn main() {
+    let a = 123;
+    let b: *const i32 = &a;
+    let c = core::ptr::slice_from_raw_parts(b, 1);
+}
+#+END_SRC
+
+#+BEGIN_SRC rust
+Temporary breakpoint 1, rs_slice::main () at rs-slice.rs:2
+2           let a = 123;
+(gdb) n
+3           let b: *const i32 = &a;
+(gdb) n
+4           let c = core::ptr::slice_from_raw_parts(b, 1);
+(gdb) p a
+$1 = 123
+(gdb) p b
+$2 = (*mut i32) 0x7fffffffd9d4
+(gdb) n
+6           let d = 123;
+(gdb) p c
+$3 = *const [i32] {data_ptr: 0x7fffffffd9d4, length: 1}
+(gdb) p *c
+Attempt to take contents of a non-pointer value.
+#+END_SRC
+
+Also notice you cannot dereference this *const [i32] since its a non-pointer value.
+
+See this compiler explorer link: https://godbolt.org/z/9xe4Wvs3e
+
+More info:
+
+https://github.com/Rust-GCC/gccrs/commit/cd39861da5e1113207193bb8b3e6fb3dde92895f
+https://doc.rust-lang.org/reference/dynamically-sized-types.html
+https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=672adac002939a2dab43b8d231adc1dc
+
+**** Intrinsic access support:
+
+The remaining issue we have is that Rusts libcore describes SliceIndex access like this:
+
+#+BEGIN_SRC rust
+unsafe impl<T> SliceIndex<[T]> for usize {
+    type Output = T;
+
+    fn get(self, slice: &[T]) -> Option<&T> {
+        unsafe { Option::Some(&*self.get_unchecked(slice)) }
+    }
+
+    unsafe fn get_unchecked(self, slice: *const [T]) -> *const T {
+        // SAFETY: the caller guarantees that `slice` is not dangling, so it
+        // cannot be longer than `isize::MAX`. They also guarantee that
+        // `self` is in bounds of `slice` so `self` cannot overflow an `isize`,
+        // so the call to `add` is safe.
+        unsafe { slice.as_ptr().add(self) }
+    }
+
+    fn index(self, slice: &[T]) -> &T {    
+        // It works if you change this to unsafe { &*self.get_unchecked(slice) }
+        // N.B., use intrinsic indexing
+        &(*slice)[self]        
+    }
+}
+#+END_SRC
+
+This ends up looking as though slice access is recursive but obviouslly this is not the case. Rust actually treats this as an intrinsic operation. For now we can work around this by chaning the rust code:
+
+#+BEGIN_SRC rust
+unsafe impl<T> SliceIndex<[T]> for usize {
+    type Output = T;
+
+    fn get(self, slice: &[T]) -> Option<&T> {
+        unsafe { Option::Some(&*self.get_unchecked(slice)) }
+    }
+
+    unsafe fn get_unchecked(self, slice: *const [T]) -> *const T {
+        // SAFETY: the caller guarantees that `slice` is not dangling, so it
+        // cannot be longer than `isize::MAX`. They also guarantee that
+        // `self` is in bounds of `slice` so `self` cannot overflow an `isize`,
+        // so the call to `add` is safe.
+        unsafe { slice.as_ptr().add(self) }
+    }
+
+    fn index(self, slice: &[T]) -> &T {
+        unsafe { &*self.get_unchecked(slice) }
+    }
+}
+#+END_SRC
+
+More info:
+
+https://users.rust-lang.org/t/why-this-does-not-lead-to-recursion/50306/3
+https://github.com/Rust-GCC/gccrs/issues/1269
+
+*** Str type layout
+
+[[https://doc.rust-lang.org/std/primitive.str.html][Str]] represents the raw string type in Rust which has specific type checking rules as it is another [[https://doc.rust-lang.org/reference/dynamically-sized-types.html][DST]] which happens to be the same layout of a Slice. Below is an example which shows Borrowing has no effect on type. The rules here are likely to affect all DST's in regards to borrows and dereferences.
+
+#+BEGIN_SRC rust
+let a:&str = "TEST 1";
+let b:&str = &"TEST 2";
+#+END_SRC
+
+When we have the same layout of a Slice we can actually get the length of the string by transmuting to a slice which is what libcore does:
+
+#+BEGIN_SRC rust
+mod mem {
+    extern "rust-intrinsic" {
+        fn transmute<T, U>(_: T) -> U;
+    }
+}
+
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+struct FatPtr<T> {
+    data: *const T,
+    len: usize,
+}
+
+pub union Repr<T> {
+    rust: *const [T],
+    rust_mut: *mut [T],
+    raw: FatPtr<T>,
+}
+
+impl<T> [T] {
+    pub const fn len(&self) -> usize {
+        unsafe { Repr { rust: self }.raw.len }
+    }
+}
+
+impl str {
+    pub const fn len(&self) -> usize {
+        self.as_bytes().len()
+    }
+
+    pub const fn as_bytes(&self) -> &[u8] {
+        unsafe { mem::transmute(self) }
+    }
+}
+
+fn main() -> i32 {
+    let t1: &str = "TEST1";
+    let t2: &str = &"TEST_12345";
+
+    let t1sz = t1.len();
+    let t2sz = t2.len();
+
+    unsafe {
+        let a = "t1sz=%i t2sz=%i\n";
+        let b = a as *const str;
+        let c = b as *const i8;
+
+        printf(c, t1sz as i32, t2sz as i32);
+    }
+
+    0
+}
+#+END_SRC
+
+Which in turn generates the following GIMPLE:
+
+#+BEGIN_SRC C
+__attribute__((cdecl))
+struct &[u8] str::as_bytes (const struct  self)
+{
+  struct &[u8] D.253;
+
+  {
+    RUSTTMP.2 = transmute<&str, &[u8]> (self);
+  }
+  D.253 = RUSTTMP.2;
+  return D.253;
+}
+
+
+struct &[u8] transmute<&str, &[u8]> (const struct  _)
+{
+  struct &[u8] D.255;
+
+  D.255 = VIEW_CONVERT_EXPR<struct &[u8]>(_);
+  return D.255;
+}
+
+
+__attribute__((cdecl))
+usize T::len<u8> (const struct &[u8] self)
+{
+  union 
+{
+  struct *const [u8] rust;
+  struct *mut [u8] rust_mut;
+  struct test::FatPtr<u8> raw;
+} D.257;
+  usize D.258;
+
+  {
+    D.257.rust = self;
+    RUSTTMP.4 = D.257.raw.len;
+  }
+  D.258 = RUSTTMP.4;
+  return D.258;
+}
+
+
+__attribute__((cdecl))
+usize str::len (const struct  self)
+{
+  usize D.260;
+  struct 
+{
+  u8 * data;
+  usize len;
+} D.261;
+
+  D.261 = str::as_bytes (self);
+  D.260 = T::len<u8> (D.261);
+  return D.260;
+}
+
+
+__attribute__((cdecl))
+i32 test::main ()
+{
+  i32 D.263;
+  const struct  t1;
+  const struct  t2;
+  const usize t1sz;
+  const usize t2sz;
+
+  try
+    {
+      t1.data = "TEST1";
+      t1.len = 5;
+      t2.data = "TEST_12345";
+      t2.len = 10;
+      t1sz = str::len (t1);
+      t2sz = str::len (t2);
+      {
+        const struct  a;
+        const struct  b;
+        const i8 * const c;
+
+        try
+          {
+            a.data = "t1sz=%i t2sz=%i\n";
+            a.len = 16;
+            b = a;
+            c = b.data;
+            _1 = (i32) t2sz;
+            _2 = (i32) t1sz;
+            printf (c, _2, _1);
+          }
+        finally
+          {
+            a = {CLOBBER};
+            b = {CLOBBER};
+          }
+      }
+      D.263 = 0;
+      return D.263;
+    }
+  finally
+    {
+      t1 = {CLOBBER};
+      t2 = {CLOBBER};
+    }
+}
+#+END_SRC
+
+https://godbolt.org/z/31PPz5b1x
