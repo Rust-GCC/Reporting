@@ -1,0 +1,144 @@
+#+title:  Weekly report for the 6th to the 13th of June 2022
+#+author: Arthur Cohen
+#+date: 2022-06-13
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This week saw major improvements in our name resolution pass, which got improved with many new features and refactored greatly. This is the result of a long standing issue regarding ~super~, ~crate~ and ~self~ paths, which Philip decided to tackle this week. On the other hand, Arthur worked on making an online dashboard, whose goal is to provide an easy way to view and track our progress using our [[github.com/rust-GCC/testing][testing project]]. The application will be unveiled as early as possible, once some more issues have been figured out.
+
+Our GSoC students have done very good work integrating with the community and have started working on their respective projects. We are really excited to see what they'll produce and hope they'll have fun.
+
+Philip will be on vacation for the next two weeks, taking some well-deserved rest in order to come back even stronger.
+
+The ~Imports and Visibility~ milestone is in a reasonable state and we are starting work on the various ~const~ expressions and contexts we are expected to support. We are also moving away slightly from the "milestone" project model, as we would like to get closer and closer to compiling an earlier version of ~libcore~ this summer.
+
+** Completed Activities
+
+- Handler super and crate in path resolution [[https://github.com/Rust-GCC/gccrs/pull/1307][PR1307]]
+- Fix lexing of empty comments continuing till next line [[https://github.com/Rust-GCC/gccrs/pull/1309][PR1309]]
+- docker: Fix GCCRS_BUILD info [[https://github.com/Rust-GCC/gccrs/pull/1300][PR1300]]
+- rust/lex: skip broken string expression [[https://github.com/Rust-GCC/gccrs/pull/1299][PR1299]]
+- rust/intrinsic: add a basic size check for `transmute` [[https://github.com/Rust-GCC/gccrs/pull/1298][PR1298]]
+- AST Dump impl traits [[https://github.com/Rust-GCC/gccrs/pull/1295][PR1295]]
+- Add new mappings for items within a module [[https://github.com/Rust-GCC/gccrs/pull/1294][PR1294]]
+- Fixup name canonicalization for impl blocks [[https://github.com/Rust-GCC/gccrs/pull/1293][PR1293]]
+- Add name resolution to for loops [[https://github.com/Rust-GCC/gccrs/pull/1292][PR1292]]
+- Fix bad impl item overlap check [[https://github.com/Rust-GCC/gccrs/pull/1291][PR1291]]
+- Reformat copyright header in rust-parse-impl.h [[https://github.com/Rust-GCC/gccrs/pull/1290][PR1290]]
+- docker: Add commit information to Docker image [[https://github.com/Rust-GCC/gccrs/pull/1288][PR1288]]
+- Add AST dump visitor [[https://github.com/Rust-GCC/gccrs/pull/1287][PR1287]]
+- Marklive: support arrayindex [[https://github.com/Rust-GCC/gccrs/pull/1284][PR1284]]
+
+*** Contributors this week
+
+- [[https://github.com/nirmal-j-patel][Nirmal Patel]] (new-contributor)
+- [[https://github.com/thomasyonug][Thomas Yonug]]
+- [[https://github.com/liushuyu][liushuyu]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       146 |       147 |    +1 |
+| In Progress |        26 |        29 |    +2 |
+| Completed   |       387 |       392 |    +5 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 6301      |      6353 |   +52 |
+| Failed    | -         |         - |     - |
+| XFAIL     | 23        |        30 |    +7 |
+| XPASS     | -         |           |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        54 |        54 |     - |
+| In Progress |        12 |        12 |     - |
+| Completed   |       163 |       167 |    +4 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
+| Imports and Visibility            |       72% |       83% | +11%  | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 29th Aug 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2022  | -               | 30th Sept 2022 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD            |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+*** Goal TestCases
+
+**** Blake3
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |         1 |         1 |     - |
+| In Progress |         1 |         1 |     - |
+| Completed   |        49 |        49 |     - |
+
+see: https://github.com/Rust-GCC/gccrs/issues/682
+
+**** Libcore SIP hasher
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |         5 |         4 |    -1 |
+| In Progress |         0 |         0 |     0 |
+| Completed   |        11 |        12 |    +1 |
+
+see: https://github.com/Rust-GCC/gccrs/issues/1247
+
+** Planned Activities
+
+- GSoC: Keep porting more const evaluation functions
+- GSoC: Keep working on improving our HIR dump
+- Keep working on our testsuite dashboard
+- Look into const generics parsing issues
+
+** Detailed changelog
+
+*** ~super~ and ~crate~ path handling
+
+Our name resolution and module handling components could previously not resolve complex relative paths such as ~crate::foo::bar~ or ~super::super::super::foo~. This is now fixed by adding proper module tree handling and improving our path resolution pass.
+
+#+BEGIN_SRC rust
+mod a {
+    pub fn foo() {}
+}
+
+mod b {
+    pub fn foo() {
+        // go UP in the hierarchy, then DOWN and DOWN
+        super::a::foo();
+    }
+}
+
+mod foo {
+    pub struct bar(pub i32);
+}
+
+             // Go to the root of the module tree, then DOWN and DOWN
+fn test() -> crate::foo::bar {
+    foo::bar(123)
+}
+#+END_SRC
