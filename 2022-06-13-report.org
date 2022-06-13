@@ -8,7 +8,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-This week saw major improvements in our name resolution pass, which got improved with many new features and refactored greatly. This is the result of a long standing issue regarding ~super~, ~crate~ and ~self~ paths, which Philip decided to tackle this week. On the other hand, Arthur worked on making an online dashboard, whose goal is to provide an easy way to view and track our progress using our [[github.com/rust-GCC/testing][testing project]]. The application will be unveiled as early as possible, once some more issues have been figured out.
+This week we saw major improvements in our name resolution pass, which got improved with many new features and refactored greatly. This is the result of a long standing issue regarding ~super~, ~crate~ and ~self~ paths, which Philip decided to tackle this week. On the other hand, Arthur worked on making an online dashboard, whose goal is to provide an easy way to view and track our progress using our [[github.com/rust-GCC/testing][testing project]]. The application will be unveiled as early as possible, once some more issues have been figured out.
 
 Our GSoC students have done very good work integrating with the community and have started working on their respective projects. We are really excited to see what they'll produce and hope they'll have fun.
 
