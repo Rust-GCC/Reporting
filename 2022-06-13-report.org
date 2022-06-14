@@ -32,10 +32,14 @@ The ~Imports and Visibility~ milestone is in a reasonable state and we are start
 - docker: Add commit information to Docker image [[https://github.com/Rust-GCC/gccrs/pull/1288][PR1288]]
 - Add AST dump visitor [[https://github.com/Rust-GCC/gccrs/pull/1287][PR1287]]
 - Marklive: support arrayindex [[https://github.com/Rust-GCC/gccrs/pull/1284][PR1284]]
+- Add mirror branch for gccrs on https://gcc.gnu.org/git/ [[https://github.com/Rust-GCC/gccrs/issues/143#issuecomment-1149742817][Issue #143]]
+- Add new ~rust~ component to GCC's bugzilla
+- Add new version ~rust/master~ component to GCC's bugzilla
 
 *** Contributors this week
 
 - [[https://github.com/nirmal-j-patel][Nirmal Patel]] (new-contributor)
+- [[https://github.com/tschwinge][Thomas Schwinge]]
 - [[https://github.com/thomasyonug][Thomas Yonug]]
 - [[https://github.com/liushuyu][liushuyu]]
 
