@@ -1,0 +1,191 @@
+#+title:  Weekly report for the 13th to the 20th of June 2022
+#+author: Arthur Cohen
+#+date: 2022-06-20
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+Our work on const generics kicked in this week with work on the parser to handle the new syntax. In the meantime, our GSoC students Andrew and Faisal started each of their project's work period, which we are very happy about!
+
+As a side note, our dashboard has been released on Github. It's not yet deployed, but you can play around with it locally and try it out. Since we are far from competent web developers, feedback and contributions are extremely welcome! Both the backend and the frontend were written in Rust. You can find the repository at the following [[https://github.com/rust-gcc/bottleboard][link]].
+
+Next week will probably not see much work, as Philip will still be in vacation and Arthur will be presenting the Rust-GCC project at [[https://www.embedded-world.de/en][Embedded World 2022]] in Nuremberg with [[https://wwww.embecosm.com][Embecosm]].
+
+** Completed Activities
+
+- Add `rust_sorry_at` diagnostic [[https://github.com/rust-gcc/gccrs/pull/1322][PR1322]]
+- AST for const generic arguments/const application [[https://github.com/rust-gcc/gccrs/pull/1317][PR1317]]
+- Add const generic declaration to AST [[https://github.com/rust-gcc/gccrs/pull/1316][PR1316]]
+- Add base for parsing const generic application [[https://github.com/rust-gcc/gccrs/pull/1315][PR1315]]
+- Parse const generics properly [[https://github.com/rust-gcc/gccrs/pull/1313][PR1313]]
+- Refactor generic parameter parsing and report order errors [[https://github.com/rust-gcc/gccrs/pull/1312][PR1312]]
+- Fix formatting error on 32-bits targets [[https://github.com/rust-gcc/gccrs/pull/1308][PR1308]]
+- Handle super and crate in path resolution [[https://github.com/rust-gcc/gccrs/pull/1307][PR1307]]
+- Ast dump trait impl [[https://github.com/rust-gcc/gccrs/pull/1296][PR1296]]
+- gccrs const folding: port over cp_walk_subtrees() [[https://github.com/rust-gcc/gccrs/pull/1286][PR1286]]
+
+*** Contributors this week
+
+- [[ro@gcc.gnu.org][Rainer Orth]] (new contributor)
+- [[https://github.com/ndrwnaguib][Andrew Naguib]] (new contributor)
+- [[https://github.com/abbasfaisal][Faisal Abbas]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       147 |       153 |    +6 |
+| In Progress |        29 |        26 |    -3 |
+| Completed   |       392 |       398 |    +6 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      6353 |      6366 |   +13 |
+| Failed    |         - |         - |     - |
+| XFAIL     |        30 |        30 |     0 |
+| XPASS     |         - |         - |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        54 |        56 |    +2 |
+| In Progress |        12 |        11 |    -1 |
+| Completed   |       167 |       169 |    +2 |
+
+*** Milestones Progress
+
+Please note that we are moving slightly away from the "milestone model" as our work is starting to focus more and more on compiling our goal testcases, such as Blake3 or libcore-1.49. As such, we are working on "multiple milestones at once" and not necessarily filling out the proper labels or information. Furthermore, our students' project milestones are undergoing quite a bit of churn and growing rapidly, so their numbers are not added as they would be misleading.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
+| Imports and Visibility            |       83% |       86% | +3%   | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 29th Aug 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2022  | -               | 30th Sept 2022 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD            |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+*** Goal TestCases
+
+**** Blake3
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |         1 |         1 |     - |
+| In Progress |         1 |         1 |     - |
+| Completed   |        49 |        49 |     - |
+
+see: https://github.com/Rust-GCC/gccrs/issues/682
+
+**** Libcore SIP hasher
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |         4 |         4 |     - |
+| In Progress |         0 |         0 |     - |
+| Completed   |        12 |        12 |     - |
+
+see: https://github.com/Rust-GCC/gccrs/issues/1247
+
+** Planned Activities
+
+- GSoC: Keep porting more const evaluation functions
+- GSoC: Keep working on improving our HIR dump
+- Start going through the various passes of the compiler to support const generics
+
+** Detailed changelog
+
+*** Const generics parsing
+
+As pointed out earlier, our parser did not support const generic declaration or application up until this week. We added the necessary features and took the time to refactor some parts of the parser, which made for nice little improvements all around.
+
+Here are a few snippets from our testsuite:
+
+#+BEGIN_SRC rust
+// There are errors about unused generic parameters, but we can't handle that yet.
+// Still, this code is invalid Rust.
+
+mod sain {
+    struct Foo<const N: usize>;
+    struct Bar<T, const N: usize>;
+    struct Baz<'l, T, const N: usize>;
+}
+
+mod doux {
+    struct Foo<const N: usize = 15>;
+    struct Bar<T, const N: usize = { 14 * 2 }>;
+
+    const N_DEFAULT: usize = 3;
+
+    struct Baz<'l, T, const N: usize = N_DEFAULT>;
+}
+#+END_SRC
+
+#+BEGIN_SRC rust
+struct Foo<const N>; // { dg-error "expecting .:. but .>. found" }
+struct Bar<const N: >; // { dg-error "unrecognised token .>. in type" }
+struct Baz<const N: usize = >; // { dg-error "invalid token for start of default value for const generic parameter" }
+#+END_SRC
+
+#+BEGIN_SRC rust
+const M: usize = 4;
+
+struct Foo<T, const N: usize = 1> {
+    value: [i32; N],
+}
+
+fn main() {
+    let foo = Foo::<i32> { value: [15] };
+    let foo = Foo::<i32, 2> { value: [15, 13] };
+    let foo: Foo<i32, M> = Foo::<i32, 4> {
+        value: [15, 13, 11, 9],
+    };
+
+    let invalid_foo: Foo<i32, { 1 + 1 }> = Foo::<i32, 3> { value: [15, 13] };
+    let invalid_foo: Foo<i32, { 1 + 1 }> = Foo::<i32, M> { value: [15, 13] };
+    let invalid_foo: Foo<i32> = Foo::<i32, 2> { value: [15, 13] };
+}
+#+END_SRC
+
+Please note that const expressions are not yet handled in later parts of the compiler, hence the lack of typechecking errors.
+
+*** Dashboard
+
+You can access the dashboard's repository [[https://github.com/rust-gcc/bottleboard][here]]! Since we are not web developers, we probably made a bit of a mess, and all contributions are welcome! Furthermore, things like styling are currently absent from the repository as we did not want to embarass ourselves.
+
+The entirety of the dashboard is written in Rust, backend and frontend. It was a really pleasant experience and a joy to work with.
+
+You can run the dashboard locally quite easily, but it will be deployed publicly soon.
+
+**** Backend
+
+The backend exposes a REST API thanks to the [[https://rocket.rs][rocket framework]].
+
+Our [[https://github.com/rust-gcc/testing][testing project]] is set-up to run all testsuites nightly and then upload the results as artifacts. Thanks to the [[https://github.com/XAMPPRocky/octocrab][octocrab crate]], we perform daily requests to the GitHub API and cache these results.
+
+We then serve them on three different endpoints (for now!):
+1. ~api/testsuites~, which returns a list of all available keys
+2. ~api/testsuites/<key>~ to get the list of runs for that specific key
+3. ~api/testsuites/<key>/<date>~ for the result of that specific nightly run
+
+**** Frontend
+
+The frontend is a simple combination of [[https://yew.rs/][Yew]] and [[https://crates.io/crates/plotters][plotters]]. We perform calls to the API to get a list of testsuites to display, and then fetch each of their results accordingly and graph them. The interface and styling are very basic, and we hope to add more functionality later on - zooming on a specific date range, hovering on points to get the exact data, etc.
