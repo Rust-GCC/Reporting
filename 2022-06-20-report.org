@@ -16,7 +16,7 @@ Next week will probably not see much work, as Philip will still be in vacation a
 
 ** Completed Activities
 
-- Add `rust_sorry_at` diagnostic [[https://github.com/rust-gcc/gccrs/pull/1322][PR1322]]
+- Add ~rust_sorry_at~ diagnostic [[https://github.com/rust-gcc/gccrs/pull/1322][PR1322]]
 - AST for const generic arguments/const application [[https://github.com/rust-gcc/gccrs/pull/1317][PR1317]]
 - Add const generic declaration to AST [[https://github.com/rust-gcc/gccrs/pull/1316][PR1316]]
 - Add base for parsing const generic application [[https://github.com/rust-gcc/gccrs/pull/1315][PR1315]]
