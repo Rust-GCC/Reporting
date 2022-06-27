@@ -1,0 +1,113 @@
+#+title:  Weekly report for the 20th to the 27th of June 2022
+#+author: Arthur Cohen
+#+date: 2022-06-27
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+As pointed out last week, this week's progress was a little slower than usual due to Embedded World 2022 and vacation days. Nevertheless, we met a lot of interesting folks and had lovely chats. Thank you to all who visited the Embecosm stand and stopped to say hello!
+We are still progressing on const generics and have added some more of the necessary steps to handle them: On top of getting parsed, they are now being handled properly in the AST, benefit from the name resolution pass, and then get lowered properly into our HIR. Once that pipelining is done, we will be able to look into plugging these HIR const generics into one of our student's GSoC project, aimed at properly doing constant folding.
+On that note, both GSoC students are making very good progress and fixing issues left and right. Thank you to both of you!
+
+** Completed Activities
+
+- Add `line!` macro [[https://github.com/rust-gcc/gccrs/pulls/1339][PR1339]]
+- Actually set TYPE_PACKED for type_record [[https://github.com/rust-gcc/gccrs/pulls/1337][PR1337]]
+- cli: add "hir-pretty" as a "dump" option [[https://github.com/rust-gcc/gccrs/pulls/1335][PR1335]]
+- hir/add: pretty printing visitor skeleton [[https://github.com/rust-gcc/gccrs/pulls/1332][PR1332]]
+- Fix remaining misuses of format specifiers on 32-bit targets [[https://github.com/rust-gcc/gccrs/pulls/1331][PR1331]]
+- Add location to HIR::Type base class and improve privacy error reporting [[https://github.com/rust-gcc/gccrs/pulls/1330][PR1330]]
+- gccrs const folding port: start porting potential_constant_expression… [[https://github.com/rust-gcc/gccrs/pulls/1329][PR1329]]
+- Lower const generics structures [[https://github.com/rust-gcc/gccrs/pulls/1327][PR1327]]
+- ast: Add location to ConstGenericArg [[https://github.com/rust-gcc/gccrs/pulls/1326][PR1326]]
+- Add const generic disambiguation [[https://github.com/rust-gcc/gccrs/pulls/1325][PR1325]]
+
+*** Contributors this week
+
+- [[https://github.com/graphman65][Sébastien Lacoste]] (new contributor)
+- [[mark@klomp.org][Mark Wieelard]]
+- [[ro@gcc.gnu.org][Rainer Orth]]
+- [[https://github.com/abbasfaisal][Faisal Abbas]]
+- [[https://github.com/ndrwnaguib][Andrew Naguib]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       153 |      149 |    -4 |
+| In Progress |        26 |       26 |     0 |
+| Completed   |       398 |      404 |    +4 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      6366 |      6387 |   +21 |
+| Failed    |         - |         - |     - |
+| XFAIL     |        30 |        30 |     0 |
+| XPASS     |         - |         - |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        56 |        56 |     0 |
+| In Progress |        11 |        11 |     0 |
+| Completed   |       169 |       169 |     0 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
+| Imports and Visibility            |       97% |       97% | -     | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        0% |        0% | -     | 30th May 2022  | -               | 29th Aug 2022  |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2022  | -               | 30th Sept 2022 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD            |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+*** Goal TestCases
+
+**** Blake3
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |         1 |         1 |     - |
+| In Progress |         1 |         1 |     - |
+| Completed   |        49 |        49 |     - |
+
+see: https://github.com/Rust-GCC/gccrs/issues/682
+
+**** Libcore SIP hasher
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |         4 |         4 |     - |
+| In Progress |         0 |         0 |     - |
+| Completed   |        12 |        12 |     - |
+
+see: https://github.com/Rust-GCC/gccrs/issues/1247
+
+** Planned Activities
+
+- GSoC: Start adding pretty-printing to our HIR now that the visitor framework is in place
+- GSoC: Keep working on porting C++'s constant folder
+- Keep going through our middle-end to support const generics
+- Start looking at plugging const generics into our GSoC's constfolder project
+- Bug fixing for our goal testcases
+
+** Detailed changelog
