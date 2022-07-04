@@ -1,0 +1,271 @@
+#+title:  Monthly Report for June 2022
+#+author: Arthur Cohen
+#+date:   2022-06-06
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This month saw a little bit of a change of pace for the compiler - Major events happpened, such as Embedded World 2022, which took a whole week. Philip and Arthur also both took vacation which slowed things down. Finally, a few weeks were also dedicated to making our testing dashboard, which allows you to easily see our progress. Nonetheless, we progressed a lot on const generics and are slowly but surely adding them to every phase of the compiler.
+
+Furthermore, our GSoC students have also made very good progress - Faisal is porting more and more functions from the C++ frontend to our frontend, which will soon allow us to plug our const generics into this evaluator. This will enable our compiler to handle some basic constant folding cases. On the other hand, Andrew is improving our HIR dumps very quickly - this will improve the development experience considerably. Both students are making really good progress and are a pleasure to work with. Thank you!
+
+We have started looking at our future upstreaming possibilites and have asked the GCC community for their input. You can follow the thread of discussion [[https://gcc.gnu.org/pipermail/gcc/2022-June/238991.html][here]]. Feel free to join our next call to discuss it!
+
+Finally, as pointed out last month, the video of our talk at the Live Embedded Event #3 has been [[https://www.youtube.com/watch?v=R8Pr21nlhig][released]].
+
+**** Monthly Community Call
+
+Our monthly community call happened last friday. You can find the call's agenda at the [[https://hackmd.io/L26ZcfsnT8q5YcadDSu1FQ][following link]]. We have also started hosting weekly sync-up calls for people in non-european timezones. These calls happen every week on wednesday. Join our Zulip for more information and to set a time that works for you too!
+
+- Jitsi: https://meet.jit.si/gccrs-community-call
+
+** Completed Activities
+
+*** ~gccrs~
+
+- HIR: fixup MatchArm assignment operator [[https://github.com/rust-gcc/gccrs/pull/1352][PR1352]]
+- Ensure we support generic arguments on mangled type-paths [[https://github.com/rust-gcc/gccrs/pull/1343][PR1343]]
+- Refactor name-resolution pass [[https://github.com/rust-gcc/gccrs/pull/1342][PR1342]]
+- ci: Temporarily disable Remark CI [[https://github.com/rust-gcc/gccrs/pull/1341][PR1341]]
+- Add ~line!~ macro [[https://github.com/rust-gcc/gccrs/pull/1339][PR1339]]
+- gccrs const folding port: continue porting potential_constant_expression_1() [[https://github.com/rust-gcc/gccrs/pull/1338][PR1338]]
+- Actually set TYPE_PACKED for type_record [[https://github.com/rust-gcc/gccrs/pull/1337][PR1337]]
+- Resolve const generic parameters [[https://github.com/rust-gcc/gccrs/pull/1336][PR1336]]
+- cli: add "hir-pretty" as a "dump" option [[https://github.com/rust-gcc/gccrs/pull/1335][PR1335]]
+- hir/add: pretty printing visitor skeleton [[https://github.com/rust-gcc/gccrs/pull/1332][PR1332]]
+- Fix remaining misuses of format specifiers on 32-bit targets [[https://github.com/rust-gcc/gccrs/pull/1331][PR1331]]
+- Add location to HIR::Type base class and improve privacy error reporting [[https://github.com/rust-gcc/gccrs/pull/1330][PR1330]]
+- gccrs const folding port: start porting potential_constant_expression… [[https://github.com/rust-gcc/gccrs/pull/1329][PR1329]]
+- Lower const generics structures [[https://github.com/rust-gcc/gccrs/pull/1327][PR1327]]
+- ast: Add location to ConstGenericArg [[https://github.com/rust-gcc/gccrs/pull/1326][PR1326]]
+- Add const generic disambiguation [[https://github.com/rust-gcc/gccrs/pull/1325][PR1325]]
+- Fixes #1263; diagnostics/feature/wrapper [[https://github.com/rust-gcc/gccrs/pull/1322][PR1322]]
+- AST for const generic arguments/const application [[https://github.com/rust-gcc/gccrs/pull/1317][PR1317]]
+- Add const generic declaration to AST [[https://github.com/rust-gcc/gccrs/pull/1316][PR1316]]
+- Add base for parsing const generic application [[https://github.com/rust-gcc/gccrs/pull/1315][PR1315]]
+- Parse const generics properly [[https://github.com/rust-gcc/gccrs/pull/1313][PR1313]]
+- Refactor generic parameter parsing and report order errors [[https://github.com/rust-gcc/gccrs/pull/1312][PR1312]]
+- Fix lexing of empty comments continuing till next line [[https://github.com/rust-gcc/gccrs/pull/1309][PR1309]]
+- Fix formatting error on 32-bits targets [[https://github.com/rust-gcc/gccrs/pull/1308][PR1308]]
+- Handle super and crate in path resolution [[https://github.com/rust-gcc/gccrs/pull/1307][PR1307]]
+- docker: Fix GCCRS_BUILD info [[https://github.com/rust-gcc/gccrs/pull/1300][PR1300]]
+- rust/lex: skip broken string expression [[https://github.com/rust-gcc/gccrs/pull/1299][PR1299]]
+- rust/intrinsic: add a basic size check for ~transmute~ [[https://github.com/rust-gcc/gccrs/pull/1298][PR1298]]
+- Ast dump trait impl [[https://github.com/rust-gcc/gccrs/pull/1296][PR1296]]
+- AST Dump impl traits [[https://github.com/rust-gcc/gccrs/pull/1295][PR1295]]
+- Add new mappings for items within a module [[https://github.com/Rust-GCC/gccrs/pull/1294][PR1294]]
+- Fixup name canonicalization for impl blocks [[https://github.com/Rust-GCC/gccrs/pull/1293][PR1293]]
+- Add name resolution to for loops [[https://github.com/Rust-GCC/gccrs/pull/1292][PR1292]]
+- Fix bad impl item overlap check [[https://github.com/Rust-GCC/gccrs/pull/1291][PR1291]]
+- Reformat copyright header in rust-parse-impl.h [[https://github.com/Rust-GCC/gccrs/pull/1290][PR1290]]
+- docker: Add commit information to Docker image [[https://github.com/Rust-GCC/gccrs/pull/1288][PR1288]]
+- Add AST dump visitor [[https://github.com/Rust-GCC/gccrs/pull/1287][PR1287]]
+- Marklive: support arrayindex [[https://github.com/Rust-GCC/gccrs/pull/1284][PR1284]]
+
+- Add mirror branch for gccrs on https://gcc.gnu.org/git/ [[https://github.com/Rust-GCC/gccrs/issues/143#issuecomment-1149742817][Issue #143]]
+- Add new ~rust~ component and new version ~rust/master~ to GCC Bugzilla: [[https://gcc.gnu.org/bugzilla/buglist.cgi?product=gcc&component=rust][Bug List]]
+
+*** Testing Dashboard
+
+This month, we have worked hard on a way for everyone to easily see our compiler's progress on various testsuites. You can now deploy and see locally our "testing dashboard", which is made of a backend and a frontend entirely written in Rust, and whose purpose is to graph the amount of test passes and failures on various testsuites ran nightly. These testsuites include a parsing testsuite from the ~rustc~ testsuite, our modified version of ~BLAKE3~ and of the ~1.49~ version of libcore, as well as some "successes only" testsuites from the main ~rust~ repository. We plan on deploying the webapp soon, with only a few issues remaining, for everyone to access easily from their browsers. Contributions welcome! We are compiler engineers, not web developers, and the app is currently looking a little bare :)
+
+- cache: Use proper logging [[https://github.com/rust-gcc/bottleboard/pull/22][PR22]]
+- dashboard: Remove useless function_component [[https://github.com/rust-gcc/bottleboard/pull/21][PR21]]
+- readme: Add instructions [[https://github.com/rust-gcc/bottleboard/pull/16][PR16]]
+- Make API calls in dashboard and draw graphs [[https://github.com/rust-gcc/bottleboard/pull/13][PR13]]
+- Base for REST API [[https://github.com/rust-gcc/bottleboard/pull/10][PR10]]
+- Update jsons on a schedule [[https://github.com/rust-gcc/bottleboard/pull/9][PR9]]
+- cache: Add authentication through personal GH token [[https://github.com/rust-gcc/bottleboard/pull/7][PR7]]
+
+*** Contributors this month
+
+- [[https://github.com/ndrwnaguib][Andrew A. Naguib]] (new contributor)
+- [[https://github.com/graphman65][Sébastien Lacoste]] (new contributor)
+- [[https://github.com/nirmal-j-patel][Nirmal Patel]] (new contributor)
+- [[https://github.com/abbasfaisal][Faisal Abbas]]
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/liushuyu][liushuyu]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        145 |        152 |    +7 |
+| In Progress |         27 |         28 |    +1 |
+| Completed   |        389 |        405 |   +16 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 6311       | 6395       | +84   |
+| Failed    | -          | -          | -     |
+| XFAIL     | 23         | 31         | +8    |
+| XPASS     | -          | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         54 |         57 |    +3 |
+| In Progress |         12 |         11 |    -1 |
+| Completed   |        164 |        169 |    +5 |
+
+*** Milestones Progress
+
+Please note that we are moving slightly away from the "milestone model" as our work is starting to focus more and more on compiling our goal testcases, such as Blake3 or libcore-1.49. As such, we are working on "multiple milestones at once" and not necessarily filling out the proper labels or information. Furthermore, our students' project milestones are undergoing quite a bit of churn and growing rapidly, so their numbers are not added as they would be misleading.
+
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |       100% |       100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
+| Imports and Visibility            |        83% |        97% | +14%  | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |         0% |        66% | +66%  | 30th May 2022  | -               | 29th Aug 2022  |
+| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2022  | -               | 30th Sept 2022 |
+| Borrow checking                   |         0% |         0% | -     | TBD            | -               | TBD            |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
+| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+
+*** Cross testing project
+
+The amount of tests was reduced between last month and this month - This is due to us setting up a nightly run of these testsuites and fixing a version of our ~rust~ submodule. This explains why, despite the number of successes falling, the success percentage is going up in some cases.
+
+The format is as follows: ~<test cases> - <passes> - <failures>~
+
+| Testsuite                     | Compiler            | Last month           | This month           | Success delta (%) |
+|-------------------------------+---------------------+----------------------+----------------------+-------------------|
+| rustc testsuite               | gccrs -fsyntax-only | 15481 - 12783 - 2698 | 13337 - 11217 - 2120 |     -1566 (+1.5%) |
+| gccrs testsuite               | rustc stable        |   563 -  390  - 173  |   607 -  408  - 199  |       -18 (-2.1%) |
+| rustc testsuite passing tests | gccrs               |  6603 -  877  - 5726 |  5783 -  740  - 5043 |      -137 (-0.5%) |
+| rustc testsuite (no_std)      | gccrs               |  2764 -  698  - 2066 |  2179 -  616  - 1563 |      -82 (-11.3%) |
+| rustc testsuite (no_core)     | gccrs               |   178 -  145  -  33  |    6  -   5   -  1   |       -33 (+1.9%) |
+| blake3                        | gccrs               |                      |    4  -   1   -  3   |                   |
+| libcore-1.49                  | gccrs               |                      |    1  -   0   -  1   |                   |
+
+*** System Integration Tests
+
+- Blake3 (missing iterator support) https://github.com/Rust-GCC/gccrs/issues/682
+- libcore SIP hasher https://github.com/Rust-GCC/gccrs/issues/1247
+
+** Planned Activities
+
+- Metadata exports
+- Finish adding const generics to the compiler pipeline
+- Work on overflow traps
+ 
+** Detailed changelog
+
+*** ~super~ and ~crate~ path handling
+
+Our name resolution and module handling components could previously not resolve complex relative paths such as ~crate::foo::bar~ or ~super::super::super::foo~. This is now fixed by adding proper module tree handling and improving our path resolution pass.
+
+#+BEGIN_SRC rust
+mod a {
+    pub fn foo() {}
+}
+
+mod b {
+    pub fn foo() {
+        // go UP in the hierarchy, then DOWN and DOWN
+        super::a::foo();
+    }
+}
+
+mod foo {
+    pub struct bar(pub i32);
+}
+
+             // Go to the root of the module tree, then DOWN and DOWN
+fn test() -> crate::foo::bar {
+    foo::bar(123)
+}
+#+END_SRC
+
+*** Const generics parsing
+
+As pointed out earlier, our parser did not support const generic declaration or application up until this week. We added the necessary features and took the time to refactor some parts of the parser, which made for nice little improvements all around.
+
+Here are a few snippets from our testsuite:
+
+#+BEGIN_SRC rust
+// There are errors about unused generic parameters, but we can't handle that yet.
+// Still, this code is invalid Rust.
+
+mod sain {
+    struct Foo<const N: usize>;
+    struct Bar<T, const N: usize>;
+    struct Baz<'l, T, const N: usize>;
+}
+
+mod doux {
+    struct Foo<const N: usize = 15>;
+    struct Bar<T, const N: usize = { 14 * 2 }>;
+
+    const N_DEFAULT: usize = 3;
+
+    struct Baz<'l, T, const N: usize = N_DEFAULT>;
+}
+#+END_SRC
+
+#+BEGIN_SRC rust
+struct Foo<const N>; // { dg-error "expecting .:. but .>. found" }
+struct Bar<const N: >; // { dg-error "unrecognised token .>. in type" } struct Baz<const N: usize = >; // { dg-error "invalid token for start of default value for const generic parameter" }
+#+END_SRC
+
+#+BEGIN_SRC rust
+const M: usize = 4;
+
+struct Foo<T, const N: usize = 1> {
+    value: [i32; N],
+}
+
+fn main() {
+    let foo = Foo::<i32> { value: [15] };
+    let foo = Foo::<i32, 2> { value: [15, 13] };
+    let foo: Foo<i32, M> = Foo::<i32, 4> {
+        value: [15, 13, 11, 9],
+    };
+
+    let invalid_foo: Foo<i32, { 1 + 1 }> = Foo::<i32, 3> { value: [15, 13] };
+    let invalid_foo: Foo<i32, { 1 + 1 }> = Foo::<i32, M> { value: [15, 13] };
+    let invalid_foo: Foo<i32> = Foo::<i32, 2> { value: [15, 13] };
+}
+#+END_SRC
+
+Please note that const expressions are not yet handled in later parts of the compiler, hence the lack of typechecking errors.
+
+*** Dashboard
+
+You can access the dashboard's repository [[https://github.com/rust-gcc/bottleboard][here]]! Since we are not web developers, we probably made a bit of a mess, and all contributions are welcome! Furthermore, things like styling are currently absent from the repository as we did not want to embarass ourselves.
+
+The entirety of the dashboard is written in Rust, backend and frontend. It was a really pleasant experience and a joy to work with.
+
+You can run the dashboard locally quite easily, but it will be deployed publicly soon.
+
+**** Backend
+
+The backend exposes a REST API thanks to the [[https://rocket.rs][rocket framework]].
+
+Our [[https://github.com/rust-gcc/testing][testing project]] is set-up to run all testsuites nightly and then upload the results as artifacts. Thanks to the [[https://github.com/XAMPPRocky/octocrab][octocrab crate]], we perform daily requests to the GitHub API and cache these results.
+
+We then serve them on three different endpoints (for now!):
+1. ~api/testsuites~, which returns a list of all available keys
+2. ~api/testsuites/<key>~ to get the list of runs for that specific key
+3. ~api/testsuites/<key>/<date>~ for the result of that specific nightly run
+
+**** Frontend
+
+The frontend is a simple combination of [[https://yew.rs/][Yew]] and [[https://crates.io/crates/plotters][plotters]]. We perform calls to the API to get a list of testsuites to display, and then fetch each of their results accordingly and graph them. The interface and styling are very basic, and we hope to add more functionality later on - zooming on a specific date range, hovering on points to get the exact data, etc.
