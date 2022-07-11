@@ -78,8 +78,9 @@ In this past week, we have almost closed our imports and visibility. The missing
 
 | Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
 |-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
-| Rust Language Changes   |            3 |                 7 |           21 | Keep up to date with the Rust language on a regular basis  |
-| Going over target dates |            3 |                 5 |           15 | Maintain status reports and issue tracking to stakeholders |
+| Rust Language Changes   |            2 |                 7 |           14 | Target specific Rustc version for first go                 |
+| Going over target dates |            2 |                 7 |           14 | Maintain status reports and issue tracking to stakeholders |
+
 
 ** Planned Activities
 
