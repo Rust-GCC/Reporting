@@ -1,0 +1,109 @@
+#+title:  Weekly Report for 18th to 25th July 2022
+#+author: Arthur Cohen
+#+date:   2022-07-25
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This week saw a lot of work on const generics as well as various bugfixing. While going through the compilation of libcore 1.29, we also found and fixed multiple bugs that were affecting the compiler for a long time. More work has been done in regard to linking and exporting multiple crates, as well as work on the backend. The Google Summer of Code work is still going strong, with the first midterm evaluation starting this week. As mentionned last week, we are focusing on keeping a high pace throughout July and August as to not be too affected by the many interesting conferences we'll attend in September :) As a reminder, we will be at the Linux Plumbers Conference, GNU Cauldron and Kangrejos. If you're there as well, feel free to come chat with us about the project!
+
+** Completed Activities
+
+- checks: Refactor project architecture for checking passes [[https://github.com/rust-gcc/gccrs/pull/1409][PR1409]]
+- Add Attribute checking visitor [[https://github.com/rust-gcc/gccrs/pull/1406][PR1406]]
+- Allow repeating metavars alongside repetitions [[https://github.com/rust-gcc/gccrs/pull/1405][PR1405]]
+- 'gcc/testsuite/rust/link/link.exp': Fix 'runtest_file_p' usage [[https://github.com/rust-gcc/gccrs/pull/1404][PR1404]]
+- macros: properly handles recursive macros [[https://github.com/rust-gcc/gccrs/pull/1401][PR1401]]
+- lexer: Allow specifiying tokens as reserved in certain editions [[https://github.com/rust-gcc/gccrs/pull/1397][PR1397]]
+- Fix parsing grammer of grouped expressions as the block tail expression [[https://github.com/rust-gcc/gccrs/pull/1394][PR1394]]
+- Ensure we parse any inner item attributes when expanding a module [[https://github.com/rust-gcc/gccrs/pull/1392][PR1392]]
+- Fix ICE on duplicate compilation of ExternBlock items [[https://github.com/rust-gcc/gccrs/pull/1391][PR1391]]
+- Update build farm status [[https://github.com/rust-gcc/gccrs/pull/1390][PR1390]]
+- Add new interfaces to mappings class [[https://github.com/rust-gcc/gccrs/pull/1388][PR1388]]
+- External Items with Rust ABI need to mangle the full path [[https://github.com/rust-gcc/gccrs/pull/1387][PR1387]]
+- Fix undefined behaviour using .get on unique_ptr [[https://github.com/rust-gcc/gccrs/pull/1386][PR1386]]
+- Add missing include for intellisense [[https://github.com/rust-gcc/gccrs/pull/1385][PR1385]]
+- Support generics in check for valid types in arithmetic expressions [[https://github.com/rust-gcc/gccrs/pull/1384][PR1384]]
+- Support ast dump of generic parameters on functions [[https://github.com/rust-gcc/gccrs/pull/1382][PR1382]]
+- Implement AST dump for ArithmeticOrLogicalExpr to fix unreachable [[https://github.com/rust-gcc/gccrs/pull/1381][PR1381]]
+- Support aggregate types in transmute [[https://github.com/rust-gcc/gccrs/pull/1380][PR1380]]
+- backend: explain why cdecl is treated differently when setting up the ABIs [[https://github.com/rust-gcc/gccrs/pull/1379][PR1379]]
+- backend: properly handles foreign ABIs [[https://github.com/rust-gcc/gccrs/pull/1375][PR1375]]
+- remove unused go code [[https://github.com/rust-gcc/gccrs/pull/1374][PR1374]]
+- Typecheck const generic params [[https://github.com/rust-gcc/gccrs/pull/1373][PR1373]]
+- typecheck-resolve-type: Move all remaining definitions [[https://github.com/rust-gcc/gccrs/pull/1372][PR1372]]
+- typecheck: Refactor TypeCheckTopLevel class [[https://github.com/rust-gcc/gccrs/pull/1371][PR1371]]
+- ast: Fix use after move in GenericArg [[https://github.com/rust-gcc/gccrs/pull/1370][PR1370]]
+- gccrs const folding port: continue porting potential_constant_expression_1() [[https://github.com/rust-gcc/gccrs/pull/1369][PR1369]]
+- Fix bad ABI from string method [[https://github.com/rust-gcc/gccrs/pull/1368][PR1368]]
+- Initial support for matches on tuples [[https://github.com/rust-gcc/gccrs/pull/1367][PR1367]]
+- Refactor mappings class and HIR lowering to be consistent [[https://github.com/rust-gcc/gccrs/pull/1366][PR1366]]
+- Support extern-blocks in ast-dumps [[https://github.com/rust-gcc/gccrs/pull/1365][PR1365]]
+
+*** Contributors this week
+
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/liushuyu][liushuyu]]
+- [[https://github.com/abbasfaisal][Faisal Abbas]]
+- [[https://github.com/dafaust][David Faust]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       152 |       158 |    +6 |
+| In Progress |        27 |        26 |    -1 |
+| Completed   |       413 |       418 |    +5 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 6468      | 6498      | +30   |
+| Failed    | -         | -         | -     |
+| XFAIL     | 31        | 44        | +13   |
+| XPASS     | -         | -         | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        69 |        68 |    -1 |
+| In Progress |        12 |        11 |    +1 |
+| Completed   |       172 |       176 |    +4 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |       30% |       32% | +2%   | 30th May 2022  | -               | 17th Oct 2022 |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2022  | -               | 14th Nov 2022 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD           |
+
+*** Risks
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            2 |                 7 |           14 | Target specific Rustc version for first go                 |
+| Going over target dates |            2 |                 7 |           14 | Maintain status reports and issue tracking to stakeholders |
+
+** Planned Activities
+
+- Unsafety visitor
+- Const generic argument typechecking
+- Work on overflow traps
+- More const folding
+- Bug fixing
+- Extract target hooks patches for gcc-review
+
+** Detailed changelog
