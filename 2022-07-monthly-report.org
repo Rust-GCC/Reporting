@@ -1,0 +1,171 @@
+#+title:  Monthly Report for June 2022
+#+author: Arthur Cohen
+#+date:   2022-06-06
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+*FIXME*
+
+**** Monthly Community Call
+
+*FIXME*
+
+- Jitsi: https://meet.jit.si/gccrs-community-call
+
+** Completed Activities
+
+*** ~gccrs~
+
+- Porting more constexpr code [[https://github.com/Rust-GCC/gccrs/pull/1350][PR1350]] [[https://github.com/Rust-GCC/gccrs/pull/1356][PR1356]] [[https://github.com/Rust-GCC/gccrs/pull/1369][PR1369]]
+- Support keyword self path in expressions and types [[https://github.com/Rust-GCC/gccrs/pull/1346][PR1346]]
+- Add new -frust-dump-pretty for our new AST dump mechanism [[https://github.com/Rust-GCC/gccrs/pull/1353][PR1353]]
+- Cleanup header and source file declarations [[https://github.com/Rust-GCC/gccrs/pull/1359][PR1359]] [[https://github.com/Rust-GCC/gccrs/pull/1371][PR1371]] [[https://github.com/Rust-GCC/gccrs/pull/1372][PR1372]]
+- Add name resolution to const-generic parameters [[https://github.com/Rust-GCC/gccrs/pull/1354][PR1354]]
+- Implement disambiguation of const-generic arguments [[https://github.com/Rust-GCC/gccrs/pull/1355][PR1355]]
+- Fix bad ABI enum switch [[https://github.com/Rust-GCC/gccrs/pull/1368][PR1368]]
+- Add extern blocks to new AST dump pass [[https://github.com/Rust-GCC/gccrs/pull/1365][PR1365]]
+- Support optional nullptr linemap [[https://github.com/Rust-GCC/gccrs/pull/1364][PR1364]]
+- Refactor lexer to support internal buffers as well as file sources [[https://github.com/Rust-GCC/gccrs/pull/1363][PR1363]]
+- Fix use after move [[https://github.com/Rust-GCC/gccrs/pull/1370][PR1370]]
+- Add initial support for match expression on Tuples [[https://github.com/Rust-GCC/gccrs/pull/1367][PR1367]]
+- Refactor our mappings class across crates [[https://github.com/Rust-GCC/gccrs/pull/1366][PR1366]]
+- Remove unused code [[https://github.com/Rust-GCC/gccrs/pull/1374][PR1374]]
+- Support missing ABI options [[https://github.com/Rust-GCC/gccrs/pull/1375][PR1375]]
+- cpp const-exprt porting [[https://github.com/Rust-GCC/gccrs/pull/1369][PR1369]]
+- Support more foreign ABI's [[https://github.com/Rust-GCC/gccrs/pull/1375][PR1375]] [[https://github.com/Rust-GCC/gccrs/pull/1379][PR1379]]
+- Bug fix bad arithmetic type checking on generics [[https://github.com/Rust-GCC/gccrs/pull/1384][PR1384]]
+- Support generics in AST dump [[https://github.com/Rust-GCC/gccrs/pull/1382][PR1382]]
+- Support arithmetic expressions in AST dump [[https://github.com/Rust-GCC/gccrs/pull/1381][PR1381]]
+- Bug fix support aggregate types in transmute [[https://github.com/Rust-GCC/gccrs/pull/1380][PR1380]]
+- Add crate helpers in mappings class [[https://github.com/Rust-GCC/gccrs/pull/1388][PR1388]]
+- External items with Rust ABI need name mangling [[https://github.com/Rust-GCC/gccrs/pull/1387][PR1387]]
+- Fix undefined behaviour with unique_ptr [[https://github.com/Rust-GCC/gccrs/pull/1386][PR1386]]
+- Add missing include [[https://github.com/Rust-GCC/gccrs/pull/1385][PR1385]]
+- Update build farm badges [[https://github.com/Rust-GCC/gccrs/pull/1390][PR1390]]
+- Extern crate loading [[https://github.com/Rust-GCC/gccrs/pull/1362][PR1362]]
+- Fix ICE on extern block [[https://github.com/Rust-GCC/gccrs/pull/1391][PR1391]]
+- Typechecking of default const generic parameters [[https://github.com/Rust-GCC/gccrs/pull/1373][PR1373]]
+- Disambiguation of generic params [[https://github.com/Rust-GCC/gccrs/pull/1358][PR1358]]
+- Parse any possible inner attribute items on module expansion [[https://github.com/Rust-GCC/gccrs/pull/1392][PR1392]]
+- Fix grouped tail expression parsing [[https://github.com/Rust-GCC/gccrs/pull/1394][PR1394]]
+- Add support for keywords based on rust editions [[https://github.com/Rust-GCC/gccrs/pull/1397][PR1397]]
+- Fix make check-rust in paralell mode for link tests [[https://github.com/Rust-GCC/gccrs/pull/1404][PR1404]]
+- Fix bug in recursive macro expansion [[https://github.com/Rust-GCC/gccrs/pull/1401][PR1401]]
+- Allow repeating metavars in macros [[https://github.com/Rust-GCC/gccrs/pull/1405][PR1405]]
+- Refactor analysis passes in the compiler pipeline [[https://github.com/Rust-GCC/gccrs/pull/1409][PR1409]]
+- Add new attribute checking pass [[https://github.com/Rust-GCC/gccrs/pull/1406][PR1406]]
+- Experiment: Add error-codes to error diagnostics along with embeded url [[https://github.com/Rust-GCC/gccrs/pull/1408][PR1408]]
+
+*FIXME*: Add missing PRs for ~gccrs~
+*FIXME*: Add bit about the first patch being sent
+
+*** Contributors this month
+
+*FIXME*: Add contributors
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        152 |            |       |
+| In Progress |         28 |            |       |
+| Completed   |        405 |            |       |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 6395       |            |       |
+| Failed    | -          |            |       |
+| XFAIL     | 31         |            |       |
+| XPASS     | -          |            |       |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         57 |            |       |
+| In Progress |         11 |            |       |
+| Completed   |        169 |            |       |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target         |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+----------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
+| Macros and cfg expansion          |       100% |       100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
+| Imports and Visibility            |        97% |            |       | 29th Mar 2022  | -               | 27th May 2022  |
+| Const Generics                    |        66% |            |       | 30th May 2022  | -               | 29th Aug 2022  |
+| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2022  | -               | 30th Sept 2022 |
+| Borrow checking                   |         0% |         0% | -     | TBD            | -               | TBD            |
+
+*** Risks
+
+*FIXME*: Fix the risks and mitigation (missing one IIRC?)
+
+| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
+|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
+| Rust Language Changes   |            2 |                 7 |           14 | Target specific Rustc version for first go                 |
+| Going over target dates |            2 |                 7 |           14 | Maintain status reports and issue tracking to stakeholders |
+
+*** Cross testing project
+
+The format is as follows: ~<test cases> - <passes> - <failures>~
+
+| Testsuite                     | Compiler            | Last month           | This month           | Success delta (%) |
+|-------------------------------+---------------------+----------------------+----------------------+-------------------|
+| rustc testsuite               | gccrs -fsyntax-only | 13337 - 11217 - 2120 |                      |                   |
+| gccrs testsuite               | rustc stable        |   607 -  408  - 199  |                      |                   |
+| rustc testsuite passing tests | gccrs               |  5783 -  740  - 5043 |                      |                   |
+| rustc testsuite (no_std)      | gccrs               |  2179 -  616  - 1563 |                      |                   |
+| rustc testsuite (no_core)     | gccrs               |    6  -   5   -  1   |                      |                   |
+| blake3                        | gccrs               |    4  -   1   -  3   |                      |                   |
+| libcore-1.49                  | gccrs               |    1  -   0   -  1   |                      |                   |
+
+*** System Integration Tests
+
+- Blake3 (missing iterator support) https://github.com/Rust-GCC/gccrs/issues/682
+- libcore SIP hasher https://github.com/Rust-GCC/gccrs/issues/1247
+
+** Planned Activities
+
+*FIXME*
+ 
+** Detailed changelog
+
+*** Unsafe checks
+
+One important feature that we hadn't implemented so far in the compiler was the check for unsafe code. This is a core feature of Rust, as a lot of operations permitted by other languages may prove dangerous and need some extra consideration. These limitations include the dereferencing of raw pointers, calls to unsafe or extern functions, accessing a union's member or using certain kinds of static variables (and more). However, these behaviors are necessary in certain situations, in which case they need to be wrapped in ~unsafe~ blocks or functions.
+
+~gccrs~ will now error out as expected from Rust programs in the following situations:
+
+#+BEGIN_SRC rust
+unsafe fn unsafoo() {}
+
+static mut GLOBAL: i32 = 15;
+
+fn bar(value: i32) {}
+
+fn foo() {
+    unsafoo(); // call to unsafe function!
+
+    let a = 15;
+    let b = &a as *const i32; // this is allowed
+
+    let c = *b; // this is unsafe!
+
+    bar(*b); // here as well!
+
+    let d = GLOBAL; // this is unsafe as well!
+}
+#+END_SRC
+
+You can follow our progress in adding unsafe checks on this [[https://github.com/rust-GCC/gccrs/issues/1411][tracking issue]] on our repository.
