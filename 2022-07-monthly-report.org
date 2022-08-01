@@ -1,6 +1,6 @@
-#+title:  Monthly Report for June 2022
-#+author: Arthur Cohen
-#+date:   2022-06-06
+#+title:  Monthly Report for July 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-08-01
 
 ** Overview
 
@@ -8,17 +8,34 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-*FIXME*
+July saw a lot of news for GCC Rust, prominently the aproval to merge upstream into GCC 13. This is seen as part of the development process for us in ensuring we are handling copyright approval and coding standards properly for GCC. The first patch set has already been reviewed, and there is work for us to start splitting up our front-end into a buildable patch set which will form version two of the patch set. I will be extracting each compiler pass into a separate patch starting with:
+
+- Skeleton front-end for rust
+- AST structures
+- Lexer and Parser (might be split up)
+- Expansion pass
+- Name resolution pass
+- HIR IR and lowering pass
+- Type resolution pass
+- Deadcode pass
+- Unsafe pass
+- GCC Generic code-generation and constexpr code
+- Smaller lints like unused var
+- Metadata output
+- Compiler driver update
+- Testsuite
+
+This is a lot of work to split up and ensure each component is buildable, but between Arthur and Faisal, our google summer of code student, we can keep moving forward each week.
 
 **** Monthly Community Call
 
-*FIXME*
+It is time for our next monthly community call:
 
+- Date: 5th August 2022 at: 09h00 UTC
+- Agenda: https://hackmd.io/ZVgm1LaPQly173-OML2X7Q
 - Jitsi: https://meet.jit.si/gccrs-community-call
 
 ** Completed Activities
-
-*** ~gccrs~
 
 - Porting more constexpr code [[https://github.com/Rust-GCC/gccrs/pull/1350][PR1350]] [[https://github.com/Rust-GCC/gccrs/pull/1356][PR1356]] [[https://github.com/Rust-GCC/gccrs/pull/1369][PR1369]]
 - Support keyword self path in expressions and types [[https://github.com/Rust-GCC/gccrs/pull/1346][PR1346]]
@@ -59,38 +76,44 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 - Refactor analysis passes in the compiler pipeline [[https://github.com/Rust-GCC/gccrs/pull/1409][PR1409]]
 - Add new attribute checking pass [[https://github.com/Rust-GCC/gccrs/pull/1406][PR1406]]
 - Experiment: Add error-codes to error diagnostics along with embeded url [[https://github.com/Rust-GCC/gccrs/pull/1408][PR1408]]
-
-*FIXME*: Add missing PRs for ~gccrs~
-*FIXME*: Add bit about the first patch being sent
+- Add unsafe checks [[https://github.com/Rust-GCC/gccrs/pull/1410][PR1410]] [[https://github.com/Rust-GCC/gccrs/pull/1415][PR1415]] [[https://github.com/Rust-GCC/gccrs/pull/1417][PR1417]] [[https://github.com/Rust-GCC/gccrs/pull/1416][PR1416]] [[https://github.com/Rust-GCC/gccrs/pull/1427][PR1427]]
+- Add skeleton improved hir-dump [[https://github.com/Rust-GCC/gccrs/pull/1378][PR1378]]
+- Add const checks [[https://github.com/Rust-GCC/gccrs/pull/1419][PR1419]]
+- Fix remark automation [[https://github.com/Rust-GCC/gccrs/pull/1402][PR1402]]
+- Bug fix recursive macros [[https://github.com/Rust-GCC/gccrs/pull/1421][PR1421]]
 
 *** Contributors this month
 
-*FIXME*: Add contributors
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/liushuyu][liushuyu]]
+- [[https://github.com/abbasfaisal][Faisal Abbas]]
+- [[https://github.com/davidmalcolm][David Malcolm]]
+- [[https://github.com/dafaust][David Faust]]
 
 *** Overall Task Status
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |        152 |            |       |
-| In Progress |         28 |            |       |
-| Completed   |        405 |            |       |
+| TODO        |        152 |        160 |    +8 |
+| In Progress |         28 |         29 |    +1 |
+| Completed   |        405 |        420 |   +15 |
 
 *** Test Cases
 
 | TestCases | Last Month | This Month | Delta |
 |-----------+------------+------------+-------|
-| Passing   | 6395       |            |       |
-| Failed    | -          |            |       |
-| XFAIL     | 31         |            |       |
-| XPASS     | -          |            |       |
+| Passing   | 6395       | 6531       | +136  |
+| Failed    | -          | -          | -     |
+| XFAIL     | 31         | 51         | +20   |
+| XPASS     | -          | -          | -     |
 
 *** Bugs
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |         57 |            |       |
-| In Progress |         11 |            |       |
-| Completed   |        169 |            |       |
+| TODO        |         57 |         55 |    -2 |
+| In Progress |         11 |         13 |    +2 |
+| Completed   |        169 |        178 |    +9 |
 
 *** Milestones Progress
 
@@ -102,42 +125,22 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 | Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
 | Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
 | Macros and cfg expansion          |       100% |       100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
-| Imports and Visibility            |        97% |            |       | 29th Mar 2022  | -               | 27th May 2022  |
-| Const Generics                    |        66% |            |       | 30th May 2022  | -               | 29th Aug 2022  |
+| Imports and Visibility            |        97% |       100% | +3%   | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022  |
+| Const Generics                    |        15% |        45% | +30%  | 30th May 2022  | -               | 29th Aug 2022  |
 | Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2022  | -               | 30th Sept 2022 |
 | Borrow checking                   |         0% |         0% | -     | TBD            | -               | TBD            |
 
 *** Risks
 
-*FIXME*: Fix the risks and mitigation (missing one IIRC?)
-
-| Risk                    | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                 |
-|-------------------------+--------------+-------------------+--------------+------------------------------------------------------------|
-| Rust Language Changes   |            2 |                 7 |           14 | Target specific Rustc version for first go                 |
-| Going over target dates |            2 |                 7 |           14 | Maintain status reports and issue tracking to stakeholders |
-
-*** Cross testing project
-
-The format is as follows: ~<test cases> - <passes> - <failures>~
-
-| Testsuite                     | Compiler            | Last month           | This month           | Success delta (%) |
-|-------------------------------+---------------------+----------------------+----------------------+-------------------|
-| rustc testsuite               | gccrs -fsyntax-only | 13337 - 11217 - 2120 |                      |                   |
-| gccrs testsuite               | rustc stable        |   607 -  408  - 199  |                      |                   |
-| rustc testsuite passing tests | gccrs               |  5783 -  740  - 5043 |                      |                   |
-| rustc testsuite (no_std)      | gccrs               |  2179 -  616  - 1563 |                      |                   |
-| rustc testsuite (no_core)     | gccrs               |    6  -   5   -  1   |                      |                   |
-| blake3                        | gccrs               |    4  -   1   -  3   |                      |                   |
-| libcore-1.49                  | gccrs               |    1  -   0   -  1   |                      |                   |
-
-*** System Integration Tests
-
-- Blake3 (missing iterator support) https://github.com/Rust-GCC/gccrs/issues/682
-- libcore SIP hasher https://github.com/Rust-GCC/gccrs/issues/1247
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Rust Language Changes          |            2 |                 7 |           14 | Target a specific Rustc version                |
+| Missing GCC 13 upstream window |            1 |                 6 |            6 | Merge in GCC 14 and be proactive about reviews |
 
 ** Planned Activities
 
-*FIXME*
+- Prepare gcc patches v2
+- Continue work on const evaluation
  
 ** Detailed changelog
 
@@ -169,3 +172,61 @@ fn foo() {
 #+END_SRC
 
 You can follow our progress in adding unsafe checks on this [[https://github.com/rust-GCC/gccrs/issues/1411][tracking issue]] on our repository.
+
+*** Linking crates
+
+In Rust, the entire crate is the compilation unit; for reference, a compilation unit is often referred to as the translation unit in GCC. This means, unlike other languages, a crate is built up with multiple source files. This is all managed by the mod keywords in your source code, such that mod foo will expand automatically to the relative path of foo.rs and include the source code akin to an include nested within a namespace in C++. This has some exciting benefits, notably no need for header files, but this means more complexity because, when linking code, the caller needs to know the calling conventions and type layout information.
+
+To support linking against crates, many things come together to let it happen, so let us look at this by considering a simple example of calling a function in a library. Let us assume we have a library foo with directory structure:
+
+#+BEGIN_SRC rust
+// libfoo/src/lib.rs
+fn bar(a:i32) -> i32 {
+  a + 2
+}
+#+END_SRC
+
+We can compile this by running:
+
+#+BEGIN_SRC bash
+  gccrs -g -O2 -frust-crate=foo -c src/lib.rs -o foo.o
+#+END_SRC
+
+This will generate your expected object file, but you will notice a new output in your current working directory: foo.rox. This is your crate metadata; it contains all this "header" information, such as functions and type layouts. There is code to this by embedding this metadata directly into the object file, which will be preserved into static libraries, and the compiler will support reading from object files and archives but not shared objects, unfortunately. However, by emitting this separate file, it means its output format is agnostic as this method does not seem to be supported for us on macosx.
+
+Back to the example, in order to link against this object and call the function, we must write code to import it:
+
+#+BEGIN_SRC rust
+// test/src/main.rs
+extern crate foo;
+use foo::bar;
+
+fn main() {
+  let a = bar(123);
+}
+#+END_SRC
+
+Now to compile and link this.
+
+#+BEGIN_SRC bash
+  gccrs -g -O2 -I../libfoo -c src/main.rs -o main.o
+  gccrs -o test main.o ../libfoo/foo.o
+#+END_SRC
+
+In the compiler, we see the extern crate declaration, which tells the compiler to look for the external crate foo, which in turn triggers the compiler to look for foo.rox, foo.o or libfoo.a in this case, we will find foo.rox. The front-end loads this data, so we know there is a function named bar. Internally the crate of foo just exports:
+
+#+BEGIN_SRC rust
+extern "Rust" {
+  fn bar(a:i32) -> i32;
+}
+#+END_SRC
+
+This is more complicated for generics and impl blocks, but the idea is the same. The benefit of exporting raw rust code here is that to support public generics, we just get this for free by reusing the same compiler pipeline.
+
+Note you can use the following options to control this metadata output so far:
+
+- -frust-embed-metadata this toggles to embed the metadata into .rust_export section of the target asm output default off
+- -frust-metadata-output= specifies the path to directly write the metadata to file
+
+Note 1: that when specifying the location to write this metadata file the compiler will enforce a naming convention of crate_name.rox on the basename of the path as the crate name is critical here.
+Note 2: this link model is heavily inspired as that from gccgo.
