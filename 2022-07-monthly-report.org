@@ -117,18 +117,18 @@ It is time for our next monthly community call:
 
 *** Milestones Progress
 
-| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target         |
-|-----------------------------------+------------+------------+-------+----------------+-----------------+----------------|
-| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021  |
-| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021  |
-| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021  |
-| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021  |
-| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021  |
-| Macros and cfg expansion          |       100% |       100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022  |
-| Imports and Visibility            |        97% |       100% | +3%   | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022  |
-| Const Generics                    |        15% |        45% | +30%  | 30th May 2022  | -               | 29th Aug 2022  |
-| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2022  | -               | 30th Sept 2022 |
-| Borrow checking                   |         0% |         0% | -     | TBD            | -               | TBD            |
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
+| Macros and cfg expansion          |       100% |       100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |        97% |       100% | +3%   | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |        15% |        45% | +30%  | 30th May 2022  | -               | 17th Oct 2022 |
+| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2022  | -               | 14th Nov 2022 |
+| Borrow checking                   |         0% |         0% | -     | TBD            | -               | TBD           |
 
 *** Risks
 
