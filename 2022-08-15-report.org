@@ -1,0 +1,96 @@
+#+title:  Weekly report for 8th to 15th August 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-08-15
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+Out GSoC project into porting C++ constexpr support has continued to progress well by finishing to support constant evaluation of builtin's which will be needed as part of handling overflow checks, now we need to focus on cleanup and merging back to main.
+
+On the GCC Patches v2 front we have received some feedback that each patch does not need to be buildable as an independant unit and we should focus on making it easier to review interesting pieces of code. This will make this process much easier for us.
+
+Overall we have made quite alot of progress in different ways this week from refactoring and cleanup to bugfixing and feature work.
+
+** Completed Activities
+
+- Improve diagnostics when a builtin macro doesn't exist [[https://github.com/Rust-GCC/gccrs/pull/1442][PR1442]]
+- Cleanup recursive macro bug testcase [[https://github.com/Rust-GCC/gccrs/pull/1438][PR1438]]
+- Initial support for rustc_const_{un}stable attribute [[https://github.com/Rust-GCC/gccrs/pull/1444][PR1444]]
+- Fix failure to type inference generic unit-structs [[https://github.com/Rust-GCC/gccrs/pull/1451][PR1451]]
+- Cleanup front-end entry points [[https://github.com/Rust-GCC/gccrs/pull/1425][PR1425]]
+- Refactor Intrinsics class [[https://github.com/Rust-GCC/gccrs/pull/1445][PR1445]] [[https://github.com/Rust-GCC/gccrs/pull/1454][PR1454]]
+- Fix the behaviour of a transmute to doing the raw copy and _not_ casting [[https://github.com/Rust-GCC/gccrs/pull/1452][PR1452]]
+- Change CI to enforce 32bit passing tests on merge [[https://github.com/Rust-GCC/gccrs/pull/1453][PR1453]]
+- Remove unused code [[https://github.com/Rust-GCC/gccrs/pull/1463][PR1463]] [[https://github.com/Rust-GCC/gccrs/pull/1464][PR1464]]
+- Refactor type resolution pass visitors [[https://github.com/Rust-GCC/gccrs/pull/1458][PR1458]]
+- Don't return early on error_mark_node for call arguments [[https://github.com/Rust-GCC/gccrs/pull/1466][PR1466]]
+- Add wrapping_{add,sub,mul} intrinsics [[https://github.com/Rust-GCC/gccrs/pull/1465][PR1465]]
+- Desugar HIR::IdentifierExpr into HIR::PathInExpression [[https://github.com/Rust-GCC/gccrs/pull/1467][PR1467]]
+- Remove unused target hooks info in GCC [[https://github.com/Rust-GCC/gccrs/pull/1471][PR1471]]
+- Implement copy_nonoverlapping intrinsic [[https://github.com/Rust-GCC/gccrs/pull/1459][PR1459]] [[https://github.com/Rust-GCC/gccrs/pull/1462][PR1462]] [[https://github.com/Rust-GCC/gccrs/pull/1468][PR1468]]
+
+*** Contributors this week
+
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/liushuyu][liushuyu]]
+- [[https://github.com/abbasfaisal][Faisal Abbas]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       157 |       158 |    +1 |
+| In Progress |        29 |        33 |    +4 |
+| Completed   |       430 |       437 |    +7 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 6607      |           |       |
+| Failed    | -         |           |       |
+| XFAIL     | 51        |           |       |
+| XPASS     | -         |           |       |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        54 |        54 |     - |
+| In Progress |        14 |        17 |    +3 |
+| Completed   |       185 |       190 |    +5 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |       50% |       55% | +5%   | 30th May 2022  | -               | 17th Oct 2022 |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2022  | -               | 14th Nov 2022 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD           |
+
+*** Risks
+
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Rust Language Changes          |            2 |                 7 |           14 | Target a specific Rustc version                |
+| Missing GCC 13 upstream window |            1 |                 6 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+** Planned Activities
+
+- Continue work on gcc patches v2
+- Continue work on const evaluation
+- Bug fixing
+ 
+** Detailed changelog
+
+TODO
