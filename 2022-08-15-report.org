@@ -50,10 +50,10 @@ Overall we have made quite alot of progress in different ways this week from ref
 
 | TestCases | Last Week | This Week | Delta |
 |-----------+-----------+-----------+-------|
-| Passing   | 6607      |           |       |
-| Failed    | -         |           |       |
-| XFAIL     | 51        |           |       |
-| XPASS     | -         |           |       |
+| Passing   | 6607      |      6660 |   +53 |
+| Failed    | -         |         - |     - |
+| XFAIL     | 51        |        51 |    +0 |
+| XPASS     | -         |         - |     - |
 
 *** Bugs
 
@@ -89,8 +89,47 @@ Overall we have made quite alot of progress in different ways this week from ref
 
 - Continue work on gcc patches v2
 - Continue work on const evaluation
+- Implement more compiler builtins
 - Bug fixing
- 
+
 ** Detailed changelog
 
-TODO
+*** ~copy_nonoverlapping~
+
+This week, we worked on implementing the ~copy_nonoverlapping~ intrinsic, which is defined as such:
+
+#+BEGIN_SRC rust
+fn copy_nonoverlapping<T>(src: *const T, dst: *mut T, count: usize);
+#+END_SRC
+
+This intrinsic is, according to the documentation, semantically equivalent to a ~memcpy~ with the order of ~dst~ and ~src~ switched. This means that we can quite easily implement it using ~gcc~'s ~__builtin_memcpy~ builtin. However, unlike most intrinsic functions, ~copy_nonoverlapping~ has side effects: Let's take an example with ~transmute~, another intrinsic working on memory:
+
+#+BEGIN_SRC rust
+fn transmute<T, U>(a: T) -> U;
+
+fn main() {
+    let a = 15.4f32;
+    unsafe { transmute<f32, i32>(a) }; // ignore the return value
+}
+#+END_SRC
+
+Because this ~transmute~ function is pure and does not contain any side effects (no I/O operations on memory for example), it is safe to optimize the call away. ~gcc~ takes care of this for us when performing its optimisation passes. However, the following calls were also being optimized out:
+
+#+BEGIN_SRC rust
+fn copy_nonoverlapping<T>(src: *const T, dst: *mut T, count: usize);
+
+fn foo() -> i32 {
+    let i = 15;
+    let mut i_copy = 16;
+
+    let i = &i as *const i32;
+    let i_copy = &mut i as *mut i32;
+
+    unsafe { copy_nonoverlapping(i, i_copy, 1) };
+    // At this point, we should have `i_copy` equal 15 and return 0
+
+    unsafe { *i_copy - 15 }
+}
+#+END_SRC
+
+This caused assertions that this ~foo~ function would return 0 to fail, as the call to ~copy_nonoverlapping~ was simply removed from the GIMPLE entirely. It took us quite some time to fix this overzealous optimization, which ended up being caused by a flag set on the intrinsic's block in the internal ~GCC~ represetation: Even if the block was marked as having side effects (~TREE_SIDE_EFFECTS(intrinsic_fn_declaration) = 1~), the fact that it was also marked as ~TREE_READONLY~ caused the optimization to happen. This was valid, as a lot of intrinsics (and all the intrinsics that we had implemented up until that point) were pure functions. We now separate between pure and impure intrinsics properly when generating their implementation.
