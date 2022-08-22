@@ -48,7 +48,7 @@ As a reminder, we will be present at the Linux Plumbers Conference, Kangrejos an
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
 | TODO        |        54 |        52 |    -2 |
-| In Progress |        17 |        17 |    -0 |
+| In Progress |        17 |        17 |     - |
 | Completed   |       190 |       193 |    +3 |
 
 *** Milestones Progress
@@ -75,7 +75,7 @@ As a reminder, we will be present at the Linux Plumbers Conference, Kangrejos an
 
 ** Planned Activities
 
-- Continue work on gcc patches v2
+- Send out gcc patches v2
 - Start merging const evaluation branch into main
 - Prepare our talks for the three upcoming conferences we'll attend
 - Keep going with the implementation of function traits and closures
