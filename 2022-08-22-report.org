@@ -1,0 +1,83 @@
+#+title:  Weekly report for 15th to 22nd August 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-08-22
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This week saw a lot of improvements to our codebase, with multiple refactors and cleanups of our type system and coercion logic from Philip. This will help ease the mental load when working on complex features, such as the support of Function traits (~FnOnce~, ~FnMut~ and ~Fn~) that Philip is currently adding. On the other hand, the const evaluation GSoC project is moving along nicely. The branch where that development happens is being prepped and rebased in order to merge it into our main branch shortly. Work also continue on compiler intrinsics and builtin functions.
+
+As a reminder, we will be present at the Linux Plumbers Conference, Kangrejos and GNU Cauldron in September. Feel free to come and say hi!
+
+** Completed Activities
+
+- Redo coercion site code [[https://github.com/rust-gcc/gccrs/pull/1492][PR1492]]
+- typecheck: resolve tuple pattern elt against parent elt [[https://github.com/rust-gcc/gccrs/pull/1491][PR1491]]
+- Refactor backend to use finegrained visitors [[https://github.com/rust-gcc/gccrs/pull/1477][PR1477]]
+- unsafe: Allow calls to safe intrinsics [[https://github.com/rust-gcc/gccrs/pull/1474][PR1474]]
+- Remove target hooks changes [[https://github.com/rust-gcc/gccrs/pull/1471][PR1471]]
+- intrinsics: Add copy_nonoverlapping<T> [[https://github.com/rust-gcc/gccrs/pull/1459][PR1459]]
+
+*** Contributors this week
+
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/abbasfaisal][Faisal Abbas]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       158 |       167 |    +9 |
+| In Progress |        33 |        30 |    -3 |
+| Completed   |       437 |       445 |    +9 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 6660      |      6676 |   +16 |
+| Failed    | -         |         - |     - |
+| XFAIL     | 51        |        51 |    +0 |
+| XPASS     | -         |         - |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        54 |        52 |    -2 |
+| In Progress |        17 |        17 |    -0 |
+| Completed   |       190 |       193 |    +3 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |       55% |       60% | +5%   | 30th May 2022  | -               | 17th Oct 2022 |
+| Intrinsics and builtins           |        0% |        0% | -     | 6th Sept 2022  | -               | 14th Nov 2022 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD           |
+
+*** Risks
+
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Rust Language Changes          |            2 |                 7 |           14 | Target a specific Rustc version                |
+| Missing GCC 13 upstream window |            1 |                 6 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+** Planned Activities
+
+- Continue work on gcc patches v2
+- Start merging const evaluation branch into main
+- Prepare our talks for the three upcoming conferences we'll attend
+- Keep going with the implementation of function traits and closures
+
+** Detailed changelog
