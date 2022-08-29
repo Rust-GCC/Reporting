@@ -1,0 +1,95 @@
+#+title:  Weekly report for 22nd to 29th August 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-08-22
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+1. Sent gcc patches
+2. Merged const generics
+    1. Need to add more test cases ofc
+
+One major change the compiler saw this week was the integration of Faisal Abbas' constant evaluation work! This PR marks a huge step towards our Const generics milestone and allows us to perform function evaluation, conditional blocks, arithmetics or even calls to builtin functions in constant contexts! This is the culmination of months of work and we are extremely proud of Faisal. Congratulations!
+
+We now need to add more constant folding test cases and stress the implementation out in multiple ways. This will hopefully expose bugs that Faisal will be able to fix as the remaining part of his project.
+
+Philip also took the time to send out our initial compiler patches to the ~gcc-patches~ mailing list. We are looking forward to the reviews and feedback!
+
+As a reminder, we will be present at the Linux Plumbers Conference, Kangrejos and GNU Cauldron in September. Feel free to come and say hi!
+
+** Completed Activities
+
+- Add missing language selection for rs6000 [[https://github.com/rust-gcc/gccrs/pull/1512][PR1512]]
+- rustc_attrs: Allow `rustc_inherit_overflow_checks` as a builtin attribute [[https://github.com/rust-gcc/gccrs/pull/1510][PR1510]]
+- constexpr: Fix warning in sorry fmt string [[https://github.com/rust-gcc/gccrs/pull/1509][PR1509]]
+- Desugar double borrows into two HIR:BorrowExpr's [[https://github.com/rust-gcc/gccrs/pull/1507][PR1507]]
+- Fix up missing jump_target handling [[https://github.com/rust-gcc/gccrs/pull/1504][PR1504]]
+- Fix port of NOP_EXPR [[https://github.com/rust-gcc/gccrs/pull/1501][PR1501]]
+- Remove missed target hooks code [[https://github.com/rust-gcc/gccrs/pull/1500][PR1500]]
+- Constant folding in gccrs: port over rest of the code from CP frontend [[https://github.com/rust-gcc/gccrs/pull/1499][PR1499]]
+- Merge from GCC upstream [[https://github.com/rust-gcc/gccrs/pull/1498][PR1498]]
+- Refactor our casts to follow the Rustc implemention [[https://github.com/rust-gcc/gccrs/pull/1497][PR1497]]
+- Fix ICE in dyn impl block [[https://github.com/rust-gcc/gccrs/pull/1493][PR1493]]
+- Improve AST dump [[https://github.com/rust-gcc/gccrs/pull/1473][PR1473]]
+
+*** Contributors this week
+
+- [[https://github.com/abbasfaisal][Faisal Abbas]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       167 |       168 |    +1 |
+| In Progress |        30 |        28 |    -2 |
+| Completed   |       445 |       452 |    +7 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |      6676 |      6732 |   +56 |
+| Failed    |         - |         - |     - |
+| XFAIL     |        51 |        51 |    +0 |
+| XPASS     |         - |         - |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        52 |        52 |     - |
+| In Progress |        17 |        16 |    -1 |
+| Completed   |       193 |       199 |    +6 |
+
+*** Milestones Progress
+
+We spent some time this week to try and mark issues and pull requests as part of the "Intrinsics and builtins" milestone. Quite an important amount of work has already been merged on this concept, but due to how our milestones are organized it was not properly tracked. Finally, because we do not have open issues for each and every intrinsic yet, the percentage shown here might be different from the percentage on the Github milestone.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |       60% |       74% | +14%  | 30th May 2022  | -               | 17th Oct 2022 |
+| Intrinsics and builtins           |        0% |       15% | +15%  | 6th Sept 2022  | -               | 14th Nov 2022 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD           |
+
+*** Risks
+
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Rust Language Changes          |            2 |                 7 |           14 | Target a specific Rustc version                |
+| Missing GCC 13 upstream window |            1 |                 6 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+** Planned Activities
+
+- Prepare our talks for the three upcoming conferences we'll attend
+
+** Detailed changelog
