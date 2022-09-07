@@ -127,7 +127,7 @@ Relevant Links:
 | Macros and cfg expansion          |       100% |       100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
 | Imports and Visibility            |       100% |       100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
 | Const Generics                    |        45% |        75% | +30%  | 30th May 2022  | -               | 17th Oct 2022 |
-| Intrinsics and builtins           |         0% |         0% | -     | 6th Sept 2022  | -               | 14th Nov 2022 |
+| Intrinsics and builtins           |         0% |        15% | +15%  | 6th Sept 2022  | -               | 14th Nov 2022 |
 | Borrow checking                   |         0% |         0% | -     | TBD            | -               | TBD           |
 
 *** Risks
@@ -136,6 +136,27 @@ Relevant Links:
 |--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
 | Rust Language Changes          |            2 |                 7 |           14 | Target a specific Rustc version                |
 | Missing GCC 13 upstream window |            1 |                 6 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+*** Testing project
+
+Since there was no activity on the testing project, we are missing around two weeks worth of nightly runs. We are working on making sure it won't happen again.
+
+The format is as follows: ~<test cases> - <passes> - <failures>~
+
+| Testsuite                     | Compiler            | Last month           | This month           | Success delta (%) |
+|-------------------------------+---------------------+----------------------+----------------------+-------------------|
+| rustc testsuite               | gccrs -fsyntax-only | 13337 - 11217 - 2120 | 13337 - 10908 - 2429 |      -309 (-2.4%) |
+| gccrs testsuite               | rustc stable        |   607 -  408  - 199  |   659 -  433  - 226  |       -25 (-1.5%) |
+| rustc testsuite passing tests | gccrs               |  5783 -  740  - 5043 |  5783 -  708  - 5075 |       -32 (-0.6%) |
+| rustc testsuite (no_std)      | gccrs               |  2179 -  616  - 1563 |  2137 -  592  - 1545 |       -24 (-0.6%) |
+| rustc testsuite (no_core)     | gccrs               |    6  -   5   -  1   |    6  -   5   -  1   |                 - |
+| blake3                        | gccrs               |    4  -   1   -  3   |    4  -   1   -  3   |                 - |
+| libcore-1.49                  | gccrs               |    1  -   0   -  1   |    1  -   0   -  1   |                 - |
+
+*** System Integration Tests
+
+- Blake3 (missing iterator support) https://github.com/Rust-GCC/gccrs/issues/682
+- libcore SIP hasher https://github.com/Rust-GCC/gccrs/issues/1247
 
 ** Planned Activities
 
@@ -452,3 +473,74 @@ fn main() {
     let c = C;
 }
 #+END_SRC
+
+*** Overflow traps
+
+We recently spent some time adding overflow traps to ~gccrs~. These traps ensure that, in debug mode, arithmetic operations on integers do not overflow silently at runtime and instead cause the user's program to crash. For example, with the following Rust code
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(fmt: *const i8, ...);
+}
+
+fn five() -> i8 {
+    5
+}
+
+fn main() {
+    let a = 127i8;
+    let b = five();
+
+    let c = a + b;
+
+    unsafe { printf("%d\n\0" as *const str as *const i8, c) }
+}
+#+END_SRC
+
+~gccrs~ will now generate the following ~GIMPLE~
+
+#+BEGIN_SRC c
+__attribute__((cdecl))
+i8 overflow1::five ()
+{
+  i8 D.121;
+
+  D.121 = 5;
+  return D.121;
+}
+
+__attribute__((cdecl))
+void overflow1::main ()
+{
+  __complex__ i8 D.123;
+  struct 
+{
+  unsigned char * const * data;
+  usize len;
+} D.126;
+  const i8 a;
+  const i8 b;
+  const i8 c;
+
+  a = 127;
+  b = overflow1::five ();
+  D.123 = .ADD_OVERFLOW (a, b); // Note the call to the builtin function
+  _1 = REALPART_EXPR <D.123>;
+  RUSTTMP.1 = _1;
+  _2 = IMAGPART_EXPR <D.123>;
+  _3 = (bool) _2;
+  if (_3 != 0) goto <D.124>; else goto <D.125>;
+  <D.124>:
+  __builtin_abort ();
+  <D.125>:
+  c = RUSTTMP.1;
+  {
+    D.126.data = "%d\n";
+    D.126.len = 4;
+    _4 = D.126.data;
+    printf (_4, c);
+  }
+}
+#+END_SRC
+
+Should the operation overflow, the program will perform a call to ~abort~ and stop its execution. We still have a few improvements to make to this addition, such as actually disabling it when compiling in release mode, but this will help ensure users can confidently write Rust code using ~gccrs~.
