@@ -1,0 +1,546 @@
+#+title:  Monthly Report for August 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-09-05
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+In August, we posted our V2 patch set for GCC review, and it turned out that ensuring each patch was a buildable item did not matter for the review process. This allowed us to split the code into 37 patches; we missed one patch, which fixed our issues on PPCLE, a missing case for the Rust language in the PPC code generation code. Apart from this, the only other patch in that patchset majorly affects GCC has already been approved; the remaining patches pertain directly to the Rust front-end itself. 
+
+In other news, we have merged our Google Summer of Code students port of the C++ constexpr code into the rust front-end, which allows us to support proper constant evaluation like Rust. Over time more test cases will be added, and the code tidied up to remove C++'isms, such as the error handlings referring to C++ standards, which doesn't make sense for Rust. Thanks, [[https://github.com/abbasfaisal][Faisal Abbas]], for your hard work on this challenging project.
+
+With the plethora of bug fixing going on, we can finally compile a version of the libcore SIP hasher taken from libcore, which is very exciting; more information about that is in our detailed changelog.
+
+The GCC Rust developers [[https://github.com/philberty][Philip Herron]], [[https://github.com/CohenArthur/][Arthur Cohen]] and [[https://github.com/dafaust][David Faust]], are on tour this month, and you will be able to find us at:
+
+- Kangrejos Spain Rust for Linux conference
+- LPC Dublin Rust MC
+- GNU Cauldron Prague
+
+Relevant Links:
+
+- https://gcc.gnu.org/pipermail/gcc-patches/2022-August/600200.html
+- https://gcc.gnu.org/wiki/cauldron2022
+- https://lpc.events/
+
+** Completed Activities
+
+- Fix bug in recurisve macro expansion [[https://github.com/Rust-GCC/gccrs/pull/1429][PR1429]]
+- Make builtin macro expansion more conformant to rustc [[https://github.com/Rust-GCC/gccrs/pull/1430][PR1430]]
+- Fix bad transmute of aggregate types [[https://github.com/Rust-GCC/gccrs/pull/1433][PR1433]]
+- Incremental refactor for conformant coercion sites pt1 [[https://github.com/Rust-GCC/gccrs/pull/1431][PR1431]]
+- Update type hasher to stop bad converions during codegen [[https://github.com/Rust-GCC/gccrs/pull/1435][PR1435]]
+- Array index access does not need to unsize to a slice [[https://github.com/Rust-GCC/gccrs/pull/1437][PR1437]]
+- Add test case for calling builtin macro when it does not exist [[https://github.com/Rust-GCC/gccrs/pull/1442][PR1442]]
+- Simplify testcase [[https://github.com/Rust-GCC/gccrs/pull/1438][PR1438]]
+- Improve diagnostics when a builtin macro doesn't exist [[https://github.com/Rust-GCC/gccrs/pull/1442][PR1442]]
+- Cleanup recursive macro bug testcase [[https://github.com/Rust-GCC/gccrs/pull/1438][PR1438]]
+- Initial support for rustc_const_{un}stable attribute [[https://github.com/Rust-GCC/gccrs/pull/1444][PR1444]]
+- Fix failure to type inference generic unit-structs [[https://github.com/Rust-GCC/gccrs/pull/1451][PR1451]]
+- Cleanup front-end entry points [[https://github.com/Rust-GCC/gccrs/pull/1425][PR1425]]
+- Refactor Intrinsics class [[https://github.com/Rust-GCC/gccrs/pull/1445][PR1445]] [[https://github.com/Rust-GCC/gccrs/pull/1454][PR1454]]
+- Fix the behaviour of a transmute to doing the raw copy and _not_ casting [[https://github.com/Rust-GCC/gccrs/pull/1452][PR1452]]
+- Change CI to enforce 32bit passing tests on merge [[https://github.com/Rust-GCC/gccrs/pull/1453][PR1453]]
+- Remove unused code [[https://github.com/Rust-GCC/gccrs/pull/1463][PR1463]] [[https://github.com/Rust-GCC/gccrs/pull/1464][PR1464]]
+- Refactor type resolution pass visitors [[https://github.com/Rust-GCC/gccrs/pull/1458][PR1458]]
+- Don't return early on error_mark_node for call arguments [[https://github.com/Rust-GCC/gccrs/pull/1466][PR1466]]
+- Add wrapping_{add,sub,mul} intrinsics [[https://github.com/Rust-GCC/gccrs/pull/1465][PR1465]]
+- Desugar HIR::IdentifierExpr into HIR::PathInExpression [[https://github.com/Rust-GCC/gccrs/pull/1467][PR1467]]
+- Remove unused target hooks info in GCC [[https://github.com/Rust-GCC/gccrs/pull/1471][PR1471]]
+- Implement copy_nonoverlapping intrinsic [[https://github.com/Rust-GCC/gccrs/pull/1459][PR1459]] [[https://github.com/Rust-GCC/gccrs/pull/1462][PR1462]] [[https://github.com/Rust-GCC/gccrs/pull/1468][PR1468]]
+- Redo coercion site code [[https://github.com/rust-gcc/gccrs/pull/1492][PR1492]]
+- typecheck: resolve tuple pattern elt against parent elt [[https://github.com/rust-gcc/gccrs/pull/1491][PR1491]]
+- Refactor backend to use finegrained visitors [[https://github.com/rust-gcc/gccrs/pull/1477][PR1477]]
+- unsafe: Allow calls to safe intrinsics [[https://github.com/rust-gcc/gccrs/pull/1474][PR1474]]
+- Remove target hooks changes [[https://github.com/rust-gcc/gccrs/pull/1471][PR1471]]
+- intrinsics: Add copy_nonoverlapping<T> [[https://github.com/rust-gcc/gccrs/pull/1459][PR1459]]
+- Add missing language selection for rs6000 [[https://github.com/rust-gcc/gccrs/pull/1512][PR1512]]
+- rustc_attrs: Allow `rustc_inherit_overflow_checks` as a builtin attribute [[https://github.com/rust-gcc/gccrs/pull/1510][PR1510]]
+- constexpr: Fix warning in sorry fmt string [[https://github.com/rust-gcc/gccrs/pull/1509][PR1509]]
+- Desugar double borrows into two HIR:BorrowExpr's [[https://github.com/rust-gcc/gccrs/pull/1507][PR1507]]
+- Fix up missing jump_target handling [[https://github.com/rust-gcc/gccrs/pull/1504][PR1504]]
+- Fix port of NOP_EXPR [[https://github.com/rust-gcc/gccrs/pull/1501][PR1501]]
+- Remove missed target hooks code [[https://github.com/rust-gcc/gccrs/pull/1500][PR1500]]
+- Constant folding in gccrs: port over rest of the code from CP frontend [[https://github.com/rust-gcc/gccrs/pull/1499][PR1499]]
+- Merge from GCC upstream [[https://github.com/rust-gcc/gccrs/pull/1498][PR1498]]
+- Refactor our casts to follow the Rustc implemention [[https://github.com/rust-gcc/gccrs/pull/1497][PR1497]]
+- Fix ICE in dyn impl block [[https://github.com/rust-gcc/gccrs/pull/1493][PR1493]]
+- Improve AST dump [[https://github.com/rust-gcc/gccrs/pull/1473][PR1473]]
+- Fix bug in repitiion macros [[https://github.com/Rust-GCC/gccrs/pull/1513][PR1513]]
+- Fix parsing of AST::RangeFullExpr [[https://github.com/Rust-GCC/gccrs/pull/1516][PR1516]]
+- Fix inifnite loop if macro contains syntax error [[https://github.com/Rust-GCC/gccrs/pull/1515][PR1515]]
+- Fix SEGV when expanding libcore 1.29 [[https://github.com/Rust-GCC/gccrs/pull/1514][PR1514]]
+- Don't emit dead code warnings for public items [[https://github.com/Rust-GCC/gccrs/pull/1511][PR1511]]
+- Add overflow checks during code generation [[https://github.com/Rust-GCC/gccrs/pull/1503][PR1503]]
+- Improve error diagnostics with rustc-error-codes part1 [[https://github.com/Rust-GCC/gccrs/pull/1408][PR1408]]
+- Refactor unify sites [[https://github.com/Rust-GCC/gccrs/pull/1517][PR1517]]
+- Create canonical path for constant compilation [[https://github.com/Rust-GCC/gccrs/pull/1505][PR1505]]
+- Fix bug on generic unit structs [[https://github.com/Rust-GCC/gccrs/pull/1519][PR1519]]
+- Improve error handling on builtin macro expansion [[https://github.com/Rust-GCC/gccrs/pull/1521][PR1521]]
+- Add test cases for constant evaluation [[https://github.com/Rust-GCC/gccrs/pull/1522][PR1522]]
+
+*** Contributors this month
+
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/liushuyu][liushuyu]]
+- [[https://github.com/abbasfaisal][Faisal Abbas]]
+- [[https://github.com/davidmalcolm][David Malcolm]]
+- [[https://github.com/dafaust][David Faust]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        160 |        169 |    +9 |
+| In Progress |         29 |         28 |    -1 |
+| Completed   |        420 |        454 |   +34 |
+
+*** Test Case
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 6531       | 6740       | +209  |
+| Failed    | -          | -          | -     |
+| XFAIL     | 51         | 51         | -     |
+| XPASS     | -          | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         55 |         53 |    -2 |
+| In Progress |         13 |         16 |    +3 |
+| Completed   |        178 |        200 |   +22 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
+| Macros and cfg expansion          |       100% |       100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |       100% |       100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |        45% |        75% | +30%  | 30th May 2022  | -               | 17th Oct 2022 |
+| Intrinsics and builtins           |         0% |        15% | +15%  | 6th Sept 2022  | -               | 14th Nov 2022 |
+| Borrow checking                   |         0% |         0% | -     | TBD            | -               | TBD           |
+
+*** Risks
+
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Rust Language Changes          |            2 |                 7 |           14 | Target a specific Rustc version                |
+| Missing GCC 13 upstream window |            1 |                 6 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+*** Testing project
+
+Since there was no activity on the testing project, we are missing around two weeks worth of nightly runs. We are working on making sure it won't happen again.
+
+The format is as follows: ~<test cases> - <passes> - <failures>~
+
+| Testsuite                     | Compiler            | Last month           | This month           | Success delta (%) |
+|-------------------------------+---------------------+----------------------+----------------------+-------------------|
+| rustc testsuite               | gccrs -fsyntax-only | 13337 - 11217 - 2120 | 13337 - 10908 - 2429 |      -309 (-2.4%) |
+| gccrs testsuite               | rustc stable        |   607 -  408  - 199  |   659 -  433  - 226  |       -25 (-1.5%) |
+| rustc testsuite passing tests | gccrs               |  5783 -  740  - 5043 |  5783 -  708  - 5075 |       -32 (-0.6%) |
+| rustc testsuite (no_std)      | gccrs               |  2179 -  616  - 1563 |  2137 -  592  - 1545 |       -24 (-0.6%) |
+| rustc testsuite (no_core)     | gccrs               |    6  -   5   -  1   |    6  -   5   -  1   |                 - |
+| blake3                        | gccrs               |    4  -   1   -  3   |    4  -   1   -  3   |                 - |
+| libcore-1.49                  | gccrs               |    1  -   0   -  1   |    1  -   0   -  1   |                 - |
+
+*** System Integration Tests
+
+- Blake3 (missing iterator support) https://github.com/Rust-GCC/gccrs/issues/682
+- libcore SIP hasher https://github.com/Rust-GCC/gccrs/issues/1247
+
+**** Libcore SIP Hasher
+
+We reached a milestone where we can fully compile one of our goal test cases libcore SIP Hasher taken from https://github.com/rust-lang/rust/blob/master/library/core/src/hash/sip.rs
+
+compiler explorer example: https://godbolt.org/z/bn4s54v67
+github-issue: https://github.com/Rust-GCC/gccrs/issues/1247
+
+**** Blake3
+
+We have a hit a break through we our blake3 integration test, so that most of the code now compiles. The remaining issues we have our missing for-loop support and some minor bugs in our range syntax to finish this off. For loop's sound simple but they actualy depend on a tremendous amount of libcore code, but the benifit here is that once you support for loops you implicitly support iterators from libcore because a for loop is syntactic sugar for calling IntoIterator and calling next with a check on the result on whether to break or not. If you are interested in what this means, try compiling an empty for loop on compiler explorer for Rustc and see how much code is produced when optimizations are turned off to see what we mean.
+
+see:
+
+- https://godbolt.org/z/hhKnnb3Wo
+- https://godbolt.org/z/PzxEr9vos
+- https://github.com/Rust-GCC/gccrs/issues/682
+- https://github.com/Rust-GCC/gccrs/issues/1247
+
+** Planned Activities
+
+- Closures
+- Bugs
+ 
+** Detailed changelog
+
+*** Diagnostics and Rustc Error codes
+
+Recently we have merged from upstream GCC which gives improved error diagnostic's code. One of these is the notion of diagnostic metadata, which seems like the best place to start using Rustc error codes. To experiment with this we have started using rustc error codes with the first place being errors on cast's. Over time we will try to use rustc error codes as the motivation to improve error handling over time.
+
+#+BEGIN_SRC
+<source>:4:14: error: invalid cast 'bool' to 'f32' [E0054]
+    4 |   let fone = t as f32;
+      |              ^ 
+#+END_SRC
+
+*** Deref coercions
+
+We have started an incremental refactor to cleanup how our type system works. The refactor here is focused on [[https://doc.rust-lang.org/nomicon/coercions.html][coercion sites]] firstly so that we become more conformant to Rustc. So for example now we can support deref coercions which can look pretty strange from a language perspective, here we are "borrowing foo" which actually ends up producing a deref call to unbox the generic structure foo. This same autoderef cycle already occurs in method resolution but is also supported in coercion sites.
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+struct Foo<T>(T);
+impl<T> core::ops::Deref for Foo<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+fn main() {
+    let foo: Foo<i32> = Foo(123);
+    let bar: &i32 = &foo;
+
+    unsafe {
+        let a = "%i\n\0";
+        let b = a as *const str;
+        let c = b as *const i8;
+
+        printf(c, *bar);
+    }
+}
+#+END_SRC
+
+see: https://godbolt.org/z/qPz6G84hd
+
+*** Array index does not need to unsize
+
+When working through some complex test cases where we define the libcore code for slice creation and access, then add in normal array index operations there was an issue that gccrs always produced an unsize coercion for arrays to a slice in order to do array index access. This is completly unnecessary but could be technically valid rust code since it is valid to unsize an array to a slice. It does however miss GCC -Warray-bounds checking at compile time and add in unnessecary overhead in non optimized builds.
+
+#+BEGIN_SRC rust
+mod intrinsics {
+    extern "rust-intrinsic" {
+        pub fn offset<T>(ptr: *const T, count: isize) -> *const T;
+    }
+}
+
+mod mem {
+    extern "rust-intrinsic" {
+        fn size_of<T>() -> usize;
+    }
+}
+
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+struct FatPtr<T> {
+    data: *const T,
+    len: usize,
+}
+
+pub union Repr<T> {
+    rust: *const [T],
+    rust_mut: *mut [T],
+    raw: FatPtr<T>,
+}
+
+pub enum Option<T> {
+    None,
+    Some(T),
+}
+
+#[lang = "Range"]
+pub struct Range<Idx> {
+    pub start: Idx,
+    pub end: Idx,
+}
+
+#[lang = "const_slice_ptr"]
+impl<T> *const [T] {
+    pub const fn len(self) -> usize {
+        let a = unsafe { Repr { rust: self }.raw };
+        a.len
+    }
+
+    pub const fn as_ptr(self) -> *const T {
+        self as *const T
+    }
+}
+
+#[lang = "const_ptr"]
+impl<T> *const T {
+    pub const unsafe fn offset(self, count: isize) -> *const T {
+        unsafe { intrinsics::offset(self, count) }
+    }
+
+    pub const unsafe fn add(self, count: usize) -> Self {
+        unsafe { self.offset(count as isize) }
+    }
+
+    pub const fn as_ptr(self) -> *const T {
+        self as *const T
+    }
+}
+
+const fn slice_from_raw_parts<T>(data: *const T, len: usize) -> *const [T] {
+    unsafe {
+        Repr {
+            raw: FatPtr { data, len },
+        }
+        .rust
+    }
+}
+
+#[lang = "index"]
+trait Index<Idx> {
+    type Output;
+
+    fn index(&self, index: Idx) -> &Self::Output;
+}
+
+impl<T> [T] {
+    pub const fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
+    pub const fn len(&self) -> usize {
+        unsafe { Repr { rust: self }.raw.len }
+    }
+}
+
+pub unsafe trait SliceIndex<T> {
+    type Output;
+
+    fn get(self, slice: &T) -> Option<&Self::Output>;
+
+    unsafe fn get_unchecked(self, slice: *const T) -> *const Self::Output;
+
+    fn index(self, slice: &T) -> &Self::Output;
+}
+
+unsafe impl<T> SliceIndex<[T]> for usize {
+    type Output = T;
+
+    fn get(self, slice: &[T]) -> Option<&T> {
+        unsafe { Option::Some(&*self.get_unchecked(slice)) }
+    }
+
+    unsafe fn get_unchecked(self, slice: *const [T]) -> *const T {
+        // SAFETY: the caller guarantees that `slice` is not dangling, so it
+        // cannot be longer than `isize::MAX`. They also guarantee that
+        // `self` is in bounds of `slice` so `self` cannot overflow an `isize`,
+        // so the call to `add` is safe.
+        unsafe { slice.as_ptr().add(self) }
+    }
+
+    fn index(self, slice: &[T]) -> &T {
+        unsafe { &*self.get_unchecked(slice) }
+    }
+}
+
+unsafe impl<T> SliceIndex<[T]> for Range<usize> {
+    type Output = [T];
+
+    fn get(self, slice: &[T]) -> Option<&[T]> {
+        if self.start > self.end || self.end > slice.len() {
+            Option::None
+        } else {
+            unsafe { Option::Some(&*self.get_unchecked(slice)) }
+        }
+    }
+
+    unsafe fn get_unchecked(self, slice: *const [T]) -> *const [T] {
+        unsafe {
+            let a: *const T = slice.as_ptr();
+            let b: *const T = a.add(self.start);
+            slice_from_raw_parts(b, self.end - self.start)
+        }
+    }
+
+    fn index(self, slice: &[T]) -> &[T] {
+        unsafe { &*self.get_unchecked(slice) }
+    }
+}
+
+impl<T, I> Index<I> for [T]
+where
+    I: SliceIndex<[T]>,
+{
+    type Output = I::Output;
+
+    fn index(&self, index: I) -> &I::Output {
+        unsafe {
+            let a = "slice-index\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c);
+        }
+
+        index.index(self)
+    }
+}
+
+fn main() -> i32 {
+    let a = [1, 2, 3, 4, 5];
+    let b = a[1];
+
+    b - 2
+}
+#+END_SRC
+
+see: https://godbolt.org/z/q3rEdjr1e
+
+*** ~copy_nonoverlapping~
+
+This week, we worked on implementing the ~copy_nonoverlapping~ intrinsic, which is defined as such:
+
+#+BEGIN_SRC rust
+fn copy_nonoverlapping<T>(src: *const T, dst: *mut T, count: usize);
+#+END_SRC
+
+This intrinsic is, according to the documentation, semantically equivalent to a ~memcpy~ with the order of ~dst~ and ~src~ switched. This means that we can quite easily implement it using ~gcc~'s ~__builtin_memcpy~ builtin. However, unlike most intrinsic functions, ~copy_nonoverlapping~ has side effects: Let's take an example with ~transmute~, another intrinsic working on memory:
+
+#+BEGIN_SRC rust
+fn transmute<T, U>(a: T) -> U;
+
+fn main() {
+    let a = 15.4f32;
+    unsafe { transmute<f32, i32>(a) }; // ignore the return value
+}
+#+END_SRC
+
+Because this ~transmute~ function is pure and does not contain any side effects (no I/O operations on memory for example), it is safe to optimize the call away. ~gcc~ takes care of this for us when performing its optimisation passes. However, the following calls were also being optimized out:
+
+#+BEGIN_SRC rust
+fn copy_nonoverlapping<T>(src: *const T, dst: *mut T, count: usize);
+
+fn foo() -> i32 {
+    let i = 15;
+    let mut i_copy = 16;
+
+    let i = &i as *const i32;
+    let i_copy = &mut i as *mut i32;
+
+    unsafe { copy_nonoverlapping(i, i_copy, 1) };
+    // At this point, we should have `i_copy` equal 15 and return 0
+
+    unsafe { *i_copy - 15 }
+}
+#+END_SRC
+
+This caused assertions that this ~foo~ function would return 0 to fail, as the call to ~copy_nonoverlapping~ was simply removed from the GIMPLE entirely. It took us quite some time to fix this overzealous optimization, which ended up being caused by a flag set on the intrinsic's block in the internal ~GCC~ represetation: Even if the block was marked as having side effects (~TREE_SIDE_EFFECTS(intrinsic_fn_declaration) = 1~), the fact that it was also marked as ~TREE_READONLY~ caused the optimization to happen. This was valid, as a lot of intrinsics (and all the intrinsics that we had implemented up until that point) were pure functions. We now separate between pure and impure intrinsics properly when generating their implementation.
+
+*** Const evaluation
+
+As we mentioned we merged [[https://github.com/abbasfaisal][Faisal Abbas]] GSoC 2022 project which now allows us to do constant evaluation of expressions and function calls within the front-end. This is akin to C++ constexpr and enforces constant expressions do not allocate. Below is an example test case of what this allows us to do. Here you can see we have a constant function and inside the main function we can see that the gimple we are feeding the GCC middle-end has already evaluated this function to a value. Note this is the behaviour regardless of optimisation level.
+
+#+BEGIN_SRC rust
+const A: i32 = 1;
+
+const fn test(a: i32) -> i32 {
+    let b = A + a;
+    if b == 2 {
+        return b + 2;
+    }
+    a
+}
+
+const B: i32 = test(1);
+const C: i32 = test(12);
+
+fn main() {
+    // { dg-final { scan-tree-dump-times {a = 1} 1 gimple } }
+    let a = A;
+    // { dg-final { scan-tree-dump-times {b = 4} 1 gimple } }
+    let b = B;
+    // { dg-final { scan-tree-dump-times {c = 12} 1 gimple } }
+    let c = C;
+}
+#+END_SRC
+
+*** Overflow traps
+
+We recently spent some time adding overflow traps to ~gccrs~. These traps ensure that, in debug mode, arithmetic operations on integers do not overflow silently at runtime and instead cause the user's program to crash. For example, with the following Rust code
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(fmt: *const i8, ...);
+}
+
+fn five() -> i8 {
+    5
+}
+
+fn main() {
+    let a = 127i8;
+    let b = five();
+
+    let c = a + b;
+
+    unsafe { printf("%d\n\0" as *const str as *const i8, c) }
+}
+#+END_SRC
+
+~gccrs~ will now generate the following ~GIMPLE~
+
+#+BEGIN_SRC c
+__attribute__((cdecl))
+i8 overflow1::five ()
+{
+  i8 D.121;
+
+  D.121 = 5;
+  return D.121;
+}
+
+__attribute__((cdecl))
+void overflow1::main ()
+{
+  __complex__ i8 D.123;
+  struct 
+{
+  unsigned char * const * data;
+  usize len;
+} D.126;
+  const i8 a;
+  const i8 b;
+  const i8 c;
+
+  a = 127;
+  b = overflow1::five ();
+  D.123 = .ADD_OVERFLOW (a, b); // Note the call to the builtin function
+  _1 = REALPART_EXPR <D.123>;
+  RUSTTMP.1 = _1;
+  _2 = IMAGPART_EXPR <D.123>;
+  _3 = (bool) _2;
+  if (_3 != 0) goto <D.124>; else goto <D.125>;
+  <D.124>:
+  __builtin_abort ();
+  <D.125>:
+  c = RUSTTMP.1;
+  {
+    D.126.data = "%d\n";
+    D.126.len = 4;
+    _4 = D.126.data;
+    printf (_4, c);
+  }
+}
+#+END_SRC
+
+Should the operation overflow, the program will perform a call to ~abort~ and stop its execution. We still have a few improvements to make to this addition, such as actually disabling it when compiling in release mode, but this will help ensure users can confidently write Rust code using ~gccrs~.
