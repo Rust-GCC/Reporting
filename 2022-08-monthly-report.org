@@ -158,19 +158,30 @@ The format is as follows: ~<test cases> - <passes> - <failures>~
 - Blake3 (missing iterator support) https://github.com/Rust-GCC/gccrs/issues/682
 - libcore SIP hasher https://github.com/Rust-GCC/gccrs/issues/1247
 
+**** Libcore SIP Hasher
+
+We reached a milestone where we can fully compile one of our goal test cases libcore SIP Hasher taken from https://github.com/rust-lang/rust/blob/master/library/core/src/hash/sip.rs
+
+compiler explorer example: https://godbolt.org/z/bn4s54v67
+github-issue: https://github.com/Rust-GCC/gccrs/issues/1247
+
+**** Blake3
+
+We have a hit a break through we our blake3 integration test, so that most of the code now compiles. The remaining issues we have our missing for-loop support and some minor bugs in our range syntax to finish this off. For loop's sound simple but they actualy depend on a tremendous amount of libcore code, but the benifit here is that once you support for loops you implicitly support iterators from libcore because a for loop is syntactic sugar for calling IntoIterator and calling next with a check on the result on whether to break or not. If you are interested in what this means, try compiling an empty for loop on compiler explorer for Rustc and see how much code is produced when optimizations are turned off to see what we mean.
+
+see:
+
+- https://godbolt.org/z/hhKnnb3Wo
+- https://godbolt.org/z/PzxEr9vos
+- https://github.com/Rust-GCC/gccrs/issues/682
+- https://github.com/Rust-GCC/gccrs/issues/1247
+
 ** Planned Activities
 
 - Closures
 - Bugs
  
 ** Detailed changelog
-
-*** Libcore SIP Hasher
-
-We reached a milestone where we can fully compile one of our goal test cases libcore SIP Hasher taken from https://github.com/rust-lang/rust/blob/master/library/core/src/hash/sip.rs
-
-compiler explorer example: https://godbolt.org/z/bn4s54v67
-github-issue: https://github.com/Rust-GCC/gccrs/issues/1247
 
 *** Diagnostics and Rustc Error codes
 
@@ -394,17 +405,6 @@ fn main() -> i32 {
 #+END_SRC
 
 see: https://godbolt.org/z/q3rEdjr1e
-
-*** Integration tests update
-
-We have a hit a break through we our blake3 integration test, so that most of the code now compiles. The remaining issues we have our missing for-loop support and some minor bugs in our range syntax to finish this off. For loop's sound simple but they actualy depend on a tremendous amount of libcore code, but the benifit here is that once you support for loops you implicitly support iterators from libcore because a for loop is syntactic sugar for calling IntoIterator and calling next with a check on the result on whether to break or not. If you are interested in what this means, try compiling an empty for loop on compiler explorer for Rustc and see how much code is produced when optimizations are turned off to see what we mean.
-
-see:
-
-- https://godbolt.org/z/hhKnnb3Wo
-- https://godbolt.org/z/PzxEr9vos
-- https://github.com/Rust-GCC/gccrs/issues/682
-- https://github.com/Rust-GCC/gccrs/issues/1247
 
 *** ~copy_nonoverlapping~
 
