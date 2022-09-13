@@ -8,9 +8,9 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-In August, we posted our V2 patch set for GCC review, and it turned out that ensuring each patch was a buildable item did not matter for the review process. This allowed us to split the code into 37 patches; we missed one patch, which fixed our issues on PPCLE, a missing case for the Rust language in the PPC code generation code. Apart from this, the only other patch in that patchset majorly affects GCC has already been approved; the remaining patches pertain directly to the Rust front-end itself. 
+In August, we posted our V2 patch set for GCC review, and it turned out that ensuring each patch was a buildable item did not matter for the review process. This allowed us to split the code into 37 patches; we missed one patch, which fixed our issues on PPCLE, a missing case for the Rust language in the PPC code generation code. Apart from this, the only other patch in that patchset that majorly affects GCC has already been approved; the remaining patches pertain directly to the Rust front-end itself. 
 
-In other news, we have merged our Google Summer of Code students port of the C++ constexpr code into the rust front-end, which allows us to support proper constant evaluation like Rust. Over time more test cases will be added, and the code tidied up to remove C++'isms, such as the error handlings referring to C++ standards, which doesn't make sense for Rust. Thanks, [[https://github.com/abbasfaisal][Faisal Abbas]], for your hard work on this challenging project.
+In other news, we have merged our Google Summer of Code student's port of the C++ constexpr code into the rust front-end, which allows us to support proper constant evaluation like Rust. Over time more test cases will be added, and the code tidied up to remove C++'isms, such as the error handlings referring to C++ standards, which doesn't make sense for Rust. Thanks, [[https://github.com/abbasfaisal][Faisal Abbas]], for your hard work on this challenging project.
 
 With the plethora of bug fixing going on, we can finally compile a version of the libcore SIP hasher taken from libcore, which is very exciting; more information about that is in our detailed changelog.
 
@@ -160,14 +160,14 @@ The format is as follows: ~<test cases> - <passes> - <failures>~
 
 **** Libcore SIP Hasher
 
-We reached a milestone where we can fully compile one of our goal test cases libcore SIP Hasher taken from https://github.com/rust-lang/rust/blob/master/library/core/src/hash/sip.rs
+We reached a milestone where we can fully compile one of our goal test cases: libcore SIP Hasher taken from https://github.com/rust-lang/rust/blob/master/library/core/src/hash/sip.rs
 
 compiler explorer example: https://godbolt.org/z/bn4s54v67
 github-issue: https://github.com/Rust-GCC/gccrs/issues/1247
 
 **** Blake3
 
-We have a hit a break through we our blake3 integration test, so that most of the code now compiles. The remaining issues we have our missing for-loop support and some minor bugs in our range syntax to finish this off. For loop's sound simple but they actualy depend on a tremendous amount of libcore code, but the benifit here is that once you support for loops you implicitly support iterators from libcore because a for loop is syntactic sugar for calling IntoIterator and calling next with a check on the result on whether to break or not. If you are interested in what this means, try compiling an empty for loop on compiler explorer for Rustc and see how much code is produced when optimizations are turned off to see what we mean.
+We hit a breakthrough in our blake3 integration test: most of the code now compiles. The remaining issues we have are missing for-loop support and some minor bugs in our range syntax to finish this off. For loops sound simple but they actualy depend on a tremendous amount of libcore code, but the benefit here is that once you support for loops you implicitly support iterators from libcore because a for loop is syntactic sugar for calling IntoIterator and calling next with a check on the result on whether to break or not. If you are interested in what this means, try compiling an empty for loop on compiler explorer for Rustc and see how much code is produced when optimizations are turned off to see what we mean.
 
 see:
 
@@ -185,7 +185,7 @@ see:
 
 *** Diagnostics and Rustc Error codes
 
-Recently we have merged from upstream GCC which gives improved error diagnostic's code. One of these is the notion of diagnostic metadata, which seems like the best place to start using Rustc error codes. To experiment with this we have started using rustc error codes with the first place being errors on cast's. Over time we will try to use rustc error codes as the motivation to improve error handling over time.
+Recently we have merged code from upstream GCC that improves error diagnostics. One of these is the notion of diagnostic metadata, which seems like the best place to start using Rustc error codes. To experiment with this, we have started using rustc error codes with the first place being errors on casts. Over time we will try to use rustc error codes as the motivation to improve error handling over time.
 
 #+BEGIN_SRC
 <source>:4:14: error: invalid cast 'bool' to 'f32' [E0054]
@@ -195,7 +195,7 @@ Recently we have merged from upstream GCC which gives improved error diagnostic'
 
 *** Deref coercions
 
-We have started an incremental refactor to cleanup how our type system works. The refactor here is focused on [[https://doc.rust-lang.org/nomicon/coercions.html][coercion sites]] firstly so that we become more conformant to Rustc. So for example now we can support deref coercions which can look pretty strange from a language perspective, here we are "borrowing foo" which actually ends up producing a deref call to unbox the generic structure foo. This same autoderef cycle already occurs in method resolution but is also supported in coercion sites.
+We have started an incremental refactor to clean up how our type system works. The refactor here is focused on [[https://doc.rust-lang.org/nomicon/coercions.html][coercion sites]] firstly so that we become more conformant to Rustc. So for example now we can support deref coercions which can look pretty strange from a language perspective, here we are "borrowing foo" which actually ends up producing a deref call to unbox the generic structure foo. This same autoderef cycle already occurs in method resolution but is also supported in coercion sites.
 
 #+BEGIN_SRC rust
 extern "C" {
@@ -229,7 +229,7 @@ see: https://godbolt.org/z/qPz6G84hd
 
 *** Array index does not need to unsize
 
-When working through some complex test cases where we define the libcore code for slice creation and access, then add in normal array index operations there was an issue that gccrs always produced an unsize coercion for arrays to a slice in order to do array index access. This is completly unnecessary but could be technically valid rust code since it is valid to unsize an array to a slice. It does however miss GCC -Warray-bounds checking at compile time and add in unnessecary overhead in non optimized builds.
+When working through some complex test cases where we define the libcore code for slice creation and access and adding in normal array index operations, there was an issue where gccrs always produced an unsize coercion for arrays to a slice in order to do array index access. This is completely unnecessary, but could be technically valid rust code since it is valid to unsize an array to a slice. It does however miss GCC -Warray-bounds checking at compile time and adds in unnecessary overhead in non-optimized builds.
 
 #+BEGIN_SRC rust
 mod intrinsics {
@@ -448,7 +448,7 @@ This caused assertions that this ~foo~ function would return 0 to fail, as the c
 
 *** Const evaluation
 
-As we mentioned we merged [[https://github.com/abbasfaisal][Faisal Abbas]] GSoC 2022 project which now allows us to do constant evaluation of expressions and function calls within the front-end. This is akin to C++ constexpr and enforces constant expressions do not allocate. Below is an example test case of what this allows us to do. Here you can see we have a constant function and inside the main function we can see that the gimple we are feeding the GCC middle-end has already evaluated this function to a value. Note this is the behaviour regardless of optimisation level.
+As we mentioned, we merged [[https://github.com/abbasfaisal][Faisal Abbas]] GSoC 2022 project, which now allows us to do constant evaluation of expressions and function calls within the front-end. This is akin to C++ constexpr and enforces constant expressions do not allocate. Below is an example test case of what this allows us to do. Here you can see we have a constant function and inside the main function we can see that the gimple we are feeding the GCC middle-end has already evaluated this function to a value. Note this is the behaviour regardless of optimisation level.
 
 #+BEGIN_SRC rust
 const A: i32 = 1;
