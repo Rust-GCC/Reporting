@@ -1,0 +1,76 @@
+#+title:  Weekly report for 5th to 12th September 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-09-12
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+We did not have a lot of time to spend on the compiler this week, as most of the time was taken by travelling to and attending [[https://kangrejos.com/][Kangrejos]]. The slides for our talk will soon be available on the website. We are also open to putting them directly on the repository as we have done in the past.
+
+The main focus of this week is that Philip Herron and David Faust will be giving a talk about ~gccrs~ at the Linux Plumbers Conference on the Rust track. We are going to continue working on various intrinsics as well as improve our testing infrastructure.
+
+** Completed Activities
+
+- add testcase with struct to test component_ref and constructor codes in eval_constant_expression() [[https://github.com/rust-gcc/gccrs/pull/1528][PR1528]]
+- backend: correctly formulate the exit condition [[https://github.com/rust-gcc/gccrs/pull/1526][PR1526]]
+
+*** Contributors this week
+
+- [[https://github.com/abbasfaisal][Faisal Abbas]]
+- [[https://github.com/liushuyu][liushuyu]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       169 |       169 |     - |
+| In Progress |        28 |        29 |    +1 |
+| Completed   |       454 |       455 |    +1 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 6740      |      6766 |   +26 |
+| Failed    | -         |         - |     - |
+| XFAIL     | 51        |        51 |    +0 |
+| XPASS     | -         |         - |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        53 |        53 |     - |
+| In Progress |        16 |        17 |    +1 |
+| Completed   |       200 |       201 |    +1 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |       75% |       76% | +1%   | 30th May 2022  | -               | 17th Oct 2022 |
+| Intrinsics and builtins           |       15% |       15% | -     | 6th Sept 2022  | -               | 14th Nov 2022 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD           |
+
+*** Risks
+
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Rust Language Changes          |            2 |                 7 |           14 | Target a specific Rustc version                |
+| Missing GCC 13 upstream window |            1 |                 6 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+** Planned Activities
+
+- Focus on LPC and GNU Cauldron
+
+** Detailed changelog
