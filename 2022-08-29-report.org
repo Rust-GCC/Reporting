@@ -8,10 +8,6 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-1. Sent gcc patches
-2. Merged const generics
-    1. Need to add more test cases ofc
-
 One major change the compiler saw this week was the integration of Faisal Abbas' constant evaluation work! This PR marks a huge step towards our Const generics milestone and allows us to perform function evaluation, conditional blocks, arithmetics or even calls to builtin functions in constant contexts! This is the culmination of months of work and we are extremely proud of Faisal. Congratulations!
 
 We now need to add more constant folding test cases and stress the implementation out in multiple ways. This will hopefully expose bugs that Faisal will be able to fix as the remaining part of his project.
