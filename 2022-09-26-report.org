@@ -8,7 +8,9 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-TODO
+The gccrs team is back home from being on tour in September, it was great to meet everyone in person. See below for the videos of our talks though our talk at Kangrejos was not recorded LPC and GNU Cauldron was recorded.
+
+This week is all about getting back on track and focusing on missing features for libcore as well as bug fixing. There are oustanding branches of work that need to be finished off and merged as well.
 
 **** Conference YouTube Videos
 
