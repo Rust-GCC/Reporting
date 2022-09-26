@@ -31,7 +31,7 @@ https://kangrejos.com/
 - Fix ICE during HIR lowering when module items expand to empty [[https://github.com/Rust-GCC/gccrs/pull/1534][PR1534]]
 - Disallow default const generic values in the correct places [[https://github.com/Rust-GCC/gccrs/pull/1530][PR1530]]
 - Add missing visitors for const generics [[https://github.com/Rust-GCC/gccrs/pull/1529][PR1529]]
-- Add new -frust-compile-until to fix help debug what compiler pass issues occur on big crates [[https://github.com/Rust-GCC/gccrs/pull/1527][PR1527]]
+- Add new -frust-compile-until to help fix or debug what compiler pass issues occur on big crates [[https://github.com/Rust-GCC/gccrs/pull/1527][PR1527]]
 - Merge from GCC upstream (has broken MacOS, fix will be merged upstream in a few days) [[https://github.com/Rust-GCC/gccrs/pull/1542][PR1542]]
 
 *** Contributors this week
