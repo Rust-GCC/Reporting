@@ -8,7 +8,11 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-TODO
+We spent a lot of time traveling in September and thus achieve very little compared to other months in terms of features. However, we have gotten a lot of feedback from the various talks we gave and the discussions we attended, and feel the project has moved forward in many ways: what features we need to compile the Rust-for-Linux project, how to go about Rust versioning, the precautions we must take regarding upstreaming the compiler, our workflow, etc.
+
+You can find the recordings of these events in the following section.
+
+During the few days we were able to dedicate to compiler development, we've made some cleanups in the type system as well as started work on our missing macro features such as exporting.
 
 **** Conference YouTube Videos
 
@@ -80,7 +84,7 @@ https://kangrejos.com/
 | Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
 | Macros and cfg expansion          |       100% |       100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
 | Imports and Visibility            |       100% |       100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
-| Const Generics                    |        75% |        76% | -     | 30th May 2022  | -               | 17th Oct 2022 |
+| Const Generics                    |        75% |        76% | +1%   | 30th May 2022  | -               | 17th Oct 2022 |
 | Intrinsics and builtins           |        15% |        15% | -     | 6th Sept 2022  | -               | 14th Nov 2022 |
 | Borrow checking                   |         0% |         0% | -     | TBD            | -               | TBD           |
 
@@ -91,10 +95,29 @@ https://kangrejos.com/
 | Rust Language Changes          |            2 |                 7 |           14 | Target a specific Rustc version                |
 | Missing GCC 13 upstream window |            1 |                 6 |            6 | Merge in GCC 14 and be proactive about reviews |
 
+*** Testing project
+
+The format is as follows: ~<test cases> - <passes> - <failures>~
+
+| Testsuite                     | Compiler            | Last month           | This month           | Success delta (%) |
+|-------------------------------+---------------------+----------------------+----------------------+-------------------|
+| rustc testsuite               | gccrs -fsyntax-only | 13337 - 10908 - 2429 | 13337 - 10951 - 2386 |       +43 (+0.0%) |
+| gccrs testsuite               | rustc stable        |   659 -  433  - 226  |   685 -  442  - 243  |        +9 (-0.1%) |
+| rustc testsuite passing tests | gccrs               |  5783 -  708  - 5075 |  5783 -  730  - 5053 |       +22 (+0.0%) |
+| rustc testsuite (no_std)      | gccrs               |  2137 -  592  - 1545 |  2211 -  619  - 1592 |       +27 (+0.0%) |
+| rustc testsuite (no_core)     | gccrs               |    6  -   5   -  1   |    6  -   5   -  1   |                 - |
+| blake3                        | gccrs               |    4  -   1   -  3   |    4  -   1   -  3   |                 - |
+| libcore                       | gccrs               |    1  -   0   -  1   |    6  -   0   -  6   |                 - |
+
+*** System Integration Tests
+
+- Blake3 (missing iterator support) https://github.com/Rust-GCC/gccrs/issues/682
+- libcore SIP hasher https://github.com/Rust-GCC/gccrs/issues/1247
+
+
 ** Planned Activities
 
 - Closures
 - Bugs
  
 ** Detailed changelog
-
