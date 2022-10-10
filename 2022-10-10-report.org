@@ -8,14 +8,16 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-1. More productive
-2. What we did
-3. New student
-4. Link to planning, feel free to raise issues to discuss stuff
-5. Hacktoberfest!
+This week we returned to a more usual level of productivity, and achieved a lot of work on the intrinsics side of things as well as our exporting mechanism. We spent some time fixing the early reviews we got from our upstream patches and are working on the next set of patches.
+
+We have put together a planning for the foreseeable future of the project and would love to hear your thoughts about it: https://hackmd.io/@RebJtN4VQzOcP4MsOf8inA/SkjK2UOfs
+Feel free to raise issues in the `gccrs` repository to discuss anything!
+
+Finally, the project is also accepting hacktoberfest contributions and we would love to mentor anyone interested in contributing! Feel free to start working on one of the issues marked `good-first-pr` or to join our [[https://gcc-rust.zulipchat.com/][Zulip]] and ask for work.
 
 ** Completed Activities
 
+- AST: dump structs, unions and enums [[https://github.com/rust-gcc/gccrs/pull/1572][PR1572]]
 - Implement data prefetch intrinsics [[https://github.com/rust-gcc/gccrs/pull/1565][PR1565]]
 - builtins: Move implementation into source file [[https://github.com/rust-gcc/gccrs/pull/1564][PR1564]]
 - ast: dump assignment and if expressions [[https://github.com/rust-gcc/gccrs/pull/1563][PR1563]]
@@ -24,6 +26,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 - Fix include structure [[https://github.com/rust-gcc/gccrs/pull/1559][PR1559]]
 - testing: try loop in const function [[https://github.com/rust-gcc/gccrs/pull/1554][PR1554]]
 - Dump item visibility [[https://github.com/rust-gcc/gccrs/pull/1547][PR1547]]
+- Reintroduce targetrustm hooks without the maze of macro definitions in target headers [[https://github.com/rust-gcc/gccrs/pull/1543][PR1543]]
 
 *** Contributors this week
 
@@ -58,11 +61,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestones Progress
 
-__FIXME__: Fix milestones! Add issues to the milestones!
-
-- Close out the const generic one
-- Keep the intrinsics one? Or is that a project more than a milestone?
-- Identify which intrinsics are for libcore and which are for after
+We plan on adding more fine-grained milestones in between November and April as more themes of work will become apparent.
 
 | Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target        |
 |-----------------------------------+-----------+-----------+-------+----------------+-----------------+---------------|
@@ -73,8 +72,10 @@ __FIXME__: Fix milestones! Add issues to the milestones!
 | Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
 | Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
 | Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
-| Const Generics                    |       76% |       76% | -     | 30th May 2022  | -               | 17th Oct 2022 |
+| Const Generics                    |       76% |      100% | +24%  | 30th May 2022  | 10th Oct 2022   | 17th Oct 2022 |
 | Intrinsics and builtins           |       15% |       15% | -     | 6th Sept 2022  | -               | 14th Nov 2022 |
+| First set of upstream patches     |        0% |       33% | +33%  | 10th Oct 2022  | -               | 30th Nov 2022 |
+| Final set of upstream patches     |        0% |        0% | -     | 1st Dec 2022   | -               | 30th Apr 2023 |
 | Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD           |
 
 *** Risks
