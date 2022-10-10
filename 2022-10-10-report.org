@@ -33,6 +33,7 @@ Finally, the project is also accepting hacktoberfest contributions and we would 
 - [[https://github.com/ibuclaw][Iain Buclaw]]
 - [[https://github.com/dafaust][David Faust]]
 - [[https://github.com/abbasfaisal][Faisal Abas]]
+- [[https://github.com/dkm][Marc Poulhiès]]
 
 *** Overall Task Status
 
