@@ -1,0 +1,96 @@
+#+title:  Weekly report for 3rd to 10th October 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-10-10
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This week we returned to a more usual level of productivity, and achieved a lot of work on the intrinsics side of things as well as our exporting mechanism. We spent some time fixing the early reviews we got from our upstream patches and are working on the next set of patches.
+
+We have put together a planning for the foreseeable future of the project and would love to hear your thoughts about it: https://hackmd.io/@RebJtN4VQzOcP4MsOf8inA/SkjK2UOfs
+Feel free to raise issues in the `gccrs` repository to discuss anything!
+
+Finally, the project is also accepting hacktoberfest contributions and we would love to mentor anyone interested in contributing! Feel free to start working on one of the issues marked `good-first-pr` or to join our [[https://gcc-rust.zulipchat.com/][Zulip]] and ask for work.
+
+** Completed Activities
+
+- AST: dump structs, unions and enums [[https://github.com/rust-gcc/gccrs/pull/1572][PR1572]]
+- Implement data prefetch intrinsics [[https://github.com/rust-gcc/gccrs/pull/1565][PR1565]]
+- builtins: Move implementation into source file [[https://github.com/rust-gcc/gccrs/pull/1564][PR1564]]
+- ast: dump assignment and if expressions [[https://github.com/rust-gcc/gccrs/pull/1563][PR1563]]
+- Support looking up super trait items during path resolution [[https://github.com/rust-gcc/gccrs/pull/1562][PR1562]]
+- Fix -Wunused using `rust-lang.cc` hack [[https://github.com/rust-gcc/gccrs/pull/1560][PR1560]]
+- Fix include structure [[https://github.com/rust-gcc/gccrs/pull/1559][PR1559]]
+- testing: try loop in const function [[https://github.com/rust-gcc/gccrs/pull/1554][PR1554]]
+- Dump item visibility [[https://github.com/rust-gcc/gccrs/pull/1547][PR1547]]
+- Reintroduce targetrustm hooks without the maze of macro definitions in target headers [[https://github.com/rust-gcc/gccrs/pull/1543][PR1543]]
+
+*** Contributors this week
+
+- [[https://github.com/ibuclaw][Iain Buclaw]]
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/abbasfaisal][Faisal Abas]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       169 |       175 |    +6 |
+| In Progress |        31 |        31 |     - |
+| Completed   |       460 |       467 |    +7 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 6783      | 6803      | +20   |
+| Failed    | -         | -         | -     |
+| XFAIL     | 52        | 52        | -     |
+| XPASS     | -         | -         | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        52 |        53 |    +1 |
+| In Progress |        17 |        14 |    -3 |
+| Completed   |       204 |       211 |    +7 |
+
+*** Milestones Progress
+
+We plan on adding more fine-grained milestones in between November and April as more themes of work will become apparent.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |       76% |      100% | +24%  | 30th May 2022  | 10th Oct 2022   | 17th Oct 2022 |
+| Intrinsics and builtins           |       15% |       15% | -     | 6th Sept 2022  | -               | 14th Nov 2022 |
+| First set of upstream patches     |        0% |       33% | +33%  | 10th Oct 2022  | -               | 30th Nov 2022 |
+| Final set of upstream patches     |        0% |        0% | -     | 1st Dec 2022   | -               | 30th Apr 2023 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD           |
+
+*** Risks
+
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Rust Language Changes          |            2 |                 7 |           14 | Target a specific Rustc version                |
+| Missing GCC 13 upstream window |            1 |                 6 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+** Planned Activities
+
+- Closures
+- Finish outstanding PRs
+- Investigate inline assembly and especially the unsafe checks around it
+- More intrinsics
+- More builtin macros
+
+** Detailed changelog
