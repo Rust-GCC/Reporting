@@ -1,0 +1,123 @@
+#+title:  Monthly Report for September 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-10-03
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+We spent a lot of time traveling in September and thus achieve very little compared to other months in terms of features. However, we have gotten a lot of feedback from the various talks we gave and the discussions we attended, and feel the project has moved forward in many ways: what features we need to compile the Rust-for-Linux project, how to go about Rust versioning, the precautions we must take regarding upstreaming the compiler, our workflow, etc.
+
+You can find the recordings of these events in the following section.
+
+During the few days we were able to dedicate to compiler development, we've made some cleanups in the type system as well as started work on our missing macro features such as exporting.
+
+**** Conference YouTube Videos
+
+GNU Cauldron Rust Front-end Talk
+https://www.youtube.com/watch?t=14304&v=dOIwE2932XI&feature=youtu.be
+
+GNU Cauldron Rust Bof
+https://www.youtube.com/watch?t=17688&v=MuicT6JUp0k&feature=youtu.be
+
+LPC 2022 Rust MC
+https://youtu.be/Xw9pKeJ-4Bw?t=862
+
+Kangrejos 2022
+https://kangrejos.com/
+
+** Completed Activities
+
+- add testcase with struct to test component_ref and constructor codes in eval_constant_expression() [[https://github.com/rust-gcc/gccrs/pull/1528][PR1528]]
+- backend: correctly formulate the exit condition [[https://github.com/rust-gcc/gccrs/pull/1526][PR1526]]
+- Add testcase for https://blog.rust-lang.org/2022/09/15/const-eval-safety-rule-revision.html [[https://github.com/Rust-GCC/gccrs/pull/1541][PR1541]]
+- Add macro_use builtin attribute mappings [[https://github.com/Rust-GCC/gccrs/pull/1532][PR1532]]
+- Fix ICE during HIR lowering when module items expand to empty [[https://github.com/Rust-GCC/gccrs/pull/1534][PR1534]]
+- Disallow default const generic values in the correct places [[https://github.com/Rust-GCC/gccrs/pull/1530][PR1530]]
+- Add missing visitors for const generics [[https://github.com/Rust-GCC/gccrs/pull/1529][PR1529]]
+- Add new -frust-compile-until to help fix or debug what compiler pass issues occur on big crates [[https://github.com/Rust-GCC/gccrs/pull/1527][PR1527]]
+- Merge from GCC upstream (has broken MacOS, fix will be merged upstream in a few days) [[https://github.com/Rust-GCC/gccrs/pull/1542][PR1542]]
+- Refactor Type resolution to support forward declarations [[https://github.com/Rust-GCC/gccrs/pull/1545][PR1545]] [[https://github.com/Rust-GCC/gccrs/pull/1546][PR1546]]
+- Bug fix for recursive type queries [[https://github.com/Rust-GCC/gccrs/pull/1551][PR1551]]
+
+*** Contributors this month
+
+- [[https://github.com/abbasfaisal][Faisal Abbas]]
+- [[https://github.com/liushuyu][liushuyu]]
+- [[https://github.com/ibuclaw][Iain Buclaw]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        169 |        168 |    -1 |
+| In Progress |         28 |         28 |     - |
+| Completed   |        454 |        466 |   +12 |
+
+*** Test Case
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 6740       | 6794       | +54   |
+| Failed    | -          | -          | -     |
+| XFAIL     | 51         | 52         | +1    |
+| XPASS     | -          | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         53 |         51 |    -2 |
+| In Progress |         16 |         14 |    -2 |
+| Completed   |        200 |        210 |   +10 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
+| Macros and cfg expansion          |       100% |       100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |       100% |       100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |        75% |        76% | +1%   | 30th May 2022  | -               | 17th Oct 2022 |
+| Intrinsics and builtins           |        15% |        15% | -     | 6th Sept 2022  | -               | 14th Nov 2022 |
+| Borrow checking                   |         0% |         0% | -     | TBD            | -               | TBD           |
+
+*** Risks
+
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Rust Language Changes          |            2 |                 7 |           14 | Target a specific Rustc version                |
+| Missing GCC 13 upstream window |            1 |                 6 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+*** Testing project
+
+The format is as follows: ~<test cases> - <passes> - <failures>~
+
+| Testsuite                     | Compiler            | Last month           | This month           | Success delta (%) |
+|-------------------------------+---------------------+----------------------+----------------------+-------------------|
+| rustc testsuite               | gccrs -fsyntax-only | 13337 - 10908 - 2429 | 13337 - 10951 - 2386 |       +43 (+0.0%) |
+| gccrs testsuite               | rustc stable        |   659 -  433  - 226  |   685 -  442  - 243  |        +9 (-0.1%) |
+| rustc testsuite passing tests | gccrs               |  5783 -  708  - 5075 |  5783 -  730  - 5053 |       +22 (+0.0%) |
+| rustc testsuite (no_std)      | gccrs               |  2137 -  592  - 1545 |  2211 -  619  - 1592 |       +27 (+0.0%) |
+| rustc testsuite (no_core)     | gccrs               |    6  -   5   -  1   |    6  -   5   -  1   |                 - |
+| blake3                        | gccrs               |    4  -   1   -  3   |    4  -   1   -  3   |                 - |
+| libcore                       | gccrs               |    1  -   0   -  1   |    6  -   0   -  6   |                 - |
+
+*** System Integration Tests
+
+- Blake3 (missing iterator support) https://github.com/Rust-GCC/gccrs/issues/682
+- libcore SIP hasher https://github.com/Rust-GCC/gccrs/issues/1247
+
+
+** Planned Activities
+
+- Closures
+- Bugs
+ 
+** Detailed changelog
