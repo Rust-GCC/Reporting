@@ -1,0 +1,92 @@
+#+title:  Weekly report for 3rd to 10th October 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-10-10
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+We spent a lot of time this week working on some shortcomings of our type-system as well as trying to improve the macro name resolution and our pipeline overall. We also took the time to fix the early reviews that our patches received. Multiple contributors submitted PRs to improve our AST exporter, which will help a lot in the long run and make future tasks much easier!
+
+We are in the middle of October, and are still accepting hacktoberfest contributions. As pointed out last week, mentoring requests are more than welcome. Feel free to start working on one of the issues marked `good-first-pr` or to join our [[https://gcc-rust.zulipchat.com/][Zulip]] and ask for work.
+
+** Completed Activities
+
+- ast: dump TypeAlias [[https://github.com/rust-gcc/gccrs/pull/1593][PR1593]]
+- AST: more dump improvements [[https://github.com/rust-gcc/gccrs/pull/1590][PR1590]]
+- Method resolution must support multiple candidates [[https://github.com/rust-gcc/gccrs/pull/1587][PR1587]]
+- Add missing lang item mappings [[https://github.com/rust-gcc/gccrs/pull/1584][PR1584]]
+- Support type resolution on super traits on dyn objects [[https://github.com/rust-gcc/gccrs/pull/1583][PR1583]]
+- Add early name resolver [[https://github.com/rust-gcc/gccrs/pull/1580][PR1580]]
+- fix ICE on missing closing paren [[https://github.com/rust-gcc/gccrs/pull/1574][PR1574]]
+- Apply #1560 master [[https://github.com/rust-gcc/gccrs/pull/1570][PR1570]]
+- make: Inherit CXXFLAGS, guard against non g++ compilers for warnings [[https://github.com/rust-gcc/gccrs/pull/1556][PR1556]]
+- Dump module items [[https://github.com/rust-gcc/gccrs/pull/1548][PR1548]]
+
+*** Contributors this week
+
+- [[https://github.com/jdupak][Jakub Dupak]] (new contributor!)
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       175 |       180 |    +5 |
+| In Progress |        31 |        34 |    +3 |
+| Completed   |       467 |       471 |    +4 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 6803      | 6819      | +16   |
+| Failed    | -         | -         | -     |
+| XFAIL     | 52        | 52        | -     |
+| XPASS     | -         | -         | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        53 |        54 |    +1 |
+| In Progress |        14 |        16 |    +2 |
+| Completed   |       211 |       213 |    +2 |
+
+*** Milestones Progress
+
+We plan on adding more fine-grained milestones in between November and April as more themes of work will become apparent.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022  | 10th Oct 2022   | 17th Oct 2022 |
+| Intrinsics and builtins           |       15% |       15% | -     | 6th Sept 2022  | -               | 14th Nov 2022 |
+| Initial upstream patches          |       33% |       48% | +15%  | 10th Oct 2022  | -               | 15th Nov 2022 |
+| Final set of upstream patches     |        0% |        3% | +3%   | 16th Nov 2022  | -               | 30th Apr 2023 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD           |
+
+*** Risks
+
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Rust Language Changes          |            2 |                 7 |           14 | Target a specific Rustc version                |
+| Missing GCC 13 upstream window |            1 |                 6 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+** Planned Activities
+
+- Closures
+- Finish work on macro name resolution
+- Investigate inline assembly and especially the unsafe checks around it
+- Work on macro exporting
+
+** Detailed changelog
