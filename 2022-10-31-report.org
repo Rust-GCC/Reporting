@@ -8,42 +8,43 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-This week saw great improvements on a feature that had been previously unexplored: closures. For the past few weeks, Philip has been working tirelessly on handling the ~FnOnce~ trait as well as code generation for closures. This is now merged, with one issue remaining regarding variable capture. We have switched over our macro name resolution to a different logic, which should help with multiple things: macro exports/imports, proper macro resolution, and finally checks around specific macros such as ~asm!~. Our upstream patches have been fixed and split up when necessary, and are ready to being sent again as v3.
+We sent out the v3 of our patches this week, which contain the same patches as our v2 with the issues addressed in early comments fixed. There is no new content in these patches, as we would like to get an early version reviwed fully and merged before.
 
-This is the last week of October and thus the last week of Hacktoberfest. The project is still accepting PRs and mentoring requests.
+A lot of time this week was also spent on our intrinsics, and especially atomic ones. We have put together a list of the intrinsics used in ~libcore-1.49~ and are working towards implementing them all.
+Our AST Dump is also being improved greatly and cleaned up by [[https://github.com/jdupak][Jakub Dupak]], which will prove to be very helpful for finishing out macro exporting and importing.
+
+We are on track to completing the ~Initial Upstream Patches~ milestone on time, with the last remaining blocker being proper macro name resolution.
 
 ** Completed Activities
 
-- Initial support for closures [[https://github.com/rust-gcc/gccrs/pull/1608][PR1608]]
-- Improve AST Fragment class [[https://github.com/rust-gcc/gccrs/pull/1607][PR1607]]
-- [33/37] lang-specs: Rename language spec @rs -> @rust [[https://github.com/rust-gcc/gccrs/pull/1605][PR1605]]
-- Add check for recursive trait cycles [[https://github.com/rust-gcc/gccrs/pull/1602][PR1602]]
-- [25/37] rust-privacy-reporter: Add copyright header [[https://github.com/rust-gcc/gccrs/pull/1599][PR1599]]
-- [10/37] rust-cfg-parser: Add copyright header [[https://github.com/rust-gcc/gccrs/pull/1598][PR1598]]
-- ast: Module: unloaded module and inner attributes [[https://github.com/rust-gcc/gccrs/pull/1597][PR1597]]
-- Add more implementations for TARGET_RUST_OS_INFO [[https://github.com/rust-gcc/gccrs/pull/1596][PR1596]]
-- Support outer attribute handling on trait items just like normal items [[https://github.com/rust-gcc/gccrs/pull/1595][PR1595]]
-- Refactor TraitResolver to not require a visitor [[https://github.com/rust-gcc/gccrs/pull/1594][PR1594]]
-- Dump macro declarations properly [[https://github.com/rust-gcc/gccrs/pull/1549][PR1549]]
+- intrinsics: Use lambdas for wrapping_<op> intrinsics [[https://github.com/rust-gcc/gccrs/pull/1621][PR1621]]
+- Intrinsics unchecked ops [[https://github.com/rust-gcc/gccrs/pull/1620][PR1620]]
+- parser: Fix ICE in closure parsing [[https://github.com/rust-gcc/gccrs/pull/1619][PR1619]]
+- Add missing copyright headers [[https://github.com/rust-gcc/gccrs/pull/1618][PR1618]]
+- Apply #1605 on master (fix lang spec) [[https://github.com/rust-gcc/gccrs/pull/1617][PR1617]]
+- Apply 1559 master (remove system includes) [[https://github.com/rust-gcc/gccrs/pull/1616][PR1616]]
+- intrinsics: Add early implementation for atomic_store_{seqcst, relaxed, release} [[https://github.com/rust-gcc/gccrs/pull/1615][PR1615]]
+- intrinsics: Add rust_sorry wrapper for unimplemented intrinsics [[https://github.com/rust-gcc/gccrs/pull/1614][PR1614]]
+- builtins: Rename all bang macro handlers [[https://github.com/rust-gcc/gccrs/pull/1613][PR1613]]
+- Apply #1556 on master [[https://github.com/rust-gcc/gccrs/pull/1585][PR1585]]
 
 *** Contributors this week
 
 - [[https://github.com/jdupak][Jakub Dupak]]
-- [[https://github.com/ibuclaw][Iain Buclaw]]
 
 *** Overall Task Status
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |       180 |       182 |    +2 |
-| In Progress |        34 |        33 |    -1 |
-| Completed   |       471 |       477 |    +6 |
+| TODO        |       182 |       180 |    -2 |
+| In Progress |        33 |        31 |    -2 |
+| Completed   |       477 |       482 |    +5 |
 
 *** Test Cases
 
 | TestCases | Last Week | This Week | Delta |
 |-----------+-----------+-----------+-------|
-| Passing   | 6819      | 6857      | +38   |
+| Passing   | 6857      | 6941      | +84   |
 | Failed    | -         | -         | -     |
 | XFAIL     | 52        | 52        | -     |
 | XPASS     | -         | -         | -     |
@@ -52,15 +53,16 @@ This is the last week of October and thus the last week of Hacktoberfest. The pr
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |        54 |        56 |    +2 |
-| In Progress |        16 |        15 |    -1 |
-| Completed   |       213 |       214 |    +1 |
+| TODO        |        56 |        56 |     - |
+| In Progress |        15 |        16 |    +1 |
+| Completed   |       214 |       214 |     - |
 
 *** Milestones Progress
 
 We plan on adding more fine-grained milestones in between November and April as more themes of work will become apparent.
 
-We've also updated our "Initial upstream patches" deadline following one email on the GCC mailing list, stating that patch submissions needed to be posted for review before the 13th of November.
+Note that the intrinsics milestone percentage on github is not representative: It shows a 66% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
 
 | Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target        |
 |-----------------------------------+-----------+-----------+-------+----------------+-----------------+---------------|
@@ -72,9 +74,9 @@ We've also updated our "Initial upstream patches" deadline following one email o
 | Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
 | Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
 | Const Generics                    |      100% |      100% | -     | 30th May 2022  | 10th Oct 2022   | 17th Oct 2022 |
-| Intrinsics and builtins           |       15% |       15% | -     | 6th Sept 2022  | -               | 14th Nov 2022 |
-| Initial upstream patches          |       48% |       71% | +23%  | 10th Oct 2022  | -               | 13th Nov 2022 |
-| Final set of upstream patches     |        3% |        6% | +3%   | 16th Nov 2022  | -               | 30th Apr 2023 |
+| Intrinsics and builtins           |       15% |       18% | +3%   | 6th Sept 2022  | -               | 14th Nov 2022 |
+| Initial upstream patches          |       71% |       84% | +13%  | 10th Oct 2022  | -               | 13th Nov 2022 |
+| Final set of upstream patches     |        6% |        6% | -     | 16th Nov 2022  | -               | 30th Apr 2023 |
 | Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD           |
 
 *** Risks
@@ -85,9 +87,8 @@ We've also updated our "Initial upstream patches" deadline following one email o
 
 ** Planned Activities
 
-- Closures
-- Finish work on macro name resolution
-- Investigate inline assembly and especially the unsafe checks around it
+- Finish work on builtin macro name resolution and eager expansion
 - Work on macro exporting
+- Investigate inline assembly and especially the unsafe checks around it
 
 ** Detailed changelog
