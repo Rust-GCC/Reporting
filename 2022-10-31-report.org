@@ -1,0 +1,94 @@
+#+title:  Weekly report for 17th to 24th October 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-10-24
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+We sent out the v3 of our patches this week, which contain the same patches as our v2 with the issues addressed in early comments fixed. There is no new content in these patches, as we would like to get an early version reviwed fully and merged before.
+
+A lot of time this week was also spent on our intrinsics, and especially atomic ones. We have put together a list of the intrinsics used in ~libcore-1.49~ and are working towards implementing them all.
+Our AST Dump is also being improved greatly and cleaned up by [[https://github.com/jdupak][Jakub Dupak]], which will prove to be very helpful for finishing out macro exporting and importing.
+
+We are on track to completing the ~Initial Upstream Patches~ milestone on time, with the last remaining blocker being proper macro name resolution.
+
+** Completed Activities
+
+- intrinsics: Use lambdas for wrapping_<op> intrinsics [[https://github.com/rust-gcc/gccrs/pull/1621][PR1621]]
+- Intrinsics unchecked ops [[https://github.com/rust-gcc/gccrs/pull/1620][PR1620]]
+- parser: Fix ICE in closure parsing [[https://github.com/rust-gcc/gccrs/pull/1619][PR1619]]
+- Add missing copyright headers [[https://github.com/rust-gcc/gccrs/pull/1618][PR1618]]
+- Apply #1605 on master (fix lang spec) [[https://github.com/rust-gcc/gccrs/pull/1617][PR1617]]
+- Apply 1559 master (remove system includes) [[https://github.com/rust-gcc/gccrs/pull/1616][PR1616]]
+- intrinsics: Add early implementation for atomic_store_{seqcst, relaxed, release} [[https://github.com/rust-gcc/gccrs/pull/1615][PR1615]]
+- intrinsics: Add rust_sorry wrapper for unimplemented intrinsics [[https://github.com/rust-gcc/gccrs/pull/1614][PR1614]]
+- builtins: Rename all bang macro handlers [[https://github.com/rust-gcc/gccrs/pull/1613][PR1613]]
+- Apply #1556 on master [[https://github.com/rust-gcc/gccrs/pull/1585][PR1585]]
+
+*** Contributors this week
+
+- [[https://github.com/jdupak][Jakub Dupak]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       182 |       180 |    -2 |
+| In Progress |        33 |        31 |    -2 |
+| Completed   |       477 |       482 |    +5 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 6857      | 6941      | +84   |
+| Failed    | -         | -         | -     |
+| XFAIL     | 52        | 52        | -     |
+| XPASS     | -         | -         | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        56 |        56 |     - |
+| In Progress |        15 |        16 |    +1 |
+| Completed   |       214 |       214 |     - |
+
+*** Milestones Progress
+
+We plan on adding more fine-grained milestones in between November and April as more themes of work will become apparent.
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 66% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022  | 10th Oct 2022   | 17th Oct 2022 |
+| Intrinsics and builtins           |       15% |       18% | +3%   | 6th Sept 2022  | -               | 14th Nov 2022 |
+| Initial upstream patches          |       71% |       84% | +13%  | 10th Oct 2022  | -               | 13th Nov 2022 |
+| Final set of upstream patches     |        6% |        6% | -     | 16th Nov 2022  | -               | 30th Apr 2023 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD           |
+
+*** Risks
+
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Missing GCC 13 upstream window |            2 |                 3 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+** Planned Activities
+
+- Finish work on builtin macro name resolution and eager expansion
+- Work on macro exporting
+- Investigate inline assembly and especially the unsafe checks around it
+
+** Detailed changelog
