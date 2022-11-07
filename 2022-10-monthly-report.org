@@ -1,6 +1,6 @@
-#+title:  Monthly Report for September 2022
+#+title:  Monthly Report for October 2022
 #+author: Philip Herron and Arthur Cohen
-#+date:   2022-10-03
+#+date:   2022-11-07
 
 ** Overview
 
@@ -117,6 +117,7 @@ Thus the percentage is computed using the sum of issues and tracked items done d
 | Initial upstream patches          |        0% |       83% | +83%  | 10th Oct 2022  | -               | 13th Nov 2022 |
 | Final set of upstream patches     |        0% |        6% | +6%   | 16th Nov 2022  | -               | 30th Apr 2023 |
 | Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD            | -               | TBD           |
 
 
 *** Risks
@@ -142,6 +143,7 @@ Thus the percentage is computed using the sum of issues and tracked items done d
 - Finish closure support
 - Finish builtin macro name resolution support
 - Implement remaining intrinsics
+- Finish patch upstreaming
  
 ** Detailed changelog
 
