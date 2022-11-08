@@ -1,0 +1,390 @@
+#+title:  Monthly Report for October 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-11-07
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This month saw a jump in productivity as we went back to a more regular schedule, after presenting the project's progress at several in-person conferences in September.
+
+We made great strides on multiple parts of the compiler, with Philip spending a lot of time improving our type-system and working on geting closures to work, while Arthur worked on the early name resolving of macros and on handling more intrinsics.
+
+We had also received a lot of review comments on our v2 version of the upstream patches, which consumed a lot of our time. We now have a workflow in place which should help address subsequent reviewsl We now have a workflow in place which should help address subsequent reviews.
+The v3 of the patches, which simply contains these fixes but no new content, has been sent. More patches will follow to update the compiler to its current state.
+
+The compilation of libcore is currently blocked by two issues: Macro importing and exporting, as well as closures. We are working hard on getting these features in the compiler as soon as possible.
+
+We are planning to spend time on these two features as well as look at the ~#[derive]~ builtin macros in order to get closer and closer to compiling ~libcore 1.49~ properly.
+
+** Completed Activities
+
+- AST: dump structs, unions and enums [[https://github.com/rust-gcc/gccrs/pull/1572][PR1572]]
+- Implement data prefetch intrinsics [[https://github.com/rust-gcc/gccrs/pull/1565][PR1565]]
+- builtins: Move implementation into source file [[https://github.com/rust-gcc/gccrs/pull/1564][PR1564]]
+- ast: dump assignment and if expressions [[https://github.com/rust-gcc/gccrs/pull/1563][PR1563]]
+- Support looking up super trait items during path resolution [[https://github.com/rust-gcc/gccrs/pull/1562][PR1562]]
+- Fix -Wunused using `rust-lang.cc` hack [[https://github.com/rust-gcc/gccrs/pull/1560][PR1560]]
+- Fix include structure [[https://github.com/rust-gcc/gccrs/pull/1559][PR1559]]
+- testing: try loop in const function [[https://github.com/rust-gcc/gccrs/pull/1554][PR1554]]
+- Dump item visibility [[https://github.com/rust-gcc/gccrs/pull/1547][PR1547]]
+- Reintroduce targetrustm hooks without the maze of macro definitions in target headers [[https://github.com/rust-gcc/gccrs/pull/1543][PR1543]]
+- ast: dump TypeAlias [[https://github.com/rust-gcc/gccrs/pull/1593][PR1593]]
+- AST: more dump improvements [[https://github.com/rust-gcc/gccrs/pull/1590][PR1590]]
+- Method resolution must support multiple candidates [[https://github.com/rust-gcc/gccrs/pull/1587][PR1587]]
+- Add missing lang item mappings [[https://github.com/rust-gcc/gccrs/pull/1584][PR1584]]
+- Support type resolution on super traits on dyn objects [[https://github.com/rust-gcc/gccrs/pull/1583][PR1583]]
+- Add early name resolver [[https://github.com/rust-gcc/gccrs/pull/1580][PR1580]]
+- fix ICE on missing closing paren [[https://github.com/rust-gcc/gccrs/pull/1574][PR1574]]
+- Apply #1560 master [[https://github.com/rust-gcc/gccrs/pull/1570][PR1570]]
+- make: Inherit CXXFLAGS, guard against non g++ compilers for warnings [[https://github.com/rust-gcc/gccrs/pull/1556][PR1556]]
+- Dump module items [[https://github.com/rust-gcc/gccrs/pull/1548][PR1548]]
+- Initial support for closures [[https://github.com/rust-gcc/gccrs/pull/1608][PR1608]]
+- Improve AST Fragment class [[https://github.com/rust-gcc/gccrs/pull/1607][PR1607]]
+- [33/37] lang-specs: Rename language spec @rs -> @rust [[https://github.com/rust-gcc/gccrs/pull/1605][PR1605]]
+- Add check for recursive trait cycles [[https://github.com/rust-gcc/gccrs/pull/1602][PR1602]]
+- [25/37] rust-privacy-reporter: Add copyright header [[https://github.com/rust-gcc/gccrs/pull/1599][PR1599]]
+- [10/37] rust-cfg-parser: Add copyright header [[https://github.com/rust-gcc/gccrs/pull/1598][PR1598]]
+- ast: Module: unloaded module and inner attributes [[https://github.com/rust-gcc/gccrs/pull/1597][PR1597]]
+- Add more implementations for TARGET_RUST_OS_INFO [[https://github.com/rust-gcc/gccrs/pull/1596][PR1596]]
+- Support outer attribute handling on trait items just like normal items [[https://github.com/rust-gcc/gccrs/pull/1595][PR1595]]
+- Refactor TraitResolver to not require a visitor [[https://github.com/rust-gcc/gccrs/pull/1594][PR1594]]
+- Dump macro declarations properly [[https://github.com/rust-gcc/gccrs/pull/1549][PR1549]]
+- intrinsics: Use lambdas for wrapping_<op> intrinsics [[https://github.com/rust-gcc/gccrs/pull/1621][PR1621]]
+- Intrinsics unchecked ops [[https://github.com/rust-gcc/gccrs/pull/1620][PR1620]]
+- parser: Fix ICE in closure parsing [[https://github.com/rust-gcc/gccrs/pull/1619][PR1619]]
+- Add missing copyright headers [[https://github.com/rust-gcc/gccrs/pull/1618][PR1618]]
+- Apply #1605 on master (fix lang spec) [[https://github.com/rust-gcc/gccrs/pull/1617][PR1617]]
+- Apply 1559 master (remove system includes) [[https://github.com/rust-gcc/gccrs/pull/1616][PR1616]]
+- intrinsics: Add early implementation for atomic_store_{seqcst, relaxed, release} [[https://github.com/rust-gcc/gccrs/pull/1615][PR1615]]
+- intrinsics: Add rust_sorry wrapper for unimplemented intrinsics [[https://github.com/rust-gcc/gccrs/pull/1614][PR1614]]
+- builtins: Rename all bang macro handlers [[https://github.com/rust-gcc/gccrs/pull/1613][PR1613]]
+- Apply #1556 on master [[https://github.com/rust-gcc/gccrs/pull/1585][PR1585]]
+
+*** Contributors this month
+
+- [[https://github.com/ibuclaw][Iain Buclaw]]
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/abbasfaisal][Faisal Abas]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/jdupak][Jakub Dupak]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        168 |        180 |   +12 |
+| In Progress |         28 |         31 |    +3 |
+| Completed   |        466 |        482 |   +16 |
+
+*** Test Case
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 6794       | 6948       | +154  |
+| Failed    | -          | -          | -     |
+| XFAIL     | 52         | 52         | -     |
+| XPASS     | -          | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         51 |         56 |    +5 |
+| In Progress |         14 |         16 |    +2 |
+| Completed   |        210 |        214 |    +4 |
+
+*** Milestones Progress
+
+We have added milestones to better reflect the GCC merging cycle. More milestones will be put together as more themes of work are discovered along the year. We have closed out the ~Const Generics~ milestone, as it is in a sufficiently complete state for ~libcore-1.49~ compilation. Nonetheless, some const generics features are missing, and have been added to a separate ~Const Generics 2~ project.
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 66% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |       76% |      100% | +24%  | 30th May 2022  | 10th Oct 2022   | 17th Oct 2022 |
+| Intrinsics and builtins           |       15% |       18% | +3%   | 6th Sept 2022  | -               | 14th Nov 2022 |
+| Initial upstream patches          |        0% |       83% | +83%  | 10th Oct 2022  | -               | 13th Nov 2022 |
+| Final set of upstream patches     |        0% |        6% | +6%   | 16th Nov 2022  | -               | 30th Apr 2023 |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD            | -               | TBD           |
+
+
+*** Risks
+
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Missing GCC 13 upstream window |            2 |                 3 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+*** Testing project
+
+| Testsuite                     | Compiler            | Last month | This month | Success delta |
+|-------------------------------+---------------------+------------+------------+---------------|
+| rustc testsuite               | gccrs -fsyntax-only |     82.1%  |      82.2% |         +0.1% |
+| gccrs testsuite               | rustc stable        |     64.5%  |      64.2% |         -0.1% |
+| rustc testsuite passing tests | gccrs               |     12.6%  |      12.3% |         -0.3% |
+| rustc testsuite (no_std)      | gccrs               |     28.0%  |      27.6% |         -0.4% |
+| rustc testsuite (no_core)     | gccrs               |     83.3%  |      33.3% |        -50.0% |  
+| blake3                        | gccrs               |     25.0%  |      25.5% |             - |
+| libcore                       | gccrs               |        0%  |         0% |             - |
+
+** Planned Activities
+
+- Finish closure support
+- Finish builtin macro name resolution support
+- Implement remaining intrinsics
+- Finish patch upstreaming
+ 
+** Detailed changelog
+
+*** Macro expansion and name resolution
+
+If you are not familiar with the concept of name resolution, I would recommend starting by reading parts of the macro expansion and name resolution chapters of the Rust compiler development guide:
+
+1. [[https://rustc-dev-guide.rust-lang.org/name-resolution.html][Name Resolution]]
+2. [[https://rustc-dev-guide.rust-lang.org/macro-expansion.html#name-resolution][Macro Name Resolution]]
+
+Macros needing to be name resolved is one of the reasons why name resolution happens at the AST level: Because macros expand to new fragments of AST, and need to be expanded before further compiler passes, we need to be able to refer a macro invocation to its definition.
+
+This includes resolving "simple" examples such as the following:
+
+#+BEGIN_SRC rust
+macro_rules! a { () => () };
+
+a!();
+
+macro_rules! a { (now_with_more_tokens) => () };
+
+a!(now_with_more_tokens);
+#+END_SRC
+
+or more complex ones involving imports:
+
+#+BEGIN_SRC rust
+use lazy_static::lazy_static as the_famous_lazy_macro;
+
+the_famous_lazy_macro! {
+    static ref A: i32 = 15;
+}
+#+END_SRC
+
+However, it does not make sense to perform a "full" name resolution at this point: macro expansion will generate new tokens, which could then benefit from a later resolution. Furthermore, the macro lexical scope is quite simple compared to the type scope of name scope and has slightly different rules.
+This explains why name resolution is "split in two" in ~rustc~: One part takes care of resolving macro invocations and imports, and the other takes care of resolving types, variables, function calls...
+
+From this point onward, we will refer to the ~Early Name Resolution~ as the pass responsible for resolving imports and macro invocations, and to ~Name Resolution~ as the later pass.
+
+Up until the month of October, our macro expander performed macro name resolution whenever a macro invocation required expansion. This worked fine in practice, even for complex cases, but made it difficult to expand with proper name resolution rules or imports.
+Adding functionality such as ~#[macro_export]~ and ~#[macro_import]~ on top of it would prove to be too difficult, so we chose to split up the name resolution pass away from the expansion pass.
+
+**** A new expansion system
+
+To take care of macro and import name resolution, we have implemented a new ~EarlyNameResolver~ visitor which takes care of tying a macro invocation to its rules definition. The previous system worked recursively and expanded as many macros as it could in one place, but it was difficult to integrate the ~EarlyNameResolver~ within that system, which was starting to be hard to maintain and very complex.
+
+We have thus switched over to a fixed-point algorithm for resolving and expanding macros: we run the early name resolver, run the macro expander, check if anything has changed, and do it again.
+
+Let's look at an example of how the two systems differ, given this piece of code, and assuming that all these macro invocations expand to their input.
+
+#+BEGIN_SRC rust
+fn main() {
+    foo!(bar!(baz!(let v = 15)));
+
+    a!(b!(a_fn_call()));
+}
+#+END_SRC
+
+1. Previous system
+
+#+BEGIN_SRC rust
+fn main() {
+    // recursively expand this invocation for as long as possible
+    foo!(bar!(baz!(let v = 15)));
+
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    bar!(baz!(let v = 15));
+
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    baz!(let v = 15);
+
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    let v = 15;
+
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    let v = 15;
+
+    // now this invocation
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    let v = 15;
+
+    b!(a_fn_call());
+}
+
+// into...
+
+
+fn main() {
+    let v = 15;
+
+    a_fn_call();
+}
+
+// done!
+#+END_SRC
+
+2. Fixed-point fashion
+
+#+BEGIN_SRC rust
+fn main() {
+    // expand each invocation *once* as we go through the crate
+    
+    foo!(bar!(baz!(let v = 15)));
+
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    bar!(baz!(let v = 15));
+
+    b!(a_fn_call());
+}
+
+// into...
+
+fn main() {
+    baz!(let v = 15);
+
+    a_fn_call();
+}
+
+// into...
+
+fn main() {
+    let v = 15;
+
+    a_fn_call();
+}
+
+// done!
+#+END_SRC
+
+The code responsible for performing this dance looks a bit like the following.
+
+#+BEGIN_SRC c++
+auto enr = EarlyNameResolver();
+auto expander = MacroExpander();
+
+do {
+    enr.go(crate);
+    expander.go(crate);
+} while (expander.has_changed() && !recursion_limit_reached());
+#+END_SRC
+
+It's a really simple and robust system, which helps clean up the code a lot.
+
+**** The problem
+
+Sadly, this system is not without flaw. As you may know, not all Rust macros can be expanded lazily!
+
+#+BEGIN_SRC rust
+macro_rules! gives_literal { () => ("literal!") }
+
+macro_rules! fake_concat {
+    ($a:literal, $b:literal) => { concat!($a, $b); }
+}
+
+fn main() {
+    let a = concat!("a ", gives_literal!()); // builtin macro, this is fine
+    let b = fake_concat!("a ", gives_literal!()); // error!
+}
+#+END_SRC
+
+...and this is the one remaining feature that the fixed-point system has to be able to deal with before we integrate it into the compiler, hopefully soon!
+
+*** Mapping intrinsics to GCC builtins
+
+~gccrs~ differs between two kinds of intrinsics:
+
+1. Those who map directly to GCC builtins, such as ~sqrtf32~ which can be replaced with a call to ~__builtin_sqrtf~
+2. Those who require the creation of a function block and which might take generic arguments
+
+A nice and short example is the handling of the ~copy_nonoverlapping~ intrinsic, whose declaration is as follows:
+
+#+BEGIN_SRC rust
+pub fn copy_nonoverlapping<T>(src: *const T, dst: *mut T, count: usize);
+#+END_SRC
+
+[[https://doc.rust-lang.org/core/intrinsics/fn.copy_nonoverlapping.html][The documentation for that intrinsic]] informs us that it is equivalent to a ~memcpy~ in C, with the argument order swapped. Furthermore, the ~count~ parameter refers to the number of values to copy, not the amount of bytes. We can thus make use of GCC's ~__builtin_memcpy~ to create the following function block:
+
+#+BEGIN_SRC rust
+pub fn copy_nonoverlapping<T>(src: *const T, dst: *mut T, count: usize) {
+    __builtin_memcpy(dst, src, count * size_of::<T>());
+}
+#+END_SRC
+
+We do similar things for a lot of Rust intrinsics and have recently encountered some fun limitations.
+
+**** data prefetch intrinsics
+
+Two data prefetch intrinsics exist in Rust, ~core::intrinsics::prefetch_read_data~ and ~core::intrinsics::prefetch_write_data~. These functions are generic over a type parameter ~T~, and take as argument a pointer to that type ~T~. An extra argument is the ~locality~, which refers to a value between 0 and 3 indicating how local the data should be kept cache-wise.
+
+This maps quite nicely to GCC's ~__builtin_prefetch~, whose "declaration" would look like the following:
+
+#+BEGIN_SRC c
+void __builtin_prefetch(const void *addr, int rw, int locality);
+#+END_SRC
+
+The function blocks seem quite easy to create:
+
+#+BEGIN_SRC rust
+pub fn prefetch_read_data<T>(data: *const T, locality: i32) {
+    __builtin_prefetch(data, 0 /* read */, locality);
+}
+
+pub fn prefetch_write_data<T>(data: *const T, locality: i32) {
+    __builtin_prefetch(data, 1 /* write */, locality);
+}
+#+END_SRC
+
+but an error arises when trying to compile them. For its locality argument, ~__builtin_prefetch~ expects a compile time constant, which it cannot reliably get from the function's argument. This causes a verification pass in our gimplification (a lowering pass in GCC's middle-end) to throw an error and fail the compilation.
+
+Interestingly, a similar limitation is present with ~rustc~ and ~LLVM~, [[https://play.rust-lang.org/?version=nightly&mode=debug&edition=2021&gist=8012b1bf794c73b4038f62d4922179aa][but will appear further down the compilation pipeline]].
+
+This is no-doubt due to our lack of proper constant folding: GCC is able to tell that a call to ~prefetch_read_data(addr, 3)~ is valid and contains a compile-time constant, but we simply do not yet give it the possiblity. Thanks to this year GSOC's student [[https://github.com/abbasfaisal][Faisal Abbas]], we should be able to hook into that constant evaluator and try to extract a constant value if possible.
+
+If intrinsics piqued your interest, feel free to come on our Zulip channel and discuss the work left to be done. There are plenty to implement and we'd love the extra help!
