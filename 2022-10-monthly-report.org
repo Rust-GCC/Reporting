@@ -336,19 +336,55 @@ fn main() {
 
 ...and this is the one remaining feature that the fixed-point system has to be able to deal with before we integrate it into the compiler, hopefully soon!
 
-*** Intrinsics and their problems
+*** Mapping intrinsics to GCC builtins
 
-1. How do we deal with generic intrinsics
-2. Example of `copy_nonoverlapping` which is quite small and easy to understand
+~gccrs~ differs between two kinds of intrinsics:
+
+1. Those who map directly to GCC builtins, such as ~sqrtf32~ which can be replaced with a call to ~__builtin_sqrtf~
+2. Those who require the creation of a function block and which might take generic arguments
+
+A nice and short example is the handling of the ~copy_nonoverlapping~ intrinsic, whose declaration is as follows:
+
+#+BEGIN_SRC rust
+pub fn copy_nonoverlapping<T>(src: *const T, dst: *mut T, count: usize);
+#+END_SRC
+
+[[https://doc.rust-lang.org/core/intrinsics/fn.copy_nonoverlapping.html][The documentation for that intrinsic]] informs us that it is equivalent to a ~memcpy~ in C, with the argument order swapped. Furthermore, the ~count~ parameter refers to the number of values to copy, not the amount of bytes. We can thus make use of GCC's ~__builtin_memcpy~ to create the following function block:
+
+#+BEGIN_SRC rust
+pub fn copy_nonoverlapping<T>(src: *const T, dst: *mut T, count: usize) {
+    __builtin_memcpy(dst, src, count * size_of::<T>());
+}
+#+END_SRC
+
+We do similar things for a lot of Rust intrinsics and have recently encountered some fun limitations.
 
 **** data prefetch intrinsics
 
-1. Only wants constants! But rustc allows anything! But LLVM really doesn't! Playground links
-2. Solutions: constant folding trial? switch/match statement?
+Two data prefetch intrinsics exist in Rust, ~core::intrinsics::prefetch_read_data~ and ~core::intrinsics::prefetch_write_data~. These functions are generic over a type parameter ~T~, and take as argument a pointer to that type ~T~. An extra argument is the ~locality~, which refers to a value between 0 and 3 indicating how local the data should be kept cache-wise.
 
-**** unsigned atomic intrinsics
+This maps quite nicely to GCC's ~__builtin_prefetch~, whose "declaration" would look like the following:
 
-1. Again, generic intrinsics from libcore
-2. But GCC's atomic intrinsics only accept unsigned values! Unless I'm doing it wrong :)
+#+BEGIN_SRC c
+void __builtin_prefetch(const void *addr, int rw, int locality);
+#+END_SRC
+
+The function blocks seem quite easy to create:
+
+#+BEGIN_SRC rust
+pub fn prefetch_read_data<T>(data: *const T, locality: i32) {
+    __builtin_prefetch(data, 0 /* read */, locality);
+}
+
+pub fn prefetch_write_data<T>(data: *const T, locality: i32) {
+    __builtin_prefetch(data, 1 /* write */, locality);
+}
+#+END_SRC
+
+but an error arises when trying to compile them. For its locality argument, ~__builtin_prefetch~ expects a compile time constant, which it cannot reliably get from the function's argument. This causes a verification pass in our gimplification (a lowering pass in GCC's middle-end) to throw an error and fail the compilation.
+
+Interestingly, a similar limitation is present with ~rustc~ and ~LLVM~, [[https://play.rust-lang.org/?version=nightly&mode=debug&edition=2021&gist=8012b1bf794c73b4038f62d4922179aa][but will appear further down the compilation pipeline]].
+
+This is no-doubt due to our lack of proper constant folding: GCC is able to tell that a call to ~prefetch_read_data(addr, 3)~ is valid and contains a compile-time constant, but we simply do not yet give it the possiblity. Thanks to this year GSOC's student [[https://github.com/abbasfaisal][Faisal Abbas]], we should be able to hook into that constant evaluator and try to extract a constant value if possible.
 
 If intrinsics piqued your interest, feel free to come on our Zulip channel and discuss the work left to be done! There are plenty to implement and we'd love the extra help
