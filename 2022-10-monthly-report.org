@@ -149,8 +149,206 @@ Thus the percentage is computed using the sum of issues and tracked items done d
 
 *** Macro expansion and name resolution
 
-**** The new expansion system
+If you are not familiar with the concept of name resolution, I would recommend starting by reading parts of the macro expansion and name resolution chapters of the Rust compiler development guide:
 
-**** Builtin macro expansion
+1. [[https://rustc-dev-guide.rust-lang.org/name-resolution.html][Name Resolution]]
+2. [[https://rustc-dev-guide.rust-lang.org/macro-expansion.html#name-resolution][Macro Name Resolution]]
+
+Macros needing to be name resolved is one of the reasons why name resolution happens at the AST level: Because macros expand to new fragments of AST, and need to be expanded before further compiler passes, we need to be able to refer a macro invocation to its definition.
+
+This includes resolving "simple" examples such as the following:
+
+#+BEGIN_SRC rust
+macro_rules! a { () => () };
+
+a!();
+
+macro_rules! a { (now_with_more_tokens) => () };
+
+a!(now_with_more_tokens);
+#+END_SRC
+
+or more complex ones involving imports:
+
+#+BEGIN_SRC rust
+use lazy_static::lazy_static as the_famous_lazy_macro;
+
+the_famous_lazy_macro! {
+    static ref A: i32 = 15;
+}
+#+END_SRC
+
+However, it does not make sense to perform a "full" name resolution at this point: macro expansion will generate new tokens, which could then benefit from a later resolution. Furthermore, the macro lexical scope is quite simple compared to the type scope of name scope and has slightly different rules.
+This explains why name resolution is "split in two" in ~rustc~: One part takes care of resolving macro invocations and imports, and the other takes care of resolving types, variables, function calls...
+
+From this point onward, we will refer to the ~Early Name Resolution~ as the pass responsible for resolving imports and macro invocations, and to ~Name Resolution~ as the later pass.
+
+Up until the month of October, our macro expander performed macro name resolution whenever a macro invocation required expansion. This worked fine in practice, even for complex cases, but made it difficult to expand with proper name resolution rules or imports.
+Adding functionality such as ~#[macro_export]~ and ~#[macro_import]~ on top of it would prove to be too difficult, so we chose to split up the name resolution pass away from the expansion pass.
+
+**** A new expansion system
+
+To take care of macro and import name resolution, we have implemented a new ~EarlyNameResolver~ visitor which takes care of tying a macro invocation to its rules definition. The previous system worked recursively and expanded as many macros as it could in one place, but it was difficult to integrate the ~EarlyNameResolver~ within that system, which was starting to be hard to maintain and very complex.
+
+We have thus switched over to a fixed-point algorithm for resolving and expanding macros: we run the early name resolver, run the macro expander, check if anything has changed, and do it again.
+
+Let's look at an example of how the two systems differ, given this piece of code, and assuming that all these macro invocations expand to their input.
+
+#+BEGIN_SRC rust
+fn main() {
+    foo!(bar!(baz!(let v = 15)));
+
+    a!(b!(a_fn_call()));
+}
+#+END_SRC
+
+1. Previous system
+
+#+BEGIN_SRC rust
+fn main() {
+    // recursively expand this invocation for as long as possible
+    foo!(bar!(baz!(let v = 15)));
+
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    bar!(baz!(let v = 15));
+
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    baz!(let v = 15);
+
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    let v = 15;
+
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    let v = 15;
+
+    // now this invocation
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    let v = 15;
+
+    b!(a_fn_call());
+}
+
+// into...
+
+
+fn main() {
+    let v = 15;
+
+    a_fn_call();
+}
+
+// done!
+#+END_SRC
+
+2. Fixed-point fashion
+
+#+BEGIN_SRC rust
+fn main() {
+    // expand each invocation *once* as we go through the crate
+    
+    foo!(bar!(baz!(let v = 15)));
+
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    bar!(baz!(let v = 15));
+
+    b!(a_fn_call());
+}
+
+// into...
+
+fn main() {
+    baz!(let v = 15);
+
+    a_fn_call();
+}
+
+// into...
+
+fn main() {
+    let v = 15;
+
+    a_fn_call();
+}
+
+// done!
+#+END_SRC
+
+The code responsible for performing this dance looks a bit like the following.
+
+#+BEGIN_SRC c++
+auto enr = EarlyNameResolver();
+auto expander = MacroExpander();
+
+do {
+    enr.go(crate);
+    expander.go(crate);
+} while (expander.has_changed() && !recursion_limit_reached());
+#+END_SRC
+
+It's a really simple and robust system, which helps clean up the code a lot.
+
+**** The problem
+
+Sadly, this system is not without flaw. As you may know, not all Rust macros can be expanded lazily!
+
+#+BEGIN_SRC rust
+macro_rules! gives_literal { () => ("literal!") }
+
+macro_rules! fake_concat {
+    ($a:literal, $b:literal) => { concat!($a, $b); }
+}
+
+fn main() {
+    let a = concat!("a ", gives_literal!()); // builtin macro, this is fine
+    let b = fake_concat!("a ", gives_literal!()); // error!
+}
+#+END_SRC
+
+...and this is the one remaining feature that the fixed-point system has to be able to deal with before we integrate it into the compiler, hopefully soon!
 
 *** Intrinsics and their problems
+
+1. How do we deal with generic intrinsics
+2. Example of `copy_nonoverlapping` which is quite small and easy to understand
+
+**** data prefetch intrinsics
+
+1. Only wants constants! But rustc allows anything! But LLVM really doesn't! Playground links
+2. Solutions: constant folding trial? switch/match statement?
+
+**** unsigned atomic intrinsics
+
+1. Again, generic intrinsics from libcore
+2. But GCC's atomic intrinsics only accept unsigned values! Unless I'm doing it wrong :)
+
+If intrinsics piqued your interest, feel free to come on our Zulip channel and discuss the work left to be done! There are plenty to implement and we'd love the extra help
