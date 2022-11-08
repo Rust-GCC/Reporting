@@ -8,7 +8,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-This month saw a jump in productivity as we went back to a more regular schedule, after being away for a while in September.
+This month saw a jump in productivity as we went back to a more regular schedule, after presenting the project's progress at several in-person conferences in September.
 
 We made great strides on multiple parts of the compiler, with Philip spending a lot of time improving our type-system and working on geting closures to work, while Arthur worked on the early name resolving of macros and on handling more intrinsics.
 
@@ -387,4 +387,4 @@ Interestingly, a similar limitation is present with ~rustc~ and ~LLVM~, [[https:
 
 This is no-doubt due to our lack of proper constant folding: GCC is able to tell that a call to ~prefetch_read_data(addr, 3)~ is valid and contains a compile-time constant, but we simply do not yet give it the possiblity. Thanks to this year GSOC's student [[https://github.com/abbasfaisal][Faisal Abbas]], we should be able to hook into that constant evaluator and try to extract a constant value if possible.
 
-If intrinsics piqued your interest, feel free to come on our Zulip channel and discuss the work left to be done! There are plenty to implement and we'd love the extra help
+If intrinsics piqued your interest, feel free to come on our Zulip channel and discuss the work left to be done. There are plenty to implement and we'd love the extra help!
