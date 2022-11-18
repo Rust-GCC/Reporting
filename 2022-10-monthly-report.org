@@ -305,7 +305,7 @@ fn main() {
 
 The code responsible for performing this dance looks a bit like the following.
 
-#+BEGIN_SRC c++
+#+BEGIN_SRC cpp
 auto enr = EarlyNameResolver();
 auto expander = MacroExpander();
 
