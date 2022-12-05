@@ -10,7 +10,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 Most of the work this month was focused on fixing the reviews we received on the patches. We spent quite a lot of time organizing them differently, making the fixes, and then applying those fixes to the proper patches. The v4 of the patchset will be sent on the mailing list soon.
 
-The compilation of libcore is still blocked by the same two issues: Macro importing and exporting, as well as closures. With the patchwork, we are finding very little time to add new features to the compiler but will get back to it as soon as possible.
+The compilation of libcore is still blocked by the same two issues: Macro importing and exporting, as well as closures. With the work on patches, we are finding very little time to add new features to the compiler but will get back to it as soon as possible.
 
 We are still planning to complete these two issues as well as look at the ~#[derive]~ builtin macros.
 
