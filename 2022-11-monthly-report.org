@@ -16,11 +16,13 @@ We are still planning to complete these two issues as well as look at the ~#[der
 
 We are also preparing abstracts in the hope of giving two talks at [[https://fosdem.org/2023/][FOSDEM]] in February. You should also expect a blog-post from us on the [[https://foundation.rust-lang.org/][Rust Foundation's website]] in the coming weeks.
 
+As a side-note, Arthur will be on vacation the second half of December, starting on the 19th.
+
 *** Community call
 
 We will be having our monthly community call on the 12th of December at 10h00 UTC.
 
-- Date/Time: 12th December 2022 at: 10h00 UTC Mon, Mon, Dec 12 2022, 11:00
+- Date/Time: 12th December 2022 at: 10h00 UTC
 - Mailing list: https://gcc.gnu.org/mailman/listinfo/gcc-rust
 - Zulip: https://gcc-rust.zulipchat.com/
 - IRC: irc.oftc.net #gccrust
@@ -70,7 +72,7 @@ You can subscribe to our newly-created Google calendar to get updates and the da
 - [[https://github.com/jdupak][Jakub Dupak]]
 - [[https://github.com/tamaroning][tamaron]]
 - [[https://github.com/dme2][Dave Evans]]
-- [[https://github.com/tschwinge][Thomas Schwinge]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
 
 *** Overall Task Status
 
@@ -114,13 +116,13 @@ Thus the percentage is computed using the sum of issues and tracked items done d
 | Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
 | Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
 | Const Generics                    |      100% |      100% | -     | 30th May 2022  | 10th Oct 2022   | 17th Oct 2022 |
-| Intrinsics and builtins           |       18% |       18% | -     | 6th Sept 2022  | -               | 14th Nov 2022 |
 | Initial upstream patches          |       83% |      100% | +17%  | 10th Oct 2022  | 13th Nov 2022   | 13th Nov 2022 |
 | Upstream initial patchset         |        0% |       78% | +78%  | 13th Nov 2022  | -               | 19th Dec 2022 |
 | Final set of upstream patches     |        6% |       20% | +14%  | 16th Nov 2022  | -               | 30th Apr 2023 |
+| Intrinsics and builtins           |       18% |       18% | -     | 6th Sept 2022  | -               | TBD           |
 | Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD           |
 | Const Generics 2                  |        0% |        0% | -     | TBD            | -               | TBD           |
-
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD            | -               | TBD           |
 
 *** Risks
 
