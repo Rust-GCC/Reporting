@@ -8,9 +8,31 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-1. Most of the work this month was focused on patches.
-2. Try and get it done before 19th of December when I go on vacation
-3. Will send v4 of patches this week
+Most of the work this month was focused on fixing the reviews we received on the patches. We spent quite a lot of time organizing them differently, making the fixes, and then applying those fixes to the proper patches. The v4 of the patchset will be sent on the mailing list soon.
+
+The compilation of libcore is still blocked by the same two issues: Macro importing and exporting, as well as closures. With the patchwork, we are finding very little time to add new features to the compiler but will get back to it as soon as possible.
+
+We are still planning to complete these two issues as well as look at the ~#[derive]~ builtin macros.
+
+We are also preparing abstracts in the hope of giving two talks at [[https://fosdem.org/2023/][FOSDEM]] in February. You should also expect a blog-post from us on the [[https://foundation.rust-lang.org/][Rust Foundation's website]] in the coming weeks.
+
+*** Community call
+
+We will be having our monthly community call on the 12th of December at 10h00 UTC.
+
+- Date/Time: 12th December 2022 at: 10h00 UTC Mon, Mon, Dec 12 2022, 11:00
+- Mailing list: https://gcc.gnu.org/mailman/listinfo/gcc-rust
+- Zulip: https://gcc-rust.zulipchat.com/
+- IRC: irc.oftc.net #gccrust
+- Video Link: https://meet.jit.si/gccrs-community-call-december
+
+Agenda: https://hackmd.io/@Rust-GCC/Syy1hUDvi
+
+You can subscribe to our newly-created Google calendar to get updates and the dates of events the team will attend.
+
+- Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
+- [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com&ctz=Europe%2FParis][Google calendar link]]
+- [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
 
 ** Completed Activities
 
