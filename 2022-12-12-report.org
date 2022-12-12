@@ -1,0 +1,103 @@
+#+title:  Weekly report for 05th to 12th November 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2022-12-12
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This week, the v4 of our patchset containing an early version of gccrs was sent to the ~gcc-patches~ mailing list. This patchset contains files from around August, with many issues noted in the v1, v2 and v3 of the patches fixed. Almost immediately, the patchset was approved, which marks a huge milestone for the project.
+
+Congratulations to all of the contributors, without whom we would never have made it this far this quickly. We still have a long road ahead of us, but we will get there!
+
+1. Patches were sent
+2. Patches were approved!
+3. Touching up on a last few issues (trailing spaces, changelog...) and merging
+4. We now need to figure out how to update the fucking thing
+
+** Completed Activities
+
+- Fix whitespace errors [[https://github.com/rust-gcc/gccrs/pull/1695][PR1695]]
+- Port over experimental flag to gcc-patch-dev [[https://github.com/rust-gcc/gccrs/pull/1692][PR1692]]
+- ci: Lock Ubuntu version to 20.04 [[https://github.com/rust-gcc/gccrs/pull/1688][PR1688]]
+- Repair 'gcc/rust/lang.opt' comment [[https://github.com/rust-gcc/gccrs/pull/1687][PR1687]]
+- bors: Expect ubuntu32bit and gcc48 jobs to succeed [[https://github.com/rust-gcc/gccrs/pull/1686][PR1686]]
+- Backport 1656 [[https://github.com/rust-gcc/gccrs/pull/1685][PR1685]]
+- backend: Use build_int_cstu for size expressions [[https://github.com/rust-gcc/gccrs/pull/1684][PR1684]]
+- backend: Replace double_int_to_tree -> wide_int_to_tree [[https://github.com/rust-gcc/gccrs/pull/1683][PR1683]]
+- const evaluator: Simplify get_nth_callarg [[https://github.com/rust-gcc/gccrs/pull/1682][PR1682]]
+- Backport #1653 [[https://github.com/rust-gcc/gccrs/pull/1681][PR1681]]
+- Cleanup unused parameters [[https://github.com/rust-gcc/gccrs/pull/1678][PR1678]]
+- Fix mac-os regression in apply generic arguments to method calls [[https://github.com/rust-gcc/gccrs/pull/1632][PR1632]]
+- Implement `-frust-incomplete-and-experimental-compiler-do-not-use` flag [[https://github.com/rust-gcc/gccrs/pull/1540][PR1540]]
+
+*** Contributors this week
+
+- [[hhtps://github.com/tschwinge][Thomas Schwinge]]
+- [[hhtps://github.com/dkm][Marc Poulhies]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       183 |       186 |    +3 |
+| In Progress |        31 |        32 |    +1 |
+| Completed   |       499 |       500 |    +1 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 6976      | 6976      | -     |
+| Failed    | -         | -         | -     |
+| XFAIL     | 52        | 52        | -     |
+| XPASS     | -         | -         | -     |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        55 |        55 |     - |
+| In Progress |        16 |        16 |     - |
+| Completed   |       218 |       218 |     - |
+
+*** Milestones Progress
+
+We plan on adding more fine-grained milestones in between November and April as more themes of work will become apparent.
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 66% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022  | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022  | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |       78% |       79% | +1%   | 13th Nov 2022  | -               | 19th Dec 2022 |
+| Final set of upstream patches     |       20% |       21% | +1%   | 16th Nov 2022  | -               | 30th Apr 2023 |
+| Intrinsics and builtins           |       18% |       18% | -     | 6th Sept 2022  | -               | TBD           |
+| Borrow checking                   |        0% |        0% | -     | TBD            | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD            | -               | TBD           |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD            | -               | TBD           |
+
+*** Risks
+
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Missing GCC 13 upstream window |            2 |                 3 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+** Planned Activities
+
+- Finish work on macro name resolution
+- Start work on ~#[derive]~ macros
+- Merge gccrs patches to GCC's master branch
+
+** Detailed changelog
