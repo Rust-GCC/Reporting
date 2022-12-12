@@ -12,6 +12,8 @@ This week, the v4 of our patchset containing an early version of gccrs was sent 
 
 Congratulations to all of the contributors, without whom we would never have made it this far this quickly. We still have a long road ahead of us, but we will get there!
 
+We had our community call on the 12th of December, for which you can find the minutes [[https://hackmd.io/iWk_GRuASjyQSGbhKvdUrw][here]].
+
 We still need a few touches here and there before merging the patches to GCC's master branch, but that should be done quickly thanks to [[https://github.com/tschwinge][Thomas Schwinge]]'s help. We now need to figure out how to go about updating the upstream branch with our current development branch.
 
 ** Completed Activities
