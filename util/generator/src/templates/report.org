@@ -1,4 +1,6 @@
-{title_block}
+#+title:  {kind} report for {from} to {to}
+#+author: {author}
+#+date:   {date}
 
 ** Overview
 
@@ -22,8 +24,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 {bugs}
 
 *** Milestones Progress
-
-# MILESTONES
+{milestones}
 
 *** Risks
 

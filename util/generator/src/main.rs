@@ -14,7 +14,14 @@ static TEMPLATE: &str = include_str!("templates/report.org");
 
 #[derive(Serialize)]
 struct Context {
-    title_block: String,
+    // TODO: Figure out how to unnest this; doing it just by creating another structure does not work.
+    // Probably needs two template: One for titleblock and one for the template, which include a title block
+    // so have another static TITLE_BLOCK_TEMPLATE: &str = "#+title: {kind} report for..." etc
+    kind: Kind,
+    from: NaiveDate,
+    to: NaiveDate,
+    author: String,
+    date: NaiveDate,
     merged_prs: String,
     contributors: String,
     task_status: String,
@@ -23,8 +30,9 @@ struct Context {
     milestones: String,
 }
 
-#[derive(ValueEnum, Clone, Copy)]
+#[derive(ValueEnum, Clone, Copy, Serialize)]
 enum Kind {
+    // TODO: Unit test to make sure this keeps being formatted as "Weekly" and "Monthly" in rendered reports
     Weekly,
     Monthly,
 }
@@ -35,39 +43,42 @@ struct Cli {
     pub kind: Kind,
     #[arg(short, long)]
     pub date: NaiveDate,
+    #[arg(short, long)]
+    pub author: String,
 }
 
 // TODO: Cleanup, improve
 #[derive(Debug)]
 enum Error {
-    GitHubRequest,
-    Template,
+    GitHubRequest(octocrab::Error),
+    Template(tinytemplate::error::Error),
 }
 
 impl From<octocrab::Error> for Error {
-    fn from(_: octocrab::Error) -> Error {
-        Error::GitHubRequest
+    fn from(e: octocrab::Error) -> Error {
+        Error::GitHubRequest(e)
     }
 }
 
 impl From<tinytemplate::error::Error> for Error {
-    fn from(_: tinytemplate::error::Error) -> Error {
-        Error::Template
+    fn from(e: tinytemplate::error::Error) -> Error {
+        Error::Template(e)
+    }
+}
+
+fn get_from_date(kind: &Kind, date: &NaiveDate) -> NaiveDate {
+    match kind {
+        Kind::Weekly => date.checked_sub_days(Days::new(7)).unwrap(),
+        Kind::Monthly => date.checked_sub_months(Months::new(1)).unwrap(),
     }
 }
 
 /// Fetch all merged pull requests merged a week or a month before the given date
 async fn fetch_merged_prs(
     gh: &Octocrab,
-    kind: &Kind,
-    date: &NaiveDate,
+    from: &NaiveDate,
+    to: &NaiveDate,
 ) -> Result<Vec<PullRequest>, Error> {
-    // FIXME: No unwrap
-    let from = match kind {
-        Kind::Weekly => date.checked_sub_days(Days::new(7)).unwrap(),
-        Kind::Monthly => date.checked_sub_months(Months::new(1)).unwrap(),
-    };
-
     let mut pages = gh
         .pulls("rust-gcc", "gccrs")
         .list()
@@ -83,7 +94,7 @@ async fn fetch_merged_prs(
             if let Some(merge_date) = pr.merged_at {
                 let merge_date = merge_date.date_naive();
                 // Is the inclusive range okay?
-                if merge_date >= from && merge_date <= *date {
+                if &merge_date >= from && &merge_date <= to {
                     dbg!(&pr.url);
                     acc.push(pr)
                 }
@@ -104,6 +115,8 @@ impl From<PullRequest> for Pr {
         Pr {
             number: pr.number,
             url: pr.url,
+            // FIXME: This contains HTML character references, like &#39
+            // Figure out how to remove them. This is blocking for this to be used
             title: pr.title.unwrap(),
         }
     }
@@ -120,11 +133,9 @@ impl Display for Pr {
 async fn main() -> Result<(), Error> {
     let args = Cli::parse();
     let gh = octocrab::instance();
-    let mut renderer = TinyTemplate::new();
+    let from_date = get_from_date(&args.kind, &args.date);
 
-    renderer.add_template("report", TEMPLATE)?;
-
-    let merged_prs = fetch_merged_prs(&gh, &args.kind, &args.date)
+    let merged_prs = fetch_merged_prs(&gh, &from_date, &args.date)
         .await?
         // FIXME: Would it be better to have a trait extension for octo::PullRequest here?
         // and `impl ReportFormatter` on it?
@@ -133,7 +144,11 @@ async fn main() -> Result<(), Error> {
         .collect::<Vec<Pr>>();
 
     let ctx = Context {
-        title_block: String::new(),
+        kind: args.kind,
+        from: from_date,
+        to: args.date,
+        author: args.author,
+        date: args.date,
         contributors: String::new(),
         task_status: String::new(),
         test_cases: String::new(),
@@ -143,6 +158,9 @@ async fn main() -> Result<(), Error> {
             .iter()
             .fold(String::new(), |acc, pr| format!("{acc}\n{pr}")),
     };
+
+    let mut renderer = TinyTemplate::new();
+    renderer.add_template("report", TEMPLATE)?;
 
     let rendered = renderer.render("report", &ctx)?;
 
