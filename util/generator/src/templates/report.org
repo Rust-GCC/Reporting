@@ -1,0 +1,36 @@
+{title_block}
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+** Completed Activities
+{merged_prs}
+
+*** Contributors this week
+{contributors}
+
+*** Overall Task Status
+{task_status}
+
+*** Test Cases
+{test_cases}
+
+*** Bugs
+{bugs}
+
+*** Milestones Progress
+
+# MILESTONES
+
+*** Risks
+
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Missing GCC 13 upstream window |            2 |                 3 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+** Planned Activities
+
+** Detailed changelog

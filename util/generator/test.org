@@ -1,0 +1,50 @@
+
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+** Completed Activities
+
+- Fix whitespace errors [[https://api.github.com/repos/Rust-GCC/gccrs/pulls/1695][PR1695]]
+- Port over experimental flag to gcc-patch-dev [[https://api.github.com/repos/Rust-GCC/gccrs/pulls/1692][PR1692]]
+- ci: Lock Ubuntu version to 20.04 [[https://api.github.com/repos/Rust-GCC/gccrs/pulls/1688][PR1688]]
+- Repair &#39;gcc/rust/lang.opt&#39; comment [[https://api.github.com/repos/Rust-GCC/gccrs/pulls/1687][PR1687]]
+- bors: Expect ubuntu32bit and gcc48 jobs to succeed [[https://api.github.com/repos/Rust-GCC/gccrs/pulls/1686][PR1686]]
+- Backport 1656 [[https://api.github.com/repos/Rust-GCC/gccrs/pulls/1685][PR1685]]
+- backend: Use build_int_cstu for size expressions [[https://api.github.com/repos/Rust-GCC/gccrs/pulls/1684][PR1684]]
+- backend: Replace double_int_to_tree -&gt; wide_int_to_tree [[https://api.github.com/repos/Rust-GCC/gccrs/pulls/1683][PR1683]]
+- const evaluator: Simplify get_nth_callarg [[https://api.github.com/repos/Rust-GCC/gccrs/pulls/1682][PR1682]]
+- Backport #1653 [[https://api.github.com/repos/Rust-GCC/gccrs/pulls/1681][PR1681]]
+- Cleanup unused parameters [[https://api.github.com/repos/Rust-GCC/gccrs/pulls/1678][PR1678]]
+- Fix mac-os regression in apply generic arguments to method calls [[https://api.github.com/repos/Rust-GCC/gccrs/pulls/1632][PR1632]]
+- Implement `-frust-incomplete-and-experimental-compiler-do-not-use` flag [[https://api.github.com/repos/Rust-GCC/gccrs/pulls/1540][PR1540]]
+
+*** Contributors this week
+
+
+*** Overall Task Status
+
+
+*** Test Cases
+
+
+*** Bugs
+
+
+*** Milestones Progress
+
+# MILESTONES
+
+*** Risks
+
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Missing GCC 13 upstream window |            2 |                 3 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+** Planned Activities
+
+** Detailed changelog
+
