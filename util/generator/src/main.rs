@@ -2,15 +2,39 @@
 //! Its goal is to help with things such as fetching merged PRs from github, generating milestone tables,
 //! fetching bug/issue status, and so on.
 
-use chrono::{Days, Months, NaiveDate};
+use async_trait::async_trait;
+use chrono::{DateTime, Days, Months, NaiveDate};
 use clap::{Parser, ValueEnum};
-use octocrab::{models::pulls::PullRequest, params::State, Octocrab};
+use octocrab::{
+    models::{self, pulls::PullRequest, Milestone},
+    params::State,
+    Octocrab, Page,
+};
 use serde::Serialize;
 use tinytemplate::TinyTemplate;
 
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
+// FIXME: There should be two templates: one for weekly reports, one for monthly reports, as monthly reports include tests etc
 static TEMPLATE: &str = include_str!("templates/report.org");
+
+#[async_trait]
+trait MilestoneExt {
+    async fn milestones(&self, owner: &str, repo: &str)
+        -> Result<Page<Milestone>, octocrab::Error>;
+}
+
+#[async_trait]
+impl MilestoneExt for Octocrab {
+    async fn milestones(
+        &self,
+        owner: &str,
+        repo: &str,
+    ) -> Result<Page<Milestone>, octocrab::Error> {
+        self.get(format!("repos/{owner}/{repo}/milestones"), None::<&()>)
+            .await
+    }
+}
 
 #[derive(Serialize)]
 struct Context {
@@ -129,6 +153,42 @@ impl Display for Pr {
     }
 }
 
+/// Fetch all milestones
+async fn fetch_milestones(gh: &Octocrab) -> Result<Vec<Milestone>, Error> {
+    Ok(gh.milestones("rust-gcc", "gccrs").await?.take_items())
+}
+
+struct MStone {
+    title: String,
+    open_issues: i64,
+    closed_issues: i64,
+    created_at: NaiveDate,
+    closed_at: Option<NaiveDate>,
+    due_on: Option<NaiveDate>,
+}
+
+impl From<Milestone> for MStone {
+    fn from(ms: Milestone) -> MStone {
+        MStone {
+            title: ms.title,
+            open_issues: ms.open_issues.unwrap(),
+            closed_issues: ms.closed_issues.unwrap(),
+            created_at: ms.created_at.date_naive(),
+            // FIXME: This is bad: No unwrap. It's valid to not have one
+            closed_at: ms.closed_at.map(|date| date.date_naive()),
+            // FIXME: This is bad: No unwrap. It's valid to not have one
+            due_on: ms.due_on.map(|date| date.date_naive()),
+        }
+    }
+}
+
+impl Display for MStone {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        // TODO: Add checker that this is valid org-mode? unit tests?
+        write!(f, "|{}|", self.title)
+    }
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     let args = Cli::parse();
@@ -139,9 +199,16 @@ async fn main() -> Result<(), Error> {
         .await?
         // FIXME: Would it be better to have a trait extension for octo::PullRequest here?
         // and `impl ReportFormatter` on it?
+        // yes
         .into_iter()
         .map(Pr::from)
         .collect::<Vec<Pr>>();
+
+    let milestones = fetch_milestones(&gh)
+        .await?
+        .into_iter()
+        .map(MStone::from)
+        .collect::<Vec<MStone>>();
 
     let ctx = Context {
         kind: args.kind,
@@ -153,7 +220,9 @@ async fn main() -> Result<(), Error> {
         task_status: String::new(),
         test_cases: String::new(),
         bugs: String::new(),
-        milestones: String::new(),
+        milestones: milestones.iter().fold(String::new(), |acc, milestone| {
+            format!("{acc}\n{milestone}")
+        }),
         merged_prs: merged_prs
             .iter()
             .fold(String::new(), |acc, pr| format!("{acc}\n{pr}")),
