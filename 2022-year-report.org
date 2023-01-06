@@ -787,7 +787,7 @@ fn main() -> i32 {
 }
 #+END_SRC
 
-Here we take into account the context of the macro invocation and parse it into AST::Items. In the even of failure to match a rule the compiler error looks like the following:
+Here we take into account the context of the macro invocation and parse it into AST::Items. In the event of failure to match a rule the compiler error looks like the following:
 
 #+BEGIN_SRC
 <source>:11:17: error: Failed to match any rule within macro
