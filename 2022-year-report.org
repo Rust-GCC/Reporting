@@ -1,0 +1,1591 @@
+#+title:  gccrs in 2022
+#+author: Philip Herron and Arthur Cohen
+#+date:   2021-12-17
+
+* Overview
+  
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+** ~gccrs~ in 2022
+
+~gccrs~ is a project which aims to bring support for the [[https://www.rust-lang.org/][Rust programming language]]
+to the [[https://gcc.gnu.org/][GNU Compiler Collection]]. Our goal is to write,
+from scratch, a new compiler frontend for the Rust programming language. The
+aim is then for this frontend to be integrated to GCC, making it available as a
+language alongside C, C++, Ada, D, Go...
+
+The project was originally started in 2014. Back then, Rust had not achieved a
+stable version yet (Rust 1.0 was released in May of 2015), and keeping up with
+the high intensity of changes was difficult for a single developer. Efforts
+started again in 2019, and have been going steadily since.
+
+In 2020, financial support started to come through for [[https://github.com/philberty][Philip Herron]],
+who was then able to start working full-time on the project. This sponsorship
+came from Open Source Security, inc. with Philip being employed by Embecosm
+and benefitting from their management, as well as support from the GCC steering
+commitee. In 2022, after almost a year and a half of flying solo, Philip was
+joined by [[https://github.com/cohenarthur/][Arthur Cohen]], another full-time
+engineer funded by Open Source Security, inc. and employed by Embecosm.
+
+With two engineers now dedicating 40 hours a week to the project, this allowed
+the team to split work accordingly and progress faster. We kept benefitting
+from the contributions of many talented people, as we did back in 2021.
+
+The most notable event occuring this year was the merging of ~gccrs~ into GCC.
+Our compiler will now be available in the next GCC release, GCC 13.1, due in
+April 2023. While the compiler is not yet complete, or even in a usable
+state, we hope you'll find joy in experimenting with it, hacking on it, and
+contributing, either via reporting issues or submitting code.
+
+We have attended multiple events, and were delighted to meet so many of you!
+We are looking forward to doing the same in 2023. Later in this report, you'll
+find links to recordings of the talks we gave this year.
+
+Even further in the report, you'll find various little statistics around the
+compiler's development: Number of bugs, ongoing work, number of tests... We
+don't see the amount of bugs almost doubling since 2021 as a bad thing: quite
+the opposite actually, as it means the compiler is being tested more and more
+thoroughly, and used by more and more brave people willing to raise these
+issues. For that, thank you!
+
+As a quick reminder, remember that you can play with ~gccrs~ on
+[[https://godbolt.org/][Compiler Explorer]], and do not need to compile it
+from source to start experimenting.
+
+2022 was also packed with code contributions from various people. We worked
+intensively on trying to get as many Rust features as possible implemented,
+and to implement them in ways respectful of the language and its ecosystem.
+
+While the list of features merged is too long to put in this report, you can
+find an already quite long detailed overview at the end of this report.
+And despite so many features being added, the road ahead is still long. We have
+many, many, many more milestones coming, bugs to fix and issues to figure out,
+and we are looking forward to counting on all of you for 2023!
+
+Similarly to last year and the year before, we hope to benefit from Google Summer
+of Code in 2023. If you are interested in participating, feel free to reach out on
+our various channels (IRC, Zulip or Github).
+
+The goal for 2023 is to finish what the compiler has started achieving in 2022.
+We hope to complete the compilation of ~libcore 1.49~, and to start working on
+other parts of the standard Rust library: ~liballoc~, support for ~libproc~,
+and so forth. In order to do so properly, we want to dedicate a lot of the coming
+months to borrow-checking. We plan to integrate with [[https://github.com/rust-lang/polonius][Polonius]],
+in order to benefit from the same rules of borrow-checking as ~rustc~. This effort
+will be massive, and will probably require a lot of help. We'd love to work with
+you if you'd be interested.
+
+We also aim to support enough Rust features to start looking at passing the
+~rustc 1.49~ testsuite. To do so, we'll need support for more many small
+features such as proper Rust error codes, as well as the core/standard library.
+This work will be ongoing, but remains an important goal for ~gccrs~. Finally,
+we hope to start being useful to the
+[[https://github.com/Rust-for-Linux][Rust-for-Linux project]], through various
+experiments and by catching up to their expected Rust version as soon as possible.
+
+As mentioned before, an early version of ~gccrs~ will be available in GCC 13.
+Among many things, this means that we should now look at how to handle contributions
+from two groups of people: the GNU community, which works by sending patches and
+raising bugs on bugzilla, and our existing contributor base, where people raise
+Github issues and send pull-requests. We have a long road ahead of us to figure
+out ways to make it work for everyone, in order for you to contribute no matter
+your background. This will be achieved through thoughtful discussion in public
+places or websites, where we hope to hear your input!
+
+To make sure not to ignore anyone, we will keep on attending in-person events
+as well as online events. While we have attended multiple conferences in 2022,
+we also feel that we did not attend enough _Rust_ events. This will be one of
+our goals in 2023. We'll start the year by attending [[https://fosdem.org/2023/][FOSDEM]]
+in February and giving a talk in the [[https://fosdem.org/2023/schedule/track/rust/][Rust devroom]].
+Among other conferences, we will aim to join RustConf 2023, wherever it is held.
+
+We are looking forward to meeting even more of you and to keep on working together!
+
+Thank you everyone for a wonderful year 2022, and looking forward to the next one.
+
+*** Thanks
+
+First of all, a huge thank you to the people sponsoring ~gccrs~:
+
+1. Brad Spengler from Open Source Security, inc.
+2. Jeremy Bennett from Embecosm
+
+Your dedication to this project, as well as to the financial funding of open source projects in general, is a fantastic gesture. Without you, this project would not be where it is. You have enabled us to work on a dreamlike project, with a dreamlike team and in the best possible conditions.
+
+However, another very important part of what has gotten this project this far is the amount of time and effort spent by individuals in their free time. These individuals have allowed us to benefit from their important experience, either in the form of code, help, reviews or infrastructure efforts.
+
+In particular, we'd like to thank:
+
+- Thomas Schwinge, for all of the work done on the GCC side of things and the invaluable help he's provided
+- Marc Poulhiès, for his dedication to the project and his fearlessness in the face of important source control work and huge refactors
+- David Faust, for his work on the backend as well as accompanying us across the world
+- Mark Wieelard, who keeps providing us with CI infrastructure and testing machines, despite us regularly angering them
+- Bjorn3 and Philipp Krones, for their Rust expertise and willingness to help the project at any time
+- Richard Biener, for the time spent reading our patches on the GCC mailing list and the kind and precise reviews left
+- David Edelsohn, for making our life easier and providing insightful advice on the GCC side
+
+as well as all of the other fantastic folks who spent time reviewing our patches, submitting some, raising bugs, or simply conversing with us:
+
+- Iain Buclaw
+- David Malcolm
+- Josh Triplett
+- Martin Liška
+- Jakub Jelinek
+- Jason Merill
+- Jose E. Marchesi
+
+#+CAPTION: GCC Rust Mug
+#+NAME:   fig:mug
+[[./gccrs-mug-v2.png]]
+
+We are not forgetting all of the other contributors who made our life easier this year. Thank you! We are looking forward to working with you again:
+
+- SimplyTheOther
+- Thomas Schwinge
+- Mark Wielaard
+- David Faust
+- liushuyu
+- Faisal Abbas
+- Thomas Young
+- Marc Poulhiès
+- Jakub Dupak
+- Yizhe
+- Nala Ginrut
+- Iain Buclaw
+- antego
+- Nirmal Patel
+- Tom Tromey
+- Ben Boeckel
+- YizhePKU
+- Akshat Agarwal
+- John Paul Adrian Glaubitz
+- Andrew Naguib
+- M V V S Manoj Kumar
+- Sebastien Lacoste
+- lrh2000
+- Dave
+- Raiki Tamura
+- Simon Cook
+- David Malcolm
+- George Liakopoulos
+- Lyra
+- Nym Seddon
+- Rodrigo Valle
+- Thomas Fitzsimmons
+- therealansh
+- Alexey Sakovets
+- Ansh Tyagi
+- CastilloDel
+- Connor Lane Smith
+- Kadoi Takemaru
+- Marek Polacek
+- Michael Karcher
+- Ondřej Machota
+- Rainer Orth
+- Romain Naour
+- Serentty
+- Vlad Doster
+- Zopolis4
+- accusitive
+- wan-nyan-wan
+
+** Achievements
+
+*** GSoC 2022
+
+Once again this year, ~gccrs~ was lucky enough to receive the contributions of two students during Google Summer of Code.
+
+The two projects that were worked on were as follows:
+
+- Complete support for Constant Evaluation in ~gccrs~ by [[https://github.com/abbasfaisal][Faisal Abbas]]
+- Improve High level Intermediate Representation debugging experience through dumps by [[https://github.com/ndrwnaguib][Andrew Naguib]]
+
+https://summerofcode.withgoogle.com/archive/2022/organizations/gnu-compiler-collection-gcc
+
+*** Talks
+
+We had the opportunity to give multiple talks this year, either remotely or in person. You can find recordings for most of them here.
+
+- [[https://www.youtube.com/watch?v=R8Pr21nlhig][Live Embedded Event]].
+- [[https://kangrejos.com/][Kangrejos]] (no recording)
+- [[https://youtu.be/Xw9pKeJ-4Bw?t=862][LPC 2022]]
+- GNU Cauldron:
+    - [[https://www.youtube.com/watch?t=14304&v=dOIwE2932XI&feature=youtu.be][Rust front-end talk]]
+    - [[https://www.youtube.com/watch?t=17688&v=MuicT6JUp0k&feature=youtu.be][Rust BoF]]
+
+** Overall Status
+
+In 2022, we merged 474 pull-requests.
+
+*** Lines of Code (LoC)
+
+| Language              | Files   | Blanks | Comments | Code  |
+|-----------------------+---------+--------+----------+-------|
+|C Header               |     152 |  13217 |    11300 | 49269 |
+|C++                    |      99 |  11756 |     8417 | 58314 |
+|Rust                   |      39 |    792 |      851 |  5077 |
+|Markdown               |      19 |    274 |        0 |   691 |
+|TOML                   |       5 |      4 |        0 |    47 |
+|Autoconf               |       2 |     79 |      118 |   248 |
+|Shell                  |       2 |     19 |       14 |   110 |
+|gitignore              |       2 |      0 |        0 |     6 |
+|License                |       1 |      2 |        0 |    21 |
+|Module-Definition      |       1 |     11 |        0 |    41 |
+|Python                 |       1 |     40 |        9 |   122 |
+|YAML                   |       1 |     12 |        0 |    63 |
+|-----------------------+---------+--------+----------+-------|
+|Total                  |     324 |  26206 |    20709 |114009 |
+
+*** Overall Task Status
+
+| Category    | Dec 2021 | Dec 2022 | Delta |
+|-------------+----------+----------+-------|
+| TODO        |       88 |      186 |   +98 |
+| In Progress |       16 |       32 |   +16 |
+| Completed   |      257 |      500 |  +243 |
+
+*** Test Cases
+
+| TestCases | Dec 2021 | Dec 2022 | Delta |
+|-----------+----------+----------+-------|
+| Passing   | 5411     | 6976     | +1565 |
+| Failed    | -        | -        |     - |
+| XFAIL     | 21       | 52       |   +31 |
+| XPASS     | -        | -        |     - |
+
+*** Bugs
+
+| Category    | Dec 2021 | Dec 2022 | Delta |
+|-------------+----------+----------+-------|
+| TODO        |       24 |       55 |   +31 |
+| In Progress |        4 |       16 |   +12 |
+| Completed   |       90 |      218 |  +128 |
+
+*** Milestones Progress
+
+| Milestone                         | Dec 2021 | Dec 2022 | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+----------+----------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |     100% |     100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |     100% |     100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |     100% |     100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |     100% |     100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |     100% |     100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
+| Macros and cfg expansion          |       0% |     100% | +100% | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |       0% |     100% | +100% | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |       0% |     100% | +100% | 30th May 2022  | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |       0% |     100% | +100% | 10th Oct 2022  | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |       8% |      79% | +79%  | 13th Nov 2022  | -               | 19th Dec 2022 |
+| Final set of upstream patches     |       0% |      21% | +21%  | 16th Nov 2022  | -               | 30th Apr 2023 |
+| Intrinsics and builtins           |       0% |      18% | +18%  | 6th Sept 2022  | -               | TBD           |
+| Borrow checking                   |       0% |       0% | -     | TBD            | -               | TBD           |
+| Const Generics 2                  |       0% |       0% | -     | TBD            | -               | TBD           |
+| Rust-for-Linux compilation        |       0% |       0% | -     | TBD            | -               | TBD           |
+
+
+*** Risks
+
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Missing GCC 13 upstream window |            2 |                 3 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+** Technical changes
+
+In this section, we'd like to detail some of the interesting changes and features that were developed this year. We have tried providing an interesting, but non-exhaustive list, as the entirety of the detailed changelogs written this year would amount to multiple thousands of lines. Furthermore, this list sadly does not do justice to non-code contributors: However, their support is some of the most important work done for the project.
+We cannot thank them enough for the help, guidance, mentoring, experience and overall, kindness, that they have provided during the year.
+
+*** Internal compiler mechanisms
+
+**** Support for language items
+
+Lang items (or ~lang_items~) refer to pluggable operations implemented directly in Rust code but usable by the compiler. For example, to allow operator overloading, a Rust compiler relies on certain traits. The trait ~Add~ is associated with the ~+~ operator, so implementing this trait for one of your types allows you to use the aforementioned operator.
+
+#+BEGIN_SRC rust
+#[lang = "add"]
+trait Add { /* ... */ }
+#+END_SRC
+
+the ~#[lang = "add"]~ attribute indicates to the compiler that this trait is the one associated with additions.
+
+One of the major milestones of this year was the support of lang items within ~gccrs~. While they are not completely supported yet (there's over a hundred of them!), the compiler does understand a good amount and contains the frame work for adding more.
+
+Here is a small example of some lang items ~gccrs~ supports, which help for the support of slices.
+
+#+BEGIN_SRC rust
+#[lang = "Range"]
+pub struct Range<Idx> {
+    pub start: Idx,
+    pub end: Idx,
+}
+
+#[lang = "const_slice_ptr"]
+impl<T> *const [T] {
+    pub const fn len(self) -> usize {
+        let a = unsafe { Repr { rust: self }.raw };
+        a.len
+    }
+
+    pub const fn as_ptr(self) -> *const T {
+        self as *const T
+    }
+}
+
+#[lang = "const_ptr"]
+impl<T> *const T {
+    pub const unsafe fn offset(self, count: isize) -> *const T {
+        unsafe { offset(self, count) }
+    }
+
+    pub const unsafe fn add(self, count: usize) -> Self {
+        unsafe { self.offset(count as isize) }
+    }
+
+    pub const fn as_ptr(self) -> *const T {
+        self as *const T
+    }
+}
+#+END_SRC
+
+You can learn more about lang items [[https://rustc-dev-guide.rust-lang.org/lang-items.html][here]].
+You can see the ongoing task of supported language items [[https://github.com/Rust-GCC/gccrs/issues/742][here]].
+
+**** Core intrinsic functions
+
+Intrinsic functions, on the other hand, are declared in the core library but implemented directly within the compiler. A lot of the intrinsics declared in the Rust core library map directly to LLVM intrinsics, which are not always present on the GCC side. We are working towards supporting as many of them as possible and contributing to the core library where it is possible to improve some of these intrinsics or their handling.
+
+Some interesting intrinsics include:
+
+***** ~transmute~
+
+We added support for transmute which is an interesting intrinsic to allow the reinterpretation of types. This test case is a snippet from this bug report https://github.com/Rust-GCC/gccrs/issues/1130
+
+#+BEGIN_SRC rust
+mod mem {
+    extern "rust-intrinsic" {
+        fn size_of<T>() -> usize;
+        fn transmute<U, V>(_: U) -> V;
+    }
+}
+
+impl u16 {
+    fn to_ne_bytes(self) -> [u8; mem::size_of::<Self>()] {
+        unsafe { mem::transmute(self) }
+    }
+}
+
+pub trait Hasher {
+    fn finish(&self) -> u64;
+
+    fn write(&mut self, bytes: &[u8]);
+
+    fn write_u8(&mut self, i: u8) {
+        self.write(&[i])
+    }
+
+    fn write_i8(&mut self, i: i8) {
+        self.write_u8(i as u8)
+    }
+
+    fn write_u16(&mut self, i: u16) {
+        self.write(&i.to_ne_bytes())
+    }
+
+    fn write_i16(&mut self, i: i16) {
+        self.write_u16(i as u16)
+    }
+}
+
+pub struct SipHasher;
+
+impl Hasher for SipHasher {
+    #[inline]
+    fn write(&mut self, msg: &[u8]) {}
+
+    #[inline]
+    fn finish(&self) -> u64 {
+        0
+    }
+}
+#+END_SRC
+
+***** ~copy_nonoverlapping~
+
+#+BEGIN_SRC rust
+fn copy_nonoverlapping<T>(src: *const T, dst: *mut T, count: usize);
+#+END_SRC
+
+This intrinsic is, according to the documentation, semantically equivalent to a ~memcpy~ with the order of ~dst~ and ~src~ switched. This means that we can quite easily implement it using ~gcc~'s ~__builtin_memcpy~ builtin. However, unlike most intrinsic functions, ~copy_nonoverlapping~ has side effects: Let's take an example with ~transmute~, another intrinsic working on memory:
+
+#+BEGIN_SRC rust
+fn transmute<T, U>(a: T) -> U;
+
+fn main() {
+    let a = 15.4f32;
+    unsafe { transmute<f32, i32>(a) }; // ignore the return value
+}
+#+END_SRC
+
+Because this ~transmute~ function is pure and does not contain any side effects (no I/O operations on memory for example), it is safe to optimize the call away. ~gcc~ takes care of this for us when performing its optimisation passes. However, the following calls were also being optimized out:
+
+#+BEGIN_SRC rust
+fn copy_nonoverlapping<T>(src: *const T, dst: *mut T, count: usize);
+
+fn foo() -> i32 {
+    let i = 15;
+    let mut i_copy = 16;
+
+    let i = &i as *const i32;
+    let i_copy = &mut i as *mut i32;
+
+    unsafe { copy_nonoverlapping(i, i_copy, 1) };
+    // At this point, we should have `i_copy` equal 15 and return 0
+
+    unsafe { *i_copy - 15 }
+}
+#+END_SRC
+
+This caused assertions that this ~foo~ function would return 0 to fail, as the call to ~copy_nonoverlapping~ was simply removed from the GIMPLE entirely. It took us quite some time to fix this overzealous optimization, which ended up being caused by a flag set on the intrinsic's block in the internal ~GCC~ represetation: Even if the block was marked as having side effects (~TREE_SIDE_EFFECTS(intrinsic_fn_declaration) = 1~), the fact that it was also marked as ~TREE_READONLY~ caused the optimization to happen. This was valid, as a lot of intrinsics (and all the intrinsics that we had implemented up until that point) were pure functions. We now separate between pure and impure intrinsics properly when generating their implementation.
+
+There are a lot of fun intrinsics to work on if you'd like to start contributing to the compiler! We are always happy to mentor people on them and get you started.
+
+You can follow the list of intrinsics we need to support [[https://github.com/Rust-GCC/gccrs/issues/658][here]].
+
+*** Constant evaluation
+
+Rust supports constant evaluation of constants including constant functions. Below is an example of this:
+
+#+BEGIN_SRC rust
+const A: i32 = 1;
+const B: i32 = { A + 2 };
+
+const fn test() -> i32 {
+    B
+}
+
+const C: i32 = {
+    const a: i32 = 4;
+    test() + a
+};
+
+fn main() -> i32 {
+    C - 7
+}
+#+END_SRC
+
+In Rust this compilation unit is expected to evaluate the main function to return zero always. This is evident when you evaluate the constants, the problem for GCC Rust arose when you consider this example using arrays:
+
+#+BEGIN_SRC rust
+const fn const_fn() -> usize {
+    4
+}
+
+const FN_TEST: usize = const_fn();
+
+const TEST: usize = 2 + FN_TEST;
+
+fn main() -> i32 {
+    let a: [_; 12] = [5; TEST * 2];
+    a[6] - 5
+}
+#+END_SRC
+
+Arrays in rust always have a constant capacity to disallow any variable length arrays. This means we need to be able to type check that the array capacities match correctly. In GCC this compilation unit can be optimized and folded when optimizations are enabled, but in ~rustc~ this still works regardless of optimization level. So GCC Rust needed the same behaviour and it turns out constexpr in C++ is very similar to this, and we are now reusing the C++ front-ends constexpr code to get this support. Now that we are reusing this C++ front-end code we can get the array capacity checking as well so when we get a case where the capacities are bad we get the folllowing error message:
+
+#+BEGIN_SRC
+<source>:2:21: error: expected an array with a fixed size of 5 elements, found one with 3 elements
+    2 |     let a:[i32;5] = [1;3];
+      |                     ^
+#+END_SRC
+
+
+Furthermore, one of the two Google Summer of Code projects this year was finishing the porting of that constant evaluator to ~gccrs~. This allows our compiler to call into constant functions, which may perform operations such as initializing variable, arithmetics, conditionals, loops...
+
+This work was completed by [[https://github.com/abbasfaisal][Faisal Abbas]], who managed to deliver a working implementation accompanied by tests in the span of a few weeks. This work will now need to be tethered to the Const Generics work, in order to achieve constant evaluation within const generics.
+
+This is akin to C++ constexpr and enforces constant expressions do not allocate. Below is an example test case of what this allows us to do. Here you can see we have a constant function and inside the main function we can see that the gimple we are feeding the GCC middle-end has already evaluated this function to a value. Note this is the behaviour regardless of optimisation level.
+
+#+BEGIN_SRC rust
+const A: i32 = 1;
+
+const fn test(a: i32) -> i32 {
+    let b = A + a;
+    if b == 2 {
+        return b + 2;
+    }
+    a
+}
+
+const B: i32 = test(1);
+const C: i32 = test(12);
+
+fn main() {
+    // { dg-final { scan-tree-dump-times {a = 1} 1 gimple } }
+    let a = A;
+    // { dg-final { scan-tree-dump-times {b = 4} 1 gimple } }
+    let b = B;
+    // { dg-final { scan-tree-dump-times {c = 12} 1 gimple } }
+    let c = C;
+}
+#+END_SRC
+
+*** Method resolution
+
+Autoderef includes calling into the deref operator overloads so for example.
+
+#+BEGIN_SRC rust
+pub trait Deref {
+    type Target;
+
+    fn deref(&self) -> &Self::Target;
+}
+
+impl<T> Deref for &T {
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        *self
+    }
+}
+
+struct Bar(i32);
+impl Bar {
+    fn foobar(self) -> i32 {
+        self.0
+    }
+}
+
+struct Foo<T>(T);
+impl<T> Deref for Foo<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+fn main() {
+    let bar = Bar(123);
+    let foo: Foo<&Bar> = Foo(&bar);
+    let foobar: i32 = foo.foobar();
+}
+#+END_SRC
+
+You can see here we have a nested structure of Foo<&Bar> and Foo is a generic structure, and we have a method call of foo.foobar(). This is an interesting case of method resolution showing how rust allows for multiple dereference to find the apropriate method of foobar. In this method call expression foo is of type Foo<&Bar> the generic structure is a covariant Reference Type (&) of the structure Bar. The method foobar has a receiver type of a simple Bar being passed by value. So in order for this function to be called the method resolution system has an algorithm of:
+
+- receiver = Foo<&Bar>
+- Find all methods named foobar
+- try and match the receiver (self) with this receiver
+- so that means we have Foo<&Bar> vs Bar which does not match
+- Go back to the start and try by taking an immutable refernece
+- &Foo<&Bar> does not match Bar
+- Go back to the start and try by taking a mutable reference
+- &mut Foo<&Bar> does not match Bar
+- Try and dereference the original receiver Foo<&Bar>
+- Do we have the deref lang item defined
+- if yes resolve the method by the same mechanism for Foo<&Bar> for deref
+- Get the result type of this function which is &&Bar do the dereference
+- Now we have &Bar and a new adjustment for the original receiver
+- Try and match &Bar to the foobar method receiver of Bar
+- Try taking an immutable reference &&Bar
+- Try taking a mutable reference &mut &Bar
+- Try and deref &Bar we have the generic implementation of deref for &T
+- Call this derefernece like before to get down to Bar
+- Now try Bar on the foobar receiver Bar and it matches
+
+We have now resolved the method with two dereference adjustments so the function call becomes:
+
+#+BEGIN_SRC c
+i32 main ()
+{
+  i32 D.103;
+  const struct Bar bar;
+  const struct Foo<&Bar> foo;
+  const i32 foobar;
+
+  try
+    {
+      bar.0 = 123;
+      foo.0 = &bar;
+      _1 = <Foo as Deref>::deref<&Bar> (&foo);
+      _2 = <&T as Deref>::deref<Bar> (_1);
+      foobar = Bar::foobar (*_2);
+      D.103 = foobar + -123;
+      return D.103;
+    }
+  finally
+    {
+      bar = {CLOBBER};
+      foo = {CLOBBER};
+    }
+}
+#+END_SRC
+
+Obviously GCC will optimize this with -O2 so that it does not require function calls but the gimple will show us what is actually going on. As far as I am aware ~rustc~ pre-optimizes this regardless of optimizations being turned on or not, these lang item functions are easily inlineable so it makes more sense to me to let GCC's middle-end take care of this for us.
+
+see https://godbolt.org/z/qjnq6Yoxb
+
+*** Slices
+
+We finally got slice generation support merged, this is the extracted code from ~rustc~ libcore 1.49.0. The key thing here is that this test-case exposed lots of bugs in our type resolution system so working through this was pretty key. We are working on a blog post to explain how this works, as slice generation is actually implemented via the trick of unsized method resolution and clever use of libcore. For now please review the code below and you can see the slice generation via passing a range to the array index expression kicks off the array index operator overload for a Range<usize> as the entry point which uses the generic higher ranked trait bound.
+
+If you are interested in how ~gccrs~ supports slices, you may also have a look at [[https://www.youtube.com/watch?t=14304&v=dOIwE2932XI&feature=youtu.be][the talk we gave in Prague during the GNU Cauldron]]. We go into more details of the implementation, interesting issues and interesting corner cases.
+
+#+BEGIN_SRC rust
+// { dg-additional-options "-w" }
+extern "rust-intrinsic" {
+    pub fn offset<T>(dst: *const T, offset: isize) -> *const T;
+}
+
+struct FatPtr<T> {
+    data: *const T,
+    len: usize,
+}
+
+union Repr<T> {
+    rust: *const [T],
+    rust_mut: *mut [T],
+    raw: FatPtr<T>,
+}
+
+#[lang = "Range"]
+pub struct Range<Idx> {
+    pub start: Idx,
+    pub end: Idx,
+}
+
+#[lang = "const_slice_ptr"]
+impl<T> *const [T] {
+    pub const fn len(self) -> usize {
+        let a = unsafe { Repr { rust: self }.raw };
+        a.len
+    }
+
+    pub const fn as_ptr(self) -> *const T {
+        self as *const T
+    }
+}
+
+#[lang = "const_ptr"]
+impl<T> *const T {
+    pub const unsafe fn offset(self, count: isize) -> *const T {
+        unsafe { offset(self, count) }
+    }
+
+    pub const unsafe fn add(self, count: usize) -> Self {
+        unsafe { self.offset(count as isize) }
+    }
+
+    pub const fn as_ptr(self) -> *const T {
+        self as *const T
+    }
+}
+
+const fn slice_from_raw_parts<T>(data: *const T, len: usize) -> *const [T] {
+    unsafe {
+        Repr {
+            raw: FatPtr { data, len },
+        }
+        .rust
+    }
+}
+
+#[lang = "index"]
+trait Index<Idx> {
+    type Output;
+
+    fn index(&self, index: Idx) -> &Self::Output;
+}
+
+pub unsafe trait SliceIndex<T> {
+    type Output;
+
+    unsafe fn get_unchecked(self, slice: *const T) -> *const Self::Output;
+
+    fn index(self, slice: &T) -> &Self::Output;
+}
+
+unsafe impl<T> SliceIndex<[T]> for Range<usize> {
+    type Output = [T];
+
+    unsafe fn get_unchecked(self, slice: *const [T]) -> *const [T] {
+        unsafe {
+            let a: *const T = slice.as_ptr();
+            let b: *const T = a.add(self.start);
+            slice_from_raw_parts(b, self.end - self.start)
+        }
+    }
+
+    fn index(self, slice: &[T]) -> &[T] {
+        unsafe { &*self.get_unchecked(slice) }
+    }
+}
+
+impl<T, I> Index<I> for [T]
+where
+    I: SliceIndex<[T]>,
+{
+    type Output = I::Output;
+
+    fn index(&self, index: I) -> &I::Output {
+        index.index(self)
+    }
+}
+
+fn main() -> i32 {
+    let a = [1, 2, 3, 4, 5];
+    let b = &a[1..3];
+
+    0
+}
+#+END_SRC
+
+see: https://godbolt.org/z/csn8hMej8
+
+*** Macro expansion
+
+2022 saw the first iteration of macro expansion within ~gccrs~. Presently, this only concerns declarative macros, or Macros by Example, as they are known in the [[https://doc.rust-lang.org/reference/macros-by-example.html][Rust reference]].
+
+Handling procedural macros and derive macros is part of an upcoming effort planned in 2023.
+
+*** Simple declarative macro handling
+
+The approach we have taken here is that we reuse our existing parser to call the apropriate functions as specified as part of the MacroFragmentType enum. If the parser does not have errors parsing that item, then it must be a match. Then once we match a rule we have a map of the token begin/end offsets for each fragment match, this is then used to adjust and create a new token stream for the macro rule definition so that when we feed it to the parser the tokens are already substituted. The resulting expression or item is then attached to the respective macro invocation and this is then name resolved and used for hir lowering.
+
+In this example the macro has two rules so we demonstrate that we match the apropriate rule and transcribe it respectively.
+
+#+BEGIN_SRC rust
+macro_rules! add {
+    ($a:expr,$b:expr) => {
+        $a + $b
+    };
+    ($a:expr) => {
+        $a
+    };
+}
+
+fn main() -> i32 {
+    let mut x = add!(1);
+    x += add!(2, 3);
+
+    x - 6
+}
+#+END_SRC
+
+Another example:
+
+#+BEGIN_SRC rust
+macro_rules! Test {
+    ($a:ident, $b:ty) => {
+        struct $a($b);
+    };
+}
+
+Test!(Foo, i32);
+
+fn main() -> i32 {
+    let a = Foo(123);
+    a.0 - 123
+}
+#+END_SRC
+
+Here we take into account the context of the macro invocation and parse it into AST::Items. In the even of failure to match a rule the compiler error looks like the following:
+
+#+BEGIN_SRC
+<source>:11:17: error: Failed to match any rule within macro
+    1 | macro_rules! add {
+      | ~                
+......
+   11 |     let mut x = add!(1, 2, 3);
+      |                 ^
+#+END_SRC
+
+More error handling has been added for when the transcribed rule actually is not fully used so for example:
+
+#+BEGIN_SRC
+<source>:4:9: error: tokens here and after are unparsed
+    4 |         struct BAD($b);
+      |         ^
+#+END_SRC
+
+see: https://godbolt.org/z/TK3qdG56n
+
+**** Repetition Macros
+
+***** Matching macro repetitions
+
+Macro match arms can contain repetition operators, which indicate the possibilty of passing multiple instances of a single token or metavariable.
+
+You can denote such repetitions using Kleene operators: Three variants are available, ~?~, ~+~ and ~*~. Each corresponds to varying bounds on the amount of tokens associated with the operator, similarly to regular expressions.
+
+#+BEGIN_SRC rust
+macro_rules! kleene {
+    ($a:ident $(,)?) => {{ }};
+    ($($i:literal tok)+) => {{ }};
+    ($($e:expr)*) => {{ }};
+}
+#+END_SRC
+
+The declaration above contains three possible matching invocations:
+
+1. Either a singular identifier, with zero or one commas (pattern: ~<comma>~, kleene operator: ~?~ (0 -> 1))
+2. One or more literal followed by the separator ~tok~ (pattern ~$i:literal tok~, kleene operator: ~+~ (1 -> ~+inf~))
+3. Zero or more expressions ~tok~ (pattern ~$e:expr~, kleene operator: ~*~ (0 -> ~+inf~))
+
+The first of implementing macro repetitions comes in matching the actual patterns given to the users. We are now able to match simple repetitions, with a few limitations and bugs still.
+
+Once those repetition patterns are matched, it is easy to figure out how many repetitions of said pattern were given by the user. We store this data alongside the rest of the fragment, to make sure that we expand said pattern a correct amount of times when transcribing.
+
+Given the following match arm:
+#+BEGIN_SRC rust
+macro_rules! lit_plus_tok {
+    ($($e:literal tok)*) => {}
+}
+#+END_SRC
+And the following invocation:
+#+BEGIN_SRC rust
+lit_plus_tok!("rustc" tok 'v' tok 1.59 tok);
+#+END_SRC
+we will have matched the repetition 3 times, and attributed a repetition amount of 3 to the ~$e~ meta-variable.
+
+See: https://doc.rust-lang.org/rust-by-example/macros/repeat.html and https://doc.rust-lang.org/reference/macros-by-example.html#repetitions
+
+***** Expanding macro repetitions
+
+Following the matching of these repetitions, we can recursively expand all tokens contained in the pattern.
+
+Considering once again the previous declaration and invocation, we can parse the following pattern as the one to expand:
+#+BEGIN_SRC rust
+    ($e:literal tok)
+#+END_SRC
+
+This pattern is then recursively expanded as if it was a regular macro invocation. In order to make sure that each meta-variable gets expanded correctly, we only give a subset of the matched fragments to the new subsitution context.
+
+#+BEGIN_SRC rust
+macro_rules! lit_plus_tok {
+    ($($e:literal tok)*) => {}
+}
+
+lit_plus_tok!("rustc" tok 'v' tok 1.59 tok);
+
+// Original matched fragments: { "lit": ["rustc", 'v', 1.59] }
+// We then expand the repetition pattern once with { "lit": ["rustc"] },
+// once with { "lit": ['v'] },
+// and finally once with { "lit": [1.59] },
+#+END_SRC
+
+Once again, certain restrictions apply, which we have yet to implement: Some specifiers get expanded eagerly, while some stay under the form inputted by the user.
+
+See: https://doc.rust-lang.org/reference/macros-by-example.html#transcribing
+
+Likewise, not all repetition patterns are covered properly. Some issues remain to be ironed out for a complete and correct implementation.
+
+Macros can be recusive resulting in new macro invocations which need to be expanded. They also can have matchers which are like regular expressions in their matchers which require n-number of arguments delimited by a single matcher to terminate the sequence. This looks very similar to bison grammer files which is pretty impressive how expressive macros are in rust.
+
+#+BEGIN_SRC rust
+macro_rules! add {
+        ($e:expr | $($es:expr) | *) => {
+            $e + add!($($es) | *)
+        };
+        ($e:expr) => {
+            $e
+        };
+    }
+
+fn test() -> i32 {
+    add!(1 | 2 | 3 | 4 | 5 | 6)
+}
+
+#+END_SRC
+
+see: https://godbolt.org/z/TfWrEovf3
+
+Rust allows users to define separators to use in macro repetitions. These separators help in making repeating macro invocations cleaner, and avoid this:
+#+BEGIN_SRC rust
+macro_rules! add0 {
+    ($a:literal) => { $a };
+    ($a:literal $($b:literal)+) => { $a + add0!($($b)*) }
+}
+
+macro_rules! add1 {
+    ($a:literal,) => { $a };
+    ($a:literal, $($b:literal,)+) => { $a + add1!($($b ,)*) }
+}
+
+add0!(1 2 3 4 67); // no separator
+add1!(1, 2, 3, 4, 67,); // extra separator
+#+END_SRC
+
+Macro repetition separators are made of one token and positionned just before the repetition operator (~?~, ~*~ or ~+~). We can now parse them, match them and expand them properly:
+
+#+BEGIN_SRC rust
+macro_rules! add {
+    ($a:literal) => { $a };
+    ($a:literal, $($b:literal),+) => { $a + add!($($b),*) }
+}
+
+add!(1, 2, 3, 4, 67);
+#+END_SRC
+
+While rust macros are extremely powerful, they are also heavily restricted to prevent ambiguities. These restrictions include sets of allowed fragments that can follow a certain metavariable fragment, which are referred to as follow-sets.
+
+As an example, the follow set of ~:expr~ fragments is { ~COMMA~, ~SEMICOLON~, ~MATCH_ARROW~ }. Any other token cannot follow an ~:expr~ fragment, as it might cause ambiguities in later versions of the language.
+
+This was previously not handled by ~gccrs~ at all. As a result, we had some test cases that contained ambiguous macro definitions that ~rustc~ rejected.
+
+We dedicated some time this week to implement (almost!) all of these restrictions, including some complex cases involving repetitions:
+
+**** Looking past zeroable repetitions
+
+#+BEGIN_SRC rust
+macro_rules! invalid {
+  ($e:expr $(,)? $(;)* $(=>)* forbidden) => {{}};
+  //  1      2     3     4        5         (matches)
+}
+#+END_SRC
+
+Since matches ~2~, ~3~ and ~4~ might occur zero times (kleene operators ~*~ or ~?~), we need to check that the ~forbidden~ token is allowed to follow an ~:expr~ fragment, which is not the case since identifier tokens are not contained in its follow-set.
+
+On the other hand, this macro is perfectly valid since a comma, contained in the follow-set of ~:expr~, is required to appear at least once before any forbidden tokens
+
+#+BEGIN_SRC rust
+macro_rules! invalid {
+  ($e:expr $(;)* $(,)+ $(=>)* forbidden) => {{}};
+  // `+` kleen operator indicates one or more, meaning that there will always be at least one comma
+}
+#+END_SRC
+
+#+BEGIN_SRC rust
+macro_rules! mac {
+  ($t:ty $lit:literal) => {{}}; // invalid
+  ($t:ty $lit:block) => {{}}; // valid
+}
+#+END_SRC
+
+The follow-set of ~:ty~ fragments allows the user to specify another fragment as follow-up, but only if this metavar fragment is a ~:block~ one.
+
+An interesting tidbit is that these checks are performed at the beginning of the expansion phase in rustc, while we go through them during parsing. This is not set in stone, and we'd love to perform them later if required.
+
+The remaining issues are marked as ~good-first-pr~ as they are simple and offer an entrypoint into the compiler's implementation of macros.
+
+Likewise, you cannot merge together repetitions which do not have the same amount of repetitions:
+
+#+BEGIN_SRC rust
+macro_rules! tuplomatron {
+  ($($e:expr),* ; $($f:expr),*) => { ( $( ( $e, $f ) ),* ) };
+}
+
+let tuple = tuplomatron!(1, 2, 3; 4, 5, 6); // valid
+let tuple = tuplomatron!(1, 2, 3; 4, 5); // invalid since both metavars do not have the same amount of repetitions
+#+END_SRC
+
+This gets expanded properly into one big tuple:
+
+#+BEGIN_SRC md
+ let tuple = TupleExpr:
+  outer attributes: none
+  inner attributes: none
+ Tuple elements:
+  TupleExpr:
+  outer attributes: none
+  inner attributes: none
+ Tuple elements:
+  1
+  4
+  TupleExpr:
+  outer attributes: none
+  inner attributes: none
+ Tuple elements:
+  2
+  5
+  TupleExpr:
+  outer attributes: none
+  inner attributes: none
+ Tuple elements:
+  3
+  6
+ final expression: none
+#+END_SRC
+
+Having ~:tt~ fragments handled properly allows us to dwelve into the world of tt-munchers, a very powerful pattern which allows the implementation of extremely complex behaviors or DSLs. The target code we're using for this comes directly from [[https://veykril.github.io/tlborm/][The Little Book of Rust Macros]] by [[https://github.com/veykril][Lukas Wirth]], adapted to fit our non-println-aware compiler.
+
+#+BEGIN_SRC rust
+extern "C" {
+    fn printf(fmt: *const i8, ...);
+}
+
+fn print(name: &str, value: i32) {
+    unsafe {
+        printf(
+            "%s = %d\n\0" as *const str as *const i8,
+            name as *const str as *const i8,
+            value,
+        );
+    }
+}
+
+macro_rules! mixed_rules {
+    () => {{}};
+    (trace $name_str:literal $name:ident; $($tail:tt)*) => {
+        {
+            print($name_str, $name);
+            mixed_rules!($($tail)*);
+        }
+    };
+    (trace $name_str:literal $name:ident = $init:expr; $($tail:tt)*) => {
+        {
+            let $name = $init;
+            print($name_str, $name);
+            mixed_rules!($($tail)*);
+        }
+    };
+}
+
+fn main() {
+    mixed_rules! (trace "a\0" a = 14; trace "a\0" a; trace "b\0" b = 15;);
+}
+#+END_SRC
+
+This is now handled by gccrs, and produces the same output as rustc.
+
+#+BEGIN_SRC shell
+~/G/gccrs > rustc tt-muncher.rs
+~/G/gccrs > ./tt-muncher
+a = 14
+a = 14
+b = 15
+~/G/gccrs > gccrs tt-muncher.rs -o tt-muncher-gccrs
+~/G/gccrs > ./tt-muncher-gccrs
+a = 14
+a = 14
+b = 15
+#+END_SRC
+
+**** Built-in compiler macros
+
+Built-in macros are declared in the standard Rust library but implemented directly by the compiler, similarly to compiler intrinsics. However, their handling happens much earlier in the compiler pipeline: expanding these macro builtins returns new AST fragments which must be inserted in our existing source AST.
+
+Some interesting examples include:
+
+1. ~concat!~, which allows the concatenation of literal tokens at compile-time
+
+#+BEGIN_SRC rust
+concat!("hey", 'n', 0, "w"); // expands to "heyn0w"
+#+END_SRC
+
+1. ~env!~, which allows fetching environment variables during compilation.
+
+#+BEGIN_SRC rust
+let path = env!("PATH");
+// expands to the content of the user's path when they invoked `gccrs`
+#+END_SRC
+
+~env!~ is interesting as it is one of the first built-in with an optional extra argument: You can specify an extra error message to display if the variable is not present.
+
+#+BEGIN_SRC rust
+macro_rules! env {
+    ($name:expr $(,)?) => { ... };
+    ($name:expr, $error_msg:expr $(,)?) => { ... };
+}
+#+END_SRC
+
+This enables us to start looking into properly checking for multiple "matchers" in builtins, and parse and fetch them accordingly.
+
+A lot of built-in macros remain to implement, and we'd love for you to have a go at them if you're interested! Feel free to drop by our Zulip or ask on GitHub for any question you might have.
+
+**** Upcoming macro work
+
+If you are not familiar with the concept of name resolution, I would recommend starting by reading parts of the macro expansion and name resolution chapters of the Rust compiler development guide:
+
+1. [[https://rustc-dev-guide.rust-lang.org/name-resolution.html][Name Resolution]]
+2. [[https://rustc-dev-guide.rust-lang.org/macro-expansion.html#name-resolution][Macro Name Resolution]]
+
+Macros needing to be name resolved is one of the reasons why name resolution happens at the AST level: Because macros expand to new fragments of AST, and need to be expanded before further compiler passes, we need to be able to refer a macro invocation to its definition.
+
+This includes resolving "simple" examples such as the following:
+
+#+BEGIN_SRC rust
+macro_rules! a { () => () };
+
+a!();
+
+macro_rules! a { (now_with_more_tokens) => () };
+
+a!(now_with_more_tokens);
+#+END_SRC
+
+or more complex ones involving imports:
+
+#+BEGIN_SRC rust
+use lazy_static::lazy_static as the_famous_lazy_macro;
+
+the_famous_lazy_macro! {
+    static ref A: i32 = 15;
+}
+#+END_SRC
+
+However, it does not make sense to perform a "full" name resolution at this point: macro expansion will generate new tokens, which could then benefit from a later resolution. Furthermore, the macro lexical scope is quite simple compared to the type scope of name scope and has slightly different rules.
+This explains why name resolution is "split in two" in ~rustc~: One part takes care of resolving macro invocations and imports, and the other takes care of resolving types, variables, function calls...
+
+From this point onward, we will refer to the ~Early Name Resolution~ as the pass responsible for resolving imports and macro invocations, and to ~Name Resolution~ as the later pass.
+
+Up until the month of October, our macro expander performed macro name resolution whenever a macro invocation required expansion. This worked fine in practice, even for complex cases, but made it difficult to expand with proper name resolution rules or imports.
+Adding functionality such as ~#[macro_export]~ and ~#[macro_import]~ on top of it would prove to be too difficult, so we chose to split up the name resolution pass away from the expansion pass.
+
+***** A new expansion system
+
+To take care of macro and import name resolution, we have implemented a new ~EarlyNameResolver~ visitor which takes care of tying a macro invocation to its rules definition. The previous system worked recursively and expanded as many macros as it could in one place, but it was difficult to integrate the ~EarlyNameResolver~ within that system, which was starting to be hard to maintain and very complex.
+
+We have thus switched over to a fixed-point algorithm for resolving and expanding macros: we run the early name resolver, run the macro expander, check if anything has changed, and do it again.
+
+Let's look at an example of how the two systems differ, given this piece of code, and assuming that all these macro invocations expand to their input.
+
+#+BEGIN_SRC rust
+fn main() {
+    foo!(bar!(baz!(let v = 15)));
+
+    a!(b!(a_fn_call()));
+}
+#+END_SRC
+
+1. Previous system
+
+#+BEGIN_SRC rust
+fn main() {
+    // recursively expand this invocation for as long as possible
+    foo!(bar!(baz!(let v = 15)));
+
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    bar!(baz!(let v = 15));
+
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    baz!(let v = 15);
+
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    let v = 15;
+
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    let v = 15;
+
+    // now this invocation
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    let v = 15;
+
+    b!(a_fn_call());
+}
+
+// into...
+
+
+fn main() {
+    let v = 15;
+
+    a_fn_call();
+}
+
+// done!
+#+END_SRC
+
+2. Fixed-point fashion
+
+#+BEGIN_SRC rust
+fn main() {
+    // expand each invocation *once* as we go through the crate
+    
+    foo!(bar!(baz!(let v = 15)));
+
+    a!(b!(a_fn_call()));
+}
+
+// into...
+
+fn main() {
+    bar!(baz!(let v = 15));
+
+    b!(a_fn_call());
+}
+
+// into...
+
+fn main() {
+    baz!(let v = 15);
+
+    a_fn_call();
+}
+
+// into...
+
+fn main() {
+    let v = 15;
+
+    a_fn_call();
+}
+
+// done!
+#+END_SRC
+
+The code responsible for performing this dance looks a bit like the following.
+
+#+BEGIN_SRC cpp
+auto enr = EarlyNameResolver();
+auto expander = MacroExpander();
+
+do {
+    enr.go(crate);
+    expander.go(crate);
+} while (expander.has_changed() && !recursion_limit_reached());
+#+END_SRC
+
+It's a really simple and robust system, which helps clean up the code a lot.
+
+***** The problem
+
+Sadly, this system is not without flaw. As you may know, not all Rust macros can be expanded lazily!
+
+#+BEGIN_SRC rust
+macro_rules! gives_literal { () => ("literal!") }
+
+macro_rules! fake_concat {
+    ($a:literal, $b:literal) => { concat!($a, $b); }
+}
+
+fn main() {
+    let a = concat!("a ", gives_literal!()); // builtin macro, this is fine
+    let b = fake_concat!("a ", gives_literal!()); // error!
+}
+#+END_SRC
+
+...and this is the one remaining feature that the fixed-point system has to be able to deal with before we integrate it into the compiler, hopefully soon!
+
+*** Item visibility
+
+We spent a lot of time this year on ~gccrs~' privacy pass, which has allowed us to have a solid privacy-reporting base. This will make it easy to report private items in public contexts, as well as have a variety of hints for good user experience.
+
+This first implementation concerns functions and function calls.
+
+#+BEGIN_SRC rust
+
+mod orange {
+    mod green {
+        fn sain() {}
+        pub fn doux() {}
+    }
+
+    fn brown() {
+        green::sain(); // error: The function definition is private in this context
+        green::doux();
+    }
+}
+#+END_SRC
+
+We also support ~pub(restricted)~ visibilities seamlessly thanks to the work done in the past few weeks regarding path resolution
+
+#+BEGIN_SRC rust
+mod foo {
+    mod bar {
+        pub(in foo) fn baz() {}
+    }
+
+    fn baz() {
+        bar::baz(); // no error, foo::bar::baz is public in foo
+    }
+}
+#+END_SRC
+
+This work was then improved to support more complex cases and reduce false positives.
+For example, the "valid ancestor check", that we were performing to see if an item's definition module was an ancestor of the current module where said item is referenced, would only go "one step down" in the ancestry tree. This meant that the following Rust code
+
+#+BEGIN_SRC rust
+fn parent() {}
+
+mod foo {
+    mod bar {
+        fn mega_child() {
+            crate::parent();
+        }
+    }
+}
+#+END_SRC
+
+Would cause errors in our privacy pass, despite being perfectly valid code. This is now handled and the ancestry checks are performed recursively as they should.
+
+On top of reporting privacy errors in more expression places (~if private_fn()~, ~let _ = private_fn()~...), we have also added privacy checks to explicit types.
+This means reporting errors for nice, simple private structures:
+
+#+BEGIN_SRC rust
+mod orange {
+    mod green {
+        struct Foo;
+        pub(in orange) struct Bar;
+        pub struct Baz;
+    }
+
+    fn brown() {
+        let _ = green::Foo; // privacy error
+        let _ = green::Bar;
+        let _ = green::Baz;
+
+        let _: green::Foo; // privacy error
+
+        fn any(a0: green::Foo, a1: green::Bar) {}
+        //         ^ privacy error
+    }
+}
+#+END_SRC
+
+As well as complex nested types inside arrays, tuples or function pointers.
+
+More work will be coming regarding trait visibility, associated types, opaque types and so on.
+
+*** Match expressions
+
+~gccrs~ now supports the wildcard pattern in match expressions: ~_~ acts akin to the default case within a switch statement in other languages. GCC CASE_LABEL_EXPR's contain operand 0 and 1, operand 0 is used for the low value of a case label and operand 1 for a high value. So with this CASE_LABEL_EXPR is is possible to support a range of values from low->high if set apropriately, but for the wildcard case this is effectively a default case which means we set both operand 0 and 1 to NULL_TREE.
+
+#+BEGIN_SRC rust
+fn inspect(f: Foo) {
+    match f {
+        Foo::A => unsafe {
+            let a = "Foo::A\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c);
+        },
+        Foo::D { x, y } => unsafe {
+            let a = "Foo::D %i %i\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c, x, y);
+        },
+        _ => unsafe {
+            let a = "wildcard\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+
+            printf(c);
+        },
+    }
+}
+#+END_SRC
+
+Thanks to [[https://github.com/dafaust][David Faust]], the compiler is now able to match on boolean expressions on top of patterns (which were already handled):
+
+#+BEGIN_SRC rust
+let a = false;
+
+match a {
+    true => { /* ... */ },
+    false => { /* ... */ },
+}
+#+END_SRC
+
+David has also added support for matching integers, chars and ranges.
+
+#+BEGIN_SRC rust
+fn foo_u32 (x: u32) {
+    match x {
+        15 => {
+            let a = "fifteen!\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+            printf (c);
+        }
+
+        _ => {
+            let a = "other!\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+            printf (c);
+        }
+    }
+}
+
+const BIG_A: char = 'A';
+const BIG_Z: char = 'Z';
+
+fn bar (x: char) {
+    match x {
+
+        'a'..='z' => {
+            let a = "lowercase\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+            printf (c);
+        }
+        BIG_A..=BIG_Z => {
+            let a = "uppercase\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+            printf (c);
+        }
+        _ => {
+            let a = "other\n\0";
+            let b = a as *const str;
+            let c = b as *const i8;
+            printf (c);
+        }
+    }
+}
+#+END_SRC
+
+More work is still to be done here to handle matching Tuples and ADT's.
+
+*** Unsafe Rust
+
+In Rust, the ~unsafe~ keyword gives you access to more functionality within the language such as dereferencing raw pointers, performing certain operations, accessing union fields or mutating globals. As the name suggests, these operations are _unsafe_ and can cause memory issues such as NULL pointer dereferences, out-of-bounds accesses, or return invalid data.
+
+As the book puts it,
+
+#+BEGIN_QUOTE
+However, Rust has a second language hidden inside it that doesn’t enforce these memory safety guarantees: it’s called unsafe Rust and works just like regular Rust, but gives us extra superpowers.
+#+END_QUOTE
+
+However, in a compiler's internal representation, these operations all seem very safe. For an abstract syntax tree, the dereference of a raw pointer is the same as the dereference of a reference: A node of type ~AST::DerefExpr~ is created, and contains a pointer to the expression being accessed, which is probably a variable name. Similarly, a _call_ to a function is the same whether said function is unsafe or not: ~AST::CallExpr~ simply contains the name of the function, as well as the list of argument to give to that function.
+
+Later on within the compilation pipeline, once name resolution has been performed and type-checking done, we have access to more information: We are able to know that, in the ~*value~ expression, ~value~ is a safe reference, and thus that operation is safe. Or that ~foo(a)~ refers to the ~unsafe fn foo(a: i32)~ and is thus an unsafe call. These checks are performed at the High Intermediate Representation level in ~gccrs~, and were introduced this year.
+
+~gccrs~ will now error out as expected from Rust programs in the following situations:
+
+#+BEGIN_SRC rust
+unsafe fn unsafoo() {}
+
+static mut GLOBAL: i32 = 15;
+
+fn bar(value: i32) {}
+
+fn foo() {
+    unsafoo(); // call to unsafe function!
+
+    let a = 15;
+    let b = &a as *const i32; // this is allowed
+
+    let c = *b; // this is unsafe!
+
+    bar(*b); // here as well!
+
+    let d = GLOBAL; // this is unsafe as well!
+}
+#+END_SRC
+
+You can follow our progress in adding unsafe checks on this [[https://github.com/rust-GCC/gccrs/issues/1411][tracking issue]] on our repository.
+
+*** Linking crates together
+
+In Rust, the entire crate is the compilation unit; for reference, a compilation unit is often referred to as the translation unit in GCC. This means, unlike other languages, a crate is built up with multiple source files. This is all managed by the mod keywords in your source code, such that mod foo will expand automatically to the relative path of foo.rs and include the source code akin to an include nested within a namespace in C++. This has some exciting benefits, notably no need for header files, but this means more complexity because, when linking code, the caller needs to know the calling conventions and type layout information.
+
+To support linking against crates, many things come together to let it happen, so let us look at this by considering a simple example of calling a function in a library. Let us assume we have a library foo with directory structure:
+
+#+BEGIN_SRC rust
+// libfoo/src/lib.rs
+fn bar(a:i32) -> i32 {
+  a + 2
+}
+#+END_SRC
+
+We can compile this by running:
+
+#+BEGIN_SRC bash
+  gccrs -g -O2 -frust-crate=foo -c src/lib.rs -o foo.o
+#+END_SRC
+
+This will generate your expected object file, but you will notice a new output in your current working directory: foo.rox. This is your crate metadata; it contains all this "header" information, such as functions and type layouts. There is code to this by embedding this metadata directly into the object file, which will be preserved into static libraries, and the compiler will support reading from object files and archives but not shared objects, unfortunately. However, by emitting this separate file, it means its output format is agnostic as this method does not seem to be supported for us on macosx.
+
+Back to the example, in order to link against this object and call the function, we must write code to import it:
+
+#+BEGIN_SRC rust
+// test/src/main.rs
+extern crate foo;
+use foo::bar;
+
+fn main() {
+  let a = bar(123);
+}
+#+END_SRC
+
+Now to compile and link this.
+
+#+BEGIN_SRC bash
+  gccrs -g -O2 -I../libfoo -c src/main.rs -o main.o
+  gccrs -o test main.o ../libfoo/foo.o
+#+END_SRC
+
+In the compiler, we see the extern crate declaration, which tells the compiler to look for the external crate foo, which in turn triggers the compiler to look for foo.rox, foo.o or libfoo.a in this case, we will find foo.rox. The front-end loads this data, so we know there is a function named bar. Internally the crate of foo just exports:
+
+#+BEGIN_SRC rust
+extern "Rust" {
+  fn bar(a:i32) -> i32;
+}
+#+END_SRC
+
+This is more complicated for generics and impl blocks, but the idea is the same. The benefit of exporting raw rust code here is that to support public generics, we just get this for free by reusing the same compiler pipeline.
+
+Note you can use the following options to control this metadata output so far:
+
+- -frust-embed-metadata this toggles to embed the metadata into .rust_export section of the target asm output default off
+- -frust-metadata-output= specifies the path to directly write the metadata to file
+
+Note 1: that when specifying the location to write this metadata file the compiler will enforce a naming convention of crate_name.rox on the basename of the path as the crate name is critical here.
+Note 2: this link model is heavily inspired as that from gccgo.
+
+*** ~rustc~ error codes
+
+In August, we merged code from upstream GCC that improves error diagnostics. One of these is the notion of diagnostic metadata, which seems like the best place to start using ~rustc~ error codes. To experiment with this, we have started using ~rustc~ error codes with the first place being errors on casts. Over time we will try to use ~rustc~ error codes as the motivation to improve error handling over time.
+
+#+BEGIN_SRC
+<source>:4:14: error: invalid cast 'bool' to 'f32' [E0054]
+    4 |   let fone = t as f32;
+      |              ^ 
+#+END_SRC
+
+In the long run, this should help getting ~gccrs~ closer to one of its main goals: Passing the ~rustc~ testsuite and ensuring the same sort of errors are emitted by both compilers. This work is still ongoing, and contributions are welcome!
+
+*** Testing project
+
+One of the ~gccrs~ side project that we have dedicated time to this year was the development of a fully fledged testing repository and its associated dashboard. The testing repository runs through various testsuites, such as the ~rustc~ one, every night. These results are then aggregated and made available through a REST API. One of the consumers of that API is a simple web frontend, which displays the evolution of these testsuites over time.
+
+You can access the dashboard's repository [[https://github.com/rust-gcc/bottleboard][here]]! Since we are not web developers, we probably made a bit of a mess, and all contributions are welcome! Furthermore, things like styling are currently absent from the repository as we did not want to embarass ourselves.
+
+The entirety of the dashboard is written in Rust, backend and frontend. It was a really pleasant experience and a joy to work with.
+
+You can run the dashboard locally quite easily, but it will be deployed publicly soon.
+
+The backend exposes a REST API thanks to the [[https://rocket.rs][rocket framework]].
+
+Our [[https://github.com/rust-gcc/testing][testing project]] is set-up to run all testsuites nightly and then upload the results as artifacts. Thanks to the [[https://github.com/XAMPPRocky/octocrab][octocrab crate]], we perform daily requests to the GitHub API and cache these results.
+
+We then serve them on three different endpoints (for now!):
+1. ~api/testsuites~, which returns a list of all available keys
+2. ~api/testsuites/<key>~ to get the list of runs for that specific key
+3. ~api/testsuites/<key>/<date>~ for the result of that specific nightly run
+
+The frontend is a simple combination of [[https://yew.rs/][Yew]] and [[https://crates.io/crates/plotters][plotters]]. We perform calls to the API to get a list of testsuites to display, and then fetch each of their results accordingly and graph them. The interface and styling are very basic, and we hope to add more functionality later on - zooming on a specific date range, hovering on points to get the exact data, etc.
+
+We still need to dedicate some time to improving this application and deploy it on a server. If you are interested in contributing or helping with that ordeal, you are more than welcome to do so!
+
+** Finishing up
+
+Many, many, many more features and fixes were integrated into the compiler this year, but listing them all would be impossible. We'd like to thank each and every one of the contributors who found joy in helping us this year, and are looking forward to working together again. Thank you all, and thank you for your continued interest and support. We wish you all a happy new year!
