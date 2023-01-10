@@ -122,6 +122,7 @@ In particular, we'd like to thank:
 - Mark Wieelard, who keeps providing us with CI infrastructure and testing machines, despite us regularly angering them
 - Bjorn3 and Philipp Krones, for their Rust expertise and willingness to help the project at any time
 - Richard Biener, for the time spent reading our patches on the GCC mailing list and the kind and precise reviews left
+- Miguel Ojeda, for inviting us to Kangrejos and helping us figure out future compilation requirements for Rust-for-Linux
 - David Edelsohn, for making our life easier and providing insightful advice on the GCC side
 
 as well as all of the other fantastic folks who spent time reviewing our patches, submitting some, raising bugs, or simply conversing with us:
@@ -140,53 +141,51 @@ as well as all of the other fantastic folks who spent time reviewing our patches
 
 We are not forgetting all of the other contributors who made our life easier this year. Thank you! We are looking forward to working with you again:
 
-- SimplyTheOther
-- Thomas Schwinge
-- Mark Wielaard
-- David Faust
-- liushuyu
-- Faisal Abbas
-- Thomas Young
-- Marc Poulhiès
-- Jakub Dupak
-- Yizhe
-- Nala Ginrut
-- Iain Buclaw
-- antego
-- Nirmal Patel
-- Tom Tromey
-- Ben Boeckel
-- YizhePKU
-- Akshat Agarwal
-- John Paul Adrian Glaubitz
-- Andrew Naguib
-- M V V S Manoj Kumar
-- Sebastien Lacoste
-- lrh2000
-- Dave
+- [[https://github.com/SimplyTheOther][SimplyTheOther]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://gnu.wildebeest.org/blog/mjw/][Mark Wielaard]]
+- [[https://github.com/dafaust][David Faust]]
+- [[https://github.com/liushuyu][Zixing Liu]]
+- [[https://github.com/abbasfaisal][Faisal Abbas]]
+- [[https://github.com/thomasyonug][Thomas Young]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/jdupak][Jakub Dupak]]
+- [[https://github.com/yizhepku][Yizhe]]
+- [[https://github.com/nalaGinrut][Nala Ginrut]]
+- [[https://github.com/ibuclaw][Iain Buclaw]]
+- [[https://github.com/antego][antego]]
+- [[https://github.com/nirmal-j-patel][Nirmal Patel]]
+- [[https://github.com/tromey][Tom Tromey]]
+- [[https://github.com/mathstuf][Ben Boeckel]]
+- [[https://github.com/humancalico][Akshat Agarwal]]
+- [[https://github.com/glaubitz][John Paul Adrian Glaubitz]]
+- [[https://github.com/ndrwnaguib][Andrew Naguib]]
+- [[https://github.com/mvvsmk][M V V S Manoj Kumar]]
+- [[https://github.com/graphman65][Sébastien Lacoste]]
+- [[https://github.com/lrh2000][lrh2000]]
+- [[https://github.com/dme2][Dave Evans]]
 - Raiki Tamura
-- Simon Cook
-- David Malcolm
+- [[https://github.com/simonpcook][Simon Cook]]
+- [[https://github.com/davidmalcolm][David Malcolm]]
 - George Liakopoulos
-- Lyra
-- Nym Seddon
-- Rodrigo Valle
-- Thomas Fitzsimmons
-- therealansh
-- Alexey Sakovets
-- Ansh Tyagi
-- CastilloDel
-- Connor Lane Smith
+- [[https://github.com/teromene][Lyra]]
+- [[https://github.com/unseddd][Nym Seddon]]
+- [[https://github.com/rodrigovalle][Rodrigo Valle]]
+- [[[https://www.fitzsim.org/blog/][Thomas Fitzsimmons]]
+- [[https://github.com/therealansh][Ansh Tyagi]]
+- [[https://github.com/asakovets][Alexey Sakovets]]
+- [[https://github.com/CastilloDel][Daniel del Castillo]]
+- [[https://github.com/cls][Connor Lane Smith]]
 - Kadoi Takemaru
 - Marek Polacek
-- Michael Karcher
-- Ondřej Machota
-- Rainer Orth
-- Romain Naour
-- Serentty
+- [[https://github.com/karcherm][Michael Karcher]]
+- [[https://github.com/omachota][Ondřej Machota]]
+- [[ro@gcc.gnu.org][Rainer Orth]]
+- [[https://github.com/romainnaour][Romain Naour]]
+- [[https://github.com/serentty][Serentty]]
 - Vlad Doster
-- Zopolis4
-- accusitive
+- [[https://github.com/Zopolis4][Maximilian Downey Twiss]]
+- [[https://github.com/accusitive][accusitive]]
 - wan-nyan-wan
 
 ** Achievements
