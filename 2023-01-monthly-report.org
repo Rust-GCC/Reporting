@@ -1,0 +1,198 @@
+#+title:  Monthly Report for January 2023
+#+author: Philip Herron and Arthur Cohen
+#+date:   2023-02-10
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+1. upstreaming patches. alsmost done!
+2. Lots of things to think about: automation, changelogs, signoff lines...
+3. Lots of pull-requests to review, lots of new contributors!
+4. Lots of new code
+5. GSoC applications
+6. PE joined the team and started working on libproc!
+
+We saw an influx of new contributors this month.
+
+Most of the work this month was focused on fixing the reviews we received on the patches. We spent quite a lot of time organizing them differently, making the fixes, and then applying those fixes to the proper patches. The v4 of the patchset will be sent on the mailing list soon.
+
+The compilation of libcore is still blocked by the same two issues: Macro importing and exporting, as well as closures. With the work on patches, we are finding very little time to add new features to the compiler but will get back to it as soon as possible.
+
+We are still planning to complete these two issues as well as look at the ~#[derive]~ builtin macros.
+
+We are also preparing abstracts in the hope of giving two talks at [[https://fosdem.org/2023/][FOSDEM]] in February. You should also expect a blog-post from us on the [[https://foundation.rust-lang.org/][Rust Foundation's website]] in the coming weeks.
+
+As a side-note, Arthur will be on vacation the second half of December, starting on the 19th.
+
+*** Community call
+
+We will be having our monthly community call on the 13th of February at 10h00 UTC.
+
+- Date/Time: 13th February 2023 at: 10h00 UTC
+- Mailing list: https://gcc.gnu.org/mailman/listinfo/gcc-rust
+- Zulip: https://gcc-rust.zulipchat.com/
+- IRC: irc.oftc.net #gccrust
+- Video Link: https://meet.jit.si/gccrs-community-call-february
+
+Agenda: https://hackmd.io/@Rust-GCC/ByuPb2Uii
+
+You can subscribe to our newly-created Google calendar to get updates and the dates of events the team will attend. It also contains events for our community calls.
+
+- Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
+- [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com&ctz=Europe%2FParis][Google calendar link]]
+- [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
+
+** Completed Activities
+
+- [CL] 24e9bd9..b3fcf32 [[https://github.com/rust-gcc/gccrs/pull/1841][PR1841]]
+- cli: Update safety warning message [[https://github.com/rust-gcc/gccrs/pull/1839][PR1839]]
+- typecheck: Refactor rust-hir-trait-reference.h [[https://github.com/rust-gcc/gccrs/pull/1837][PR1837]]
+- [CL] 849cea5 ec4695a [[https://github.com/rust-gcc/gccrs/pull/1836][PR1836]]
+- Update `gcc-patch-dev` after first half update [[https://github.com/rust-gcc/gccrs/pull/1833][PR1833]]
+- ci: Run commit format checker on push to `trying` branch [[https://github.com/rust-gcc/gccrs/pull/1832][PR1832]]
+- Removed comment copy-pasted from gcc/tree.def [[https://github.com/rust-gcc/gccrs/pull/1826][PR1826]]
+- parser: Fix parsing of closure param list [[https://github.com/rust-gcc/gccrs/pull/1824][PR1824]]
+- parser: Improve parsing of complex generic arguments [[https://github.com/rust-gcc/gccrs/pull/1823][PR1823]]
+- Support for TuplePattern in let statements [[https://github.com/rust-gcc/gccrs/pull/1820][PR1820]]
+- Implement lowering ReferencePattern from AST to HIR [[https://github.com/rust-gcc/gccrs/pull/1818][PR1818]]
+- ci: Require commits check to pass for bors to merge and fix CI names [[https://github.com/rust-gcc/gccrs/pull/1817][PR1817]]
+- Move rust-buffered-queue.h to util folder #1766 [[https://github.com/rust-gcc/gccrs/pull/1816][PR1816]]
+- parser: Allow parsing multiple reference types [[https://github.com/rust-gcc/gccrs/pull/1812][PR1812]]
+- Merge upstream (dummy), "Rust front-end patches v4" [[https://github.com/rust-gcc/gccrs/pull/1811][PR1811]]
+- fixed indentation in AST pretty printed expanded dump of trait. [[https://github.com/rust-gcc/gccrs/pull/1810][PR1810]]
+- Run workflow [[https://github.com/rust-gcc/gccrs/pull/1789][PR1789]]
+- ci: Add commit format checker [[https://github.com/rust-gcc/gccrs/pull/1788][PR1788]]
+- Fix SoB lines [[https://github.com/rust-gcc/gccrs/pull/1784][PR1784]]
+- Remove HIR::GroupedPattern [[https://github.com/rust-gcc/gccrs/pull/1783][PR1783]]
+- Add SoB CI [[https://github.com/rust-gcc/gccrs/pull/1779][PR1779]]
+- Moved operator.h to util/rust-operators.h. [[https://github.com/rust-gcc/gccrs/pull/1778][PR1778]]
+- Rename file rust-ast-full-test.cc to rust-ast.cc [[https://github.com/rust-gcc/gccrs/pull/1777][PR1777]]
+- fixed compiler error message on wildcard pattern within expression [[https://github.com/rust-gcc/gccrs/pull/1776][PR1776]]
+- Create and use CompilePatternLet visitor for compiling let statments [[https://github.com/rust-gcc/gccrs/pull/1775][PR1775]]
+- Added missing GroupedPattern visitors for code generation [[https://github.com/rust-gcc/gccrs/pull/1772][PR1772]]
+- Add type resolution for grouped patterns [[https://github.com/rust-gcc/gccrs/pull/1771][PR1771]]
+- Add HIR lowering for GroupedPattern [[https://github.com/rust-gcc/gccrs/pull/1769][PR1769]]
+- Do not crash on empty macros expand. Fixes #1712 [[https://github.com/rust-gcc/gccrs/pull/1763][PR1763]]
+- Support GroupedPattern during name resolution [[https://github.com/rust-gcc/gccrs/pull/1760][PR1760]]
+- Revert 10-second timeout for each test [[https://github.com/rust-gcc/gccrs/pull/1759][PR1759]]
+- [CL] ast dump and refactor [[https://github.com/rust-gcc/gccrs/pull/1757][PR1757]]
+- [CL] const test cases, const generics, various fixes [[https://github.com/rust-gcc/gccrs/pull/1755][PR1755]]
+- [CL] In place macro expansion and query-based type system [[https://github.com/rust-gcc/gccrs/pull/1754][PR1754]]
+- [CL] type cleanups + const cleanups [[https://github.com/rust-gcc/gccrs/pull/1753][PR1753]]
+- README.md: Added experimental flag & updated gccrs path [[https://github.com/rust-gcc/gccrs/pull/1751][PR1751]]
+- [CL] do not lint public items [[https://github.com/rust-gcc/gccrs/pull/1749][PR1749]]
+- [CL] cleanup macro expansion and parsing [[https://github.com/rust-gcc/gccrs/pull/1748][PR1748]]
+- Add CL checking automation to gcc-patch-dev [[https://github.com/rust-gcc/gccrs/pull/1746][PR1746]]
+- [CL] gccrs: const folding port [[https://github.com/rust-gcc/gccrs/pull/1745][PR1745]]
+- [CL] Double borrow + arithmetic overflow checks + builtin refactor [[https://github.com/rust-gcc/gccrs/pull/1743][PR1743]]
+- Initial type bounds checking for all type checks [[https://github.com/rust-gcc/gccrs/pull/1739][PR1739]]
+- Add support for feature check. [[https://github.com/rust-gcc/gccrs/pull/1737][PR1737]]
+- Change how CompileVarDecl outputs Bvariable's [[https://github.com/rust-gcc/gccrs/pull/1736][PR1736]]
+- macro: Allow builtin `MacroInvocation`s within the AST [[https://github.com/rust-gcc/gccrs/pull/1735][PR1735]]
+- Add get_locus function for abstract class MetaItemInner. [[https://github.com/rust-gcc/gccrs/pull/1734][PR1734]]
+- diagnostics: Add underline for tokens in diagnostics. [[https://github.com/rust-gcc/gccrs/pull/1733][PR1733]]
+- testsuite: Handle Windows carriage returns properly [[https://github.com/rust-gcc/gccrs/pull/1732][PR1732]]
+- Improve type checking on let statements [[https://github.com/rust-gcc/gccrs/pull/1730][PR1730]]
+- Add support for generics associated type binding [[https://github.com/rust-gcc/gccrs/pull/1724][PR1724]]
+- [CL] First update Changelog tryout: Updating AST dump [[https://github.com/rust-gcc/gccrs/pull/1721][PR1721]]
+- format: Fix git whitespace errors [[https://github.com/rust-gcc/gccrs/pull/1717][PR1717]]
+- rust: add bound parsing in parse_generic_arg. [[https://github.com/rust-gcc/gccrs/pull/1716][PR1716]]
+- unsafe: check use of `target_feature` attribute [[https://github.com/rust-gcc/gccrs/pull/1711][PR1711]]
+- Check const functions for mutable references [[https://github.com/rust-gcc/gccrs/pull/1709][PR1709]]
+- Parse declarative macro (decl_macro 2.0) [[https://github.com/rust-gcc/gccrs/pull/1708][PR1708]]
+- Fix frust very long typo [[https://github.com/rust-gcc/gccrs/pull/1707][PR1707]]
+- update the ubuntu version [[https://github.com/rust-gcc/gccrs/pull/1698][PR1698]]
+
+- ci: Use very long -frust flag for testing [[https://github.com/rust-gcc/cargo-gccrs/pull/69][PR69]]
+- Fix clippy warnings [[https://github.com/rust-gcc/cargo-gccrs/pull/67][PR67]]
+
+*** Contributors this month
+
+- [[https://github.com/powerboat9][powerboat9]] (new contributor!)
+- [[https://github.com/Taym95][Taym Haddadi]] (new contributor!)
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]] (new contributor!)
+- [[https://github.com/drmahad][Mahad]] (new contributor!)
+- [[https://github.com/00AR][Abdul Rafey]] (new contributor!)
+- [[https://github.com/Parthib314][Parthib]] (new contributor!)
+- [[https://github.com/snprajwal][Prajwal S N]] (new contributor!)
+- [[https://github.com/ArshErgon][Mohd Arsh Ali]] (new contributor!)
+- [[https://github.com/teromene][Lyra]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/dkm/][Marc Poulhiès]]
+- [[https://github.com/TuringKi][mxlol233]]
+- [[https://github.com/dme2][Dave Evans]]
+- [[https://github.com/tamaroning][tamaron]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        186 |        211 |   +25 |
+| In Progress |         32 |         43 |   +12 |
+| Completed   |        500 |        522 |   +22 |
+
+*** Test Cases
+
+*FIXME*
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 5467       | 5483       | +16   |
+| Failed    | -          | -          | -     |
+| XFAIL     | 40         | 52         | -     |
+| XPASS     | -          | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         55 |         67 |   +12 |
+| In Progress |         16 |         11 |    -5 |
+| Completed   |        218 |        227 |    +9 |
+
+*** Milestones Progress
+
+We are putting together milestones regarding projects such as libproc and will update the Milestone.
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 69% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+Similarly, the Update GCC's master branch milestone contains a [[https://github.com/rust-gcc/gccrs/issues/1705][tracking issue]] containing over 200 tasks. The percentage shown here takes this into account.
+
+| Milestone                         | Last month | This month | Delta | Start Date     | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+----------------+-----------------+---------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020  | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021  | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021  | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021  | 17th Sept 2021  | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sept 2021 | 9th Dec 2021    | 29th Nov 2021 |
+| Macros and cfg expansion          |         0% |       100% | -     | 1st Dec 2021   | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |         0% |       100% | -     | 29th Mar 2022  | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |         0% |       100% | -     | 30th May 2022  | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |         0% |       100% | -     | 10th Oct 2022  | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |       100% |       100% | -     | 13th Nov 2022  | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |        39% |        71% | +32%  | 1st Jan 2023   | -               | 3rd Mar 2023  |
+| Final set of upstream patches     |        31% |        47% | +16%  | 16th Nov 2022  | -               | 30th Apr 2023 |
+| Intrinsics and builtins           |         0% |        18% | +18%  | 6th Sept 2022  | -               | TBD           |
+| Borrow checking                   |         0% |         0% | -     | TBD            | -               | TBD           |
+| Const Generics 2                  |         0% |         0% | -     | TBD            | -               | TBD           |
+| Rust-for-Linux compilation        |         0% |         0% | -     | TBD            | -               | TBD           |
+
+*** Risks
+
+| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
+|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
+| Missing GCC 13 upstream window |            2 |                 3 |            6 | Merge in GCC 14 and be proactive about reviews |
+
+*** Testing project
+
+The testing project is on hold as we try and figure out some of the issues we're running into with GitHub and our various automations around it.
+
+** Planned Activities
+
+- Finish patch upstreaming
+- libproc
+ 
+** Detailed changelog    
