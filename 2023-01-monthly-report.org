@@ -8,28 +8,23 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-1. upstreaming patches. alsmost done!
-2. Lots of things to think about: automation, changelogs, signoff lines...
-3. Lots of pull-requests to review, lots of new contributors!
-4. Lots of new code
-5. GSoC applications
-6. PE joined the team and started working on libproc!
+This month saw an influx of new contributors and pull-requests, which we are extremely happy about. We have opened multiple issues marked as ~good-first-pr~ in order to make sure that anyone interested in the project is able to get started.
+Incidentally, this also caused us to start looking at enhancing the contributing experience regarding GCC ChangeLogs and restrictions earlier than planned. This is fine, as most of the infrastructure was already in place for our
+work on upstreaming patches to GCC's master branch. Overall, more than 60 pull-requests were merged this month, with 8 new people contributing to the project!
 
-We saw an influx of new contributors this month.
+As a consequence, our continuous integration now checks whether or not your commits contain the proper format of Changelog and respect the Digital Certificate of Origin or were made under an FSF copyright assignment. We are putting together more "interactive" to make
+it easier for first time contributors to create these ChangeLog entries.
 
-Most of the work this month was focused on fixing the reviews we received on the patches. We spent quite a lot of time organizing them differently, making the fixes, and then applying those fixes to the proper patches. The v4 of the patchset will be sent on the mailing list soon.
+We also submitted our list of Google Summer of Code projects, which you can find [[https://gcc.gnu.org/wiki/SummerOfCode][here on the GCC wiki]], in the Rust frontend section. We put together four different projects, two of them being "short" (175 hours) and the rest being "long" (350 hours) projects.
 
-The compilation of libcore is still blocked by the same two issues: Macro importing and exporting, as well as closures. With the work on patches, we are finding very little time to add new features to the compiler but will get back to it as soon as possible.
+The project also made the trip to FOSDEM at the beginning of February to give a talk to the Rust devroom about some internal workings of the compiler. You can find the recording of that talk [[https://fosdem.org/2023/schedule/event/rust_a_deep_dive_inside_the_rust_frontend_for_gcc/][here, on the FOSDEM website]].
 
-We are still planning to complete these two issues as well as look at the ~#[derive]~ builtin macros.
-
-We are also preparing abstracts in the hope of giving two talks at [[https://fosdem.org/2023/][FOSDEM]] in February. You should also expect a blog-post from us on the [[https://foundation.rust-lang.org/][Rust Foundation's website]] in the coming weeks.
-
-As a side-note, Arthur will be on vacation the second half of December, starting on the 19th.
+Finally, the most important news for the project this month is the arrival of [[https://github.com/P-E-P/][Pierre-Emmanuel Patry]] as a full time contributor to the project. Pierre-Emmanuel is joining us as part of his final year internship for his Masters degree, and will be mostly working on
+our procedural macros. Notably, his work will consist in working on a reimplementation of ~libproc_macro~ as well as the various infrastructure surrounding that crate, such as inter process communication and client/server behavior within the compiler.
 
 *** Community call
 
-We will be having our monthly community call on the 13th of February at 10h00 UTC.
+We had our monthly community call on the 13th of February at 10h00 UTC. You can find some notes and minutes about the call in the agenda.
 
 - Date/Time: 13th February 2023 at: 10h00 UTC
 - Mailing list: https://gcc.gnu.org/mailman/listinfo/gcc-rust
@@ -136,13 +131,11 @@ You can subscribe to our newly-created Google calendar to get updates and the da
 
 *** Test Cases
 
-*FIXME*
-
 | TestCases | Last Month | This Month | Delta |
 |-----------+------------+------------+-------|
 | Passing   | 5467       | 5483       | +16   |
 | Failed    | -          | -          | -     |
-| XFAIL     | 40         | 52         | -     |
+| XFAIL     | 40         | 40         | -     |
 | XPASS     | -          | -          | -     |
 
 *** Bugs
@@ -175,7 +168,7 @@ Similarly, the Update GCC's master branch milestone contains a [[https://github.
 | Upstream initial patchset         |       100% |       100% | -     | 13th Nov 2022  | 13th Dec 2022   | 19th Dec 2022 |
 | Update GCC's master branch        |        39% |        71% | +32%  | 1st Jan 2023   | -               | 3rd Mar 2023  |
 | Final set of upstream patches     |        31% |        47% | +16%  | 16th Nov 2022  | -               | 30th Apr 2023 |
-| Intrinsics and builtins           |         0% |        18% | +18%  | 6th Sept 2022  | -               | TBD           |
+| Intrinsics and builtins           |         0% |        18% | -     | 6th Sept 2022  | -               | TBD           |
 | Borrow checking                   |         0% |         0% | -     | TBD            | -               | TBD           |
 | Const Generics 2                  |         0% |         0% | -     | TBD            | -               | TBD           |
 | Rust-for-Linux compilation        |         0% |         0% | -     | TBD            | -               | TBD           |
@@ -193,6 +186,7 @@ The testing project is on hold as we try and figure out some of the issues we're
 ** Planned Activities
 
 - Finish patch upstreaming
+- Finish macro name resolution
 - libproc
  
 ** Detailed changelog    
