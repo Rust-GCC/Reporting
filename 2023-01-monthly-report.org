@@ -175,9 +175,7 @@ Similarly, the Update GCC's master branch milestone contains a [[https://github.
 
 *** Risks
 
-| Risk                           | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                     |
-|--------------------------------+--------------+-------------------+--------------+------------------------------------------------|
-| Missing GCC 13 upstream window |            2 |                 3 |            6 | Merge in GCC 14 and be proactive about reviews |
+The last remaining risk was for gccrs to not get merged in GCC 13 by us missing the stage deadline, but that is no longer the case.
 
 *** Testing project
 
