@@ -45,7 +45,8 @@ As a reminder, we published 4 project ideas for this year's Google Summer of Cod
 *** Contributors this week
 
 - [[https://github.com/SainiAditya1][SainiAditya1]] (new contributor!)
-- [[https://github.com/dkm][Thomas Schwinge]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/dkm][Marc Poulhiès]]
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
 - [[https://github.com/powerboat9][Arsen Owens]]
 - [[https://github.com/turingki][mxlol233]]
