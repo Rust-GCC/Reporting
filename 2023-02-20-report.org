@@ -1,0 +1,114 @@
+#+title:  Weekly report for 13th to 20th February 2023
+#+author: Philip Herron and Arthur Cohen
+#+date:   2023-02-20
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+The amount of contributions stayed very high this week with multiple pull-requests from multiple different people. Thank you! We are looking forward to more contributions from all of you.
+
+The work on writing the Rust interface for our reimplementation of ~libproc~ was started by [[https://github.com/p-e-p/][Pierre-Emmanuel Patry]] and is ongoing. Once that interface is complete, Pierre-Emmanuel will get started on writing the C++ internals powering our ~libproc_macro~.
+Philip kept working on various aspects of our type system such as bounds checking, and has restarted working on supporting ~for~ loops and the machinery that comes with them. Arthur spent most of his time working on various parser fixes and investigating macro name resolution internals.
+
+We will also be writing Changelogs for the last few remaining commits that slipped through the cracks between our cutoff point in [[https://github.com/rust-GCC/gccrs/issues/1705][#1705]] and the time when we started enforcing Changelog in commits. There are only 22 commits left without a Changelog, so we expect this work to be dealt with quickly.
+These commits will then be rebased on top of GCC's master branch and pushed.
+
+As a reminder, we published 4 project ideas for this year's Google Summer of Code on GCC's wiki: https://gcc.gnu.org/wiki/SummerOfCode. You can see the list of projects in the ~Rust frontend~ section. Feel free to reach out on Zulip if you have any questions or would like to start putting together a proposal!
+
+** Completed Activities
+
+- gccrs: add test case to show our query-type system is working [[https://github.com/rust-gcc/gccrs/pull/1877][PR1877]]
+- Fix up DejaGnu directives in 'rust/compile/issue-1830_{bytes,str}.rs' test cases [#1838] [[https://github.com/rust-gcc/gccrs/pull/1869][PR1869]]
+- ast: Refactor TraitItem to keep Location info [[https://github.com/rust-gcc/gccrs/pull/1868][PR1868]]
+- diagnostic: Refactor Error class [[https://github.com/rust-gcc/gccrs/pull/1867][PR1867]]
+- include!(): Return empty list of tokens instead of nullptr [[https://github.com/rust-gcc/gccrs/pull/1866][PR1866]]
+- Add trailing newline [[https://github.com/rust-gcc/gccrs/pull/1863][PR1863]]
+- Add AST::AltPattern class [[https://github.com/rust-gcc/gccrs/pull/1862][PR1862]]
+- rename rust-hir-full-test.cc [[https://github.com/rust-gcc/gccrs/pull/1861][PR1861]]
+- ci: Add missing `merge_group` trigger for workflow [[https://github.com/rust-gcc/gccrs/pull/1858][PR1858]]
+- Add support for parsing empty tuple patterns. [[https://github.com/rust-gcc/gccrs/pull/1855][PR1855]]
+- Improve bounds type checking and implement Sized Marker Trait [[https://github.com/rust-gcc/gccrs/pull/1854][PR1854]]
+- Merge upstream (dummy), 2023-01-31 GCC/Rust upstreaming [[https://github.com/rust-gcc/gccrs/pull/1851][PR1851]]
+- Update GCC/Rust files per 'contrib/update-copyright.py --this-year' [#1831] [[https://github.com/rust-gcc/gccrs/pull/1850][PR1850]]
+- Merge upstream, last commit before 2023-01-31 GCC/Rust upstreaming [[https://github.com/rust-gcc/gccrs/pull/1847][PR1847]]
+- Add variadic argument type checking [[https://github.com/rust-gcc/gccrs/pull/1845][PR1845]]
+- [CL] 3554037..3925d11 [[https://github.com/rust-gcc/gccrs/pull/1844][PR1844]]
+- lex: Prevent directories in RAIIFile [[https://github.com/rust-gcc/gccrs/pull/1838][PR1838]]
+- Add feature gate for "rust-intrinsic". [[https://github.com/rust-gcc/gccrs/pull/1825][PR1825]]
+- Improve WildcardPattern let statement handling [[https://github.com/rust-gcc/gccrs/pull/1821][PR1821]]
+- Implement fixed point macro expansion [[https://github.com/rust-gcc/gccrs/pull/1750][PR1750]]
+- Implemented utf-8 checking [[https://github.com/rust-gcc/gccrs/pull/1727][PR1727]]
+
+*** Contributors this week
+
+- [[https://github.com/SainiAditya1][SainiAditya1]] (new contributor!)
+- [[https://github.com/dkm][Thomas Schwinge]]
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
+- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/turingki][mxlol233]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       211 |       208 |    -3 |
+| In Progress |        43 |        47 |    +4 |
+| Completed   |       522 |       535 |   +13 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |   5483    |  5518     |   +35 |
+| Failed    |   -       |  -        |     - |
+| XFAIL     |   40      |  40       |     - |
+| XPASS     |   -       |  -        |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        67 |        59 |    -8 |
+| In Progress |        11 |        24 |   +13 |
+| Completed   |       227 |       237 |   +10 |
+
+*** Milestones Progress
+
+We plan on adding more fine-grained milestones in between November and April as more themes of work will become apparent.
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 69% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+Similarly, the Update GCC's master branch milestone contains a [[https://github.com/rust-gcc/gccrs/issues/1705][tracking issue]] containing over 200 tasks. The percentage shown here takes this into account.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |      100% |      100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |       71% |       98% | +27%  |  1st Jan 2023 | -               |  3rd Mar 2023 |
+| Final set of upstream patches     |       47% |       54% | +7%   | 16th Nov 2022 | -               | 30th Apr 2023 |
+| Intrinsics and builtins           |       18% |       18% | -     | 6th Sept 2022 | -               | TBD           |
+| Borrow checking                   |        0% |        0% | -     | TBD           | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD           | -               | TBD           |
+
+*** Risks
+
+** Planned Activities
+
+- Keep going on for loops
+- Finish work on macro name resolution
+- Keep going on ~libproc~'s Rust interface
+- Fix more parser issues
+
+** Detailed changelog
