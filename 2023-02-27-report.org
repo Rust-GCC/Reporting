@@ -1,0 +1,125 @@
+#+title:  Weekly report for 20th to 27th February 2023
+#+author: Philip Herron and Arthur Cohen
+#+date:   2023-02-27
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+We saw a lot of activity on the repository again this week, which we are very
+thankful for! Thank you to all the talented people who submitted us pull-
+requests or opened issues.
+
+Incidentally, we also dedicated some time this week
+to finally chase down all of the remaining parsing issues we run into when
+trying to compile ~libcore 1.49~ - only a few more fixes and we will be able to
+handle the library entirely. Apart from one issue, all of them concern unstable
+Rust 1.49 features such as specialization or extern types. Philip is also spending
+some time cleaning up our type-system to make it closer to ~rustc~'s in behavior.
+
+Finally, on the ~libproc_macro~ side of things,
+[[https://github.com/P-E-P][Pierre-Emmanuel Patry]] is
+making great progress: work has started on the user interface for our
+~libproc_macro~, which needs to be written in Rust, and more specifically in
+Rust 1.49 as that is the version ~gccrs~ targets. This library is complete and
+is about to be merged. Its role is to interact with a C++ internal library,
+which will also be used by the compiler. As a result, Pierre-Emmanuel is
+spending some time adding a new library folder to GCC's build system which will
+contain all of the libraries used by and offered by ~gccrs~.
+
+As a reminder, we published 4 project ideas for this year's Google Summer of
+Code on GCC's wiki: https://gcc.gnu.org/wiki/SummerOfCode. You can see the list
+of projects in the ~Rust frontend~ section. Feel free to reach out on Zulip if
+you have any questions or would like to start putting together a proposal!
+
+** Completed Activities
+
+- typecheck: Refactor cast_site [[https://github.com/rust-gcc/gccrs/pull/1926][PR1926]]
+- Add AST node for extern types [[https://github.com/rust-gcc/gccrs/pull/1924][PR1924]]
+- typecheck: Refactor coercion_site [[https://github.com/rust-gcc/gccrs/pull/1912][PR1912]]
+- Merge upstream (dummy), 2023-02-21 "Rust front-end update" [[https://github.com/rust-gcc/gccrs/pull/1911][PR1911]]
+- Update `gcc-patch-dev` pre patchbomb [[https://github.com/rust-gcc/gccrs/pull/1909][PR1909]]
+- Merge upstream, last commit before 2023-02-21 "Rust front-end update" [[https://github.com/rust-gcc/gccrs/pull/1908][PR1908]]
+- typecheck: Refactor unify_site [[https://github.com/rust-gcc/gccrs/pull/1907][PR1907]]
+- ci: Run GCC 4.8 job in Ubuntu 18.04 container [[https://github.com/rust-gcc/gccrs/pull/1906][PR1906]]
+- macro_invoc_lexer: Add `split_current_token` implementation [[https://github.com/rust-gcc/gccrs/pull/1905][PR1905]]
+- Merge upstream [[https://github.com/rust-gcc/gccrs/pull/1885][PR1885]]
+- Added AST Node AST::InlineAsm [[https://github.com/rust-gcc/gccrs/pull/1884][PR1884]]
+- Unsafe block parsing fix [[https://github.com/rust-gcc/gccrs/pull/1879][PR1879]]
+- Parse AltPattern [[https://github.com/rust-gcc/gccrs/pull/1878][PR1878]]
+- parser: Parse auto_traits [[https://github.com/rust-gcc/gccrs/pull/1875][PR1875]]
+- parser: Allow parsing of qualified type path as nested generic argument [[https://github.com/rust-gcc/gccrs/pull/1874][PR1874]]
+- Add feature gate for "rustc_attri". [[https://github.com/rust-gcc/gccrs/pull/1873][PR1873]]
+- [CL] 3925d11..d3c9827 [[https://github.com/rust-gcc/gccrs/pull/1857][PR1857]]
+
+*** Contributors this week
+
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
+- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/turingki][mxlol233]]
+- [[https://github.com/mvvsmk][M V V S Manoj Kumar]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       211 |       221 |   +10 |
+| In Progress |        47 |        46 |    -1 |
+| Completed   |       535 |       549 |   +14 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |   5518    |  5538     |   +20 |
+| Failed    |   -       |  -        |     - |
+| XFAIL     |   40      |  40       |     - |
+| XPASS     |   -       |  -        |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        59 |        67 |    +8 |
+| In Progress |        24 |        34 |   +10 |
+| Completed   |       237 |       244 |    +7 |
+
+*** Milestones Progress
+
+We plan on adding more fine-grained milestones in between November and April as more themes of work will become apparent.
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 69% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |      100% |      100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |       98% |      100% | +2%   |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       54% |       56% | +2%   | 16th Nov 2022 | -               | 30th Apr 2023 |
+| Intrinsics and builtins           |       18% |       18% | -     | 6th Sept 2022 | -               | TBD           |
+| Borrow checking                   |        0% |        0% | -     | TBD           | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD           | -               | TBD           |
+
+*** Risks
+
+** Planned Activities
+
+- Keep going on for loops
+- Finish work on macro name resolution
+- Keep going on ~libproc~'s Rust interface
+- Fix more parser issues
+
+** Detailed changelog
