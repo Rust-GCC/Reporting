@@ -122,6 +122,7 @@ Thus the percentage is computed using the sum of issues and tracked items done d
 - Finish work on macro name resolution
 - Keep going on ~libproc~'s Rust interface
 - Fix more parser issues
+- Fix bugs in type resolution for iterators in libcore
 
 ** Detailed changelog
 
