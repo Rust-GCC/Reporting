@@ -129,7 +129,9 @@ Thus the percentage is computed using the sum of issues and tracked items done d
 
 Recently we add support for the binding associated types syntax in generic arguments such as:
 
-#+BEGIN_SRCcore::ops::Add<Output = i32>>#+END_SRC
+#+BEGIN_SRC
+core::ops::Add<Output = i32>>
+#+END_SRC
 
 This syntax of Output=xyz allows the arguments of an associated type bound set the expected associated types expected argument to be. This means when we do bounds checking we need to ensure that when bounds match not only are they coherent as in are they actually implemented as well as any parent trait bounds, but are their expected associated types ok. So for example you might do something like this:
 
