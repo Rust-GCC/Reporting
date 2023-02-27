@@ -16,8 +16,9 @@ Incidentally, we also dedicated some time this week
 to finally chase down all of the remaining parsing issues we run into when
 trying to compile ~libcore 1.49~ - only a few more fixes and we will be able to
 handle the library entirely. Apart from one issue, all of them concern unstable
-Rust 1.49 features such as specialization or extern types. Philip is also spending
-some time cleaning up our type-system to make it closer to ~rustc~'s in behavior.
+Rust 1.49 features such as specialization or extern types. Philip's focus has been
+on adding proper bounds checking which now enforces things such as the Sized lang
+item, and is now onto fixing bugs to get libcore [https://github.com/Rust-GCC/gccrs/issues/1895][iterator code working]].
 
 Finally, on the ~libproc_macro~ side of things,
 [[https://github.com/P-E-P][Pierre-Emmanuel Patry]] is
