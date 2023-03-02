@@ -1,0 +1,113 @@
+#+title:  Weekly report for 27th of February 2023 to 6th March 2023
+#+author: Philip Herron and Arthur Cohen
+#+date:   2023-03-06
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+1. Still a lot of people
+2. Getting really close to for loops! This is insane as there is a huge amount of code from libcore necessary to handle them
+    1. Expect maybe a blogpost?
+3. Macro exports is working! lots of things to clean up, but it's finally tackled it
+4. good progress on ~libproc_macro~ and parsing issues
+5. The GCC organization got accepted into Google Summer of Code, we are awaiting your proposals!
+6. this report is written on the 2nd of March as Arthur will be on vacation
+
+As a reminder, we published 4 project ideas for this year's Google Summer of
+Code on GCC's wiki: https://gcc.gnu.org/wiki/SummerOfCode. You can see the list
+of projects in the ~Rust frontend~ section. Feel free to reach out on Zulip if
+you have any questions or would like to start putting together a proposal!
+
+** Completed Activities
+
+- Add location info when opening a file fails in include_str and include_bytes [[https://github.com/rust-gcc/gccrs/pull/1955][PR1955]]
+- Parse if let expressions correctly [[https://github.com/rust-gcc/gccrs/pull/1950][PR1950]]
+- hir: Refactor ASTLoweringStmt to source file. [[https://github.com/rust-gcc/gccrs/pull/1946][PR1946]]
+- gccrs: add {add,sub,mul}_with_overflow intrinsics [[https://github.com/rust-gcc/gccrs/pull/1945][PR1945]]
+- Parse rest pattern in slices [[https://github.com/rust-gcc/gccrs/pull/1944][PR1944]]
+- Fix assignment operator overloads for AST and HIR patterns [[https://github.com/rust-gcc/gccrs/pull/1942][PR1942]]
+- Basic Code Cleanup [[https://github.com/rust-gcc/gccrs/pull/1940][PR1940]]
+- Fix casting error behind generics [[https://github.com/rust-gcc/gccrs/pull/1938][PR1938]]
+- Add `RestPattern` AST node [[https://github.com/rust-gcc/gccrs/pull/1937][PR1937]]
+- an attempt to implement pretty HIR dump [[https://github.com/rust-gcc/gccrs/pull/1933][PR1933]]
+- parser: Parse external type item [[https://github.com/rust-gcc/gccrs/pull/1932][PR1932]]
+- Generic pointers coerceable [[https://github.com/rust-gcc/gccrs/pull/1931][PR1931]]
+- Add feature gate definition for `extern_types`. [[https://github.com/rust-gcc/gccrs/pull/1929][PR1929]]
+- parser: Parse `default` impl Functions and Methods [[https://github.com/rust-gcc/gccrs/pull/1921][PR1921]]
+- [CL] missing commits from after #1705 [[https://github.com/rust-gcc/gccrs/pull/1889][PR1889]]
+- builtins: Implement eager expansion for include_str!() [[https://github.com/rust-gcc/gccrs/pull/1871][PR1871]]
+
+*** Contributors this week
+
+- [[https://github.com/omkar-mohanty][Omkar Mohanty]] (new contributor!)
+- [[https://github.com/goar5670][Mahmoud Adel]] (new contributor!)
+- [[https://github.com/nikos-alexandris][Nikos Alexandris]] (new contributor!)
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
+- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/00AR][Abdul Rafey]]
+- [[https://github.com/TuringKi][mxlol233]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       221 |       210 |   -11 |
+| In Progress |        46 |        46 |     - |
+| Completed   |       549 |       565 |   +16 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |   5538    |  5566     |   +28 |
+| Failed    |   -       |  -        |     - |
+| XFAIL     |   40      |  40       |     - |
+| XPASS     |   -       |  -        |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        67 |        58 |    -9 |
+| In Progress |        34 |        26 |    -8 |
+| Completed   |       244 |       256 |   +12 |
+
+*** Milestones Progress
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 69% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |      100% |      100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |      100% |      100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       56% |       63% | +7%   | 16th Nov 2022 | -               | 30th Apr 2023 |
+| Intrinsics and builtins           |       18% |       18% | -     | 6th Sept 2022 | -               | TBD           |
+| Borrow checking                   |        0% |        0% | -     | TBD           | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD           | -               | TBD           |
+
+*** Risks
+
+** Planned Activities
+
+- Finish work on for loops
+- Cleanup work on macro export and import
+- Merge ~libproc_macro~'s Rust interface and build system
+- Keep working on parser issues
+- Fix bugs in type resolution for iterators in libcore
+
+** Detailed changelog
+
