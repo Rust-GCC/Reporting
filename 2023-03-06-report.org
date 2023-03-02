@@ -8,18 +8,31 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-1. Still a lot of people
-2. Getting really close to for loops! This is insane as there is a huge amount of code from libcore necessary to handle them
-    1. Expect maybe a blogpost?
-3. Macro exports is working! lots of things to clean up, but it's finally tackled it
-4. good progress on ~libproc_macro~ and parsing issues
-5. The GCC organization got accepted into Google Summer of Code, we are awaiting your proposals!
-6. this report is written on the 2nd of March as Arthur will be on vacation
+The influx of contributors to the project has not stopped and we are constantly
+getting pull-requests and interest from multiple people, which we are very
+thankful for. A lot of people coming to chat with us on Zulip or asking to be
+assigned to Github issues are planning to apply for this year's Google Summer
+of Code, and as the GCC project has been accepted as a GSoC organization once
+again, we are looking forward to all of your proposals! As a reminder,
+you can find all of our project ideas [[https://gcc.gnu.org/wiki/SummerOfCode][on the GCC wiki]]. You are welcome to
+come up with your own project idea too and discuss it with the team!
 
-As a reminder, we published 4 project ideas for this year's Google Summer of
-Code on GCC's wiki: https://gcc.gnu.org/wiki/SummerOfCode. You can see the list
-of projects in the ~Rust frontend~ section. Feel free to reach out on Zulip if
-you have any questions or would like to start putting together a proposal!
+All of the contributors have tackled an important amount of issues this week, and we are quickly progressing through
+our milestone.
+
+On the ~libcore 1.49~ front, ~gccrs~ is getting really close to compiling ~for~ loops. This will be an important milestone,
+as the amount of code from libcore necessary to get them to work is quite impressive. You can expect detailed changelogs from
+Philip which will go into detail on all the interesting features and how we deal with them. Arthur has also spent time
+tackling macro exports and imports, which are almost finished and just need a little cleaning-up.
+
+Regarding ~libproc_macro~, Pierre-Emmanuel is working hard on getting GCC's build system to accomodate these new Rust libraries
+as well as internal libraries which ~gccrs~ will make use of. He has also spent a lot of time going through our parser-related
+issues, bringing us closer and closer to compiling the core library!
+
+As a side-note, Arthur will be on vacation from the 3rd of March to the 10th of March, which is why this report is being written
+as of today the 2nd of March. The monthly report will be published on the 13th of March.
+
+Finally, ~gccrs~ will once again be at Embedded World in Nuremberg. Feel free to come to the Embecosm stand and discuss the project!
 
 ** Completed Activities
 
@@ -110,4 +123,3 @@ Thus the percentage is computed using the sum of issues and tracked items done d
 - Fix bugs in type resolution for iterators in libcore
 
 ** Detailed changelog
-
