@@ -1,0 +1,117 @@
+#+title:  Weekly report for 6th to 13th March 2023
+#+author: Philip Herron and Arthur Cohen
+#+date:   2023-03-13
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+The influx of contributors to the project has not stopped and we are constantly
+getting pull-requests and interest from multiple people, which we are very
+thankful for. As a reminder, you can find all of our GSOC project ideas
+[[https://gcc.gnu.org/wiki/SummerOfCode][on the GCC wiki]].
+You are welcome to come up with your own project idea too and discuss it with the team!
+
+This week was quiet, some issues has been resolved but no major milestone has been reached.
+
+Arthur was on vacation so naturally less work has been achieved on his side.
+
+On the ~libcore 1.49~ front, ~gccrs~ is still close to compiling ~for~ loops but nothing has really moved on this part during this week.
+
+Regarding ~libproc_macro~, Pierre-Emmanuel has almost finished the additions to GCC's build system to accomodate these new Rust libraries
+as well as internal libraries which ~gccrs~ will make use of. Hopefully this could be merged soon. He also implemented the ~stringify~ builtin macro.
+
+Finally, ~gccrs~ will once again be at Embedded World in Nuremberg. Feel free to come to the Embecosm stand and discuss the project!
+
+** Completed Activities
+
+- hir: add a helper function for TypeCheckPattern::visit (HIR::RangePattern &pattern) [[https://github.com/Rust-GCC/gccrs/pull/1972][PR1972]]
+- typecheck: Add basic typechecking for ReferenceType [[https://github.com/Rust-GCC/gccrs/pull/1971][PR1971]]
+- Fix handling of coherence related lang_items [[https://github.com/Rust-GCC/gccrs/pull/1970][PR1970]]
+- Add stringify macro expansion [[https://github.com/Rust-GCC/gccrs/pull/1969][PR1969]]
+- Resolve closure parameters without given type [[https://github.com/Rust-GCC/gccrs/pull/1964][PR1964]]
+- Add length checking for tuple patterns. [[https://github.com/Rust-GCC/gccrs/pull/1963][PR1963]]
+- parser: Fix handling of multiple left angles in null denotation [[https://github.com/Rust-GCC/gccrs/pull/1966][PR1966]]
+- Cleanup and Assertion [[https://github.com/Rust-GCC/gccrs/pull/1967][PR1967]]
+- parser: Fix parsing closure parameter [[https://github.com/Rust-GCC/gccrs/pull/1960][PR1960]]
+- gccrs: Take advantage of our new unify_and to inject inference [[https://github.com/Rust-GCC/gccrs/pull/1962][PR1962]]
+
+*** Contributors this week
+
+- [[https://github.com/chosen-ox][Vincent Fan]] (new contributor!)
+- [[https://github.com/Parthib314][Parthib Datta]]
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
+- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/goar5670][Mahmoud Adel]]
+- [[https://github.com/nikos-alexandris][Nikos Alexandris]]
+
+*** Overall Task Status
+
+**FIXME**: Update stats
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       221 |       210 |   -11 |
+| In Progress |        46 |        46 |     - |
+| Completed   |       549 |       565 |   +16 |
+
+*** Test Cases
+
+**FIXME**: Update stats
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |   5538    |  5566     |   +28 |
+| Failed    |   -       |  -        |     - |
+| XFAIL     |   40      |  40       |     - |
+| XPASS     |   -       |  -        |     - |
+
+*** Bugs
+
+**FIXME**: Update stats
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        67 |        58 |    -9 |
+| In Progress |        34 |        26 |    -8 |
+| Completed   |       244 |       256 |   +12 |
+
+*** Milestones Progress
+
+**FIXME**: Update
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 69% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |      100% |      100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |      100% |      100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       56% |       63% | +7%   | 16th Nov 2022 | -               | 30th Apr 2023 |
+| Intrinsics and builtins           |       18% |       18% | -     | 6th Sept 2022 | -               | TBD           |
+| Borrow checking                   |        0% |        0% | -     | TBD           | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD           | -               | TBD           |
+
+*** Risks
+
+** Planned Activities
+
+- Finish work on for loops
+- Cleanup work on macro export and import
+- Merge ~libproc_macro~'s Rust interface and build system
+- Keep working on parser issues
+- Fix bugs in type resolution for iterators in libcore
+
+** Detailed changelog
