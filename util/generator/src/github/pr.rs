@@ -1,4 +1,7 @@
-use crate::error::Error;
+use crate::{
+    error::Error,
+    naming::{ORGANISATION, REPOSITORY},
+};
 use chrono::NaiveDate;
 use octocrab::{models::pulls::PullRequest, params::State, Octocrab};
 
@@ -36,7 +39,7 @@ pub async fn fetch_merged(
     to: &NaiveDate,
 ) -> Result<Vec<PullRequest>, Error> {
     let mut pages = gh
-        .pulls("rust-gcc", "gccrs")
+        .pulls(ORGANISATION, REPOSITORY)
         .list()
         .state(State::Closed)
         .per_page(100)

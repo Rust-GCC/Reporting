@@ -1,4 +1,7 @@
-use crate::error::Error;
+use crate::{
+    error::Error,
+    naming::{ORGANISATION, REPOSITORY},
+};
 use async_trait::async_trait;
 use chrono::NaiveDate;
 use std::fmt::{Display, Formatter, Result as FmtResult};
@@ -56,5 +59,5 @@ impl Display for MStone {
 
 /// Fetch all milestones
 pub async fn fetch_all(gh: &Octocrab) -> Result<Vec<Milestone>, Error> {
-    Ok(gh.milestones("rust-gcc", "gccrs").await?.take_items())
+    Ok(gh.milestones(ORGANISATION, REPOSITORY).await?.take_items())
 }
