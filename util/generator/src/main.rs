@@ -14,6 +14,11 @@ use github::{
     pr::{self, Pr},
 };
 
+mod naming {
+    pub static ORGANISATION: &str = "rust-gcc";
+    pub static REPOSITORY: &str = "gccrs";
+}
+
 mod error;
 mod github;
 
