@@ -21,6 +21,7 @@ mod naming {
 
 mod error;
 mod github;
+mod testcase;
 
 // FIXME: There should be two templates: one for weekly reports, one for monthly reports, as monthly reports include tests etc
 static TEMPLATE: &str = include_str!("templates/report.org.template");
@@ -52,6 +53,8 @@ enum Kind {
 
 #[derive(Parser)]
 struct Cli {
+    #[arg(short, help = "Run tests to report deltas")]
+    pub run_tests: bool,
     #[arg(short, long)]
     pub kind: Kind,
     #[arg(short, long)]
@@ -72,6 +75,13 @@ async fn main() -> Result<(), Error> {
     let args = Cli::parse();
     let gh = octocrab::instance();
     let from_date = get_from_date(&args.kind, &args.date);
+
+    let test_cases = if args.run_tests {
+        let x = testcase::TestCases::collect().unwrap();
+        x.to_string()
+    } else {
+        String::new()
+    };
 
     let merged_prs = pr::fetch_merged(&gh, &from_date, &args.date)
         .await?
@@ -96,7 +106,7 @@ async fn main() -> Result<(), Error> {
         date: args.date,
         contributors: String::new(),
         task_status: String::new(),
-        test_cases: String::new(),
+        test_cases,
         bugs: String::new(),
         milestones: milestones.iter().fold(String::new(), |acc, milestone| {
             format!("{acc}\n{milestone}")
