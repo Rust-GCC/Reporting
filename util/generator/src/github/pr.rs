@@ -1,3 +1,4 @@
+//! Module related to github pull requests.
 use crate::{
     error::Error,
     naming::{ORGANISATION, REPOSITORY},
@@ -33,6 +34,12 @@ impl Display for Pr {
 }
 
 /// Fetch all merged pull requests merged a week or a month before the given date
+///
+/// # Arguments
+///
+/// * `gh` - Octocrab instance that should be used to fetch data.
+/// * `from` - Start date for the time period containing the merged pull requests.
+/// * `to` - End date for the time period containing the merged pull requests.
 pub async fn fetch_merged(
     gh: &Octocrab,
     from: &NaiveDate,
@@ -49,16 +56,14 @@ pub async fn fetch_merged(
     Ok(pages
         .take_items()
         .into_iter()
-        .fold(Vec::new(), |mut acc, pr| {
-            if let Some(merge_date) = pr.merged_at {
-                let merge_date = merge_date.date_naive();
-                // Is the inclusive range okay?
-                if &merge_date >= from && &merge_date <= to {
-                    dbg!(&pr.url);
-                    acc.push(pr)
-                }
-            }
-
-            acc
-        }))
+        .filter(|pr| {
+            pr.merged_at
+                .map(|e| {
+                    let merge_date = &e.date_naive();
+                    // Is the inclusive range okay?
+                    merge_date < from && merge_date > to
+                })
+                .unwrap_or(true)
+        })
+        .collect())
 }

@@ -3,12 +3,15 @@
 //! fetching bug/issue status, and so on.
 
 use clap::{Parser, ValueEnum};
+use error::Error;
+use git2::Repository;
 use serde::Serialize;
+use std::path::PathBuf;
+use testcase::TestCases;
 use tinytemplate::TinyTemplate;
 
 use chrono::{Days, Months, NaiveDate};
 
-use error::Error;
 use github::{
     milestone::{self, MStone},
     pr::{self, Pr},
@@ -21,6 +24,7 @@ mod naming {
 
 mod error;
 mod github;
+mod repository;
 mod testcase;
 
 // FIXME: There should be two templates: one for weekly reports, one for monthly reports, as monthly reports include tests etc
@@ -53,8 +57,20 @@ enum Kind {
 
 #[derive(Parser)]
 struct Cli {
-    #[arg(short, help = "Run tests to report deltas")]
-    pub run_tests: bool,
+    #[arg(short, long, help = "Skip tests and do not report deltas")]
+    pub skip_tests: bool,
+    #[arg(
+        short,
+        long,
+        help = "Path to a local repository to avoid cloning the project"
+    )]
+    pub local_repo: Option<PathBuf>,
+    #[arg(
+        short,
+        long,
+        help = "Additional arguments to pass to the configure script"
+    )]
+    pub configure: Option<String>,
     #[arg(short, long)]
     pub kind: Kind,
     #[arg(short, long)]
@@ -76,13 +92,6 @@ async fn main() -> Result<(), Error> {
     let gh = octocrab::instance();
     let from_date = get_from_date(&args.kind, &args.date);
 
-    let test_cases = if args.run_tests {
-        let x = testcase::TestCases::collect().unwrap();
-        x.to_string()
-    } else {
-        String::new()
-    };
-
     let merged_prs = pr::fetch_merged(&gh, &from_date, &args.date)
         .await?
         // FIXME: Would it be better to have a trait extension for octo::PullRequest here?
@@ -91,6 +100,39 @@ async fn main() -> Result<(), Error> {
         .into_iter()
         .map(Pr::from)
         .collect::<Vec<Pr>>();
+
+    let test_cases = if args.skip_tests {
+        String::new()
+    } else {
+        let repository = if let Some(ref path) = args.local_repo {
+            Repository::open(path).map_err(Error::Repository)?
+        } else {
+            repository::clone(&gh).await.map_err(Error::Clone)?
+        };
+
+        // FIXME: Change "master" references to actual references
+        // Should we rely on PRs or git history ?
+        let results = TestCases::collect(
+            &repository,
+            "master",
+            "master",
+            &args.configure.unwrap_or_default(),
+        )
+        .await
+        .map_err(Error::Test)?;
+
+        if args.local_repo.is_none() {
+            std::fs::remove_dir_all(
+                repository
+                    .path()
+                    .parent()
+                    .expect(".git parent should always exist"),
+            )
+            .map_err(Error::Workspace)?;
+        }
+
+        results.to_string()
+    };
 
     let milestones = milestone::fetch_all(&gh)
         .await?

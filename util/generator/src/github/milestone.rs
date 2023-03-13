@@ -1,3 +1,4 @@
+//! Module related to github milestones.
 use crate::{
     error::Error,
     naming::{ORGANISATION, REPOSITORY},
@@ -58,6 +59,8 @@ impl Display for MStone {
 }
 
 /// Fetch all milestones
+///
+/// * `gh` - Octocrab instance that should be used to fetch data.
 pub async fn fetch_all(gh: &Octocrab) -> Result<Vec<Milestone>, Error> {
     Ok(gh.milestones(ORGANISATION, REPOSITORY).await?.take_items())
 }
