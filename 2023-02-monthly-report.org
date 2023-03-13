@@ -20,7 +20,7 @@ Rust libraries we will be bringing to the GCC project. He has also made signific
 multiple ~libcore~-related issues, namely on some features our parser lacked. Philip has spent
 a lot of time on iterators and ~for~ loops, bringing us closer and closer to supporting all
 of ~libcore 1.49~'s intricacies and internal mechanics. The handling of ~for~ loops requires
-being able to compile a significant part of ~libcore~, which we are really excited about.
+being able to compile a significant portion of ~libcore~, which we are really excited about.
 Arthur spent some more time on name resolution and macros overall, finally bridging the gap
 between macro exporting and our metadata exports, which allows us to start pulling in public
 macros from external modules and crates.
@@ -212,5 +212,68 @@ The testing project is on hold as we try and figure out some of the issues we're
 - Finish patch upstreaming
 - Finish macro name resolution
 - libproc
+- Iterators and Bugs
  
-** Detailed changelog    
+** Detailed changelog
+
+*** Generic Argument bindings
+
+Recently we add support for the binding associated types syntax in generic arguments such as:
+
+#+BEGIN_SRC
+core::ops::Add<Output = i32>>
+#+END_SRC
+
+This syntax of Output=xyz allows the arguments of an associated type bound set the expected associated types expected argument to be. This means when we do bounds checking we need to ensure that when bounds match not only are they coherent as in are they actually implemented as well as any parent trait bounds, but are their expected associated types ok. So for example you might do something like this:
+
+#+BEGIN_SRC rust
+mod core {
+    mod ops {
+        #[lang = "add"]
+        pub trait Add<Rhs = Self> {
+            type Output;
+
+            fn add(self, rhs: Rhs) -> Self::Output;
+        }
+    }
+}
+
+impl core::ops::Add for f32 {
+    type Output = f32;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        self + rhs
+    }
+}
+
+pub fn foo<T: core::ops::Add<Output = i32>>(a: T) -> i32 {
+    a + a
+}
+
+pub fn main() {
+    foo(123f32);
+}
+#+END_SRC
+
+This test case shows that we expected foo to take an Add trait bound with an output of i32 but in main we are passing an f32 which obviously returns an f32 for its add output. Which results in this error:
+
+#+BEGIN_SRC
+<source>:25:9: error: expected 'i32' got 'f32'
+   13 |     type Output = f32;
+      |     ~~~~ 
+......
+   20 | pub fn foo<T: core::ops::Add<Output = i32>>(a: T) -> i32 {
+      |               ~~~~
+......
+   25 |     foo(123f32);
+      |         ^~~~~~
+<source>:25:9: error: bounds not satisfied for f32 'Add' is not satisfied
+   20 | pub fn foo<T: core::ops::Add<Output = i32>>(a: T) -> i32 {
+      |               ~~~~
+......
+   25 |     foo(123f32);
+      |         ^~~~~~
+#+END_SRC
+
+see: https://godbolt.org/z/r6jn3aGjj
+
