@@ -1,0 +1,216 @@
+#+title:  Monthly Report for February 2023
+#+author: Philip Herron and Arthur Cohen
+#+date:   2023-03-13
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+The number of contributions this month stayed extremely important, with a lot of new
+contributors and many existing contributors returning. The month of January, which was already
+impressive with around 50 pull-requests merged, got supplanted by February, where we saw around
+80 pull-requests from more than a dozen people get submitted and merged!
+
+We hope that everyone has a nice time contributing to the project, but we are aware that there might still be some rough edges for new contributors. Please feel free to reach out to let us know what could be improved!
+
+This month, Pierre-Emmanuel spent some more time getting our build system to handle the new
+Rust libraries we will be bringing to the GCC project. He has also made significant strides on
+multiple ~libcore~-related issues, namely on some features our parser lacked. Philip has spent
+a lot of time on iterators and ~for~ loops, bringing us closer and closer to supporting all
+of ~libcore 1.49~'s intricacies and internal mechanics. The handling of ~for~ loops requires
+being able to compile a significant part of ~libcore~, which we are really excited about.
+Arthur spent some more time on name resolution and macros overall, finally bridging the gap
+between macro exporting and our metadata exports, which allows us to start pulling in public
+macros from external modules and crates.
+
+Furthermore, the GCC project was accepted as a GSoC organization this year again. We have
+put together 4 project proposals for ~gccrs~, for which you are welcome to submit a proposal! Philip and Arthur will be mentoring
+applicants together.
+
+You can find these project ideas [[https://gcc.gnu.org/wiki/SummerOfCode][here on the GCC wiki]], in the Rust frontend section.
+
+You will be able to start submitting them on the 20th of March. In the meantime, feel free to
+come chat with us on [[https://gcc-rust.zulipchat.com][Zulip]] and discuss them, or talk about new project ideas. We are open to
+all ideas, and are looking forward to your submissions!
+
+Finally, ~gccrs~ will be present at Embedded World 2023 at the Embecosm booth. Feel free to come see us to chat about the project!
+
+*** Community call
+
+We had our monthly community call on the 6th of March. You can subscribe to our calendar
+to see when the next one will be held. The call is open to everyone, even if you would just
+like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to
+be notified of upcoming events.
+
+- Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
+- [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com&ctz=Europe%2FParis][Google calendar link]]
+- [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
+
+** Completed Activities
+
+- gccrs: fix some clang warnings [[https://github.com/rust-gcc/gccrs/pull/1975][PR1975]]
+- hir: add a helper function for `TypeCheckPattern::visit (HIR::RangePattern &pattern)` [[https://github.com/rust-gcc/gccrs/pull/1972][PR1972]]
+- typecheck: Add basic typechecking for ReferenceType [[https://github.com/rust-gcc/gccrs/pull/1971][PR1971]]
+- Fix handling of coherence related lang_items [[https://github.com/rust-gcc/gccrs/pull/1970][PR1970]]
+- Add stringify macro expansion [[https://github.com/rust-gcc/gccrs/pull/1969][PR1969]]
+- Cleanup and Assertion [[https://github.com/rust-gcc/gccrs/pull/1967][PR1967]]
+- parser: Fix handling of multiple left angles in null denotation [[https://github.com/rust-gcc/gccrs/pull/1966][PR1966]]
+- Resolve closure parameters without given type [[https://github.com/rust-gcc/gccrs/pull/1964][PR1964]]
+- Add length checking for tuple patterns. Resolves issue Rust-GCC#1849 [[https://github.com/rust-gcc/gccrs/pull/1963][PR1963]]
+- gccrs: Take advantage of our new unify_and to inject inference [[https://github.com/rust-gcc/gccrs/pull/1962][PR1962]]
+- parser: Fix parsing closure parameter [[https://github.com/rust-gcc/gccrs/pull/1960][PR1960]]
+- Add location info when opening a file fails in include_str and include_bytes [[https://github.com/rust-gcc/gccrs/pull/1955][PR1955]]
+- Fix handling of nested qualified paths [[https://github.com/rust-gcc/gccrs/pull/1954][PR1954]]
+- Parse zero sized slice pattern [[https://github.com/rust-gcc/gccrs/pull/1953][PR1953]]
+- parser: Fix while let expr parsing [[https://github.com/rust-gcc/gccrs/pull/1951][PR1951]]
+- Parse if let expressions correctly [[https://github.com/rust-gcc/gccrs/pull/1950][PR1950]]
+- gccrs: add uninit intrinsic [[https://github.com/rust-gcc/gccrs/pull/1948][PR1948]]
+- hir: Refactor ASTLoweringStmt to source file. [[https://github.com/rust-gcc/gccrs/pull/1946][PR1946]]
+- gccrs: add {add,sub,mul}_with_overflow intrinsics [[https://github.com/rust-gcc/gccrs/pull/1945][PR1945]]
+- Parse rest pattern in slices [[https://github.com/rust-gcc/gccrs/pull/1944][PR1944]]
+- Fix bootstrap compile error [[https://github.com/rust-gcc/gccrs/pull/1943][PR1943]]
+- Fix assignment operator overloads for AST and HIR patterns [[https://github.com/rust-gcc/gccrs/pull/1942][PR1942]]
+- Basic Code Cleanup [[https://github.com/rust-gcc/gccrs/pull/1940][PR1940]]
+- Fix casting error behind generics [[https://github.com/rust-gcc/gccrs/pull/1938][PR1938]]
+- Add `RestPattern` AST node [[https://github.com/rust-gcc/gccrs/pull/1937][PR1937]]
+- an attempt to implement pretty HIR dump [[https://github.com/rust-gcc/gccrs/pull/1933][PR1933]]
+- parser: Parse external type item [[https://github.com/rust-gcc/gccrs/pull/1932][PR1932]]
+- Generic pointers coerceable [[https://github.com/rust-gcc/gccrs/pull/1931][PR1931]]
+- Add feature gate definition for `extern_types`. [[https://github.com/rust-gcc/gccrs/pull/1929][PR1929]]
+- typecheck: Refactor cast_site [[https://github.com/rust-gcc/gccrs/pull/1926][PR1926]]
+- Add AST node for extern types [[https://github.com/rust-gcc/gccrs/pull/1924][PR1924]]
+- parser: Parse `default` impl Functions and Methods [[https://github.com/rust-gcc/gccrs/pull/1921][PR1921]]
+- typecheck: Refactor coercion_site [[https://github.com/rust-gcc/gccrs/pull/1912][PR1912]]
+- Merge upstream (dummy), 2023-02-21 "Rust front-end update" [[https://github.com/rust-gcc/gccrs/pull/1911][PR1911]]
+- Update `gcc-patch-dev` pre patchbomb [[https://github.com/rust-gcc/gccrs/pull/1909][PR1909]]
+- Merge upstream, last commit before 2023-02-21 "Rust front-end update" [[https://github.com/rust-gcc/gccrs/pull/1908][PR1908]]
+- typecheck: Refactor unify_site [[https://github.com/rust-gcc/gccrs/pull/1907][PR1907]]
+- ci: Run GCC 4.8 job in Ubuntu 18.04 container [[https://github.com/rust-gcc/gccrs/pull/1906][PR1906]]
+- macro_invoc_lexer: Add `split_current_token` implementation [[https://github.com/rust-gcc/gccrs/pull/1905][PR1905]]
+- [CL] missing commits from after #1705 [[https://github.com/rust-gcc/gccrs/pull/1889][PR1889]]
+- Add AltPattern HIR node [[https://github.com/rust-gcc/gccrs/pull/1888][PR1888]]
+- Merge upstream [[https://github.com/rust-gcc/gccrs/pull/1885][PR1885]]
+- Added AST Node AST::InlineAsm [[https://github.com/rust-gcc/gccrs/pull/1884][PR1884]]
+- Unsafe block parsing fix [[https://github.com/rust-gcc/gccrs/pull/1879][PR1879]]
+- Parse AltPattern [[https://github.com/rust-gcc/gccrs/pull/1878][PR1878]]
+- gccrs: add test case to show our query-type system is working [[https://github.com/rust-gcc/gccrs/pull/1877][PR1877]]
+- parser: Parse auto_traits [[https://github.com/rust-gcc/gccrs/pull/1875][PR1875]]
+- parser: Allow parsing of qualified type path as nested generic argument [[https://github.com/rust-gcc/gccrs/pull/1874][PR1874]]
+- Add feature gate for "rustc_attri". [[https://github.com/rust-gcc/gccrs/pull/1873][PR1873]]
+- builtins: Implement eager expansion for include_str!() [[https://github.com/rust-gcc/gccrs/pull/1871][PR1871]]
+- Fix up DejaGnu directives in 'rust/compile/issue-1830_{bytes,str}.rs' test cases [#1838] [[https://github.com/rust-gcc/gccrs/pull/1869][PR1869]]
+- ast: Refactor TraitItem to keep Location info [[https://github.com/rust-gcc/gccrs/pull/1868][PR1868]]
+- diagnostic: Refactor Error class [[https://github.com/rust-gcc/gccrs/pull/1867][PR1867]]
+- include!(): Return empty list of tokens instead of nullptr [[https://github.com/rust-gcc/gccrs/pull/1866][PR1866]]
+- Add trailing newline [[https://github.com/rust-gcc/gccrs/pull/1863][PR1863]]
+- Add AST::AltPattern class [[https://github.com/rust-gcc/gccrs/pull/1862][PR1862]]
+- rename rust-hir-full-test.cc [[https://github.com/rust-gcc/gccrs/pull/1861][PR1861]]
+- ci: Add missing `merge_group` trigger for workflow [[https://github.com/rust-gcc/gccrs/pull/1858][PR1858]]
+- [CL] 3925d11..d3c9827 [[https://github.com/rust-gcc/gccrs/pull/1857][PR1857]]
+- Add support for parsing empty tuple patterns. [[https://github.com/rust-gcc/gccrs/pull/1855][PR1855]]
+- Improve bounds type checking and implement Sized Marker Trait [[https://github.com/rust-gcc/gccrs/pull/1854][PR1854]]
+- Merge upstream (dummy), 2023-01-31 GCC/Rust upstreaming [[https://github.com/rust-gcc/gccrs/pull/1851][PR1851]]
+- Update GCC/Rust files per 'contrib/update-copyright.py --this-year' [#1831] [[https://github.com/rust-gcc/gccrs/pull/1850][PR1850]]
+- Merge upstream, last commit before 2023-01-31 GCC/Rust upstreaming [[https://github.com/rust-gcc/gccrs/pull/1847][PR1847]]
+- Add variadic argument type checking [[https://github.com/rust-gcc/gccrs/pull/1845][PR1845]]
+- [CL] 3554037..3925d11 [[https://github.com/rust-gcc/gccrs/pull/1844][PR1844]]
+- cli: Update safety warning message [[https://github.com/rust-gcc/gccrs/pull/1839][PR1839]]
+- lex: Prevent directories in RAIIFile [[https://github.com/rust-gcc/gccrs/pull/1838][PR1838]]
+- typecheck: Refactor rust-hir-trait-reference.h [[https://github.com/rust-gcc/gccrs/pull/1837][PR1837]]
+- [CL] 849cea5 ec4695a [[https://github.com/rust-gcc/gccrs/pull/1836][PR1836]]
+- ci: Run commit format checker on push to `trying` branch [[https://github.com/rust-gcc/gccrs/pull/1832][PR1832]]
+- Add feature gate for "rust-intrinsic". [[https://github.com/rust-gcc/gccrs/pull/1825][PR1825]]
+- parser: Fix parsing of closure param list [[https://github.com/rust-gcc/gccrs/pull/1824][PR1824]]
+- parser: Improve parsing of complex generic arguments [[https://github.com/rust-gcc/gccrs/pull/1823][PR1823]]
+- Improve WildcardPattern let statement handling [[https://github.com/rust-gcc/gccrs/pull/1821][PR1821]]
+- Support for TuplePattern in let statements [[https://github.com/rust-gcc/gccrs/pull/1820][PR1820]]
+- fixed indentation in AST pretty printed expanded dump of trait. [[https://github.com/rust-gcc/gccrs/pull/1810][PR1810]]
+- Run workflow [[https://github.com/rust-gcc/gccrs/pull/1789][PR1789]]
+- Implement fixed point macro expansion [[https://github.com/rust-gcc/gccrs/pull/1750][PR1750]]
+- Implemented utf-8 checking [[https://github.com/rust-gcc/gccrs/pull/1727][PR1727]]
+  
+*** Contributors this month
+
+- [[https://github.com/chosen-ox][Vincent]] (new contributor!)
+- [[https://github.com/goar5670][Mahmoud Adel]] (new contributor!)
+- [[https://github.com/nikos-alexandris][Nikos Alexandris]] (new contributor!)
+- [[https://github.com/omkar-mohanty][Omkar Mohanty]] (new contributor!)
+- [[https://github.com/SainiAditya1][SainiAditya1]] (new contributor!)
+- [[https://github.com/mvvsmk][M V V S Manoj Kumar]]
+- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/TuringKi][mxlol233]]
+- [[https://github.com/00AR][Abdul Rafey]]
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
+- [[https://github.com/Parthib314][Parthib]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        211 |        198 |   -13 |
+| In Progress |         43 |         40 |    -3 |
+| Completed   |        522 |        586 |   +64 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 5483       | 5613       | +130  |
+| Failed    | -          | -          | -     |
+| XFAIL     | 40         | 40         | -     |
+| XPASS     | -          | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         67 |         54 |    -7 |
+| In Progress |         11 |         21 |   +10 |
+| Completed   |        227 |        265 |   +38 |
+
+*** Milestones Progress
+
+We are putting together milestones regarding projects such as libproc and will update the Milestone.
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 69% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+Similarly, the Update GCC's master branch milestone contains a [[https://github.com/rust-gcc/gccrs/issues/1705][tracking issue]] containing over 200 tasks. The percentage shown here takes this into account.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |      100% |      100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |       71% |      100% | +29%  |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       47% |       70% | +23%  | 16th Nov 2022 | -               | 30th Apr 2023 |
+| Intrinsics and builtins           |       18% |       18% | -     | 6th Sept 2022 | -               | TBD           |
+| Borrow checking                   |        0% |        0% | -     | TBD           | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD           | -               | TBD           |
+
+*** Risks
+
+The last remaining risk was for gccrs to not get merged in GCC 13 by us missing the stage deadline, but that is no longer the case.
+
+*** Testing project
+
+The testing project is on hold as we try and figure out some of the issues we're running into with GitHub and our various automations around it.
+
+** Planned Activities
+
+- Finish patch upstreaming
+- Finish macro name resolution
+- libproc
+ 
+** Detailed changelog    
