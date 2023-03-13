@@ -133,7 +133,7 @@ be notified of upcoming events.
   
 *** Contributors this month
 
-- [[https://github.com/chosen-ox][Vincent]] (new contributor!)
+- [[https://github.com/chosen-ox][Vincent Fan]] (new contributor!)
 - [[https://github.com/goar5670][Mahmoud Adel]] (new contributor!)
 - [[https://github.com/nikos-alexandris][Nikos Alexandris]] (new contributor!)
 - [[https://github.com/omkar-mohanty][Omkar Mohanty]] (new contributor!)
