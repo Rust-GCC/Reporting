@@ -1,0 +1,132 @@
+#+title:  Weekly report for 13th of March 2023 to 20th March 2023
+#+author: Philip Herron and Arthur Cohen
+#+date:   2023-03-06
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+1. Embedded World
+2. Macro imports and exports almost complete
+3. Iterators
+4. Proc macro
+5. Rename to crab1
+
+The influx of contributors to the project has not stopped and we are constantly
+getting pull-requests and interest from multiple people, which we are very
+thankful for. A lot of people coming to chat with us on Zulip or asking to be
+assigned to Github issues are planning to apply for this year's Google Summer
+of Code, and as the GCC project has been accepted as a GSoC organization once
+again, we are looking forward to all of your proposals! As a reminder,
+you can find all of our project ideas [[https://gcc.gnu.org/wiki/SummerOfCode][on the GCC wiki]]. You are welcome to
+come up with your own project idea too and discuss it with the team!
+
+All of the contributors have tackled an important amount of issues this week, and we are quickly progressing through
+our milestone.
+
+On the ~libcore 1.49~ front, ~gccrs~ is getting really close to compiling ~for~ loops. This will be an important milestone,
+as the amount of code from libcore necessary to get them to work is quite impressive. You can expect detailed changelogs from
+Philip which will go into detail on all the interesting features and how we deal with them. Arthur has also spent time
+tackling macro exports and imports, which are almost finished and just need a little cleaning-up.
+
+Regarding ~libproc_macro~, Pierre-Emmanuel is working hard on getting GCC's build system to accomodate these new Rust libraries
+as well as internal libraries which ~gccrs~ will make use of. He has also spent a lot of time going through our parser-related
+issues, bringing us closer and closer to compiling the core library!
+
+As a side-note, Arthur will be on vacation from the 3rd of March to the 10th of March, which is why this report is being written
+as of today the 2nd of March. The monthly report will be published on the 13th of March.
+
+Finally, ~gccrs~ will once again be at Embedded World in Nuremberg. Feel free to come to the Embecosm stand and discuss the project!
+
+** Completed Activities
+
+- Fix bad method resolution and add move_val_init [[https://github.com/rust-gcc/gccrs/pull/1999][PR1999]]
+- resolve: Fix multiple bindings handling in match [[https://github.com/rust-gcc/gccrs/pull/1997][PR1997]]
+- Unify HIR::IfLetExprConseqIf{,Let} into HIR::IfLetExprConseqElse [[https://github.com/rust-gcc/gccrs/pull/1995][PR1995]]
+- Unify HIR::IfExprConseqIf{,Let} into HIR::IfExprConseqElse [[https://github.com/rust-gcc/gccrs/pull/1994][PR1994]]
+- resolve: Add name resolution for AltPattern [[https://github.com/rust-gcc/gccrs/pull/1993][PR1993]]
+- Cleanup [[https://github.com/rust-gcc/gccrs/pull/1990][PR1990]]
+- hir: Improve pattern bindings handling in closure parameters [[https://github.com/rust-gcc/gccrs/pull/1989][PR1989]]
+- gccrs: Rename compiler proper to crab1 [[https://github.com/rust-gcc/gccrs/pull/1988][PR1988]]
+- resolve: Handle multiple bindings to the same identifier [[https://github.com/rust-gcc/gccrs/pull/1983][PR1983]]
+- hir: Fix `ReferencePattern` typechecking [[https://github.com/rust-gcc/gccrs/pull/1980][PR1980]]
+- Unify AST and HIR dump indentation [[https://github.com/rust-gcc/gccrs/pull/1978][PR1978]]
+- Cleanup type system and fix bad type monomorphization [[https://github.com/rust-gcc/gccrs/pull/1977][PR1977]]
+- Impl `Rust::HIR::Dump::visit` [[https://github.com/rust-gcc/gccrs/pull/1976][PR1976]]
+- hir: Provide basic handling for `ReferencePattern` [[https://github.com/rust-gcc/gccrs/pull/1974][PR1974]]
+- Allow all keywords (except `priv`) to follow `:vis` in macro rules [[https://github.com/rust-gcc/gccrs/pull/1965][PR1965]]
+- enr: Fetch module items during early name resolution [[https://github.com/rust-gcc/gccrs/pull/1957][PR1957]]
+- hir: Add ExportedMacro node and handling. [[https://github.com/rust-gcc/gccrs/pull/1947][PR1947]]
+- librust: Add libproc_macro and build system [[https://github.com/rust-gcc/gccrs/pull/1913][PR1913]]
+
+*** Contributors this week
+
+- [[https://github.com/chosen-ox][Vincent]] (new contributor!)
+- [[https://github.com/tage64][tage64]] (new contributor!)
+- [[https://github.com/goar5670][Mahmoud Adel]]
+- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/jdupak][Jakub Dupak]]
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       198 |       199 |    +1 |
+| In Progress |        40 |        40 |     - |
+| Completed   |       586 |       593 |    +7 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |   5613    |  5681     |   +68 |
+| Failed    |   -       |  -        |     - |
+| XFAIL     |   40      |  40       |     - |
+| XPASS     |   -       |  -        |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        54 |        56 |    +2 |
+| In Progress |        21 |        20 |    -1 |
+| Completed   |       265 |       268 |    +3 |
+
+*** Milestones Progress
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 69% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |      100% |      100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |      100% |      100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       70% |       73% | +3%   | 16th Nov 2022 | -               | 30th Apr 2023 |
+| Intrinsics and builtins           |       18% |       18% | -     | 6th Sept 2022 | -               | TBD           |
+| Borrow checking                   |        0% |        0% | -     | TBD           | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD           | -               | TBD           |
+
+*** Risks
+
+** Planned Activities
+
+- Finish work on iterators
+- Cleanup work on macro export and import
+- Merge ~libproc_macro~'s Rust interface and build system
+- Keep working on parser issues
+- Fix bugs in type resolution for iterators in libcore
+
+** Detailed changelog
