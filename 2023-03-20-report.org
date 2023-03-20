@@ -8,37 +8,22 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-1. Embedded World
-2. Macro imports and exports almost complete
-3. Iterators
-4. Proc macro
-5. Rename to crab1
+The number of pull-requests to the project continues to grow at a nice rate, with almost another twenty pull-requests submitted, reviewed and merged this week, and two new contributors.
 
-The influx of contributors to the project has not stopped and we are constantly
-getting pull-requests and interest from multiple people, which we are very
-thankful for. A lot of people coming to chat with us on Zulip or asking to be
-assigned to Github issues are planning to apply for this year's Google Summer
-of Code, and as the GCC project has been accepted as a GSoC organization once
-again, we are looking forward to all of your proposals! As a reminder,
-you can find all of our project ideas [[https://gcc.gnu.org/wiki/SummerOfCode][on the GCC wiki]]. You are welcome to
-come up with your own project idea too and discuss it with the team!
+Philip has kept progressing on iterators, fixing many type-system issues in the process. You can follow the work on that front [[https://github.com/rust-GCC/gccrs/issues/1895][here]].
+Pierre-Emmanuel managed to overcome GCC's build-system in order to add our first Rust-related libraries to the project. These libraries and build system changes will be upstreamed in a few months due to GCC's staging process.
+Last week did not see much progress from Arthur as the Embecosm team was at Embedded World. We really enjoyed chatting about ~gccrs~ with so many interested people!
+Thank you to everyone who stopped by and tried to solve our little Rust optimization challenge!
 
-All of the contributors have tackled an important amount of issues this week, and we are quickly progressing through
-our milestone.
+We have started reviewing some GSoC applicants proposal and are impressed by the quality of them. Please, keep them coming!
 
-On the ~libcore 1.49~ front, ~gccrs~ is getting really close to compiling ~for~ loops. This will be an important milestone,
-as the amount of code from libcore necessary to get them to work is quite impressive. You can expect detailed changelogs from
-Philip which will go into detail on all the interesting features and how we deal with them. Arthur has also spent time
-tackling macro exports and imports, which are almost finished and just need a little cleaning-up.
-
-Regarding ~libproc_macro~, Pierre-Emmanuel is working hard on getting GCC's build system to accomodate these new Rust libraries
-as well as internal libraries which ~gccrs~ will make use of. He has also spent a lot of time going through our parser-related
-issues, bringing us closer and closer to compiling the core library!
-
-As a side-note, Arthur will be on vacation from the 3rd of March to the 10th of March, which is why this report is being written
-as of today the 2nd of March. The monthly report will be published on the 13th of March.
-
-Finally, ~gccrs~ will once again be at Embedded World in Nuremberg. Feel free to come to the Embecosm stand and discuss the project!
+Finally, on a lighter note, we put the naming of the compiler proper to a vote within the
+~gccrs~ community. The compiler *proper* is different from the compiler *driver*, ~gccrs~,
+which users interact with. Because only ~gccrs~ hackers will ever interact with the compiler
+*proper*, we thought it would be fun to change its name. The project was originally started as
+a hobby and passion project, and we think that keeping things light is an important aspect of it.
+Hence, if you do contribute to ~gccrs~, you'll now use ~gcc/crab1~ instead of ~gcc/rust1~ to see if your changes
+have taken into effect!
 
 ** Completed Activities
 
