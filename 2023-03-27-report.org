@@ -162,3 +162,9 @@ pub fn test(a: i32) -> Result<i32, bool> {
 #+END_SRC
 
 Due to the use declaration it is now ok to directly use Err and Ok without specifying Result::<variant> directly.
+
+*** Reanming our compiler proper from rust1 to crab1
+
+This is an important change going forward to remember to have fun. For those who are not aware when you invoke gcc to compile C code fro example you should try doing so but pass the '-v' flag and you will see that it ends up invoking a program called 'cc1'. For gccrs we used to invoke one called rust1 we have now renamed this 'crab1'.
+
+See our zulip for fun discussions on this.
