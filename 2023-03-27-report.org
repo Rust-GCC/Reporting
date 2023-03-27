@@ -181,3 +181,13 @@ fn foo() -> i32 { // { dg-error "expected .i32. got .bool." }
 #+END_SRC
 
 see: https://godbolt.org/z/3njj6K14j
+
+*** Uninit intrinsic
+
+Although we add intrinsics fairly regularly this one is interesting from a compiler perspective, sometimes you just need uninitilized memory which is used in the mem::ptr modules in libcore which gets called from the iterator code to swap data around for the next element. We got some advice from bjorn3 here on our zulip which suggests the best way to implement an uninit intrinsic is to memset with 0x01 as it seems to be the least dangerous in an unsafe context.
+
+  - https://github.com/Rust-GCC/gccrs/pull/1948
+  - https://github.com/Rust-GCC/gccrs/issues/1899
+  - https://gcc-rust.zulipchat.com/#narrow/stream/266897-general/topic/Rust.20uninit.20intrinsic/near/328521116
+
+As rust is designed to limit unitilized memory it would be great in the future to look at this in more detail in the future for now we are copying Rustc.
