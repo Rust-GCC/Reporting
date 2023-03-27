@@ -103,3 +103,30 @@ Thus the percentage is computed using the sum of issues and tracked items done d
 - Fix bugs in type resolution for iterators in libcore
 
 ** Detailed changelog
+
+*** Bare trait objects
+
+During testing libcore code we found that we didn't bare trait objects where it does not specify the 'dyn' keyword: https://doc.rust-lang.org/nightly/edition-guide/rust-2021/warnings-promoted-to-error.html#bare_trait_objects
+
+This is depreciated code but we aiming to compile older versions of libcore first so we need to be able to handle this before this became a hard error.
+
+#+BEGIN_SRC rust
+trait Foo {
+    fn bar(&mut self, other: &mut Foo);
+}
+
+struct Baz;
+impl Foo for Baz {
+    fn bar(&mut self, other: &mut Foo) {}
+}
+#+END_SRC
+
+*** Reference patterns
+
+One of our new contributors [[https://github.com/goar5670][Mahmoud Adel]] has been working on adding support for patterns within gccrs. Reference patterns was added recently which allows the users to automatically destructure the reference parameters here to their element types without requiring dereference syntax.
+
+#+BEGIN_SRC rust
+fn foo (&a: &i32, b: i32) -> i32 {
+  a + b
+}
+#+END_SRC
