@@ -1,0 +1,105 @@
+#+title:  Weekly report for 20th of March 2023 to 27th of March 2023
+#+author: Philip Herron and Arthur Cohen
+#+date:   2023-03-27
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+A lot of contributors are spending time on adding support for more Rust patterns within the compiler, which is extremely appreciated.
+These contributions target the entire pipeline of the compiler, from parsing, lowering to our HIR, and then lowering to GCC's intermediate representation, which represents a good opportunity to get familiar with our internals or compilers in general.
+
+Last week also marked the start of proposal submissions for GSoC. So far, out of 5 proposals regarding the GNU Compiler Collection, 4 of them are ~gccrs~-related!
+We will start reviewing them in detail in the coming weeks.
+
+The GCC 13 release is fast approaching, with an estimated release date set in 5 weeks. We are doing our best to get as many features working and as many bugs fixed. We will need to start thinking about a cutoff point for ~gccrs~, which will mark the latest commit which we plan to upstream in GCC 13.
+We will be discussing this during our next monthly call:
+
+Time: 3rd of April 2023, 9h00 UTC
+Video link: https://meet.jit.si/gccrs-community-call-march
+Agenda: https://hackmd.io/@Rust-GCC/SJmM4lJW2
+
+** Completed Activities
+
+- gccrs: Fix ICE on parsing trait object missing dyn keyword [[https://github.com/rust-gcc/gccrs/pull/2046][PR2046]]
+- gccrs: Fix bad type inference [[https://github.com/rust-gcc/gccrs/pull/2018][PR2018]]
+- Split Cfg stripping and macro expansion phase [[https://github.com/rust-gcc/gccrs/pull/2016][PR2016]]
+- ast: Dump each MacroRule properly without the extra semicolon [[https://github.com/rust-gcc/gccrs/pull/2014][PR2014]]
+- rust-imports: Fix last few mentions of Go. [[https://github.com/rust-gcc/gccrs/pull/2013][PR2013]]
+- Support use declaration to export the type properly [[https://github.com/rust-gcc/gccrs/pull/2011][PR2011]]
+- gccrs: Cleanup unused headers [[https://github.com/rust-gcc/gccrs/pull/2010][PR2010]]
+- Lower AltPattern [[https://github.com/rust-gcc/gccrs/pull/2008][PR2008]]
+- Add name resolution and ast lowering for SlicePattern [[https://github.com/rust-gcc/gccrs/pull/2007][PR2007]]
+- Remove unused ResolvePattern visitor [[https://github.com/rust-gcc/gccrs/pull/2006][PR2006]]
+- ci: Do not run `check-gccrs-prefix` on PRs to master [[https://github.com/rust-gcc/gccrs/pull/1992][PR1992]]
+- Lower public macros to mappings [[https://github.com/rust-gcc/gccrs/pull/1991][PR1991]]
+- ci: check Signed-off-by lines (and others) are at the end [[https://github.com/rust-gcc/gccrs/pull/1979][PR1979]]
+- Fix `FeatureGate::gate` will crash on 32-bit x86. [[https://github.com/rust-gcc/gccrs/pull/1956][PR1956]]
+
+*** Contributors this week
+
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
+- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/TuringKi][mxlol233]]
+- [[https://github.com/goar5670][Mahmoud Adel]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       199 |       223 |   +24 |
+| In Progress |        40 |        42 |    +2 |
+| Completed   |       593 |       599 |    +6 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |   5681    |  5689     |    +8 |
+| Failed    |   -       |  -        |     - |
+| XFAIL     |   40      |  40       |     - |
+| XPASS     |   -       |  -        |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        56 |        70 |   +14 |
+| In Progress |        20 |        20 |     - |
+| Completed   |       268 |       274 |    +6 |
+
+*** Milestones Progress
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 69% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |      100% |      100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |      100% |      100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       73% |       73% | -     | 16th Nov 2022 | -               | 30th Apr 2023 |
+| Intrinsics and builtins           |       18% |       18% | -     | 6th Sept 2022 | -               | TBD           |
+| Borrow checking                   |        0% |        0% | -     | TBD           | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD           | -               | TBD           |
+
+*** Risks
+
+** Planned Activities
+
+- Finish work on iterators
+- Fix bugs in type resolution for iterators in libcore
+
+** Detailed changelog
