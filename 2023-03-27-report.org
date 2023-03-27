@@ -168,3 +168,14 @@ Due to the use declaration it is now ok to directly use Err and Ok without speci
 This is an important change going forward to remember to have fun. For those who are not aware when you invoke gcc to compile C code fro example you should try doing so but pass the '-v' flag and you will see that it ends up invoking a program called 'cc1'. For gccrs we used to invoke one called rust1 we have now renamed this 'crab1'.
 
 See our zulip for fun discussions on this and associated PR https://github.com/Rust-GCC/gccrs/pull/1988
+
+*** Add length checks for tuple patterns
+
+When assigning tuples and patterns in general we did not have any sized checks so it used to be possible to assign a pattern of differing sizes which would lead to UB and or and ICE. Thanks to one of our new contributors [[https://github.com/nikos-alexandris][Nikos Alexandris]] we now have proper checks such as:
+
+fn foo() -> i32 { // { dg-error "expected .i32. got .bool." }
+    let (a, _) = (true, 2, 3); // { dg-error "expected a tuple with 3 elements, found one with 2 elements" }
+    a
+}
+
+see: https://godbolt.org/z/3njj6K14j
