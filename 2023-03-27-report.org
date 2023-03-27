@@ -130,3 +130,35 @@ fn foo (&a: &i32, b: i32) -> i32 {
   a + b
 }
 #+END_SRC
+
+*** Use declarations as the Rustc prelude
+
+When working with Result and Option gccrs did not support the prelude use declarations which meant you had to specify Option::Some or Result::Ok rather than the usual Ok and Some. In order to support this Rust uses a special decalration to add these enum variant names directly to the namespace so for exmaple:
+
+#+BEGIN_SRC rust
+pub use result::Result::{self, Err, Ok};
+
+extern "C" {
+    fn printf(s: *const i8, ...);
+}
+
+mod result {
+    pub enum Result<T, E> {
+        #[lang = "Ok"]
+        Ok(T),
+
+        #[lang = "Err"]
+        Err(E),
+    }
+}
+
+pub fn test(a: i32) -> Result<i32, bool> {
+    if a > 5 {
+        Ok(123)
+    } else {
+        Err(false)
+    }
+}
+#+END_SRC
+
+Due to the use declaration it is now ok to directly use Err and Ok without specifying Result::<variant> directly.
