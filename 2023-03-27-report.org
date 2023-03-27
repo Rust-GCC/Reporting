@@ -173,9 +173,11 @@ See our zulip for fun discussions on this and associated PR https://github.com/R
 
 When assigning tuples and patterns in general we did not have any sized checks so it used to be possible to assign a pattern of differing sizes which would lead to UB and or and ICE. Thanks to one of our new contributors [[https://github.com/nikos-alexandris][Nikos Alexandris]] we now have proper checks such as:
 
+#+BEGIN_SRC rust
 fn foo() -> i32 { // { dg-error "expected .i32. got .bool." }
     let (a, _) = (true, 2, 3); // { dg-error "expected a tuple with 3 elements, found one with 2 elements" }
     a
 }
+#+END_SRC
 
 see: https://godbolt.org/z/3njj6K14j
