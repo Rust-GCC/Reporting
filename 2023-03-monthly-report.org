@@ -8,14 +8,39 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-1. GSoC Proposals
-    1. We'll review them in details soon
-    2. 9/13 are gccrs :)
-2. Number of PRs diminished but still high
-3. Embedded World
-4. Release is approaching fast!
-    1. Cutoff point
-5. crab1
+We have received many GSoC proposals over the past few weeks and are starting to review them
+in more detail. Remember, proposals are open until the 4th of April, and will be reviewed
+until the 27th of April. We kept on receiving a high number of contributions this month, with
+around 50 PRs submitted, reviewed and merged in three weeks. Please note that why this amount
+is lower than previous months, this report was also written and published a week earlier
+than past months. Out of 13 proposals submitted to the GSoC portal so far, 9 of them concern
+~gccrs~.
+
+We have opened many issues pertaining to the compilation of ~libcore 1.49~ and feel confident
+that we are getting closer and closer to compiling it. However, due to the GCC staging
+process, we will not be able to make the changes required to the build system for ~libcore~ to
+be distributed as part of GCC 13, nor will we have a completely working version of libcore at
+this point. In the last few weeks that remain before GCC 13 releases, we will not be able to
+implement some of the more complex features remaining, such as inline assembly, format string
+parsing and handling, or the remaining compiler builtins.
+
+For this reason, we have chosen to go with quite an early cutoff for the GCC 13 release,
+which means we'll have more time to focus on documentation and user experience for the GCC 13
+release. We will spend some time in the coming weeks upstreaming commits to GCC's master and
+figuring out our next steps for the compiler.
+
+Arthur also spent one week this month at Embedded World talking about the project with many
+interesting people from different backgrounds. Thank you to everyone who stopped by or
+attended our little Rust compilation challenge. We had pleasant discussions around ~gccrs~ with
+individuals from AdaCore and Ferrous Systems and had a lovely time.
+
+Finally, one of the big changes this month was the renaming of our compiler proper from ~rust1~ to ~crab1~.
+The compiler *proper* is different from the compiler *driver*, ~gccrs~,
+which users interact with. Because only ~gccrs~ hackers will ever interact with the compiler
+*proper*, we thought it would be fun to change its name. The project was originally started as
+a hobby and passion project, and we think that keeping things light is an important aspect of it.
+Hence, if you do contribute to ~gccrs~, you'll now use ~gcc/crab1~ instead of ~gcc/rust1~ to see if your changes
+have taken into effect!
 
 *** Community call
 
@@ -226,7 +251,7 @@ pub fn test(a: i32) -> Result<i32, bool> {
 
 Due to the use declaration it is now ok to directly use Err and Ok without specifying Result::<variant> directly.
 
-*** Reanming our compiler proper from rust1 to crab1
+*** Renaming our compiler proper from rust1 to crab1
 
 This is an important change going forward to remember to have fun. For those who are not aware when you invoke gcc to compile C code fro example you should try doing so but pass the '-v' flag and you will see that it ends up invoking a program called 'cc1'. For gccrs we used to invoke one called rust1 we have now renamed this 'crab1'.
 
