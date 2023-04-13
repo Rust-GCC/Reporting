@@ -1,0 +1,103 @@
+#+title:  Weekly report for 3rd of April 2023 to 11th of April 2023
+#+author: Philip Herron and Arthur Cohen
+#+date:   2023-04-11
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+We have upstreamed more patches in preparation of the GCC 13.1 release, and will now be putting patch usptreaming on hold, as more and more of our commits depend on changes which we cannot push yet due to the current GCC development stage. Triaging all of these commits takes a large amount of time, and since we are unlikely to hit a major breakthrough functionality-wise (think `println!` or inline assembly working) before GCC 13.1 releases, this is unnecessary stress.
+We are continuing our work on libcore and are getting through the remaining issues. We have created new milestones which are listed later in the report, and have reassigned some of our existing issues to them.
+
+We had our community call on the 3rd of April 2023. You are able to find the meeting's minutes at the following link: https://hackmd.io/@Rust-GCC/SJmM4lJW2
+
+** Completed Activities
+
+- Placate clang-format, 'gcc/rust/rust-lang.cc:grs_langhook_type_for_mode' [[https://github.com/rust-gcc/gccrs/pull/2116][PR2116]]
+- Merge upstream (dummy), "Rust front-end update 2023-04-05" [[https://github.com/rust-gcc/gccrs/pull/2115][PR2115]]
+- Merge upstream, last commit before "Rust front-end update 2023-04-05" [[https://github.com/rust-gcc/gccrs/pull/2112][PR2112]]
+- gccrs: Introduce AST::Visitable class for AST [[https://github.com/rust-gcc/gccrs/pull/2107][PR2107]]
+- ast: Add difference between attributes [[https://github.com/rust-gcc/gccrs/pull/2099][PR2099]]
+- Support qualified trait item call expression [[https://github.com/rust-gcc/gccrs/pull/2097][PR2097]]
+- Tokenstream fixes [[https://github.com/rust-gcc/gccrs/pull/2093][PR2093]]
+- Handle "fn" and "fn_mut" lang items [[https://github.com/rust-gcc/gccrs/pull/2091][PR2091]]
+- ast: Move implementation out of rust-ast [[https://github.com/rust-gcc/gccrs/pull/2085][PR2085]]
+- gccrs: Fix ICE using constructors for intilizers in statics [[https://github.com/rust-gcc/gccrs/pull/2083][PR2083]]
+- Add derive proc_macro expansion stubs [[https://github.com/rust-gcc/gccrs/pull/2076][PR2076]]
+
+*** Contributors this week
+
+- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       218 |       221 |    +3 |
+| In Progress |        43 |        44 |    +1 |
+| Completed   |       614 |       623 |    +9 |
+
+*** Test Cases
+
+The high amount of new testcases is due to the LTO testsuite issue mentioned in previous reports having been fixed by [[https://github.com/tschwinge][Thomas Schwinge]].
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   |   5728    |  7682     | +1954 |
+| Failed    |   -       |  -        |     - |
+| XFAIL     |   40      |  40       |     - |
+| XPASS     |   -       |  -        |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        65 |        70 |    +5 |
+| In Progress |        18 |        19 |    +1 |
+| Completed   |       287 |       292 |    +5 |
+
+*** Milestones Progress
+
+We have added more milestones to the project to better compartimentalize the upcoming months of development.
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 69% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |      100% |      100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |      100% |      100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       73% |       96% | -     | 16th Nov 2022 | -               | 30th Apr 2023 |
+| Borrow Checking 1                 |        0% |        0% | -     | TBD           | -               | 15th Aug 2023 |
+| AST Pipeline for libcore 1.49     |        0% |        0% | -     | 13th Apr 2023 | -               |  1st Jun 2023 |
+| HIR Pipeline for libcore 1.49     |        0% |        0% | -     | 13th Apr 2023 | -               | TBD           |
+| Procedural Macros 1               |        0% |        0% | -     | 13th Apr 2023 | -               |  6th Aug 2023 |
+| GCC 13.2 Release                  |        0% |        0% | -     | 13th Apr 2023 | -               | 15th Jul 2023 |
+| GCC 14 Stage 3                    |        0% |        0% | -     | TBD           | -               |  1st Nov 2023 |
+| Rustc Testsuite Prerequisistes    |        0% |        0% | -     | TBD           | -               |  1st Sep 2023 |
+| Intrinsics and builtins           |       18% |       18% | -     |  6th Sep 2022 | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD           | -               | TBD           |
+
+*** Risks
+
+** Planned Activities
+
+- Finish work on iterators
+- Look into glob use statements
+
+** Detailed changelog
