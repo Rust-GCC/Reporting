@@ -1,0 +1,97 @@
+#+title:  Weekly report for 11th of April 2023 to 17th of April 2023
+#+author: Philip Herron and Arthur Cohen
+#+date:   2023-04-17
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+Philip and Arthur took some time this week to sort through this year's GSoC proposals and review them as well as rank them. We have landed on our final selection, and are now waiting to hear from Google. We look forward to working with you all over the summer and would like to thank you for the effort put into these proposals, as well as the very high number we received!
+
+We have added new milestones to the project's repository in order to better split the upcoming months of work on the compiler, and are listing them below. We will keep pushing to get libcore compiling as soon as possible and look forward to the upcoming challenges!
+
+** Completed Activities
+
+- Unify HIR::ExprStmt deriving classes [[https://github.com/rust-gcc/gccrs/pull/2111][PR2111]]
+- Handle underscore in MacroMatch. [[https://github.com/rust-gcc/gccrs/pull/2109][PR2109]]
+- Fix StructExprStructFields tokenstream [[https://github.com/rust-gcc/gccrs/pull/2100][PR2100]]
+- parser: macro: reject separator in `?` repetition [[https://github.com/rust-gcc/gccrs/pull/2098][PR2098]]
+- Unify AST::IfLetExprConseqIf{,Let} into AST::IfLetExprConseqElse [[https://github.com/rust-gcc/gccrs/pull/2002][PR2002]]
+- Unify AST::IfExprConseqIf{,Let} into AST::IfExprConseqElse [[https://github.com/rust-gcc/gccrs/pull/2001][PR2001]]
+
+*** Contributors this week
+
+- [[https://github.com/kirmayer-gnu][Sebastian Kirmayer]] (new contributor!)
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
+- [[https://github.com/powerboat9][Arsen Owens]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       221 |       220 |    -1 |
+| In Progress |        44 |        44 |     - |
+| Completed   |       623 |       624 |    +1 |
+
+*** Test Cases
+
+The high amount of new testcases is due to the LTO testsuite issue mentioned in previous reports having been fixed by [[https://github.com/tschwinge][Thomas Schwinge]].
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 7682      | 7685      |     - |
+| Failed    | -         | -         |     - |
+| XFAIL     | 52        | 52        |     - |
+| XPASS     | -         | -         |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        70 |        69 |    -1 |
+| In Progress |        19 |        19 |     - |
+| Completed   |       292 |       293 |    +1 |
+
+*** Milestones Progress
+
+We have added more milestones to the project to better compartimentalize the upcoming months of development.
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 73% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |      100% |      100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |      100% |      100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       96% |       96% | -     | 16th Nov 2022 | -               | 30th Apr 2023 |
+| Borrow Checking 1                 |        0% |        0% | -     | TBD           | -               | 15th Aug 2023 |
+| AST Pipeline for libcore 1.49     |        0% |        2% | +2%   | 13th Apr 2023 | -               |  1st Jun 2023 |
+| HIR Pipeline for libcore 1.49     |        0% |        0% | -     | 13th Apr 2023 | -               | TBD           |
+| Procedural Macros 1               |        0% |        0% | -     | 13th Apr 2023 | -               |  6th Aug 2023 |
+| GCC 13.2 Release                  |        0% |        0% | -     | 13th Apr 2023 | -               | 15th Jul 2023 |
+| GCC 14 Stage 3                    |        0% |        0% | -     | TBD           | -               |  1st Nov 2023 |
+| Rustc Testsuite Prerequisistes    |        0% |        0% | -     | TBD           | -               |  1st Sep 2023 |
+| Intrinsics and builtins           |       18% |       18% | -     |  6th Sep 2022 | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD           | -               | TBD           |
+
+*** Risks
+
+** Planned Activities
+
+- Finish work on iterators
+- Look into glob use statements
+- Look into remaining issues required for proper AST pipeline of libcore
+
+** Detailed changelog
