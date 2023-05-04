@@ -92,7 +92,7 @@ be notified of upcoming events.
 - [[https://github.com/bugaevc][Sergei Bugaev]] (new contributor!)
 - [[https://github.com/TieWay59][TieWay59]] (new contributor!)
 - [[https://github.com/ArberSephirotheca][ArberSephirotheca]] (new contributor!)
-- [[https://github.com/kirmayer][kirmayer]] (new contributor!)
+- [[https://github.com/kirmayer-gnu][Sebastian Kirmayer]] (new contributor!)
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
 - [[https://github.com/dkm][dkm]]
 - [[https://github.com/tschwinge][tschwinge]]
