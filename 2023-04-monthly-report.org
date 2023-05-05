@@ -158,10 +158,6 @@ Similarly, the Update GCC's master branch milestone contains a [[https://github.
 *** Testing project
 
 The testing project is on hold as we try and figure out some of the issues we're running into with GitHub and our various automations around it.
-
-** Planned Activities
-
-~FIXME~
  
 ** Detailed changelog
 
