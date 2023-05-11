@@ -161,8 +161,10 @@ The testing project is on hold as we try and figure out some of the issues we're
 
 ** Planned Activities
 
-~FIXME~
- 
+- Keep going on derive macros
+- Fix remaining type systems bugs for libcore 1.49
+- Start expanding custom procedural macros in our pipeline
+
 ** Detailed changelog
 
 *** Builtin derive macros
