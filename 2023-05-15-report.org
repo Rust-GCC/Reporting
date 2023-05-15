@@ -8,7 +8,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-We are very happy to announce that two students have been selected for this year's Google Summer of Code: [[https://github.com/tamaroning][Raiki Tamura]] and [[https://github.com/MahadMuhammad/][Muhammad Mahad]]. Congratulations! We are super stocked to be working with you two, and are looking forward to your progress. We were very impressed with all of the proposals this year, and thank you all for your involvment - we hope you all apply again next year!
+We are very happy to announce that two students have been selected for this year's Google Summer of Code: [[https://github.com/tamaroning][Raiki Tamura]] and [[https://github.com/MahadMuhammad/][Muhammad Mahad]]. Congratulations! We are super stoked to be working with you two, and are looking forward to your progress. We were very impressed with all of the proposals this year, and thank you all for your involvment - we hope you all apply again next year!
 Muhammad will be working on improving our user errors, as well as integrating the official [[https://doc.rust-lang.org/error_codes/error-index.html][Rust error codes]] to ~gccrs~, which will assist us greatly in passing the ~rustc~ testsuite in the coming months. Raiki, on the other hand, will be working on proper Unicode support for ~gccrs~: this involves changing to our lexer, parser, as well as the entire pipeline of the compiler.
 We are super excited for this work to land and cannot wait to tell you more about their progress!
 
