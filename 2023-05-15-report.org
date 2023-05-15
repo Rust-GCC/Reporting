@@ -95,7 +95,9 @@ Thus the percentage is computed using the sum of issues and tracked items done d
 
 *** Risks
 
-**FIXME**:
+| Risk                                | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                          |
+|-------------------------------------+--------------+-------------------+--------------+-------------------------------------|
+| `core` and `std` missing for GCC 14 |            2 |                 6 |           12 | Look at necessary unstable features |
 
 ** Planned Activities
 
