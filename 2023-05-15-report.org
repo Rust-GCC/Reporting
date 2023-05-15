@@ -1,0 +1,107 @@
+#+title:  Weekly report for 2nd of May 2023 to 15th of May 2023
+#+author: Philip Herron and Arthur Cohen
+#+date:   2023-05-15
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+We are very happy to announce that two students have been selected for this year's Google Summer of Code: [[https://github.com/tamaroning][Raiki Tamura]] and [[https://github.com/MahadMuhammad/][Muhammad Mahad]]. Congratulations! We are super stocked to be working with you two, and are looking forward to your progress. We were very impressed with all of the proposals this year, and thank you all for your involvment - we hope you all apply again next year!
+Muhammad will be working on improving our user errors, as well as integrating the official [[https://doc.rust-lang.org/error_codes/error-index.html][Rust error codes]] to ~gccrs~, which will assist us greatly in passing the ~rustc~ testsuite in the coming months. Raiki, on the other hand, will be working on proper Unicode support for ~gccrs~: this involves changing to our lexer, parser, as well as the entire pipeline of the compiler.
+We are super excited for this work to land and cannot wait to tell you more about their progress!
+
+We received a high number of contributions related to macro expansion and the AST pipeline in general, some of which have fixed very long standing bugs which is really nice to see. Builtin derive macros are being implemented, with a base framework enabling more contributors to join this effort if interested. This work also helps [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]'s work on custom procedural macros, which is progressing nicely and has started looking at the finer details of binary interfaces between procedural macros and the compiler.
+
+We also had our community call on the 15th of May, for which you can find notes [[https://hackmd.io/X_hMaXkVRP-f6tZhmthgNQ][here]]. Stay tuned for the next one, which should happen at the beginning of June.
+
+** Completed Activities
+
+- Address invalid little-endian-only testcases [[https://github.com/rust-gcc/gccrs/pull/2208][PR2208]]
+- Add missing coercion site logic [[https://github.com/rust-gcc/gccrs/pull/2202][PR2202]]
+- Handle keywords in macro fragments [[https://github.com/rust-gcc/gccrs/pull/2200][PR2200]]
+- Fix "default unsafe fn ..." parsing [[https://github.com/rust-gcc/gccrs/pull/2199][PR2199]]
+- Fix ICE with unit expressions [[https://github.com/rust-gcc/gccrs/pull/2197][PR2197]]
+- gccrs: Add missing compile locals for constants and statics [[https://github.com/rust-gcc/gccrs/pull/2196][PR2196]]
+- Fix tail expression stripping [[https://github.com/rust-gcc/gccrs/pull/2156][PR2156]]
+- Modularize libproc macro [[https://github.com/rust-gcc/gccrs/pull/2153][PR2153]]
+- builtin: Cleanup handling of builtin macros [[https://github.com/rust-gcc/gccrs/pull/2152][PR2152]]
+- Proc macro type [[https://github.com/rust-gcc/gccrs/pull/2150][PR2150]]
+- Fix out of bounds indexing while expanding macros with repetition [[https://github.com/rust-gcc/gccrs/pull/2141][PR2141]]
+- Handle nested #[macro_use] modules properly [[https://github.com/rust-gcc/gccrs/pull/2131][PR2131]]
+- Added HIR::InlineAsm [[https://github.com/rust-gcc/gccrs/pull/1886][PR1886]]
+
+*** Contributors this week
+
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
+- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/mvvsmk][M V V S Manoj Kumar]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       219 |       226 |    +7 |
+| In Progress |        49 |        50 |    +1 |
+| Completed   |       639 |       649 |   +10 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 7737      | 7838      |  +101 |
+| Failed    | -         | -         |     - |
+| XFAIL     | 53        | 53        |     - |
+| XPASS     | -         | -         |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        66 |        69 |    +3 |
+| In Progress |        22 |        26 |    +4 |
+| Completed   |       304 |       312 |    +8 |
+
+*** Milestones Progress
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 73% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |      100% |      100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |      100% |      100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       96% |      100% | +4%   | 16th Nov 2022 |  2nd May 2023   | 30th Apr 2023 |
+| Borrow Checking 1                 |        0% |        0% | -     | TBD           | -               | 15th Aug 2023 |
+| AST Pipeline for libcore 1.49     |       20% |       35% | +15%  | 13th Apr 2023 | -               |  1st Jun 2023 |
+| HIR Pipeline for libcore 1.49     |       40% |       46% | +6%   | 13th Apr 2023 | -               | TBD           |
+| Procedural Macros 1               |       45% |       35% | -10%  | 13th Apr 2023 | -               |  6th Aug 2023 |
+| GCC 13.2 Release                  |        0% |        0% | -     | 13th Apr 2023 | -               | 15th Jul 2023 |
+| GCC 14 Stage 3                    |        0% |        0% | -     | TBD           | -               |  1st Nov 2023 |
+| Rustc Testsuite Prerequisistes    |        0% |        0% | -     | TBD           | -               |  1st Sep 2023 |
+| Intrinsics and builtins           |       18% |       18% | -     |  6th Sep 2022 | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD           | -               | TBD           |
+
+*** Risks
+
+**FIXME**:
+
+** Planned Activities
+
+- Finish work on iterators
+- Look into glob use statements
+- Look into more builtin ~#[derive]~ macros
+- Look into remaining issues required for proper AST pipeline of libcore
+
+** Detailed changelog
