@@ -84,7 +84,7 @@ Thus the percentage is computed using the sum of issues and tracked items done d
 | AST Pipeline for libcore 1.49     |       35% |       45% | +15%  | 13th Apr 2023 | -               |  1st Jun 2023 |
 | HIR Pipeline for libcore 1.49     |       46% |       46% | -     | 13th Apr 2023 | -               | TBD           |
 | Procedural Macros 1               |       35% |       63% | +28%  | 13th Apr 2023 | -               |  6th Aug 2023 |
-| GCC 13.2 Release                  |        0% |        0% | -     | 13th Apr 2023 | -               | 15th Jul 2023 |
+| GCC 13.2 Release                  |        0% |       21% | +21%  | 13th Apr 2023 | -               | 15th Jul 2023 |
 | GCC 14 Stage 3                    |        0% |        0% | -     | TBD           | -               |  1st Nov 2023 |
 | Rustc Testsuite Prerequisistes    |        0% |        0% | -     | TBD           | -               |  1st Sep 2023 |
 | Intrinsics and builtins           |       18% |       18% | -     |  6th Sep 2022 | -               | TBD           |
