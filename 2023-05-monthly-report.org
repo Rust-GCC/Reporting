@@ -1,0 +1,149 @@
+#+title:  Monthly Report for May 2023
+#+author: Philip Herron and Arthur Cohen
+#+date:   2023-06-05
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+The GCC 13.2 release date is approaching, and we are hard at work trying to get ~core~ integrated to ~gccrs~. We are progressing a lot on our AST pipeline, with many contributions from external contributors as well as work from Pierre-Emmanuel and Arthur. We are still trying to figure out some of the steps necessary for integrating the Rust 1.49 version of `core` with GCC's build system, and how to properly submit these patches upstream in time for reviewing.
+This year's Google Summer of Code is also starting, with our two students getting started on their projects this week. This work will be happening in public on our GitHub repository and our Zulip chat, which you can join for updates.
+
+We are also getting things ready for submitting a talk to EuroRust in October - if you have any subject you'd like us to talk about when we meet there, feel free to send us a message or email! The subject of the talk is not fully defined yet and we are open to all ideas.
+
+*** Community call
+
+We will have our next monthly community call on the 12th of June 2023. You can subscribe to our calendar
+to see when the next one will be held. The call is open to everyone, even if you would just
+like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to
+be notified of upcoming events.
+
+- Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
+- [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com][Google calendar link]]
+- [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
+
+** Completed Activities
+
+- derive: Add proper derive(Clone) for unions [[https://github.com/rust-gcc/gccrs/pull/2256][PR2256]]
+- derive: Add #[derive(Clone)] for regular structs [[https://github.com/rust-gcc/gccrs/pull/2255][PR2255]]
+- gccrs: get rid of useless helper class and fix header usage [[https://github.com/rust-gcc/gccrs/pull/2254][PR2254]]
+- Add #[derive(Copy)] support [[https://github.com/rust-gcc/gccrs/pull/2253][PR2253]]
+- macro-invoc-lexer: Add Copyright header. [[https://github.com/rust-gcc/gccrs/pull/2251][PR2251]]
+- Properly match delimiters [[https://github.com/rust-gcc/gccrs/pull/2249][PR2249]]
+- gccrs: Fix cast site to not miss type-unifications [[https://github.com/rust-gcc/gccrs/pull/2248][PR2248]]
+- Add missing name-resolution and hir lowering to Stmts [[https://github.com/rust-gcc/gccrs/pull/2247][PR2247]]
+- Fix handling of single fragments in repetitions [[https://github.com/rust-gcc/gccrs/pull/2243][PR2243]]
+- Avoid invalid metavariable substitutions [[https://github.com/rust-gcc/gccrs/pull/2241][PR2241]]
+- Add Spans to procedural macros [[https://github.com/rust-gcc/gccrs/pull/2240][PR2240]]
+- gccrs: remove stray semicolon [[https://github.com/rust-gcc/gccrs/pull/2237][PR2237]]
+- Bug fixes autoderef cycles using derefs [[https://github.com/rust-gcc/gccrs/pull/2235][PR2235]]
+- enr: Cleanup #[macro_use] accumulation [[https://github.com/rust-gcc/gccrs/pull/2231][PR2231]]
+- Only check first item of cfg_attr attribute as predicate [[https://github.com/rust-gcc/gccrs/pull/2230][PR2230]]
+- Fix macro resolutions in middle of multiple nested macro_use modules [[https://github.com/rust-gcc/gccrs/pull/2226][PR2226]]
+- Add operator== for Optional. [[https://github.com/rust-gcc/gccrs/pull/2224][PR2224]]
+- Handle keyword metavariables during macro expansion [[https://github.com/rust-gcc/gccrs/pull/2221][PR2221]]
+- Change return type of ```token_id_keyword_string``` [[https://github.com/rust-gcc/gccrs/pull/2219][PR2219]]
+- derive: Add base for builtin derives and #[derive(Clone)] [[https://github.com/rust-gcc/gccrs/pull/2216][PR2216]]
+- ast: Add `outer_attrs` to all `Item`s [[https://github.com/rust-gcc/gccrs/pull/2215][PR2215]]
+- dump: Dump `TupleIndexExpr`s [[https://github.com/rust-gcc/gccrs/pull/2214][PR2214]]
+- Improve Optional<T> implementation [[https://github.com/rust-gcc/gccrs/pull/2213][PR2213]]
+- Improve Optional<T&> implementation [[https://github.com/rust-gcc/gccrs/pull/2212][PR2212]]
+- Allow hashing Optional<T> [[https://github.com/rust-gcc/gccrs/pull/2211][PR2211]]
+- ast: Propagate type suffix [[https://github.com/rust-gcc/gccrs/pull/2210][PR2210]]
+- Address invalid little-endian-only testcases [[https://github.com/rust-gcc/gccrs/pull/2208][PR2208]]
+- Rework expression statement parsing [[https://github.com/rust-gcc/gccrs/pull/2206][PR2206]]
+- libproc_macro: Change rust literal internals [[https://github.com/rust-gcc/gccrs/pull/2204][PR2204]]
+- Add missing coercion site logic [[https://github.com/rust-gcc/gccrs/pull/2202][PR2202]]
+- Handle keywords in macro fragments [[https://github.com/rust-gcc/gccrs/pull/2200][PR2200]]
+- Fix "default unsafe fn ..." parsing [[https://github.com/rust-gcc/gccrs/pull/2199][PR2199]]
+- Fix ICE with unit expressions [[https://github.com/rust-gcc/gccrs/pull/2197][PR2197]]
+- gccrs: Add missing compile locals for constants and statics [[https://github.com/rust-gcc/gccrs/pull/2196][PR2196]]
+- Parse AST::AttrInputMacro attributes [[https://github.com/rust-gcc/gccrs/pull/2185][PR2185]]
+- Add AST::AttrInputMacro [[https://github.com/rust-gcc/gccrs/pull/2177][PR2177]]
+- Make key and key/value config options seperate [[https://github.com/rust-gcc/gccrs/pull/2175][PR2175]]
+- Fix tail expression stripping [[https://github.com/rust-gcc/gccrs/pull/2156][PR2156]]
+- Modularize libproc macro [[https://github.com/rust-gcc/gccrs/pull/2153][PR2153]]
+- builtin: Cleanup handling of builtin macros [[https://github.com/rust-gcc/gccrs/pull/2152][PR2152]]
+- Proc macro type [[https://github.com/rust-gcc/gccrs/pull/2150][PR2150]]
+- Fix out of bounds indexing while expanding macros with repetition [[https://github.com/rust-gcc/gccrs/pull/2141][PR2141]]
+- Handle nested #[macro_use] modules properly [[https://github.com/rust-gcc/gccrs/pull/2131][PR2131]]
+- Added HIR::InlineAsm [[https://github.com/rust-gcc/gccrs/pull/1886][PR1886]]
+
+*** Contributors this month
+
+- [[https://github.com/matthewjasper][Matthew Jasper]] (new contributor!)
+- [[https://github.com/powerboat9][powerboat9]]
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
+- [[https://github.com/davidmalcolm][David Malcolm]]
+- [[https://github.com/mvvsmk][mvvsmk]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        219 |        227 |    +8 |
+| In Progress |         49 |         50 |    +1 |
+| Completed   |        639 |        670 |   +31 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 7737       | 7924       | +187  |
+| Failed    | -          | -          | -     |
+| XFAIL     | 53         | 53         | +13   |
+| XPASS     | -          | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         66 |         72 |    +6 |
+| In Progress |         22 |         26 |    +4 |
+| Completed   |        304 |        327 |   +23 |
+
+*** Milestones Progress
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 73% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+Similarly, the Update GCC's master branch milestone contains a [[https://github.com/rust-gcc/gccrs/issues/1705][tracking issue]] containing over 200 tasks. The percentage shown here takes this into account.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |      100% |      100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |      100% |      100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       96% |      100% | +4%   | 16th Nov 2022 |  1st May 2023   | 30th Apr 2023 |
+| Borrow Checking 1                 |        0% |        0% | -     | TBD           | -               | 15th Aug 2023 |
+| AST Pipeline for libcore 1.49     |       20% |       51% | +31%  | 13th Apr 2023 | -               |  1st Jul 2023 |
+| HIR Pipeline for libcore 1.49     |       40% |       53% | +13%  | 13th Apr 2023 | -               | TBD           |
+| Procedural Macros 1               |       45% |       70% | +25%  | 13th Apr 2023 | -               |  6th Aug 2023 |
+| GCC 13.2 Release                  |        0% |       26% | +26%  | 13th Apr 2023 | -               | 15th Jul 2023 |
+| GCC 14 Stage 3                    |        0% |        0% | -     | TBD           | -               |  1st Nov 2023 |
+| Rustc Testsuite Prerequisistes    |        0% |        0% | -     | TBD           | -               |  1st Sep 2023 |
+| Intrinsics and builtins           |       18% |       18% | -     |  6th Sep 2022 | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD           | -               | TBD           |
+
+*** Testing project
+
+The testing project is on hold as we try and figure out some of the issues we're running into with GitHub and our various automations around it.
+
+** Planned Activities
+
+- Look at remaining AST issues for compiling ~core~
+- Fix remaining type systems bugs for ~core~ 1.49
+- Look at procedural macro name resolution
+- Look at moving imports name resolution to Early Name Resolver
+
+** Detailed changelog
