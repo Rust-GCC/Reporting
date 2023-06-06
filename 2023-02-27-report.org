@@ -59,7 +59,7 @@ you have any questions or would like to start putting together a proposal!
 
 - [[https://github.com/tschwinge][Thomas Schwinge]]
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
-- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/turingki][mxlol233]]
 - [[https://github.com/mvvsmk][M V V S Manoj Kumar]]
 

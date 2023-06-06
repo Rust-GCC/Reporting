@@ -42,7 +42,7 @@ Agenda: https://hackmd.io/@Rust-GCC/SJmM4lJW2
 
 - [[https://github.com/dkm][Marc Poulhiès]]
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
-- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/TuringKi][mxlol233]]
 - [[https://github.com/goar5670][Mahmoud Adel]]
 

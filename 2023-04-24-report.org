@@ -42,7 +42,7 @@ We are going to keep working on some of the last big hurdles for complete AST ex
 - [[https://github.com/tieway59][tieway59]] (new contributor!)
 - [[https://github.com/tschwinge][Thomas Schwinge]]
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
-- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/mvvsmk][M V V S Manoj Kumar]]
 
 *** Overall Task Status

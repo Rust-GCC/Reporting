@@ -54,7 +54,7 @@ https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f0
 - [[https://github.com/teromene][Lyra]] (new contributor!)
 - [[https://github.com/drmahad][Mahad]] (new contributor!)
 - [[https://github.com/Parthib314][Parthab]] (new contributor!)
-- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/dkm][Marc Poulhies]]
 
 *** Overall Task Status

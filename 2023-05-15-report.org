@@ -35,7 +35,7 @@ We also had our community call on the 15th of May, for which you can find notes 
 *** Contributors this week
 
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
-- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/mvvsmk][M V V S Manoj Kumar]]
 
 *** Overall Task Status

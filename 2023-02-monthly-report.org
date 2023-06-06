@@ -139,7 +139,7 @@ be notified of upcoming events.
 - [[https://github.com/omkar-mohanty][Omkar Mohanty]] (new contributor!)
 - [[https://github.com/SainiAditya1][SainiAditya1]] (new contributor!)
 - [[https://github.com/mvvsmk][M V V S Manoj Kumar]]
-- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/TuringKi][mxlol233]]
 - [[https://github.com/00AR][Abdul Rafey]]
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]

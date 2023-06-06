@@ -59,7 +59,7 @@ Finally, ~gccrs~ will once again be at Embedded World in Nuremberg. Feel free to
 - [[https://github.com/goar5670][Mahmoud Adel]] (new contributor!)
 - [[https://github.com/nikos-alexandris][Nikos Alexandris]] (new contributor!)
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
-- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/00AR][Abdul Rafey]]
 - [[https://github.com/TuringKi][mxlol233]]
 
