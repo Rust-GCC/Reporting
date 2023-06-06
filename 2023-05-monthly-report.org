@@ -74,7 +74,7 @@ be notified of upcoming events.
 *** Contributors this month
 
 - [[https://github.com/matthewjasper][Matthew Jasper]] (new contributor!)
-- [[https://github.com/powerboat9][powerboat9]]
+- [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
 - [[https://github.com/davidmalcolm][David Malcolm]]
 - [[https://github.com/mvvsmk][mvvsmk]]
