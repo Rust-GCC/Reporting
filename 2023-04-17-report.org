@@ -25,7 +25,7 @@ We have added new milestones to the project's repository in order to better spli
 
 - [[https://github.com/kirmayer-gnu][Sebastian Kirmayer]] (new contributor!)
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
-- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/powerboat9][Owen Avery]]
 
 *** Overall Task Status
 

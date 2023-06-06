@@ -29,7 +29,7 @@ We had our community call on the 3rd of April 2023. You are able to find the mee
 
 *** Contributors this week
 
-- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
 - [[https://github.com/dkm][Marc Poulhiès]]
 - [[https://github.com/tschwinge][Thomas Schwinge]]

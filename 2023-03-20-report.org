@@ -51,7 +51,7 @@ have taken into effect!
 - [[https://github.com/chosen-ox][Vincent]] (new contributor!)
 - [[https://github.com/tage64][tage64]] (new contributor!)
 - [[https://github.com/goar5670][Mahmoud Adel]]
-- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/jdupak][Jakub Dupak]]
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
 

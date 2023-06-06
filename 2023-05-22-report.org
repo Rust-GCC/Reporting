@@ -8,7 +8,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-A lot of work is being done on our AST pipeline in order to properly parse, expand and name-resolve the ~core~ crate, with multiple contributions coming from [[https://github.com/matthewjasper][Matthew Jasper]] and [[https://github.com/powerboat9][Arsen Owens]], two GitHub contributors. This is really nice to see and enables Arthur to keep working on derive macros. Regarding procedural macros, dynamic calls to shared libraries are being performed and tokens are being sent properly - what remains is to integrate the received tokens back into our AST, which is what Pierre-Emmanuel is currently working on.
+A lot of work is being done on our AST pipeline in order to properly parse, expand and name-resolve the ~core~ crate, with multiple contributions coming from [[https://github.com/matthewjasper][Matthew Jasper]] and [[https://github.com/powerboat9][Owen Avery]], two GitHub contributors. This is really nice to see and enables Arthur to keep working on derive macros. Regarding procedural macros, dynamic calls to shared libraries are being performed and tokens are being sent properly - what remains is to integrate the received tokens back into our AST, which is what Pierre-Emmanuel is currently working on.
 
 We have also gotten in touch with our two GSoC students and are in the process of setting up weekly sessions with them to track their progress and communicate. Work on their projects will start on May 29th, per [[https://developers.google.com/open-source/gsoc/timeline][this year's GSoC timeline]]
 
@@ -33,7 +33,7 @@ We have also gotten in touch with our two GSoC students and are in the process o
 *** Contributors this week
 
 - [[https://github.com/matthewjasper][Matthew Jasper]] (new contributor!)
-- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
 
 *** Overall Task Status

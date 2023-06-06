@@ -117,7 +117,7 @@ be notified of upcoming events.
 - [[https://github.com/emanuele-em][emanuel-em]] (new contributor!)
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
 - [[https://github.com/TuringKi][mxlol233]]
-- [[https://github.com/powerboat9][Arsen Owens]]
+- [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/goar5670][Mahmoud Adel]]
 - [[https://github.com/dkm][Marc Poulhiès]]
 - [[https://github.com/jdupak][Jakub Dupak]]
