@@ -8,9 +8,8 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-1. GSoC projects starting, changes to common parts of the compiler
-2. AST pipeline in a very good state, looking at glob imports which should help fix the remaining missing macros bugs
-3. Proc Macro expansion merged, now name resolution and that is also on a good way
+This week saw the start of the Unicode Support GSoC project, with some changes being made to ~libcpp~ - the C pre-processor library. These changes will need to be upstreamed and reviewed, but they should prove useful to other frontends which have had to implement similar functions in the past.
+A major Procedural Macro pull-request has been merged, bringing proper expansion of these macros to the compiler. The loading of these external binaries and dynamic procedure calls are implemented properly, and the AST fragments generated are being inserted in the current AST, meaning that most of the functionality is present. What remains is for Pierre-Emmanuel to perform name resolution of the external crates and procedural macros being used, which ties in with Arthur's work on macro imports and glob imports. All in all, this should help fix the two major remaining issues for proper expansion of the ~core~ crate. Philip is still working on the typesystem, bringing us closer and closer to completion of the ~HIR Pipeline 1.49~ milestone.
 
 ** Completed Activities
 
@@ -32,8 +31,6 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 - [[https://github.com/powerboat9][Owen Avery]]
 
 *** Overall Task Status
-
-*FIXME*
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
