@@ -1,6 +1,6 @@
-#+title:  Weekly report for 15th of May 2023 to 22nd of May 2023
+#+title:  Weekly report for 5th of June 2023 to 12th of June 2023
 #+author: Philip Herron and Arthur Cohen
-#+date:   2023-05-22
+#+date:   2023-06-12
 
 ** Overview
 
