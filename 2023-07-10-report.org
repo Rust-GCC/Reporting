@@ -1,0 +1,120 @@
+#+title:  Weekly report for 3rd of July 2023 to 10th of July 2023
+#+author: Philip Herron and Arthur Cohen
+#+date:   2023-07-10
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+1. Lots of PRs this week! 22!
+2. Lots of issues from our GSoC students
+  1. Very good work
+  2. Entering second phase of their projects, more exploratory and research
+  3. Evaluations this week - both will pass!
+3. Switching to the new GCC code of conduct
+4. Merging work for new name resolution
+
+** Completed Activities
+
+- Replace ```Linemap::unknown_location``` with ```UNKNOWN_LOCATION``` [[https://github.com/rust-gcc/gccrs/pull/2392][PR2392]]
+- [E0070] invalid left-hand side of assignment [[https://github.com/rust-gcc/gccrs/pull/2390][PR2390]]
+- [E0063] constructor is missing fields [[https://github.com/rust-gcc/gccrs/pull/2387][PR2387]]
+- [E0425] Use of unresolved name [[https://github.com/rust-gcc/gccrs/pull/2383][PR2383]]
+- [E0053] method 'x' has an incompatible type for trait 'y' [[https://github.com/rust-gcc/gccrs/pull/2380][PR2380]]
+- [E0046] Missing Items in Trait Implementation [[https://github.com/rust-gcc/gccrs/pull/2377][PR2377]]
+- Add utf-8 validation for input source [[https://github.com/rust-gcc/gccrs/pull/2374][PR2374]]
+- [E0061] Refactored argument mismatch error function [[https://github.com/rust-gcc/gccrs/pull/2373][PR2373]]
+- gccrs: HIR cleanup [[https://github.com/rust-gcc/gccrs/pull/2372][PR2372]]
+- Reduce Linemap/Gcc_linemap abstraction further [[https://github.com/rust-gcc/gccrs/pull/2371][PR2371]]
+- Reduce Linemap/Gcc_linemap abstraction [[https://github.com/rust-gcc/gccrs/pull/2370][PR2370]]
+- [E0229] associated type bindings error [[https://github.com/rust-gcc/gccrs/pull/2367][PR2367]]
+- [E0034] Ambiguous Method Call Error [[https://github.com/rust-gcc/gccrs/pull/2365][PR2365]]
+- Add location info to `Rust::Identifier` [[https://github.com/rust-gcc/gccrs/pull/2364][PR2364]]
+- Replace default initialization ```Location ()``` with ```UNDEF_LOCATION``` [[https://github.com/rust-gcc/gccrs/pull/2363][PR2363]]
+- Change class Location into typedef [[https://github.com/rust-gcc/gccrs/pull/2362][PR2362]]
+- Create MacroInvocLexerBase [[https://github.com/rust-gcc/gccrs/pull/2351][PR2351]]
+- nr2.0: Add complex testcases [[https://github.com/rust-gcc/gccrs/pull/2342][PR2342]]
+- Ast collector fixes [[https://github.com/rust-gcc/gccrs/pull/2340][PR2340]]
+- optional: Import tl's optional type [[https://github.com/rust-gcc/gccrs/pull/2327][PR2327]]
+- util: Add tl::expected type [[https://github.com/rust-gcc/gccrs/pull/2317][PR2317]]
+- Ignore semicolon following a macro expansion in expression context [[https://github.com/rust-gcc/gccrs/pull/2292][PR2292]]
+
+*** Contributors this week
+
+- [[https://github.com/mahadmuhammad][Mahad Muhammad]]
+- [[https://github.com/tamaroning][Raiki Tamura]]
+- [[https://github.com/powerboat9][Owen Avery]]
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       237 |       247 |   +10 |
+| In Progress |        46 |        49 |    +3 |
+| Completed   |       696 |       700 |    +4 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 7974      | 7986      |   +12 |
+| Failed    | -         | -         |     - |
+| XFAIL     | 53        | 68        |   +15 |
+| XPASS     | -         | -         |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        73 |        85 |   +10 |
+| In Progress |        22 |        24 |    +2 |
+| Completed   |       346 |       347 |    +1 |
+
+*** Milestones Progress
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 73% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |       100% |       100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |       100% |       100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |       100% |       100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |       100% |       100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |       100% |       100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |       100% |       100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       100% |       100% | -     | 16th Nov 2022 |  1st May 2023   | 30th Apr 2023 |
+| Borrow Checking 1                 |         0% |         0% | -     | TBD           | -               | 15th Aug 2023 |
+| AST Pipeline for libcore 1.49     |        70% |        75% | +5%   | 13th Apr 2023 | -               |  1st Jul 2023 |
+| HIR Pipeline for libcore 1.49     |        67% |        67% | -     | 13th Apr 2023 | -               | TBD           |
+| Procedural Macros 1               |        70% |        70% | -     | 13th Apr 2023 | -               |  6th Aug 2023 |
+| GCC 13.2 Release                  |        42% |        42% | -     | 13th Apr 2023 | -               | 15th Jul 2023 |
+| GCC 14 Stage 3                    |         0% |         0% | -     | TBD           | -               |  1st Nov 2023 |
+| core 1.49 functionality [AST]     |         0% |         0% | -     |  1st Jul 2023 | -               |  1st Nov 2023 |
+| Rustc Testsuite Prerequisistes    |         0% |         0% | -     | TBD           | -               |  1st Sep 2023 |
+| Intrinsics and builtins           |        18% |        18% | -     |  6th Sep 2022 | -               | TBD           |
+| Const Generics 2                  |         0% |         0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |         0% |         0% | -     | TBD           | -               | TBD           |
+
+*** Risks
+
+| Risk                                | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                          |
+|-------------------------------------+--------------+-------------------+--------------+-------------------------------------|
+| `core` and `std` missing for GCC 14 |            2 |                 6 |           12 | Look at necessary unstable features |
+
+** Planned Activities
+
+- Finish name resolution rework
+- Look into remaining issues required for proper AST pipeline of `core`
+
+** Detailed changelog
