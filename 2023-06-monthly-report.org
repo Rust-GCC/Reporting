@@ -98,6 +98,7 @@ be notified of upcoming events.
 - [[https://github.com/matthewjasper][Matthew Jasper]]
 - [[https://github.com/TieWay59][tieway59]]
 - [[https://github.com/dme2][Dave Evans]]
+- [[https://github.com/GuillaumeGomez][Guillaume Gomez]]
 
 *** Overall Task Status
 
