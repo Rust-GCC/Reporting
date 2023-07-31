@@ -162,4 +162,6 @@ pub fn dynamic_bar(a: &dyn Trait) {
 }
 #+END_SRC
 
+Note in the example, Trait's define an implicit Self type parameter which does not implemented Sized by default. This is because it would cause a recursive trait obligation for Sized to be defined on the Self for the Sized trait itself. 
+
 This is a key milestone for gccrs as it lays the groundwork to support the other major marker-trait of Drop.
