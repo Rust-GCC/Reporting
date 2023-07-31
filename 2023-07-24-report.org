@@ -19,7 +19,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
     3. Now looking at it with Pierre-Emmanuel
 4. Sized marker trait implemented
   1. Lays ground work for support drop traits
-  2. Means out trait system is working well
+  2. Means our trait system is working well
   3. Fixed ICE's in typesystem thanks to bugs from GSoC Students
 5. More error codes and lots of testing going on.
 
@@ -122,7 +122,7 @@ Thus the percentage is computed using the sum of issues and tracked items done d
 - Finish name resolution rework
 - Look into remaining issues required for proper AST pipeline of `core`
 - Continue bug fixing in type system
-- Opaue types development
+- Opaque types development
 
 ** Detailed changelog
 
