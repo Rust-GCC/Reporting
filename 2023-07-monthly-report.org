@@ -348,6 +348,32 @@ pub fn dynamic_bar(a: &dyn Trait) {
 }
 #+END_SRC
 
-Note in the example, Trait's define an implicit Self type parameter which does not implemented Sized by default. This is because it would cause a recursive trait obligation for Sized to be defined on the Self for the Sized trait itself. 
+Note in the example, Trait's define an implicit Self type parameter which does not implemented Sized by default. This is because it would cause a recursive trait obligation for Sized to be defined on the Self for the Sized trait itself.
 
-This is a key milestone for gccrs as it lays the groundwork to support the other major marker-trait of Drop. As the Sized trait is so intrinsic to Rust this has enforced us to updatae most of the testsuite to include this marker trait
+This is a key milestone for gccrs as it lays the groundwork to support the other major marker-trait of Drop. As the Sized trait is so intrinsic to Rust this has enforced us to update most of the testsuite to include this marker-trait.
+
+*** Track Fn trait fn_once_output
+
+In order to setup the Output associated type we can rely on using generic argument bindings. So for example when we have the FnOnce trait:
+
+#+BEGIN_SRC rust
+#[lang = "fn_once"]
+pub trait FnOnce<Args> {
+    #[lang = "fn_once_output"]
+    type Output;
+
+    extern "rust-call" fn call_once(self, args: Args) -> Self::Output;
+}
+#+END_SRC
+    
+Then we might have a function such as:
+
+#+BEGIN_SRC rust
+pub fn map<R, F: FnOnce(T) -> R>(self, f: F) -> Option<R> { ... }
+#+END_SRC
+    
+For this trait bound predicate of FnOnce(T) -> R we use syntactic sugar to setup generics for the bound as if it was just another generic trait such as:
+    
+FnOnce<(T), Output=R>
+    
+Note the argument T is wrapped up implicitly inside a Tuple this keeps the type system consistent so you don't need to have specific traits for numbers of arguments. Resuing argument binding means we can reuse our generic argument handling to get this support for free which is then consistent across the compiler.
