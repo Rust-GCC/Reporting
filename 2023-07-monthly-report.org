@@ -271,6 +271,13 @@ This month saw us adding these error codes to our diagnostics:
 9. E0093
 10. E0124
 11. E0070
+12. E0063
+13. E0045
+14. E0053
+15. E0046
+16. E0061
+17. E0229
+18. E0034
 
 With the continued push forward with more error codes each week it shows GCC Rust is able to catch errors at the right points to emit these error codes. Lots have already been added this is just the list for this month.
 
