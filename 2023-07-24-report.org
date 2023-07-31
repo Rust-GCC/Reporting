@@ -17,6 +17,11 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
     1. Path resolution
     2. Module resolution
     3. Now looking at it with Pierre-Emmanuel
+4. Sized marker trait implemented
+  1. Lays ground work for support drop traits
+  2. Means out trait system is working well
+  3. Fixed ICE's in typesystem thanks to bugs from GSoC Students
+5. More error codes and lots of testing going on.
 
 ** Completed Activities
 
@@ -116,5 +121,45 @@ Thus the percentage is computed using the sum of issues and tracked items done d
 
 - Finish name resolution rework
 - Look into remaining issues required for proper AST pipeline of `core`
+- Continue bug fixing in type system
+- Opaue types development
 
 ** Detailed changelog
+
+*** Sized marker trait
+
+In Rust all generic type parameters implement the Sized marker trait by default. This means for an example such as:
+
+#+BEGIN_SRC rust
+fn foo<T>(a:T) -> X { ... }
+#+END_SRC
+
+Will always get turned into:
+
+#+BEGIN_SRC rust
+#[lang = "sized"]
+pub trait Sized {}
+
+fn foo<T: Sized>(a:T) -> X { ... }
+#+END_SRC
+
+Types such as Slices, Dyn traits do not implement sized so we need to use the special syntax of ?Sized to remove the Sized trait obligation
+
+#+BEGIN_SRC rust
+#[lang = "sized"]
+pub trait Sized {}
+
+pub trait Trait {
+    fn foo(&self) -> Self
+    where
+        Self: Sized;
+}
+
+pub fn static_foo<T: Trait + ?Sized>(_b: &T) {}
+
+pub fn dynamic_bar(a: &dyn Trait) {
+    static_foo(a)
+}
+#+END_SRC
+
+This is a key milestone for gccrs as it lays the groundwork to support the other major marker-trait of Drop.
