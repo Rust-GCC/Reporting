@@ -203,5 +203,151 @@ Similarly, the Update GCC's master branch milestone contains a [[https://github.
 - Finish late name resolution 2.0
 - Look at procedural macro name resolution
 - Fix remaining type systems bugs for ~core~ 1.49
+- Opaque types
+- Drop marker trait
 
 ** Detailed changelog
+
+*** HIR Dump
+
+We now have a great starting point to a working HIR dump. It does not conform directly to Rustc but we don't need it to. We have desperatly needed this for quite some time to help newer developers debug in the backend code generation as well as the typesystem and HIR lints. The HIR contains a bunch of mapping information and these ID's are crucial to help with debugging issues.
+
+#+BEGIN_SRC rust
+Crate [                                                                                                                                                                      
+        inner_attrs: empty                                                            
+        mapping: [C: 0 Nid: 72 Hid: 59]                                                                                                                                      
+        items {                                                                                                                                                              
+                Trait [                                                                                                                                                      
+                        mapping: [C: 0 Nid: 6 Hid: 21 Lid: 2]                                                                                                                
+                        outer_attributes {                                                                                                                                   
+                                lang = sized                                                                                                                                 
+                        } // outer_attributes                                                                                                                                
+                        visibility: pub                                                                                                                                      
+                        unsafety: 0                                                   
+                        name: Sized                                                                                                                                          
+                        generic_params {                                                                                                                                     
+                                TypeParam [                                                                                                                                  
+                                        outer_attr:                                                                                                                          
+                                        type_representation: Self                                                                                                            
+                                        type_param_bounds: empty                                                                                                             
+                                        type: none                                                                                                                           
+                                ] // TypeParam                                                                                                                               
+                        } // generic_params 
+                        type_param_bounds: empty
+                        where clause: none
+                        trait_items: empty
+                ] // Trait
+                TupleStruct [
+                        mapping: [C: 0 Nid: 20 Hid: 29 Lid: 8]
+                        outer_attributes: empty
+                        visibility: private 
+                        struct_name: GenericStruct
+                        generic_params {
+                                TypeParam [ 
+                                        outer_attr: 
+                                        type_representation: T
+                                        type_param_bounds: empty
+                                        type: none
+                                ] // TypeParam
+                        } // generic_params 
+                        where_clause: none
+                        fields {
+#+END_SRC
+
+We will be making changes to this going forward but having a starting point gives us the chance to move forward.
+
+*** More error codes
+
+This month saw us adding these error codes to our diagnostics:
+
+1. E0572
+2. E0571
+3. E0268
+4. E0045
+5. E0323
+6. E0423
+7. E0133
+8. E0658
+9. E0093
+10. E0124
+11. E0070
+
+With the continued push forward with more error codes each week it shows GCC Rust is able to catch errors at the right points to emit these error codes. Lots have already been added this is just the list for this month.
+
+*** Fix ICE with return expression outside of context
+
+This was a nice bug to fix because you can't return outside of a function context.
+
+#+BEGIN_SRC rust
+const FOO: u32 = return 0; 
+#+END_SRC
+
+This was an access to an empty stack which would not have been allowed if we wrote this in Rust. We now emit
+
+#+BEGIN_SRC rust
+test.rs:1:18: error: return statement outside of function body
+    1 | const FOO: u32 = return 0;
+      |                  ^~~~~~
+#+END_SRC
+
+*** Fix ICE when using full path to enum variant as part of a TypePath
+
+It is not allowed to use the variant of an enum as a Type, rust enforces that you must use the Enum itself as a type. For example
+
+#+BEGIN_SRC rust
+enum Dragon {
+    Born,
+}
+
+fn oblivion() -> Dragon::Born {
+    Dragon::Born
+}
+#+END_SRC
+
+We now emit: 
+
+#+BEGIN_SRC rust
+test.rs:5:26: error: expected type, found variant of Dragon
+    5 | fn oblivion() -> Dragon::Born {
+      |                          ^~~~
+#+END_SRC
+
+*** Sized marker trait
+
+In Rust all generic type parameters implement the Sized marker trait by default. This means for an example such as:
+
+#+BEGIN_SRC rust
+fn foo<T>(a:T) -> X { ... }
+#+END_SRC
+
+Will always get turned into:
+
+#+BEGIN_SRC rust
+#[lang = "sized"]
+pub trait Sized {}
+
+fn foo<T: Sized>(a:T) -> X { ... }
+#+END_SRC
+
+Types such as Slices, Dyn traits do not implement sized so we need to use the special syntax of ?Sized to remove the Sized trait obligation
+
+#+BEGIN_SRC rust
+#[lang = "sized"]
+pub trait Sized {}
+
+pub trait Trait {
+    fn foo(&self) -> Self
+    where
+        Self: Sized;
+}
+
+pub fn static_foo<T: Trait + ?Sized>(_b: &T) {}
+
+pub fn dynamic_bar(a: &dyn Trait) {
+    static_foo(a)
+}
+#+END_SRC
+
+Note in the example, Trait's define an implicit Self type parameter which does not implemented Sized by default. This is because it would cause a recursive trait obligation for Sized to be defined on the Self for the Sized trait itself. 
+
+This is a key milestone for gccrs as it lays the groundwork to support the other major marker-trait of Drop. As the Sized trait is so intrinsic to Rust this has enforced us to updatae most of the testsuite to include this marker trait
