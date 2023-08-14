@@ -138,7 +138,7 @@ be notified of upcoming events.
 | TODO        |        237 |        252 |   +15 |
 | In Progress |         46 |         52 |    +6 |
 | Completed   |        696 |        721 |   +25 |
-
+#+tblfm: $4='(if (equalp $3 0) "-" (format "%+d" (- $3 $2)));N
 *** Test Cases
 
 | TestCases | Last Month | This Month | Delta |
@@ -147,6 +147,7 @@ be notified of upcoming events.
 | Failed    | -          | -          | -     |
 | XFAIL     | 53         | 53         | -     |
 | XPASS     | -          | -          | -     |
+#+tblfm: $4='(if (equalp $3 0) "-" (format "%+d" (- $3 $2)));N
 
 *** Bugs
 
@@ -155,6 +156,7 @@ be notified of upcoming events.
 | TODO        |         73 |         90 |   +17 |
 | In Progress |         22 |         27 |    +5 |
 | Completed   |        346 |        354 |    +8 |
+#+tblfm: $4='(if (equalp $3 0) "-" (format "%+d" (- $3 $2)));N
 
 *** Milestones Progress
 
