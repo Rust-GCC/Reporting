@@ -187,6 +187,7 @@ Similarly, the Update GCC's master branch milestone contains a [[https://github.
 | Intrinsics and builtins           |        18% |        18% | -     |  6th Sep 2022 | -               | TBD           |
 | Const Generics 2                  |         0% |         0% | -     | TBD           | -               | TBD           |
 | Rust-for-Linux compilation        |         0% |         0% | -     | TBD           | -               | TBD           |
+#+tblfm: $4='(let ((diff (apply #'- (mapcar (lambda (x) (string-to-number (string-replace "%" "" x))) (list $3 $2))))) (if (zerop diff) "-" (format "%+d%%" diff)));
 
 *** Testing project
 
