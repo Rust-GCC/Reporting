@@ -1,0 +1,140 @@
+#+title:  Weekly report for 7th of August 2023 to 21st of August 2023
+#+author: Philip Herron, Pierre-Emmanuel Patry, Arthur Cohen
+#+date:   2023-08-21
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+1. Late name resolution underway
+  1. Good work from PE on complex macro-invocation-expands-to-macro-definition case
+  2. Resolve `use` statements
+  3. Fill out existing mappings
+  4. Figured out last little bit of info for what is needed by the typechecker
+2. GSoC is almost over!
+  1. More errors, contributor will keep going after GSoC ends, super succesful
+  2. Deep into second part of the project, adding punycode encoding to our name mangling algorithm, super useful
+3. 40 PRs merged in two weeks, quite nice - mostly due to GSoC
+4. Lots of cleanup in our backend too
+
+** Completed Activities
+
+- [E0164] Neither tuple struct nor tuple variant used as a pattern       [[https://github.com/rust-gcc/gccrs/pull/2565][PR2565]]
+- [E0391] Detected type dependency cycle                                 [[https://github.com/rust-gcc/gccrs/pull/2561][PR2561]]
+- [E0034] found more than one items for method                           [[https://github.com/rust-gcc/gccrs/pull/2560][PR2560]]
+- [E0535] Unknown argument given to inline attribute                     [[https://github.com/rust-gcc/gccrs/pull/2559][PR2559]]
+- [E0534] inline attribute was malformed                                 [[https://github.com/rust-gcc/gccrs/pull/2558][PR2558]]
+- Non-allowed default type paramters                                     [[https://github.com/rust-gcc/gccrs/pull/2556][PR2556]]
+- Handle gengtype annotations in ```rust-constexpr.cc```                 [[https://github.com/rust-gcc/gccrs/pull/2554][PR2554]]
+- gccrs: improve name mangling hash                                      [[https://github.com/rust-gcc/gccrs/pull/2551][PR2551]]
+- gccrs: simplify matching possible candidates                           [[https://github.com/rust-gcc/gccrs/pull/2550][PR2550]]
+- gccrs: remove horrible hack in solving complex generics on impl blocks [[https://github.com/rust-gcc/gccrs/pull/2549][PR2549]]
+- gccrs: Fix legacy mangling to use Unicode escape                       [[https://github.com/rust-gcc/gccrs/pull/2547][PR2547]]
+- Add missing ```CHECKING_P``` guard to ```rust-punycode.cc```           [[https://github.com/rust-gcc/gccrs/pull/2546][PR2546]]
+- gccrs: Cleanup HIR dump                                                [[https://github.com/rust-gcc/gccrs/pull/2544][PR2544]]
+- gccrs: Adjust HIR dump for IfExpr and IfExprConseqElse                 [[https://github.com/rust-gcc/gccrs/pull/2543][PR2543]]
+- Support for `rich-loc` & `errorcode` in parser & expansion errors      [[https://github.com/rust-gcc/gccrs/pull/2542][PR2542]]
+- Basic formatting/comment fixes                                         [[https://github.com/rust-gcc/gccrs/pull/2540][PR2540]]
+- [E0107] Wrong number of generic argument                               [[https://github.com/rust-gcc/gccrs/pull/2539][PR2539]]
+- [E0015] Use of non-const inside const                                  [[https://github.com/rust-gcc/gccrs/pull/2538][PR2538]]
+- [E0658] Use of mutable reference in constant functions.                [[https://github.com/rust-gcc/gccrs/pull/2536][PR2536]]
+- Add punycode encoding to v0 mangling                                   [[https://github.com/rust-gcc/gccrs/pull/2535][PR2535]]
+- [E0412] used type name not in scope                                    [[https://github.com/rust-gcc/gccrs/pull/2534][PR2534]]
+- Implement punycode encoding                                            [[https://github.com/rust-gcc/gccrs/pull/2533][PR2533]]
+- Fix a warning about extra semicolon                                    [[https://github.com/rust-gcc/gccrs/pull/2532][PR2532]]
+- [E0753] Use of inner doc comment in invalid context                    [[https://github.com/rust-gcc/gccrs/pull/2531][PR2531]]
+- Move Codepoint to gcc/rust/util/                                       [[https://github.com/rust-gcc/gccrs/pull/2530][PR2530]]
+- Add type annotation to make-rust-unicode-data.py                       [[https://github.com/rust-gcc/gccrs/pull/2529][PR2529]]
+- `[E0054-E0604-E0620-E0606]` TypeCasting ErrorCodes                     [[https://github.com/rust-gcc/gccrs/pull/2528][PR2528]]
+- [E0380] Use of auto trait with method or associated item               [[https://github.com/rust-gcc/gccrs/pull/2527][PR2527]]
+- [E0541] Use of unknown meta item                                       [[https://github.com/rust-gcc/gccrs/pull/2526][PR2526]]
+- [E0308] array misamatch types                                          [[https://github.com/rust-gcc/gccrs/pull/2525][PR2525]]
+- [E0282] type annotations needed                                        [[https://github.com/rust-gcc/gccrs/pull/2524][PR2524]]
+- macro-expand: Keep optional references to last_{def, invoc}            [[https://github.com/rust-gcc/gccrs/pull/2520][PR2520]]
+- [E0703] Use of Invalid ABI                                             [[https://github.com/rust-gcc/gccrs/pull/2519][PR2519]]
+- diagnostics: Fix mismatch between new[] and free                       [[https://github.com/rust-gcc/gccrs/pull/2518][PR2518]]
+- Fix lexer exponential on tuple                                         [[https://github.com/rust-gcc/gccrs/pull/2515][PR2515]]
+- Remove ```Backend::bool_type``` and ```Backend::char_type```           [[https://github.com/rust-gcc/gccrs/pull/2506][PR2506]]
+- Move ```Backend::error_variable``` to ```Bvariable::error_variable```  [[https://github.com/rust-gcc/gccrs/pull/2505][PR2505]]
+- Remove unneeded references to ```this``` in backend methods            [[https://github.com/rust-gcc/gccrs/pull/2503][PR2503]]
+- Use ```MacroInvocLexerBase``` in ```ProcMacroInvocLexer```             [[https://github.com/rust-gcc/gccrs/pull/2498][PR2498]]
+- Normalize all identifiers to NFC                                       [[https://github.com/rust-gcc/gccrs/pull/2489][PR2489]]
+
+*** Contributors this week
+
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/mahadmuhammad][Mahad Muhammad]]
+- [[https://github.com/tamaroning][Raiki Tamura]]
+- [[https://github.com/powerboat9][Owen Avery]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       255 |       259 |    +4 |
+| In Progress |        55 |        56 |    +1 |
+| Completed   |       708 |       730 |   +22 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 8116      | 8129      |   +22 |
+| Failed    | -         | -         |     - |
+| XFAIL     | 69        | 69        |     - |
+| XPASS     | -         | -         |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        93 |        95 |    +2 |
+| In Progress |        25 |        29 |    +4 |
+| Completed   |       349 |       359 |   +10 |
+
+*** Milestones Progress
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 73% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |       100% |       100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |       100% |       100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |       100% |       100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |       100% |       100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |       100% |       100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |       100% |       100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       100% |       100% | -     | 16th Nov 2022 |  1st May 2023   | 30th Apr 2023 |
+| Borrow Checking 1                 |         0% |         0% | -     | TBD           | -               | 15th Aug 2023 |
+| AST Pipeline for libcore 1.49     |        76% |        77% | +1%   | 13th Apr 2023 | -               |  1st Jul 2023 |
+| HIR Pipeline for libcore 1.49     |        67% |        67% | -     | 13th Apr 2023 | -               | TBD           |
+| Procedural Macros 1               |        85% |        85% | -     | 13th Apr 2023 | -               |  6th Aug 2023 |
+| GCC 13.2 Release                  |       100% |       100% | -     | 13th Apr 2023 | 18th Jul 2023   | 15th Jul 2023 |
+| GCC 14 Stage 3                    |         0% |         0% | -     | TBD           | -               |  1st Nov 2023 |
+| core 1.49 functionality [AST]     |         4% |         0% | -     |  1st Jul 2023 | -               |  1st Nov 2023 |
+| Rustc Testsuite Prerequisistes    |         0% |         0% | -     | TBD           | -               |  1st Sep 2023 |
+| Intrinsics and builtins           |        18% |        18% | -     |  6th Sep 2022 | -               | TBD           |
+| Const Generics 2                  |         0% |         0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |         0% |         0% | -     | TBD           | -               | TBD           |
+
+*** Risks
+
+| Risk                                | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                          |
+|-------------------------------------+--------------+-------------------+--------------+-------------------------------------|
+| `core` and `std` missing for GCC 14 |            2 |                 6 |           12 | Look at necessary unstable features |
+
+** Planned Activities
+
+- Fix remaining bits or procedural macro name resolution.
+- Name resolve macro name that have not yet been expanded (nested macro definition)
+- Punycode implementation
+
+** Detailed changelog
