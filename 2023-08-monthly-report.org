@@ -8,9 +8,13 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-Another very important month in terms of contributions, with 86 pull requests merged. Once again, most of them come from the Google Summer of Code program, which is coming to an end.
-You can expect more detailed blogposts about our students' work this summer in the coming weeks, but the short of it is: they have both been hugely successful, and have proved to be amazing contributors to the project. They have both passed the GSoC evaluations brillantly, and we are hoping they will keep working on the project!
-Thank you [[https://github.com/tamaroning][Raiki Tamura]] and [[https://github.com/mahadmuhammad][Mahad Muhammad]]! Well done!
+Another very important month in terms of contributions, with 86 pull requests merged. Once
+again, most of them come from the Google Summer of Code program, which is coming to an end.
+You can expect more detailed blogposts about our students' work this summer in the coming
+weeks, but the short of it is: they have both been hugely successful, and have proved to be
+amazing contributors to the project. They have both passed the GSoC evaluations brillantly,
+and we are hoping they will keep working on the project! Thank you [[https://github.com/tamaroning][Raiki Tamura]]
+and [[https://github.com/mahadmuhammad][Mahad Muhammad]]! Well done!
 
 On the technical side of things, late name resolution is going swimmingly. We are now in
 the process of merging it in the compiler, while still keeping it hidden behind a specific
@@ -32,10 +36,10 @@ recreating the missing functions from those new data structures, and making sure
 compilation passes could make use of the new resolution.
 
 On the typechecking side, Philip is also getting infuriatingly close to getting iterators
-working! Thanks to advice from [[https://github.com/bjorn3/][bjorn3]] and [[https://
-github.com/matthewjasper][Matthew Jasper]], we have identified a few bugs in our handling of
-compiler intrinsics, which are now fixed. The handling of opaque types is one of the last big
-pieces of iterator support, which Philip is currently working on.
+working! Thanks to advice from [[https://github.com/bjorn3/][bjorn3]] and [[https://github.com/matthewjasper][Matthew Jasper]],
+we have identified a few bugs in our handling of compiler intrinsics, which are now fixed. The
+handling of opaque types is one of the last big pieces of iterator support, which Philip is
+currently working on.
 
 After that work is complete, we will start working on the ~format_args!()~ builtin macro, a central component of the widely used ~println!()~ macro as well as a lot of print-like macros available in Linux kernel.
 
@@ -68,7 +72,11 @@ macro_rules! print_macro (
 
 Source: https://rust-for-linux.github.io/docs/src/kernel/print.rs.html#142-165.
 
-Finally, we are looking forward to meeting with the GCC community once again during GNU Cauldron at the end of September in Cambridge. Philip and Pierre-Emmanuel will be giving a talk about some of the recent changes in the compiler, as well as the inner workings of procedural macros. We will also be talking about the compilation of the ~core~ library at EuroRust in Brussels. See you then!
+Finally, we are looking forward to meeting with the GCC community once again during GNU
+Cauldron at the end of September in Cambridge. Philip and Pierre-Emmanuel will be giving
+a talk about some of the recent changes in the compiler, as well as the inner workings of
+procedural macros. We will also be talking about the compilation of the ~core~ library at
+EuroRust in Brussels. See you then!
 
 *** Community call
 
@@ -77,7 +85,7 @@ to see when the next one will be held. The call is open to everyone, even if you
 like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to
 be notified of upcoming events.
 
-- [[https://meet.jit.si/gccrs-community-call-july][jitsi link]]
+- [[https://meet.jit.si/gccrs-community-call-september][jitsi link]]
 - Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
 - [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com][Google calendar link]]
 - [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
