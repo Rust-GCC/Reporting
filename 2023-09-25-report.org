@@ -1,0 +1,96 @@
+#+title:  Weekly report for 2023-09-18 to 2023-09-25
+#+author: Pierre-Emmanuel Patry
+#+date:   2023-09-25
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+1. Procedural macro symbol export
+  1. Structure type declaration almost complete
+  2. Structure filling well underway
+2. Late name resolution has new fixes
+3. libgrust build system patches sent
+
+** Completed Activities
+
+- Fix spelling [[https://github.com/Rust-GCC/gccrs/pull/2632][PR2632]]
+- gccrs: Add debug helper to dump HIR [[https://github.com/Rust-GCC/gccrs/pull/2630][PR2630]]
+
+*** Contributors this week
+
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/powerboat9][Owen Avery]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       254 |       258 |    +4 |
+| In Progress |        55 |        55 |     - |
+| Completed   |       742 |       742 |     - |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 8176      | 8176      |     - |
+| Failed    | -         | -         |     - |
+| XFAIL     | 69        | 69        |     - |
+| XPASS     | -         | -         |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        91 |        93 |    +2 |
+| In Progress |        29 |        29 |     - |
+| Completed   |       365 |       365 |     - |
+
+*** Milestones Progress
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 73% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |      100% |      100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |      100% |      100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |      100% |      100% | -     | 16th Nov 2022 |  1st May 2023   | 30th Apr 2023 |
+| Borrow Checking 1                 |        0% |        0% | -     | TBD           | -               | 15th Aug 2023 |
+| AST Pipeline for libcore 1.49     |       78% |       78% | -     | 13th Apr 2023 | -               |  1st Jul 2023 |
+| HIR Pipeline for libcore 1.49     |       68% |       69% | +1%   | 13th Apr 2023 | -               | TBD           |
+| Procedural Macros 1               |      100% |      100% | -     | 13th Apr 2023 | 3rd Sep 2023    |  6th Aug 2023 |
+| GCC 13.2 Release                  |      100% |      100% | -     | 13th Apr 2023 | 18th Jul 2023   | 15th Jul 2023 |
+| GCC 14 Stage 3                    |        0% |       80% | +1%   | TBD           | -               |  1st Nov 2023 |
+| core 1.49 functionality [AST]     |        4% |        4% | -     |  1st Jul 2023 | -               |  1st Nov 2023 |
+| Rustc Testsuite Prerequisistes    |       84% |       84% | -     | TBD           | -               |  1st Sep 2023 |
+| Intrinsics and builtins           |       18% |       18% | -     |  6th Sep 2022 | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD           | -               | TBD           |
+| Procedural Macros 2               |       46% |       50% | +4%   | 3rd Sep 2023  | -               | TBD           |
+
+*** Risks
+
+| Risk                                          | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                    |
+|-----------------------------------------------+--------------+-------------------+--------------+---------------------------------------------------------------|
+| `core` and `std` missing features for GCC 14  |            2 |                 6 |           12 | Get in touch with release manager regarding required features |
+| `libgrust` build system changes get rejected  |            2 |                 6 |           12 | Submit patches upstream early, be proactive about reviews     |
+
+** Planned Activities
+
+- Continue working on proc macro symbols export
+- Test the build system changes against a wider range of architectures
+
+** Detailed changelog
