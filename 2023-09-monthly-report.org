@@ -8,28 +8,27 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Milestone Progress
 
-- 35 PRs merged, slowed down as expected + vacations + Cauldron
-- Cleanups
-- Focus on intrinsics
-    - ~copy~
-    - ~likely~
-    - ~assume~
-- Fix of cross compilation issues with ~libgrust~, re-enabling the usage of gccrs for the Dreamcast revival project
-- Cauldron
-    - Recording soon
-    - Slides here:
-    - Preparing slides
-- patches sent upstream again
-    - most of the focus this month
-- will follow up with the 870 commits we are missing
-- NR2.0 - only 18 test failures remaining, have to do with external crate importing
-- Website contrast and theme changes
+The focus for this month was the upstreaming of all ~gccrs~ commits which affect common GCC
+parts, in order for our subsquent work to be upstreamed properly. These patches are essential,
+as most of the work we have done this year relies on them: Error codes, for example, require
+changes to the error emitting framework within GCC. The procedural macro work, which was the
+subject of Pierre-Emmanuel's internship, relies on changes to the GCC build system in order
+for our set of Rust libraries to be built when building the Rust frontend. We are almost done
+fixing reviews from the GCC maintainers, and most of the commits aforementioned have been
+pushed to GCC's ~trunk~ branch already. We will now continue the upstreaming of commits, by
+sending over 800 patches to ~trunk~ in the following weeks. This work needs to be completed
+before the end of the GCC 14 development stage, which should happen sometime in May 2024.
 
-Finally, we are looking forward to meeting with the GCC community once again during GNU
-Cauldron at the end of September in Cambridge. Philip and Pierre-Emmanuel will be giving
-a talk about some of the recent changes in the compiler, as well as the inner workings of
-procedural macros. We will also be talking about the compilation of the ~core~ library at
-EuroRust in Brussels. See you then!
+The upstreaming of patches is however a time-consuming task, and coupled with vacations,
+GNU Cauldron and the disappearance of our GSoC students, only 35 pull-requests have been
+merged to the ~gccrs~ repository this month. Nonetheless, we are on track and are happy with
+the progress of the compiler. The technical work that has been merged this month focused
+on compiler intrinsics, as well as backend cleanups. Furthermore, a longstanding cross-
+compilation issue has been fixed, allowing some of our early ~gccrs~ users to continue using
+the compiler for Dreamcast/SH4 development.
+
+The main event this month for ~gccrs~ was GNU Cauldron, during which Pierre-Emmanuel Patry gave an amazing talk detailing the progress of the frontend as well as some technical details regarding procedural macros. You can find the slides for this talk [[https://github.com/Rust-GCC/Reporting/blob/main/Cauldron%202023.pdf][here]].
+The next talk we will give will be at EuroRust 2023, in a couple of weeks!
 
 *** Community call
 
@@ -97,26 +96,26 @@ be notified of upcoming events.
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |        257 |        257 |    +5 |
-| In Progress |         54 |         54 |    +2 |
-| Completed   |        737 |        737 |   +16 |
+| TODO        |        257 |        256 |    -1 |
+| In Progress |         54 |         55 |    +1 |
+| Completed   |        737 |        747 |   +10 |
 
 *** Test Cases
 
 | TestCases | Last Month | This Month | Delta |
 |-----------+------------+------------+-------|
-| Passing   | 8148       | 8148       | +174  |
+| Passing   | 8148       | 8176       | +28   |
 | Failed    | -          | -          | -     |
-| XFAIL     | 69         | 69         | +16   |
+| XFAIL     | 69         | 69         | -     |
 | XPASS     | -          | -          | -     |
 
 *** Bugs
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |         93 |         93 |    +3 |
-| In Progress |         28 |         28 |    +1 |
-| Completed   |        363 |        363 |    +9 |
+| TODO        |         93 |         93 |     - |
+| In Progress |         28 |         29 |    +1 |
+| Completed   |        363 |        366 |    +3 |
 
 *** Milestones Progress
 
