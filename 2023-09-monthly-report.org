@@ -9,7 +9,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 *** Milestone Progress
 
 The focus for this month was the upstreaming of all ~gccrs~ commits which affect common GCC
-parts, in order for our subsquent work to be upstreamed properly. These patches are essential,
+parts, in order for our subsequent work to be upstreamed properly. These patches are essential,
 as most of the work we have done this year relies on them: Error codes, for example, require
 changes to the error emitting framework within GCC. The procedural macro work, which was the
 subject of Pierre-Emmanuel's internship, relies on changes to the GCC build system in order
