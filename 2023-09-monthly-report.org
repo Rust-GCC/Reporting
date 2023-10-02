@@ -1,0 +1,167 @@
+#+title:  Monthly Report for September 2023
+#+author: Philip Herron, Pierre-Emmanuel Patry and Arthur Cohen
+#+date:   2023-10-02
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+- 35 PRs merged, slowed down as expected + vacations + Cauldron
+- Cleanups
+- Focus on intrinsics
+    - ~copy~
+    - ~likely~
+    - ~assume~
+- Fix of cross compilation issues with ~libgrust~, re-enabling the usage of gccrs for the Dreamcast revival project
+- Cauldron
+    - Recording soon
+    - Slides here:
+    - Preparing slides
+- patches sent upstream again
+    - most of the focus this month
+- will follow up with the 870 commits we are missing
+- NR2.0 - only 18 test failures remaining, have to do with external crate importing
+- Website contrast and theme changes
+
+Finally, we are looking forward to meeting with the GCC community once again during GNU
+Cauldron at the end of September in Cambridge. Philip and Pierre-Emmanuel will be giving
+a talk about some of the recent changes in the compiler, as well as the inner workings of
+procedural macros. We will also be talking about the compilation of the ~core~ library at
+EuroRust in Brussels. See you then!
+
+*** Community call
+
+We will have our next monthly community call on the 9th of October 2023. You can subscribe to our calendar
+to see when the next one will be held. The call is open to everyone, even if you would just
+like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to
+be notified of upcoming events.
+
+- [[https://meet.jit.si/gccrs-community-call-october][jitsi link]]
+- Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
+- [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com][Google calendar link]]
+- [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
+
+** Completed Activities
+
+- Fix ICE when emitting an error during cfg strip [[https://github.com/rust-gcc/gccrs/pull/2639][PR2639]]
+- Fix CanonicalPath for impl [[https://github.com/rust-gcc/gccrs/pull/2633][PR2633]]
+- Fix spelling [[https://github.com/rust-gcc/gccrs/pull/2632][PR2632]]
+- gccrs: Add debug helper to dump HIR [[https://github.com/rust-gcc/gccrs/pull/2630][PR2630]]
+- gccrs: port over readonly_error from c-family for lvalue assignment checks [[https://github.com/rust-gcc/gccrs/pull/2629][PR2629]]
+- gccrs: Remove HIR::ForLoopExpr [[https://github.com/rust-gcc/gccrs/pull/2628][PR2628]]
+- [E0617] Attempt for invalid type variable in `variadic` function [[https://github.com/rust-gcc/gccrs/pull/2627][PR2627]]
+- gccrs: Minor typo fix [[https://github.com/rust-gcc/gccrs/pull/2626][PR2626]]
+- gccrs: trivial typo fix. [[https://github.com/rust-gcc/gccrs/pull/2625][PR2625]]
+- Rename ```rust_error_codes.def``` to ```rust-error-codes.def``` [[https://github.com/rust-gcc/gccrs/pull/2623][PR2623]]
+- Remove unused complex number support [[https://github.com/rust-gcc/gccrs/pull/2622][PR2622]]
+- Memoize ```Backend::wchar_type``` [[https://github.com/rust-gcc/gccrs/pull/2621][PR2621]]
+- Add ```assume``` intrinsic [[https://github.com/rust-gcc/gccrs/pull/2619][PR2619]]
+- Remove unused `ctx` argument in `make_unsigned_long_tree` function [[https://github.com/rust-gcc/gccrs/pull/2617][PR2617]]
+- Add license text to libproc_macro rust interface [[https://github.com/rust-gcc/gccrs/pull/2616][PR2616]]
+- Add intrinsics `copy` and `likely` [[https://github.com/rust-gcc/gccrs/pull/2613][PR2613]]
+- Shorten `make_unsigned_long_tree` code [[https://github.com/rust-gcc/gccrs/pull/2612][PR2612]]
+- Use namespace definition to simplify function declarations [[https://github.com/rust-gcc/gccrs/pull/2610][PR2610]]
+- Convert class ```Backend``` into namespace [[https://github.com/rust-gcc/gccrs/pull/2609][PR2609]]
+- Remove ```Backend::write_export_data``` [[https://github.com/rust-gcc/gccrs/pull/2607][PR2607]]
+- Move remaining expression-related methods into base class ```Backend``` [[https://github.com/rust-gcc/gccrs/pull/2606][PR2606]]
+- Move block-related methods into base class ```Backend``` [[https://github.com/rust-gcc/gccrs/pull/2605][PR2605]]
+- Iterators WORKING [[https://github.com/rust-gcc/gccrs/pull/2604][PR2604]]
+- Move statement-related methods into base class ```Backend``` [[https://github.com/rust-gcc/gccrs/pull/2602][PR2602]]
+- Move function-related methods into base class ```Backend``` [[https://github.com/rust-gcc/gccrs/pull/2601][PR2601]]
+- Unify raw attribute values [[https://github.com/rust-gcc/gccrs/pull/2591][PR2591]]
+- Retrieve proc macro definition [[https://github.com/rust-gcc/gccrs/pull/2587][PR2587]]
+- Rename libproc_macro to libproc_macro_internal [[https://github.com/rust-gcc/gccrs/pull/2585][PR2585]]
+- AltPattern typechecking [[https://github.com/rust-gcc/gccrs/pull/2581][PR2581]]
+- Add testcase for #1260 [[https://github.com/rust-gcc/gccrs/pull/2576][PR2576]]
+- [E0599] Failed to resovle method implementation [[https://github.com/rust-gcc/gccrs/pull/2571][PR2571]]
+- [E0592] method or associated functions already defined with same names [[https://github.com/rust-gcc/gccrs/pull/2555][PR2555]]
+- Name resolve proc macros [[https://github.com/rust-gcc/gccrs/pull/2496][PR2496]]
+- Remove ```Gcc_backend``` [[https://github.com/rust-gcc/gccrs/pull/2440][PR2440]]
+- Add libstdc++ dependency to libgrust [[https://github.com/rust-gcc/gccrs/pull/2143][PR2143]]
+
+- Switch to "home made" website instead of using minimal theme [[https://github.com/Rust-GCC/Rust-GCC.github.io/pull/35]PR35]]
+
+*** Contributors this month
+
+- [[https://github.com/GuillaumeGomez][Guillaume Gomez]] (new contributor!)
+- [[https://github.com/liushuyu][Zixing Liu]]
+- [[https://github.com/dme2][Dave Evans]]
+- [[https://github.com/powerboat9][Owen Avery]]
+- [[https://github.com/mahadmuhammad][Mahad Muhammad]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        257 |        257 |    +5 |
+| In Progress |         54 |         54 |    +2 |
+| Completed   |        737 |        737 |   +16 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 8148       | 8148       | +174  |
+| Failed    | -          | -          | -     |
+| XFAIL     | 69         | 69         | +16   |
+| XPASS     | -          | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         93 |         93 |    +3 |
+| In Progress |         28 |         28 |    +1 |
+| Completed   |        363 |        363 |    +9 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |       100% |       100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |       100% |       100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |       100% |       100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |       100% |       100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |       100% |       100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |       100% |       100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       100% |       100% | -     | 16th Nov 2022 |  1st May 2023   | 30th Apr 2023 |
+| Borrow Checking 1                 |         0% |         0% | -     | TBD           | -               | 15th Aug 2023 |
+| AST Pipeline for libcore 1.49     |        78% |        78% | -     | 13th Apr 2023 | -               |  1st Jul 2023 |
+| HIR Pipeline for libcore 1.49     |        67% |        69% | +2%   | 13th Apr 2023 | -               | TBD           |
+| Procedural Macros 1               |       100% |       100% | -     | 13th Apr 2023 | -               |  6th Aug 2023 |
+| GCC 13.2 Release                  |       100% |       100% | -     | 13th Apr 2023 | 22nd Jul 2023   | 15th Jul 2023 |
+| GCC 14 Stage 3                    |         0% |       100% | +100% |  1st Sep 2023 | 20th Sep 2023   |  1st Nov 2023 |
+| core 1.49 functionality [AST]     |         4% |         4% | -     |  1st Jul 2023 | -               |  1st Nov 2023 |
+| Rustc Testsuite Prerequisistes    |         0% |         0% | -     | TBD           | -               |  1st Feb 2024 |
+| Intrinsics and builtins           |        18% |        18% | -     |  6th Sep 2022 | -               | TBD           |
+| Const Generics 2                  |         0% |         0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |         0% |         0% | -     | TBD           | -               | TBD           |
+| GCC 14.1 Release                  |         0% |         0% | -     | TBD           | -               | 15th Apr 2024 |
+
+*** Testing project
+
+| Testsuite                     | Compiler            | Last month | This month | Success delta |
+|-------------------------------+---------------------+------------+------------+---------------|
+| rustc testsuite               | gccrs -fsyntax-only |      92.7% |      92.7% |             - |
+| gccrs testsuite               | rustc stable        |      59.2% |      59.2% |             - |
+| rustc testsuite passing tests | gccrs               |      14.0% |      14.0% |             - |
+| rustc testsuite (no_std)      | gccrs               |      27.5% |      27.5% |             - |
+| rustc testsuite (no_core)     | gccrs               |       3.8% |       3.8% |             - |
+| blake3                        | gccrs               |      25.0% |      25.0% |             - |
+| libcore                       | gccrs               |         0% |         0% |             - |
+
+** Planned Activities
+
+- Opaque types
+- Drop marker trait
+
+** Detailed changelog
