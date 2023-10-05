@@ -5,6 +5,8 @@
 use clap::{Parser, ValueEnum};
 use error::Error;
 use git2::Repository;
+use indicatif::MultiProgress;
+use progress::{FetchMethod, ProgressBarExt, Steps};
 use serde::Serialize;
 use std::path::PathBuf;
 use testcase::TestCases;
@@ -24,6 +26,7 @@ mod naming {
 
 mod error;
 mod github;
+mod progress;
 mod repository;
 mod testcase;
 
@@ -92,6 +95,11 @@ async fn main() -> Result<(), Error> {
     let gh = octocrab::instance();
     let from_date = get_from_date(&args.kind, &args.date);
 
+    let multi = MultiProgress::new();
+    let bar = progress::default_progress_bar();
+    multi.add(bar.clone());
+
+    bar.set_step(progress::Steps::RetrievePrs);
     let merged_prs = pr::fetch_merged(&gh, &from_date, &args.date)
         .await?
         // FIXME: Would it be better to have a trait extension for octo::PullRequest here?
@@ -105,9 +113,11 @@ async fn main() -> Result<(), Error> {
         String::new()
     } else {
         let repository = if let Some(ref path) = args.local_repo {
+            bar.set_step(Steps::FetchRepository(FetchMethod::Local));
             Repository::open(path).map_err(Error::Repository)?
         } else {
-            repository::clone(&gh).await.map_err(Error::Clone)?
+            bar.set_step(Steps::FetchRepository(FetchMethod::Remote));
+            repository::clone(&gh, &multi).await.map_err(Error::Clone)?
         };
 
         // FIXME: Change "master" references to actual references
@@ -122,6 +132,7 @@ async fn main() -> Result<(), Error> {
         .map_err(Error::Test)?;
 
         if args.local_repo.is_none() {
+            bar.set_step(Steps::Cleaning);
             std::fs::remove_dir_all(
                 repository
                     .path()
@@ -134,6 +145,7 @@ async fn main() -> Result<(), Error> {
         results.to_string()
     };
 
+    bar.set_step(Steps::RetrieveMilestones);
     let milestones = milestone::fetch_all(&gh)
         .await?
         .into_iter()

@@ -1,6 +1,9 @@
 //! A module providing utility functions to interact with git repositories
 use crate::naming::{ORGANISATION, REPOSITORY};
-use git2::{Error, Repository};
+use crate::progress::{default_progress_bar, FetchMethod, ProgressBarExt, Steps};
+use git2::build::RepoBuilder;
+use git2::{Error, FetchOptions, RemoteCallbacks, Repository, RepositoryInitMode};
+use indicatif::{MultiProgress, ProgressBar};
 use octocrab::Octocrab;
 use std::fmt;
 use tokio::task::{self, JoinError};
@@ -59,7 +62,7 @@ impl std::error::Error for CloneError {}
 /// # Arguments
 ///
 /// * `gh` - Reference to an octocrab instance.
-pub async fn clone(gh: &Octocrab) -> Result<Repository, CloneError> {
+pub async fn clone(gh: &Octocrab, multi: &MultiProgress) -> Result<Repository, CloneError> {
     use CloneError::{Download, Local, MissingCloneUrl, Octocrab, Thread};
     let gh_repository = gh
         .repos(ORGANISATION, REPOSITORY)
@@ -71,13 +74,30 @@ pub async fn clone(gh: &Octocrab) -> Result<Repository, CloneError> {
 
     let workspace = rand_dir().map_err(Local)?;
 
+    let bar = default_progress_bar();
+    multi.add(bar.clone());
+
     let clone_destination = workspace.clone();
-    task::spawn_blocking(move || {
-        // TODO: Take a look at git2::RepoBuilder, it may be possible to clone only what is required.
-        Repository::clone(clone_url.as_str(), clone_destination).map_err(Download)
+    let res = task::spawn_blocking(move || {
+        let mut callbacks = RemoteCallbacks::new();
+        callbacks.transfer_progress(|p| {
+            bar.set_length(p.total_objects().try_into().unwrap_or_default());
+            bar.set_position(p.indexed_objects().try_into().unwrap_or_default());
+            bar.set_message("Downloading");
+            true
+        });
+        let mut fo = FetchOptions::new();
+        fo.remote_callbacks(callbacks);
+
+        let mut builder = RepoBuilder::new();
+        builder.fetch_options(fo);
+        builder
+            .clone(clone_url.as_str(), &clone_destination)
+            .map_err(Download)
     })
     .await
-    .map_err(Thread)?
+    .map_err(Thread)?;
+    res
 }
 
 /// Checkout a given repository to a given reference.
