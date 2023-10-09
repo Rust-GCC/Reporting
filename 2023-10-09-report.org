@@ -1,0 +1,99 @@
+#+title:  Weekly report for 2nd of October 2023 to 9th of October 2023
+#+author: Philip Herron, Pierre-Emmanuel Patry, Arthur Cohen
+#+date:   2023-10-09
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+1. Fixing upstream reviews, last patch almost ready for merging
+  1. All with the timeframe for GCC 14.1, everything is going smoothly
+2. Lots of issues opened by PE regarding the parser
+  1. Goal is to get us to 100% parsing completion for 1.49
+  2. Really nice work
+3. Lots of work on other projects from Arthur this week
+4. EuroRust
+  1. Sponsorship
+  2. Leaving this week
+
+** Completed Activities
+
+- Fix parser bug on tupplestruct patterns [[https://github.com/rust-gcc/gccrs/pull/2646][PR2646]]
+- Remove unnecessary "empty vector" comments [[https://github.com/rust-gcc/gccrs/pull/2644][PR2644]]
+- Fix type confusion in coercions [[https://github.com/rust-gcc/gccrs/pull/2642][PR2642]]
+
+*** Contributors this week
+
+- [[https://github.com/rizan21][Mohammed Rizan Farooqui]] (new contributor!)
+- [[https://github.com/jdupak][Jakub Dupak]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       257 |       274 |   +17 |
+| In Progress |        53 |        56 |    +3 |
+| Completed   |       739 |       747 |    +2 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 8169      | 8177      |    +8 |
+| Failed    | -         | -         |     - |
+| XFAIL     | 69        | 69        |     - |
+| XPASS     | -         | -         |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |        94 |       111 |   +17 |
+| In Progress |        28 |        30 |    +2 |
+| Completed   |       363 |       368 |    +5 |
+
+*** Milestones Progress
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 73% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+-------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |      100% |      100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |      100% |      100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |      100% |      100% | -     | 16th Nov 2022 |  1st May 2023   | 30th Apr 2023 |
+| Borrow Checking 1                 |        0% |        0% | -     | TBD           | -               | 15th Aug 2023 |
+| AST Pipeline for libcore 1.49     |       78% |       78% | -     | 13th Apr 2023 | -               |  1st Jul 2023 |
+| HIR Pipeline for libcore 1.49     |       69% |       69% | -     | 13th Apr 2023 | -               | TBD           |
+| Procedural Macros 1               |      100% |      100% | -     | 13th Apr 2023 | -               |  6th Aug 2023 |
+| GCC 13.2 Release                  |      100% |      100% | -     | 13th Apr 2023 | 22nd Jul 2023   | 15th Jul 2023 |
+| GCC 14 Stage 3                    |      100% |      100% | -     |  1st Sep 2023 | 20th Sep 2023   |  1st Nov 2023 |
+| core 1.49 functionality [AST]     |        4% |        4% | -     |  1st Jul 2023 | -               |  1st Nov 2023 |
+| Rustc Testsuite Prerequisistes    |        0% |        0% | -     | TBD           | -               |  1st Feb 2024 |
+| Intrinsics and builtins           |       18% |       18% | -     |  6th Sep 2022 | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD           | -               | TBD           |
+| GCC 14.1 Release                  |        0% |        2% | +2%   | TBD           | -               | 15th Apr 2024 |
+| Procedural Macros 1               |        0% |       53% | +53%  | TBD           | -               | TBD           |
+
+*** Risks
+
+| Risk                                          | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                    |
+|-----------------------------------------------+--------------+-------------------+--------------+---------------------------------------------------------------|
+| `core` and `std` missing features for GCC 14  |            2 |                 6 |           12 | Get in touch with release manager regarding required features |
+| `libgrust` build system changes get rejected  |            2 |                 6 |           12 | Submit patches upstream early, be proactive about reviews     |
+
+** Planned Activities
+
+** Detailed changelog
