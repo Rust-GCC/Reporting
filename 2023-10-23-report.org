@@ -1,0 +1,115 @@
+#+title:  Weekly report for 16th of October 2023 to 23rd of October 2023
+#+author: Philip Herron, Pierre-Emmanuel Patry, Arthur Cohen
+#+date:   2023-10-23
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+1. Patches
+2. Borrow checker
+3. Parser fixes from PE, getting us closer and closer
+4. More cleanups
+5. v0 mangling scheme, important for RfL
+
+** Completed Activities
+
+- libgrust: Add changelog, maintainers                                         [[https://github.com/rust-gcc/gccrs/pull/2692][PR2692]]
+- 2688 labelled block                                                          [[https://github.com/rust-gcc/gccrs/pull/2689][PR2689]]
+- Fix pub unit type parsing                                                    [[https://github.com/rust-gcc/gccrs/pull/2686][PR2686]]
+- Fix macro fragment follow set                                                [[https://github.com/rust-gcc/gccrs/pull/2685][PR2685]]
+- Make resolution of ```AssociatedItem``` instances polymorphic                [[https://github.com/rust-gcc/gccrs/pull/2683][PR2683]]
+- Make lowering of ```AssociatedItem``` instances polymorphic                  [[https://github.com/rust-gcc/gccrs/pull/2682][PR2682]]
+- gccrs: minor changes (typo and minor refactor)                               [[https://github.com/rust-gcc/gccrs/pull/2681][PR2681]]
+- Create base class ```AssociatedItem```                                       [[https://github.com/rust-gcc/gccrs/pull/2679][PR2679]]
+- Fix parse mut ref                                                            [[https://github.com/rust-gcc/gccrs/pull/2678][PR2678]]
+- Replace ```get_pattern_node_id``` with ```get_node_id```                     [[https://github.com/rust-gcc/gccrs/pull/2677][PR2677]]
+- Accept `macro_rules` name for a macro rule.                                  [[https://github.com/rust-gcc/gccrs/pull/2675][PR2675]]
+- Fix macro "default" call at item level                                       [[https://github.com/rust-gcc/gccrs/pull/2674][PR2674]]
+- Fix closure in closure parsing                                               [[https://github.com/rust-gcc/gccrs/pull/2673][PR2673]]
+- Fix RangeFromExpr parsing in for loop                                        [[https://github.com/rust-gcc/gccrs/pull/2672][PR2672]]
+- Fix expression segment parsing                                               [[https://github.com/rust-gcc/gccrs/pull/2671][PR2671]]
+- Fix global path parsing                                                      [[https://github.com/rust-gcc/gccrs/pull/2668][PR2668]]
+- Rename cloning methods in ```TupleStructItems``` and ```TuplePatternItems``` [[https://github.com/rust-gcc/gccrs/pull/2661][PR2661]]
+- Tyty cast api                                                                [[https://github.com/rust-gcc/gccrs/pull/2647][PR2647]]
+- Adjust methods for ```TuplePatternItems``` to match ```TupleStructItems```   [[https://github.com/rust-gcc/gccrs/pull/2643][PR2643]]
+- Add tests for v0 mangling                                                    [[https://github.com/rust-gcc/gccrs/pull/2637][PR2637]]
+- Initial implementation of v0 mangling                                        [[https://github.com/rust-gcc/gccrs/pull/2615][PR2615]]
+
+*** Contributors this week
+
+- [[https://github.com/jdupak][Jakub Dupak]]
+- [[https://github.com/powerboat][Owen Avery]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/tamaroning][Raiki Tamura]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       262 |       264 |    +2 |
+| In Progress |        67 |        61 |    -6 |
+| Completed   |       749 |       762 |   +13 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 8177      | 8200      |     - |
+| Failed    | -         | -         |     - |
+| XFAIL     | 69        | 69        |     - |
+| XPASS     | -         | -         |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       100 |        98 |    -2 |
+| In Progress |        41 |        35 |    -6 |
+| Completed   |       369 |       380 |   +11 |
+
+*** Milestones Progress
+
+Note that the intrinsics milestone percentage on github is not representative: It shows a 73% completion rate, but does not take into account the tracking issues with dozens of unresolved items.
+Thus the percentage is computed using the sum of issues and tracked items done divided by the sums of issues and tracked items overall.
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+-------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |      100% |      100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |      100% |      100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |      100% |      100% | -     | 16th Nov 2022 |  1st May 2023   | 30th Apr 2023 |
+| Borrow Checking 1                 |        0% |        0% | -     | TBD           | -               | 15th Aug 2023 |
+| AST Pipeline for libcore 1.49     |       79% |       79% | -     | 13th Apr 2023 | -               |  1st Jul 2023 |
+| HIR Pipeline for libcore 1.49     |       69% |       69% | -     | 13th Apr 2023 | -               | TBD           |
+| Procedural Macros 1               |      100% |      100% | -     | 13th Apr 2023 | -               |  6th Aug 2023 |
+| GCC 13.2 Release                  |      100% |      100% | -     | 13th Apr 2023 | 22nd Jul 2023   | 15th Jul 2023 |
+| GCC 14 Stage 3                    |      100% |      100% | -     |  1st Sep 2023 | 20th Sep 2023   |  1st Nov 2023 |
+| core 1.49 functionality [AST]     |        4% |        4% | -     |  1st Jul 2023 | -               |  1st Nov 2023 |
+| Rustc Testsuite Prerequisistes    |        0% |        0% | -     | TBD           | -               |  1st Feb 2024 |
+| Intrinsics and builtins           |       18% |       18% | -     |  6th Sep 2022 | -               | TBD           |
+| Const Generics 2                  |        0% |        0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD           | -               | TBD           |
+| GCC 14.1 Release                  |        4% |       46% | +44%  | TBD           | -               | 15th Apr 2024 |
+| Procedural Macros 2               |       53% |       53% | -     | TBD           | -               | TBD           |
+
+*** Risks
+
+| Risk                                          | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                    |
+|-----------------------------------------------+--------------+-------------------+--------------+---------------------------------------------------------------|
+| `core` and `std` missing features for GCC 14  |            2 |            6 -> 3 |      12 -> 6 | Get in touch with release manager regarding required features |
+| `libgrust` build system changes get rejected  |            2 |            6 -> 4 |      12 -> 8 | Submit patches upstream early, be proactive about reviews     |
+
+** Planned Activities
+
+** Detailed changelog
