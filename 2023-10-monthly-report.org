@@ -14,7 +14,7 @@ We are also exploring solutions to help automate this process a little more, as 
 
 On the technical side, a lot of bugs were fixed this month again thanks to our contributor team. [[https://github.com/jdupak][Jakub Dupak]] has been making some amazing progress on borrow-checking in ~gccrs~, with the development of a new, simplified intermediate representation specifically designed to interact with the polonius borrow-checker. At the moment, our compiler can start emitting simple errors, such as "use after move" errors, or simple lifetime analysis, which we are really excited for.
 
-We also got in touch with the GCC release maintainers to understand what was expected of ~gccrs~ for it to be an integral part of the GCC 14.1 release, and should be able to fulfill the requirements (`println!()` macro, simple Rust examples working...). We are very excited for everyone to be able to try the compiler.
+We also got in touch with the GCC release maintainers to understand what was expected of ~gccrs~ for it to be an integral part of the GCC 14.1 release, and should be able to fulfill the requirements (~println!()~ macro, simple Rust examples working...). We are very excited for everyone to be able to try the compiler.
 
 Finally, October also saw Pierre-Emmanuel and Arthur go to EuroRust, where they had an amazing time. We are looking forward to coming back next year. We gave a small talk on the compiler, and the challenges of compiling the standard Rust library, which we will link to once released.
 
