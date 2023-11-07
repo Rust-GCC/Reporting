@@ -12,7 +12,38 @@ We spent the majority of our time this month preparing patches, or fixing them a
 These patches are necessary to upstream before the rest of the work done this year, as intrinsic compiler features have been moved to this directory. Once this is done, we will be able to simply push the new patches upstream, after short modifications to make them more suitable to the upstream GCC project. At the moment, there are around 900 patches being prepared, with the hope of pushing them before the end of the month.
 We are also exploring solutions to help automate this process a little more, as it represents very time consuming work which we would like to avoid in the future - keeping ~upstream~ up to date with our development repository, with weekly or bi-weekly updates, should prove worthwhile in the long term.
 
-On the technical side, a lot of bugs were fixed this month again thanks to our contributor team. [[https://github.com/jdupak][Jakub Dupak]] has been making some amazing progress on borrow-checking in ~gccrs~, with the development of a new, simplified intermediate representation specifically designed to interact with the polonius borrow-checker. At the moment, our compiler can start emitting simple errors, such as "use after move" errors, or simple lifetime analysis, which we are really excited for.
+On the technical side, a lot of bugs were fixed this month again thanks to our contributor team. [[https://github.com/jdupak][Jakub Dupak]] has been making some amazing progress on borrow-checking in ~gccrs~, with the development of a new, simplified intermediate representation specifically designed to interact with the polonius borrow-checker. At the moment, our compiler can start emitting simple errors, such as "use after move" errors:
+
+#+BEGIN_SRC rust
+fn test_move() {
+    // this struct cannot be copied
+    struct A {
+        i: i32,
+    }
+    let a = A { i: 1 };
+
+    let b = a; // first move
+    let c = a; // second move occurs here
+}
+#+END_SRC
+
+or simple lifetime analysis:
+
+#+BEGIN_SRC rust
+// this errors out...
+fn foo<'a, 'b>(x: &'a usize) -> &'b usize {
+    x // we can't know if x will live long enough, so this is an error
+}
+
+// ...but this is valid, since we specify that 'a must outlive 'b
+fn foo2<'a, 'b>(x: &'a usize) -> &'b usize
+    where 'a: 'b
+{
+    x
+}
+#+END_SRC
+
+At the moment, errors are not yet formatted or displayed to the user, but the invalid behavior is caught and the compiler errors out. This work is extremely exciting, and we are looking forward to more progress from Jakub! Great work!
 
 We also got in touch with the GCC release maintainers to understand what was expected of ~gccrs~ for it to be an integral part of the GCC 14.1 release, and should be able to fulfill the requirements (~println!()~ macro, simple Rust examples working...). We are very excited for everyone to be able to try the compiler.
 
@@ -25,7 +56,7 @@ to see when the next one will be held. The call is open to everyone, even if you
 like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to
 be notified of upcoming events.
 
-- [[https://meet.jit.si/gccrs-community-call-october][jitsi link]]
+- [[https://meet.jit.si/gccrs-community-call-november][jitsi link]]
 - Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
 - [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com][Google calendar link]]
 - [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
