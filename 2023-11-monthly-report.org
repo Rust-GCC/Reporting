@@ -25,12 +25,12 @@ Finally, Pierre-Emmanuel and Arthur are finalizing the FOSDEM talks that they wi
 
 *** Community call
 
-We will have our next monthly community call on the 13th of November 2023. You can subscribe to our calendar
+We will have our next monthly community call on the 11th of December 2023. You can subscribe to our calendar
 to see when the next one will be held. The call is open to everyone, even if you would just
 like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to
 be notified of upcoming events.
 
-- [[https://meet.jit.si/gccrs-community-call-november][jitsi link]]
+- [[https://meet.jit.si/gccrs-community-call-december][jitsi link]]
 - Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
 - [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com][Google calendar link]]
 - [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
