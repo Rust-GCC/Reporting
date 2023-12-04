@@ -1,0 +1,169 @@
+#+title:  Monthly Report for November 2023
+#+author: Philip Herron, Pierre-Emmanuel Patry and Arthur Cohen
+#+date:   2023-12-04
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+This month, work has started on ~format_args!()~, one of the last pieces of the puzzle for the feature wishlist of GCC 14.1. As a reminder, once that compiler macro will be implemented, you will have access to macros such as ~println!~ and ~format!~ in ~gccrs~, thus enabling you to finally run one of the most complex Rust programs out there:
+
+#+BEGIN_SRC rust
+fn main() {
+    println!("Hello, world!")
+}
+#+END_SRC
+
+In other technical compiler frontend news, Pierre-Emmanuel worked hard this week to make our parser *more* permissive, by allowing more "invalid" Rust constructs to be parsed and then later rejected during a new AST validation pass. The ~rustc~ testsuite expects to parse some of these invalid constructs, such as "unsafe modules" or "const trait functions" - which could be useful for later features of the language. For example, "async trait functions" were rejected until recently - but they are now being integrated to stable Rust. It makes sense then that our parser allows such constructs, but rejects them later on once we know more about the current Rust edition we are targeting, and which unstable features we've enabled.
+Further in the compiler pipeline, [[https://github.com/tamaroning][Raiki Tamura]], one of our 2023 GSoC student is continuing to work on v0 name mangling - an important backend feature for the compilation of the Rust-for-Linux project.
+
+More work is being done on the borrow-checker by [[https://github.com/jdupak][Jakub Dupak]], who had to fight various parts of our type checker in order to propagate lifetime information all the way to his compiler pass. While this does not add any new borrow checking errors, it is very important that all that information is being used properly in order to keep going with the borrow-checking feature.
+
+Finally, Pierre-Emmanuel and Arthur are finalizing the FOSDEM talks that they will be submitting, and work on a joint blogpost with the Rust project has started again - which we will share here once we are more advanced.
+
+*** Community call
+
+We will have our next monthly community call on the 13th of November 2023. You can subscribe to our calendar
+to see when the next one will be held. The call is open to everyone, even if you would just
+like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to
+be notified of upcoming events.
+
+- [[https://meet.jit.si/gccrs-community-call-november][jitsi link]]
+- Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
+- [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com][Google calendar link]]
+- [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
+
+** Call for contribution
+
+This is a new section for particularly easy or interesting issues we would like folks external to the project to contribute to. We are available for mentoring and guiding you on their resolution. This is a great way to start making your mark on a complex project such as this one and to learn a lot in the process!
+
+- WIN64 is a predefined constant by GCC on MinGW-w64   [[https://github.com/rust-gcc/gccrs/issue/2768][Issue 2768]]
+- Emit error on async trait functions                  [[https://github.com/rust-gcc/gccrs/issue/2767][Issue 2767]]
+
+Check out our [[https://github.com/Rust-GCC/gccrs/blob/master/CONTRIBUTING.md][Contributing guidelines]] to get started on them or feel free to send us a message on Zulip or IRC!
+
+** Completed Activities
+
+- Add test for binding name resolution scope                                    [[https://github.com/rust-gcc/gccrs/pull/2766][PR2766]]
+- gccrs: Remove backend dependancy on resolution rib information                [[https://github.com/rust-gcc/gccrs/pull/2765][PR2765]]
+- Remove class ```AST::InherentImplItem```                                      [[https://github.com/rust-gcc/gccrs/pull/2764][PR2764]]
+- Make early name resolver inherit from default one                             [[https://github.com/rust-gcc/gccrs/pull/2762][PR2762]]
+- Change attribute checker visitor to use default visitor                       [[https://github.com/rust-gcc/gccrs/pull/2760][PR2760]]
+- Change feature gate visitor to use default visitor                            [[https://github.com/rust-gcc/gccrs/pull/2759][PR2759]]
+- Ast validation trait const                                                    [[https://github.com/rust-gcc/gccrs/pull/2753][PR2753]]
+- Unsafe module                                                                 [[https://github.com/rust-gcc/gccrs/pull/2752][PR2752]]
+- Split async and const function qualifiers                                     [[https://github.com/rust-gcc/gccrs/pull/2751][PR2751]]
+- Add AST union validation                                                      [[https://github.com/rust-gcc/gccrs/pull/2750][PR2750]]
+- Auto trait AST validation                                                     [[https://github.com/rust-gcc/gccrs/pull/2749][PR2749]]
+- Reject regular variadic functions                                             [[https://github.com/rust-gcc/gccrs/pull/2748][PR2748]]
+- fixup: Ensure buffer allocation for bootstrap                                 [[https://github.com/rust-gcc/gccrs/pull/2746][PR2746]]
+- Keyword list rework                                                           [[https://github.com/rust-gcc/gccrs/pull/2743][PR2743]]
+- Add `use` declaration resolution                                              [[https://github.com/rust-gcc/gccrs/pull/2742][PR2742]]
+- Prevent const self ptr                                                        [[https://github.com/rust-gcc/gccrs/pull/2741][PR2741]]
+- Add base for late name resolution 2.0                                         [[https://github.com/rust-gcc/gccrs/pull/2740][PR2740]]
+- Add ForeverStack APIs for Name Resolution 2.0                                 [[https://github.com/rust-gcc/gccrs/pull/2739][PR2739]]
+- Added support to Parse ASYNC function                                         [[https://github.com/rust-gcc/gccrs/pull/2736][PR2736]]
+- Further ast validation                                                        [[https://github.com/rust-gcc/gccrs/pull/2729][PR2729]]
+- Bump actions/upload-artifact from v2 to v3                                    [[https://github.com/rust-gcc/gccrs/pull/2728][PR2728]]
+- Move ast collector template implementation                                    [[https://github.com/rust-gcc/gccrs/pull/2727][PR2727]]
+- v0-mangle closures                                                            [[https://github.com/rust-gcc/gccrs/pull/2722][PR2722]]
+- Ast refactor                                                                  [[https://github.com/rust-gcc/gccrs/pull/2721][PR2721]]
+- Fix pub type parsing in trait                                                 [[https://github.com/rust-gcc/gccrs/pull/2720][PR2720]]
+- Remove obsolete HIR::BorrowExpr::double_borrow                                [[https://github.com/rust-gcc/gccrs/pull/2719][PR2719]]
+- Fix more tuple indices                                                        [[https://github.com/rust-gcc/gccrs/pull/2717][PR2717]]
+- Replace ```AST::Method``` with existing ```AST::Function```                   [[https://github.com/rust-gcc/gccrs/pull/2715][PR2715]]
+- Reject const item with no value in impl context                               [[https://github.com/rust-gcc/gccrs/pull/2713][PR2713]]
+- Parse variadic functions                                                      [[https://github.com/rust-gcc/gccrs/pull/2701][PR2701]]
+- Create base class for ```TupleStructItems``` and ```TuplePatternItems```      [[https://github.com/rust-gcc/gccrs/pull/2699][PR2699]]
+- Adjust item kind enums for ```TupleStructItems``` and ```TuplePatternItems``` [[https://github.com/rust-gcc/gccrs/pull/2698][PR2698]]
+- Fix token lexed as a float literal                                            [[https://github.com/rust-gcc/gccrs/pull/2694][PR2694]]
+
+*** Contributors this month
+
+- [[https://github.com/mvvsmk][Manoj Kumar]]
+- [[https://github.com/jdupak][Jakub Dupak]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/powerboat9][Owen Avery]]
+- [[https://github.com/tamaroning][Raiki Tamura]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        265 |        271 |    +6 |
+| In Progress |         65 |         60 |    -5 |
+| Completed   |        765 |        777 |   +12 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 8203       | 8299       | +96   |
+| Failed    | -          | -          | -     |
+| XFAIL     | 69         | 69         | -     |
+| XPASS     | -          | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         98 |        102 |    +4 |
+| In Progress |         38 |         33 |    -5 |
+| Completed   |        382 |        391 |    +9 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |       100% |       100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |       100% |       100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |       100% |       100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |       100% |       100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |       100% |       100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |       100% |       100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       100% |       100% | -     | 16th Nov 2022 |  1st May 2023   | 30th Apr 2023 |
+| Borrow Checking 1                 |         0% |         0% | -     | TBD           | -               | 15th Aug 2023 |
+| AST Pipeline for libcore 1.49     |        78% |        78% | -     | 13th Apr 2023 | -               |  1st Jul 2023 |
+| HIR Pipeline for libcore 1.49     |        69% |        69% | -     | 13th Apr 2023 | -               | TBD           |
+| Procedural Macros 1               |       100% |       100% | -     | 13th Apr 2023 | -               |  6th Aug 2023 |
+| GCC 13.2 Release                  |       100% |       100% | -     | 13th Apr 2023 | 22nd Jul 2023   | 15th Jul 2023 |
+| GCC 14 Stage 3                    |       100% |       100% | -     |  1st Sep 2023 | 20th Sep 2023   |  1st Nov 2023 |
+| core 1.49 functionality [AST]     |         4% |         4% | -     |  1st Jul 2023 | -               |  1st Nov 2023 |
+| Rustc Testsuite Prerequisistes    |         0% |         0% | -     | TBD           | -               |  1st Feb 2024 |
+| Intrinsics and builtins           |        18% |        18% | -     |  6th Sep 2022 | -               | TBD           |
+| Const Generics 2                  |         0% |         0% | -     | TBD           | -               | TBD           |
+| Rust-for-Linux compilation        |         0% |         0% | -     | TBD           | -               | TBD           |
+| GCC 14.1 Release                  |         0% |         0% | -     | TBD           | -               | 15th Apr 2024 |
+| Procedural Macros 2               |         0% |        57% | +57%  | TBD           | -               | TBD           |
+
+*** Testing project
+
+| Testsuite                     | Compiler            | Last month | This month | Success delta |
+|-------------------------------+---------------------+------------+------------+---------------|
+| rustc testsuite               | gccrs -fsyntax-only |      92.7% |      92.7% |             - |
+| gccrs testsuite               | rustc stable        |      59.2% |      59.2% |             - |
+| rustc testsuite passing tests | gccrs               |      14.0% |      14.0% |             - |
+| rustc testsuite (no_std)      | gccrs               |      27.5% |      27.5% |             - |
+| rustc testsuite (no_core)     | gccrs               |       3.8% |       3.8% |             - |
+| blake3                        | gccrs               |      25.0% |      25.0% |             - |
+| libcore                       | gccrs               |         0% |         0% |             - |
+
+** Planned Activities
+
+- Opaque types
+- Drop marker trait
+
+*** Risks
+
+| Risk                                          | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                    |
+|-----------------------------------------------+--------------+-------------------+--------------+---------------------------------------------------------------|
+| Missing features for GCC 14.1 deadline        |            2 |                 3 |            6 | Start working on required features early                      |
+
+** Detailed changelog
