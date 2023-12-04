@@ -141,7 +141,7 @@ Check out our [[https://github.com/Rust-GCC/gccrs/blob/master/CONTRIBUTING.md][C
 | Const Generics 2                  |         0% |         0% | -     | TBD           | -               | TBD           |
 | Rust-for-Linux compilation        |         0% |         0% | -     | TBD           | -               | TBD           |
 | GCC 14.1 Release                  |         0% |         0% | -     | TBD           | -               | 15th Apr 2024 |
-| Procedural Macros 2               |         0% |        57% | +57%  | TBD           | -               | TBD           |
+| Procedural Macros 2               |        57% |        57% | -     | TBD           | -               | TBD           |
 
 *** Testing project
 
