@@ -83,11 +83,9 @@ Check out our [[https://github.com/Rust-GCC/gccrs/blob/master/CONTRIBUTING.md][C
 
 *** Test Cases
 
-*FIXME*: Add this month's test numbers 
-
 | TestCases | Last Month | This Month | Delta |
 |-----------+------------+------------+-------|
-| Passing   | 8299       | 8299       | +96   |
+| Passing   | 8299       | 8347       | +48   |
 | Failed    | -          | -          | -     |
 | XFAIL     | 69         | 69         | -     |
 | XPASS     | -          | -          | -     |
