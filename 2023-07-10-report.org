@@ -1,6 +1,8 @@
 #+title:  Weekly report for 3rd of July 2023 to 10th of July 2023
 #+author: Philip Herron and Arthur Cohen
 #+date:   2023-07-10
+# do not treat a_b as a<sub>b</sub>, i.e. fn_once
+#+options: ^:nil
 
 ** Overview
 

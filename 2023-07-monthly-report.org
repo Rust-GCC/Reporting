@@ -1,6 +1,8 @@
 #+title:  Monthly Report for July 2023
 #+author: Philip Herron and Arthur Cohen
 #+date:   2023-07-31
+# do not treat a_b as a<sub>b</sub>, i.e. fn_once
+#+options: ^:nil
 
 ** Overview
 
@@ -136,7 +138,7 @@ be notified of upcoming events.
 | TODO        |        237 |        252 |   +15 |
 | In Progress |         46 |         52 |    +6 |
 | Completed   |        696 |        721 |   +25 |
-
+#+tblfm: $4='(if (equalp $3 0) "-" (format "%+d" (- $3 $2)));N
 *** Test Cases
 
 | TestCases | Last Month | This Month | Delta |
@@ -145,6 +147,7 @@ be notified of upcoming events.
 | Failed    | -          | -          | -     |
 | XFAIL     | 53         | 53         | -     |
 | XPASS     | -          | -          | -     |
+#+tblfm: $4='(if (equalp $3 0) "-" (format "%+d" (- $3 $2)));N
 
 *** Bugs
 
@@ -153,6 +156,7 @@ be notified of upcoming events.
 | TODO        |         73 |         90 |   +17 |
 | In Progress |         22 |         27 |    +5 |
 | Completed   |        346 |        354 |    +8 |
+#+tblfm: $4='(if (equalp $3 0) "-" (format "%+d" (- $3 $2)));N
 
 *** Milestones Progress
 
@@ -185,6 +189,7 @@ Similarly, the Update GCC's master branch milestone contains a [[https://github.
 | Intrinsics and builtins           |        18% |        18% | -     |  6th Sep 2022 | -               | TBD           |
 | Const Generics 2                  |         0% |         0% | -     | TBD           | -               | TBD           |
 | Rust-for-Linux compilation        |         0% |         0% | -     | TBD           | -               | TBD           |
+#+tblfm: $4='(let ((diff (apply #'- (mapcar (lambda (x) (string-to-number (string-replace "%" "" x))) (list $3 $2))))) (if (zerop diff) "-" (format "%+d%%" diff)));
 
 *** Testing project
 
