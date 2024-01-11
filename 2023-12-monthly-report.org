@@ -16,7 +16,93 @@ push, which should happen this week. We will then resume work on the final parts
 of name resolution and handling of ~format_args!()~, in order to support the
 required features for the GCC 14.1. release.
 
-Progress on the compiler itself slowed down this month due to holidays. Both issues we had mentioned in our "Call for Contribution" section last month are being worked on, which is great. Thanks a lot for the interest in our project. [[https://github.com/jdupak][Jakub]]'s work on the borrow checker is continuing, with even more facts being emitted correctly and more invalid code being caught. We are looking forward to the progress on this side of the compiler.
+Progress on the compiler itself slowed down this month due to holidays. Both issues we had
+mentioned in our "Call for Contribution" section last month are being worked on, which is
+great. Thanks a lot for the interest in our project.
+
+[[https://github.com/jdupak][Jakub]]'s work on the borrow checker is continuing, with even
+more facts being emitted correctly and more invalid code being caught:
+
+#+BEGIN_SRC rust
+
+fn invalid_move() {
+    // note that `A` is not `Copy`
+    struct A {
+        i: i32,
+    }
+
+    let a = A { i: 1 };
+    let b = a; // a is moved here for the first time
+    let c = a; //~ ERROR `a` moved here for the second time
+}
+
+fn valid_move() {
+    let a = 1; // integers are `Copy`, so this is allowed
+    let b = a;
+    let c = a;
+}
+
+// runtime condition invalid move
+fn test_move_conditional(b1: bool, b2:bool) {
+    struct A {
+        i: i32
+    }
+
+    let a = A { i: 1 }; // `A` cannot be copied
+
+    if b1 {
+        let b = a; // `a` might be moved here for the first time
+    }
+    if b2 {
+        let c = a; // `a` might be moved here for the second time
+    }
+}
+#+END_SRC
+
+The work done by Jakub is also starting to enforce proper lifetime bounds:
+
+#+BEGIN_SRC rust
+
+fn lifetime_return_invalid<'a, 'b>(x: &'a u32, y: &'b u32) -> &'a u32 {
+    y //~ ERROR 
+}
+
+fn lifetime_return_valid<'a, 'b>(x: &'a u32, y: &'b u32) -> &'a u32
+    where 'b: 'a
+{
+    y
+}
+
+#+END_SRC
+
+And can handle complex expressions and borrow situations:
+
+#+BEGIN_SRC rust
+
+struct Reference<'a> {
+    value: &'a i32,
+}
+
+impl<'a> Reference<'a> {
+    fn new<'a>(value: &'a i32) -> Reference<'a> {
+        Reference { value }
+    }
+}
+
+fn mutable_borrow_while_immutable_borrowed_struct() {
+    let x = 0;
+    let y = Reference::new(&x);
+    let z = &mut x; //~ ERROR
+    let w = y;
+}
+#+END_SRC
+
+We are looking forward to more progress on this side of the compiler, as it is an extremely
+important part of the Rust programming language - it is absolutely necessary that a borrow
+checker exists for Linux developers to start working in Rust using ~gccrs~. Note that Jakub
+is currently finishing studying for his Master's Degree and is looking for sponsorship to
+continue his work on the borrow checker. Please get in touch if you or your company would be
+interested in funding his work!
 
 Finally, Pierre-Emmanuel, Philip and Arthur will all be present at FOSDEM 2024. We are excited to meet everyone in both the Rust and GCC rooms.
 
