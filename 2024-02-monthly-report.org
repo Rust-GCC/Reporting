@@ -1,0 +1,182 @@
+#+title:  Monthly Report for February 2024
+#+author: Philip Herron, Pierre-Emmanuel Patry and Arthur Cohen
+#+date:   2024-03-04
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Milestone Progress
+
+1. GSoC
+  1. Strong students, very invested, asking good questions, submitting good pull requests
+2. format_args!()
+  1. First rust dependency is now added
+3. what else?
+4. Contributions are picking up
+5. Upstream tooling is working good - two upstreams in three weeks, next one tomorrow/this week
+  1. This enabled us to catch a couple bugs earlier than we would have
+6. Get in touch with release maintainers regarding upcoming release
+7. More borrow check work
+
+We would like to remind our readers that Jakub Dupak, one of our contributors working on
+integrating the ~polonius~ borrow-checker to gccrs, is currently finishing studying for his
+Master's Degree and is looking for sponsorship to continue his work on the borrow checker.
+Please get in touch if you or your company would be interested in funding his work!
+
+*** Community call
+
+We will have our next monthly community call on the 18th of March at 10am UTC. You can subscribe to our calendar
+to see when the next one will be held. The call is open to everyone, even if you would just
+like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to
+be notified of upcoming events.
+
+- [[https://meet.jit.si/gccrs-community-call-march][Jitsi link]]
+- Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
+- [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com][Google calendar link]]
+- [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
+
+** Call for contribution
+
+This is a new section for particularly easy or interesting issues we would like folks external
+to the project to contribute to. We are available for mentoring and guiding you on their
+resolution. This is a great way to start making your mark on a complex project such as this
+one and to learn a lot in the process!
+
+
+- [[https://github.com/rust-gcc/gccrs/issues/2154][Issue 2154]]
+
+__FIXME__
+
+
+Check out our [[https://github.com/Rust-GCC/gccrs/blob/master/CONTRIBUTING.md][Contributing guidelines]] to get started on them or feel free to send us a message on Zulip or IRC!
+
+** Completed Activities
+
+- Add error emitting when we can't resolve id expr                                                                 [[https://github.com/rust-gcc/gccrs/pull/2895][PR2895]]
+- Make ```DefaultResolver``` visit more of the AST                                                                 [[https://github.com/rust-gcc/gccrs/pull/2891][PR2891]]
+- Ensure ```TupleStructPattern``` and ```TuplePattern``` have items                                                [[https://github.com/rust-gcc/gccrs/pull/2887][PR2887]]
+- Cleanup creation of lang items                                                                                   [[https://github.com/rust-gcc/gccrs/pull/2880][PR2880]]
+- Fix FixMe in changing return type of builtin_macro_from_string() from BuiltinMacro to tl::optional<BuiltinMacro> [[https://github.com/rust-gcc/gccrs/pull/2871][PR2871]]
+- Adjust error checks to match name resolution 2.0                                                                 [[https://github.com/rust-gcc/gccrs/pull/2869][PR2869]]
+- Add base for implementing extern types                                                                           [[https://github.com/rust-gcc/gccrs/pull/2865][PR2865]]
+- gccrs: minor cleanup in langhook.type_for_mode                                                                   [[https://github.com/rust-gcc/gccrs/pull/2863][PR2863]]
+- gccrs: fix powif64 intrinsic                                                                                     [[https://github.com/rust-gcc/gccrs/pull/2862][PR2862]]
+- Fix false positive for top-level ```AltPattern```                                                                [[https://github.com/rust-gcc/gccrs/pull/2861][PR2861]]
+- Return proper AST nodes from format_args!() expansion                                                            [[https://github.com/rust-gcc/gccrs/pull/2859][PR2859]]
+- gccrs: Avoid *.bak suffixed tests - use dg-skip-if instead                                                       [[https://github.com/rust-gcc/gccrs/pull/2857][PR2857]]
+- libgrust: Add missed commits for Changelog creation                                                              [[https://github.com/rust-gcc/gccrs/pull/2853][PR2853]]
+- Fix variadic check on all function parameters                                                                    [[https://github.com/rust-gcc/gccrs/pull/2851][PR2851]]
+- Fix lookup of ```TuplePattern``` sub-pattern types                                                               [[https://github.com/rust-gcc/gccrs/pull/2848][PR2848]]
+- gccrs: add powi intrinsics                                                                                       [[https://github.com/rust-gcc/gccrs/pull/2845][PR2845]]
+- Update copyright years to 2024                                                                                   [[https://github.com/rust-gcc/gccrs/pull/2842][PR2842]]
+- gccrs: Fix typo in RegionConstraints instance                                                                    [[https://github.com/rust-gcc/gccrs/pull/2841][PR2841]]
+- Add testcase for #2314, fix formatting in macro error                                                            [[https://github.com/rust-gcc/gccrs/pull/2840][PR2840]]
+- gccrs: Add testcase for matches!() macro                                                                         [[https://github.com/rust-gcc/gccrs/pull/2839][PR2839]]
+- [upstream] [2024-02-06] Prepare commits                                                                          [[https://github.com/rust-gcc/gccrs/pull/2831][PR2831]]
+- Start reusing rustc's `format_args` parser                                                                       [[https://github.com/rust-gcc/gccrs/pull/2822][PR2822]]
+- Fix rebinding imports                                                                                            [[https://github.com/rust-gcc/gccrs/pull/2312][PR2312]]
+- Rust: Make 'tree'-level 'MAIN_NAME_P' work                                                                       [[https://github.com/rust-gcc/gccrs/pull/2123][PR2123]]
+
+
+*** Contributors this month
+
+- [[https://github.com/sahilyeole][Sahil Yeole]] (new contributor!)
+- [[https://github.com/0xn4utilus][Gyanendra Banjare]] (new contributor!)
+- [[https://github.com/badumbatish][Jasmine Tang]] (new contributor!)
+- [[https://github.com/powerboat9][Owen Avery]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        266 |        276 |   +10 |
+| In Progress |         66 |         74 |    +8 |
+| Completed   |        798 |        812 |   +14 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 8365       | 8402       | +37   |
+| Failed    | -          | -          | -     |
+| XFAIL     | 69         | 69         | -     |
+| XPASS     | -          | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |         95 |         97 |    +2 |
+| In Progress |         36 |         37 |    +1 |
+| Completed   |        406 |        411 |    +5 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|
+| GCC 14.1 Release                  |         0% |        71% |  +71% | TBD           | -               | 15th Apr 2024 |
+| AST Pipeline for libcore 1.49     |        78% |        82% |   +4% | 13th Apr 2023 | -               | 15th Apr 2024 |
+| HIR Pipeline for libcore 1.49     |        69% |        72% |   +3% | 13th Apr 2023 | -               | TBD           |
+| core 1.49 functionality [AST]     |         4% |         8% |   +4% |  1st Jul 2023 | -               | 15th Apr 2025 |
+| format_args!() support            |         0% |        60% |  +60% | 15th Feb 2024 | -               |  1st Apr 2024 |
+| Name Resolution rework            |         0% |         0% | -     | 15th Feb 2024 | -               |  1st Apr 2024 |
+
+| Upcoming Milestone                | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|
+| Rustc Testsuite Prerequisistes    |         0% |         0% | -     | TBD           | -               |  1st Feb 2024 |
+| Intrinsics and builtins           |        18% |        18% | -     |  6th Sep 2022 | -               |  1st Apr 2025 |
+| Const Generics 2                  |         0% |         0% | -     | TBD           | -               | 15th Dec 2024 |
+| Rust-for-Linux compilation        |         0% |         0% | -     | TBD           | -               |  1st Apr 2025 |
+| Procedural Macros 2               |        57% |        57% | -     | TBD           | -               | 15th Dec 2024 |
+| Borrow Checking 2                 |         0% |         0% | -     | TBD           | -               | 15th Apr 2025 |
+
+| Past Milestone                    | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |       100% |       100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |       100% |       100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |       100% |       100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |       100% |       100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |       100% |       100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |       100% |       100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       100% |       100% | -     | 16th Nov 2022 |  1st May 2023   | 30th Apr 2023 |
+| Borrow Checking 1                 |       100% |       100% | -     | TBD           |  8th Jan 2024   | 15th Aug 2023 |
+| Procedural Macros 1               |       100% |       100% | -     | 13th Apr 2023 | 6th Aug 2023    |  6th Aug 2023 |
+| GCC 13.2 Release                  |       100% |       100% | -     | 13th Apr 2023 | 22nd Jul 2023   | 15th Jul 2023 |
+| GCC 14 Stage 3                    |       100% |       100% | -     |  1st Sep 2023 | 20th Sep 2023   |  1st Nov 2023 |
+
+
+*** Testing project
+
+| Testsuite                     | Compiler            | Last month | This month | Success delta |
+|-------------------------------+---------------------+------------+------------+---------------|
+| rustc testsuite               | gccrs -fsyntax-only |      92.7% |      92.7% |             - |
+| gccrs testsuite               | rustc stable        |      59.2% |      59.2% |             - |
+| rustc testsuite passing tests | gccrs               |      14.0% |      14.0% |             - |
+| rustc testsuite (no_std)      | gccrs               |      27.5% |      27.5% |             - |
+| rustc testsuite (no_core)     | gccrs               |       3.8% |       3.8% |             - |
+| blake3                        | gccrs               |      25.0% |      25.0% |             - |
+| libcore                       | gccrs               |         0% |         0% |             - |
+
+** Planned Activities
+
+__FIXME__:
+
+- Proper extern type support, important for format_args!()
+- Name resolution 2.0 fixes
+- Start release preparations
+
+*** Risks
+
+| Risk                                          | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                    |
+|-----------------------------------------------+--------------+-------------------+--------------+---------------------------------------------------------------|
+| Missing features for GCC 14.1 deadline        |            2 |                 3 |            6 | Start working on required features early                      |
+
+** Detailed changelog
