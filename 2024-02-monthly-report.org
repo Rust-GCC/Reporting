@@ -6,20 +6,39 @@
 
 Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
 
-*** Milestone Progress
+*** Project update
 
-1. GSoC
-  1. Strong students, very invested, asking good questions, submitting good pull requests
-2. format_args!()
-  1. First rust dependency is now added
-3. what else?
-4. Contributions are picking up
-5. Upstream tooling is working good - two upstreams in three weeks, next one tomorrow/this week
-  1. This enabled us to catch a couple bugs earlier than we would have
-6. Get in touch with release maintainers regarding upcoming release
-7. More borrow check work
+We have had an influx of potential GSoC applicants this month, with lots of new
+people joining our Zulip channel and GitHub repository. They have submitted a
+large number of pull-requests, and have started heavily participating in the
+compiler development chat - which we are really happy about! The potential
+applicants seem very motivated and eager to work on the project, which is very
+nice to see. Thank you all for your interest!
 
-We would like to remind our readers that Jakub Dupak, one of our contributors working on
+As a consequence, the amount of contributions as picked up - similarly to past years around this period. This increases our review load, but is also very productive.
+
+On the upstream side, the tooling we had been working on is working nicely and
+speeding up the creation and testing of these commits. We are still going to
+improve it, but it is already proving to be useful. Since last month, we have
+upstreamed two patchsets in three weeks, with one more patchset being prepared
+for this week. This has enabled us to catch some minor issues we would not have
+discovered until much later, thanks to the wide range of architectures used by
+the GCC community.
+
+Regarding technical contributions, progress continued on the borrow checker
+with multiple large pull-requests from Jakub currently being reviewed. These
+pull-requests concern the addition of variance analysis to the project, as well
+as the emission of more facts for the ~polonius-engine~ crate.
+
+We have also made great progress on ~format_args!()~, with the proper expansion of these macro invocations to their runtime components. Once these components are properly generated, it is relatively easy to implement the famous ~println!()~ macro - iterate on those components, calling the associated formatting function each time, and using ~stdout~ as a writer.
+Thanks to the work done by Philip on iterators, we are now able to have a functioning, but unoptimized ~println!()~ with gccrs - which is a huge milestone! Please note that the real ~println!()~ macro is a member of the ~std~ crate, not ~core~, as it relies on dynamic allocation and locking in order to ensure a fast and safe access to the global operating system output streams.
+
+A couple issues remain around the parsing of the ~format_args!()~ arguments, but we are expecting to take care of them soon. We will have to polish the integration of the Rust component responsible for parsing the ~format_args!()~ invocation, as there are build system subtleties to take in account.
+
+We will soon get in touch with the GCC release maintainers in order to prepare
+this upcoming release, with the expectation of our frontend being part of GCC 14.1.
+
+We would like to remind our readers that [[https://github.com/jdupak][Jakub Dupak]], one of our contributors working on
 integrating the ~polonius~ borrow-checker to gccrs, is currently finishing studying for his
 Master's Degree and is looking for sponsorship to continue his work on the borrow checker.
 Please get in touch if you or your company would be interested in funding his work!
@@ -43,11 +62,15 @@ to the project to contribute to. We are available for mentoring and guiding you 
 resolution. This is a great way to start making your mark on a complex project such as this
 one and to learn a lot in the process!
 
-
 - [[https://github.com/rust-gcc/gccrs/issues/2154][Issue 2154]]
 
-__FIXME__
+Derive macros (invoked through the ~#[derive(...)]~ attribute) should only be
+applied on type declarations - new structures, enumerations or unions. We need
+to report an error to the user when they try using such a macro on a non-type-declaration element - such as a function or trait.
 
+The provided playground link showcases the expected behavior. The code it contains will need to be added as a test case to the project, with other test cases welcome.
+
+This contribution will touch on our AST, our highest level intermediate representation in the compiler.
 
 Check out our [[https://github.com/Rust-GCC/gccrs/blob/master/CONTRIBUTING.md][Contributing guidelines]] to get started on them or feel free to send us a message on Zulip or IRC!
 
@@ -166,8 +189,6 @@ Check out our [[https://github.com/Rust-GCC/gccrs/blob/master/CONTRIBUTING.md][C
 | libcore                       | gccrs               |         0% |         0% |             - |
 
 ** Planned Activities
-
-__FIXME__:
 
 - Proper extern type support, important for format_args!()
 - Name resolution 2.0 fixes
