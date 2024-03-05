@@ -68,7 +68,7 @@ Derive macros (invoked through the ~#[derive(...)]~ attribute) should only be
 applied on type declarations - new structures, enumerations or unions. We need
 to report an error to the user when they try using such a macro on a non-type-declaration element - such as a function or trait.
 
-The provided playground link showcases the expected behavior. The code it contains will need to be added as a test case to the project, with other test cases welcome.
+The provided playground link (see [[https://github.com/rust-gcc/gccrs/issues/2154][the issue]])  showcases the expected behavior. The code it contains will need to be added as a test case to the project, with other test cases welcome.
 
 This contribution will touch on our AST, our highest level intermediate representation in the compiler.
 
