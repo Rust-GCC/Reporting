@@ -46,7 +46,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 | Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
 |-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
-| GCC 14.1 Release                  |       71% |       71% | -     | TBD           | -               | 15th Apr 2024 |
+| GCC 14.1 Release                  |       71% |       71% | -     |  2nd Jan 2024 | -               | 15th Apr 2024 |
 | AST Pipeline for libcore 1.49     |       82% |       82% | -     | 13th Apr 2023 | -               | 15th Apr 2024 |
 | HIR Pipeline for libcore 1.49     |       72% |       72% | -     | 13th Apr 2023 | -               | TBD           |
 | core 1.49 functionality [AST]     |        8% |        8% | -     |  1st Jul 2023 | -               | 15th Apr 2025 |
