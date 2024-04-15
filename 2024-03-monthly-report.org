@@ -63,6 +63,7 @@ be notified of upcoming events.
 
 - [[https://github.com/srj31][Sourabh Raj Jaiswal]] (new contributor!)
 - [[https://github.com/zhanghe9702][zhanghe]] (new contributor!)
+- [[https://github.com/tschwinge][Thomas Schwinge]]
 - [[https://github.com/badumbatish][Jasmine Tang]]
 - [[https://github.com/0xn4utilus][Gyanendra Banjare]]
 - [[https://github.com/jdupak][Jakub Dupak]]
