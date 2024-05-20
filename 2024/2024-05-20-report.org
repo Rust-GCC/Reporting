@@ -1,0 +1,108 @@
+#+title:  Weekly report for 13th of May to 20th of May 2024
+#+author: Philip Herron, Pierre-Emmanuel Patry, Arthur Cohen
+#+date:   2024-05-20
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+- Progress on milestones document: https://hackmd.io/pJQAETRsSym8KG0TFuSnhw
+- Spent a lot of time identifying issues with ~core~, identified some nice milestones out of them
+  - e.g. error propagation
+- Starting work on recently identified parser issues for ~std~ and ~Rust-for-Linux~
+- GSoC weekly syncups are ongoing, nice progress from all students who wish to start their work early
+  - https://hackmd.io/6SSc3kzfSCa-KuzrOt3FCQ
+  - https://hackmd.io/nHlmHFfARIe1AIau4hh6Eg
+  - https://hackmd.io/pQDae4c4SQS_kvm4Y2u1HA
+  - Most of the work for now is exploratory and research-y.
+  - This will help establish milestones for the projects.
+
+** Completed Activities
+
+- Visit constant items without expressions properly              [[https://github.com/rust-gcc/gccrs/3005][PR3005]]
+- Allow matching on non-enum ADTs                                [[https://github.com/rust-gcc/gccrs/2978][PR2978]]
+- Remove unused ```Context``` parameter for some backend methods [[https://github.com/rust-gcc/gccrs/2973][PR2973]]
+- Make most lookup return an optional                            [[https://github.com/rust-gcc/gccrs/2972][PR2972]]
+- libformat_parser: Lower minimum Rust version to 1.49           [[https://github.com/rust-gcc/gccrs/2964][PR2964]]
+- Handle structs as scrutinee for match expressions              [[https://github.com/rust-gcc/gccrs/2958][PR2958]]
+
+*** Contributors this week
+
+- [[https://github.com/powerboat9][Owen Avery]]
+- [[https://github.com/nobel-sh][Nobel Singh]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       290 |       312 |   +22 |
+| In Progress |        69 |        69 |     - |
+| Completed   |       833 |       834 |    +1 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 8473      | 8504      |   +31 |
+| Failed    | -         | -         |     - |
+| XFAIL     | 69        | 69        |     - |
+| XPASS     | -         | -         |     - |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       107 |       117 |   +10 |
+| In Progress |        38 |        38 |     - |
+| Completed   |       413 |       414 |    +1 |
+
+*** Milestones Progress
+
+*NOTE*: This is a work in progress and will be entirely reworked shortly
+
+| Milestone                         | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| GCC 14.1 Release                  |       98% |       98% | -     |  2nd Jan 2024 | -               | 30th Apr 2024 |
+| AST Pipeline for libcore 1.49     |      100% |      100% | -     | 13th Apr 2023 | 15th Apr 2024   | 30th Apr 2024 |
+| HIR Pipeline for libcore 1.49     |       72% |       72% | -     | 13th Apr 2023 | -               | TBD           |
+| core 1.49 functionality [AST]     |       11% |        8% | -     |  1st Jul 2023 | -               | 15th Apr 2025 |
+| format_args!() support            |      100% |      100% | -     | 15th Feb 2024 | 1st Apr 2024    |  1st Apr 2024 |
+| Name Resolution rework            |        0% |        0% | -     | 15th Feb 2024 | -               |  1st Apr 2024 |
+
+| Upcoming Milestone                | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Rustc Testsuite Prerequisistes    |        0% |        0% | -     | TBD           | -               |  1st Feb 2024 |
+| Intrinsics and builtins           |       18% |       18% | -     |  6th Sep 2022 | -               |  1st Apr 2025 |
+| Const Generics 2                  |        0% |        0% | -     | TBD           | -               | 15th Dec 2024 |
+| Rust-for-Linux compilation        |        0% |        0% | -     | TBD           | -               |  1st Apr 2025 |
+| Borrow Checking 2                 |        0% |        0% | -     | TBD           | -               | 15th Apr 2025 |
+| Procedural Macros 2               |       53% |       53% | -     | TBD           | -               | 15th Apr 2025 |
+| GCC 15.1 Release                  |        0% |        0% | -     | TBD           | -               | 15th Apr 2025 |
+
+| Past Milestone                    | Last Week | This Week | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+-----------+-----------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |      100% |      100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |      100% |      100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |      100% |      100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |      100% |      100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |      100% |      100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |      100% |      100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |      100% |      100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |      100% |      100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |      100% |      100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |      100% |      100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |      100% |      100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |      100% |      100% | -     | 16th Nov 2022 |  1st May 2023   | 30th Apr 2023 |
+| Borrow Checking 1                 |      100% |      100% | -     | TBD           |  8th Jan 2024   | 15th Aug 2023 |
+| Procedural Macros 1               |      100% |      100% | -     | 13th Apr 2023 | 6th Aug 2023    |  6th Aug 2023 |
+| GCC 13.2 Release                  |      100% |      100% | -     | 13th Apr 2023 | 22nd Jul 2023   | 15th Jul 2023 |
+| GCC 14 Stage 3                    |      100% |      100% | -     |  1st Sep 2023 | 20th Sep 2023   |  1st Nov 2023 |
+
+*** Risks
+
+** Planned Activities
+
+- Create distribution packages
+- Finish milestone documents
+
+** Detailed changelog
