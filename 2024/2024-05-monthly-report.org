@@ -1,0 +1,161 @@
+#+title:  Monthly Report for May 2024
+#+author: Philip Herron, Pierre-Emmanuel Patry and Arthur Cohen
+#+date:   2024-06-10
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Project update
+
+We took some time this month to put together a document outlining the future of the project, like we had done last year. [[https://hackmd.io/pJQAETRsSym8KG0TFuSnhw?view][This document]] allowed us to establish smaller milestones, and to create a dependency graph in between these milestones. This, as well as an estimate of the time to complete for each issue, allows us to put together a Gantt chart which gives us start and target dates for each of the milestones. The purpose of this document is to evolve as time passes, and to reflect on our progress around the release of GCC 15.1, in one year of work.
+
+To establish this document, we spent multiple hours painstakingly compiling each module of the ~core~ and ~alloc~ crates, hacking around the missing imports and dependencies in order to go as far as possible into the compiler pipeline, in the hope of unearthing new issues with the compiler. Because we attempted to compile each module separately, imports were not handled properly and we had to re-define huge chunks of the ~core~ library each time, making the progress very slow. However, as the high number of issues opened this month will show, this work is proving to be worthwile and gives us a clearer picture of the situation for our objectives of compiling the Rust standard library and the Rust-for-Linux project.
+
+Speaking about Rust-for-Linux (RfL), Miguel Ojeda and Arthur had a great conversation regarding the state of the compiler and future goals of the Rust language concerning the kernel. For example, RfL no longer needs its own fork of the ~alloc~ crate - meaning that once we are able to catch up and compile the Rust standard library, we should have no issues providing this dependency to RfL. Furthermore, [[https://rust-lang.github.io/rust-project-goals/2024h2/rfl_stable.html][one of the goals of the Rust project for 2024]] is to enable RfL to compile using a stable compiler, which should help us when catching up to the Rust version the kernel expects, as it will drop requirements for nightly features we might not have implemented.
+
+Regarding GSoC, we are very impressed with the work done by our students so far. As they all had important commitments, such as internships or exams, they chose to start working on their project early and have done oustandingly. We are looking forward to more progress and we can't wait to show you the cool features they are building.
+
+On the technical side of things, we have started progressing towards the next milestones already. Internal compiler attributes are being handled, work has started on fixing some bugs discovered in our support of negative trait implementations (used in quite a few places in ~core~ 1.49), parser improvements are being worked on for ~alloc~ and ~std~, and as usual, a lot of code is being cleaned up and improved continuously. Our GCC build system patch has now been reviewed, and the review comments adressed - meaning that upstreaming will start again shortly, and that GCC's trunk will be in sync with our development repository. We are also working towards getting documentation in for GCC 14.2, which should release in the next few months.
+
+*** Community call
+
+We will have our next monthly community call on the 17th of June at 9am UTC. You can subscribe to our calendar
+to see when the next one will be held. The call is open to everyone, even if you would just
+like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to
+be notified of upcoming events.
+
+- [[https://meet.jit.si/gccrs-community-call-june][Jitsi link]]
+- Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
+- [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com][Google calendar link]]
+- [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
+
+** Call for contribution
+
+- [[https://github.com/Rust-GCC/gccrs/issues/3001][Issue 3001: Generic arguments are not disambiguated on error propagation expressions]]
+
+** Completed Activities
+
+- Corrected access specifiers                                         [[https://github.com/rust-gcc/gccrs/pull/3043][PR3043]]
+- Remove cstddef header from rust-fmt                                 [[https://github.com/rust-gcc/gccrs/pull/3011][PR3011]]
+- Visit constant items without expressions properly                   [[https://github.com/rust-gcc/gccrs/pull/3005][PR3005]]
+- Add call and method call default visitors                           [[https://github.com/rust-gcc/gccrs/pull/3004][PR3004]]
+- Allow ```rustc_const_stable``` and ```rustc_const_unstable```       [[https://github.com/rust-gcc/gccrs/pull/3003][PR3003]]
+- Make gccrs recognize negative_impls                                 [[https://github.com/rust-gcc/gccrs/pull/3002][PR3002]]
+- Allow matching on non-enum ADTs                                     [[https://github.com/rust-gcc/gccrs/pull/2978][PR2978]]
+- Remove unnecessary SIDE_EFFECTS/READONLY macros                     [[https://github.com/rust-gcc/gccrs/pull/2977][PR2977]]
+- Remove unused ```Context``` parameter for some backend methods      [[https://github.com/rust-gcc/gccrs/pull/2973][PR2973]]
+- Make most lookup return an optional                                 [[https://github.com/rust-gcc/gccrs/pull/2972][PR2972]]
+- Rework hir map to make it's API more confortable to work with.      [[https://github.com/rust-gcc/gccrs/pull/2969][PR2969]]
+- Removed obsolete objects                                            [[https://github.com/rust-gcc/gccrs/pull/2968][PR2968]]
+- libformat_parser: Lower minimum Rust version to 1.49                [[https://github.com/rust-gcc/gccrs/pull/2964][PR2964]]
+- Handle structs as scrutinee for match expressions                   [[https://github.com/rust-gcc/gccrs/pull/2958][PR2958]]
+- Remove system include in `gcc/rust/typecheck/rust-hir-type-check.h` [[https://github.com/rust-gcc/gccrs/pull/2924][PR2924]]
+- Improve handling of ```ConstantItem``` during name resolution 2.0   [[https://github.com/rust-gcc/gccrs/pull/2900][PR2900]]
+- Borrowck tests and build                                            [[https://github.com/rust-gcc/gccrs/pull/2889][PR2889]]
+
+*** Contributors this month
+
+- [[https://github.com/SIGMazer][mazin]] (new contributor!)
+- [[https://github.com/badumbatish][Jasmine Tang]]
+- [[https://github.com/braw-lee][Kushal Pal]]
+- [[https://github.com/jdupak][Jakub Dupak]]
+- [[https://github.com/powerboat9][Owen Avery]]
+- [[https://github.com/nobel-sh][Nobel Singh]]
+- [[https://github.com/MaelCravero][Mael Cravero]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        293 |        333 |   +40 |
+| In Progress |         68 |         71 |    +3 |
+| Completed   |        831 |        836 |    +5 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 8439       | 8507       | +68   |
+| Failed    | -          | -          | -     |
+| XFAIL     | 69         | 69         | -     |
+| XPASS     | -          | -          | -     |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        108 |        126 |   +18 |
+| In Progress |         37 |         40 |    +3 |
+| Completed   |        413 |        414 |    +1 |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|
+| GCC 14.2                          |         0% |         0% |     - |  7th Jun 2024 |               - | 15th Jun 2024 |
+| Name resolution 2.0               |         0% |         0% |     - |  1st Jun 2024 |               - |  1st Apr 2025 |
+| Macro expansion                   |         0% |         0% |     - |  1st Jun 2024 |               - |  1st Jan 2025 |
+ 
+| Upcoming Milestone                | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|
+| GCC 15.1                          |         0% |         0% |     - | 21st Jun 2024 |               - |  1st Jul 2024 |
+| Unhandled attributes              |         0% |         0% |     - |  1st Jul 2024 |               - | 15th Aug 2024 |
+| Lang items                        |         0% |         0% |     - |  1st Jul 2024 |               - |  1st Sep 2024 |
+| Indexing fixes                    |         0% |         0% |     - | 21st Jun 2024 |               - | 15th Sep 2024 |
+| Iterator fixes                    |         0% |         0% |     - | 21st Jun 2024 |               - | 15th Sep 2024 |
+| Auto traits improvements          |         0% |         0% |     - | 15th Sep 2024 |               - | 21st Oct 2024 |
+| Deref and DerefMut improvements   |         0% |         0% |     - | 28th Sep 2024 |               - | 28th Oct 2024 |
+| Remaining typecheck issues        |         0% |         0% |     - | 21st Oct 2024 |               - |  1st Jan 2025 |
+| cfg-core                          |         0% |         0% |     - |  1st Dec 2024 |               - |  1st Jan 2025 |
+| Question mark operator            |         0% |         0% |     - | 15th Dec 2024 |               - | 21st Feb 2025 |
+| Codegen fixes                     |         0% |         0% |     - |  7th Oct 2024 |               - |  1st Mar 2025 |
+| Specialization                    |         0% |         0% |     - |  1st Jan 2025 |               - |  1st Mar 2025 |
+| Inline assembly                   |         0% |         0% |     - |  1st Jun 2024 |               - | 15th Sep 2024 |
+| Borrow checker improvements       |         0% |         0% |     - |  1st Jun 2024 |               - | 15th Sep 2024 |
+| Rustc Testsuite Adaptor           |         0% |         0% |     - |  1st Jun 2024 |               - | 15th Sep 2024 |
+| black_box intrinsic               |         0% |         0% |     - | 28th Oct 2024 |               - | 28th Nov 2024 |
+| Unstable RfL features             |         0% |         0% |     - |  7th Jan 2025 |               - |  1st Mar 2025 |
+| cfg-rfl                           |         0% |         0% |     - |  7th Jan 2025 |               - | 15th Feb 2025 |
+| alloc parser issues               |         0% |         0% |     - |  7th Jan 2025 |               - | 28th Jan 2025 |
+| let-else                          |         0% |         0% |     - | 28th Jan 2025 |               - | 28th Feb 2025 |
+| Explicit generics with impl Trait |         0% |         0% |     - | 28th Feb 2025 |               - | 28th Mar 2025 |
+| offset_of!() builtin macro        |         0% |         0% |     - | 15th Mar 2025 |               - | 15th May 2025 |
+| Generic Associated Types          |         0% |         0% |     - | 15th Mar 2025 |               - | 15th Jun 2025 |
+| RfL const generics                |         0% |         0% |     - |  1st May 2025 |               - | 15th Jun 2025 |
+| frontend plugin hooks             |         0% |         0% |     - | 15th May 2025 |               - |  7th Jul 2025 |
+| Handling the testsuite issues     |         0% |         0% |     - | 15th Sep 2024 |               - | 15th Sep 2025 |
+| std parser issues                 |         0% |         0% |     - | 28th Jun 2025 |               - | 28th Jul 2025 |
+| main shim                         |         0% |         0% |     - | 28th Jul 2025 |               - | 15th Sep 2025 |
+
+| Past Milestone                    | Last Month | This Month | Delta | Start Date    | Completion Date | Target        |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|
+| Data Structures 1 - Core          |       100% |       100% | -     | 30th Nov 2020 | 27th Jan 2021   | 29th Jan 2021 |
+| Control Flow 1 - Core             |       100% |       100% | -     | 28th Jan 2021 | 10th Feb 2021   | 26th Feb 2021 |
+| Data Structures 2 - Generics      |       100% |       100% | -     | 11th Feb 2021 | 14th May 2021   | 28th May 2021 |
+| Data Structures 3 - Traits        |       100% |       100% | -     | 20th May 2021 | 17th Sep 2021   | 27th Aug 2021 |
+| Control Flow 2 - Pattern Matching |       100% |       100% | -     | 20th Sep 2021 |  9th Dec 2021   | 29th Nov 2021 |
+| Macros and cfg expansion          |       100% |       100% | -     |  1st Dec 2021 | 31st Mar 2022   | 28th Mar 2022 |
+| Imports and Visibility            |       100% |       100% | -     | 29th Mar 2022 | 13th Jul 2022   | 27th May 2022 |
+| Const Generics                    |       100% |       100% | -     | 30th May 2022 | 10th Oct 2022   | 17th Oct 2022 |
+| Initial upstream patches          |       100% |       100% | -     | 10th Oct 2022 | 13th Nov 2022   | 13th Nov 2022 |
+| Upstream initial patchset         |       100% |       100% | -     | 13th Nov 2022 | 13th Dec 2022   | 19th Dec 2022 |
+| Update GCC's master branch        |       100% |       100% | -     |  1st Jan 2023 | 21st Feb 2023   |  3rd Mar 2023 |
+| Final set of upstream patches     |       100% |       100% | -     | 16th Nov 2022 |  1st May 2023   | 30th Apr 2023 |
+| Borrow Checking 1                 |       100% |       100% | -     | TBD           |  8th Jan 2024   | 15th Aug 2023 |
+| Procedural Macros 1               |       100% |       100% | -     | 13th Apr 2023 | 6th Aug 2023    |  6th Aug 2023 |
+| GCC 13.2 Release                  |       100% |       100% | -     | 13th Apr 2023 | 22nd Jul 2023   | 15th Jul 2023 |
+| GCC 14 Stage 3                    |       100% |       100% | -     |  1st Sep 2023 | 20th Sep 2023   |  1st Nov 2023 |
+| GCC 14.1 Release                  |        98% |       100% | +2%   |  2nd Jan 2024 |  2nd Jun 2024   | 15th Apr 2024 |
+| format_args!() support            |       100% |       100% | -     | 15th Feb 2024 | -               |  1st Apr 2024 |
+
+** Planned Activities
+
+*** Risks
+
+| Risk                                          | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                      |
+|-----------------------------------------------+--------------+-------------------+--------------+-----------------------------------------------------------------|
+| Missing features for GCC 15.1 deadline        |            2 |                 1 |            2 | Start working on required features as early as July (6mo ahead) |
+
+
+** Detailed changelog
