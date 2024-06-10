@@ -34,6 +34,8 @@ be notified of upcoming events.
 
 - [[https://github.com/Rust-GCC/gccrs/issues/3001][Issue 3001: Generic arguments are not disambiguated on error propagation expressions]]
 
+Our error propagation expressions (expressions which use the question mark operator, of the form ~<expr>?~) are currently forgotten in many of our AST visitors. As a result, there are unexpected cases when it comes to various parts of the compiler pipeline handling them. In that particular case, the function call's generic arguments are not disambiguated - the compiler does not know if it needs to be handling a generic type, or a const generic value. You will need to add handling to our name resolution pass for these error propagation expressions. It would be helpful to look at [[https://github.com/Rust-GCC/gccrs/blob/75049a3bfee8c3f888994bce3b741a805c631c2a/gcc/rust/resolve/rust-ast-resolve-type.cc#L568][the current generic disambiguation]] to start figuring out where it is called from, and where you need to call it.
+
 ** Completed Activities
 
 - Corrected access specifiers                                         [[https://github.com/rust-gcc/gccrs/pull/3043][PR3043]]
