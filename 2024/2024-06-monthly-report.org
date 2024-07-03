@@ -34,7 +34,7 @@ Our error propagation expressions (expressions which use the question mark opera
 
 - [[https://github.com/Rust-GCC/gccrs/issues/3045][Issue 3045: Prevent ~#[may_dangle]~ attribute from being used in safe impl]]
 
-*FIXME*
+The ~#[may_dangle]~ attribute is an important part of ~core~ 1.49, as it is used in many ~Drop~ implementations of complex Rust standard types. However, the usage of this attribute is complex, and has certain consequences on the borrow-checker and drop-checker, two integral parts of the Rust compiler pipeline. Because of this, its use is restricted to ~unsafe~ trait implementations, which is a behavior we aim to reproduce in ~gccrs~. Have a look at our ~UnsafeChecker~ compiler pass to see what you will need to modify. You can read about the ~#[may_dangle]~ attribute [[https://doc.rust-lang.org/nomicon/dropck.html][here]].
 
 ** Completed Activities
 
