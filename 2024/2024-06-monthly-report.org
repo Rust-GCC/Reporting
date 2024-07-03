@@ -168,4 +168,17 @@ There have been no changes to the Risk table this month
 
 ** Detailed changelog
 
-*FIXME*: Talk about `raw`/`box` keywords in more details
+In order to support the entirey of Rust's standard library, we must first make sure to parse all of its components correctly, included ~alloc~. ~alloc~, in its 1.49 version, uses two interesting keywords which are seldom used in Rust today: ~raw~ and ~box~.
+
+The ~box~ keyword 
+
+1. the box keyword
+2. the raw keyword
+  - why?
+3. they're being replaced
+4. we still need to support them, which we started workin on this month
+  - with parsing
+
+Interestingly, both of these keywords are no longer used by the standard library today. ~box~ has been replaced by calls to ~Box::new()~ in all instances, while uses of ~raw~ were replaced by the ~addr_of!~ macro (which uses ~raw~ internally).
+
+We need to add suppor
