@@ -4,7 +4,7 @@
 
 use clap::{Parser, ValueEnum};
 use error::Error;
-use git2::Repository;
+use git2::{Oid, Repository};
 use indicatif::MultiProgress;
 use progress::{FetchMethod, ProgressBarExt, Steps};
 use serde::Serialize;
@@ -16,12 +16,12 @@ use chrono::{Days, Months, NaiveDate};
 
 use github::{
     milestone::{self, MStone},
-    pr::{self, Pr},
+    pr::{self, find_oldest_pr_merge_commit, Pr},
 };
 
 mod naming {
-    pub static ORGANISATION: &str = "rust-gcc";
-    pub static REPOSITORY: &str = "gccrs";
+    pub const ORGANISATION: &str = "rust-gcc";
+    pub const REPOSITORY: &str = "gccrs";
 }
 
 mod error;
@@ -109,9 +109,9 @@ async fn main() -> Result<(), Error> {
         .map(Pr::from)
         .collect::<Vec<Pr>>();
 
-    let test_cases = if args.skip_tests {
-        String::new()
-    } else {
+    let old_commit_sha = find_oldest_pr_merge_commit(&gh, &merged_prs).await;
+
+    let test_cases = if let (Some(old_commit_sha), false) = (old_commit_sha, args.skip_tests) {
         let repository = if let Some(ref path) = args.local_repo {
             bar.set_step(Steps::FetchRepository(FetchMethod::Local));
             Repository::open(path).map_err(Error::Repository)?
@@ -120,12 +120,19 @@ async fn main() -> Result<(), Error> {
             repository::clone(&gh, &multi).await.map_err(Error::Clone)?
         };
 
-        // FIXME: Change "master" references to actual references
-        // Should we rely on PRs or git history ?
+        let previous_commit = repository
+            .find_commit(
+                Oid::from_str(&old_commit_sha).expect("We found this SHA in the repository"),
+            )
+            // TODO: Cleanup
+            .unwrap()
+            .parent_id(0)
+            .unwrap();
+
         let results = TestCases::collect(
             &repository,
-            "master",
-            "master",
+            &previous_commit.to_string(),
+            "master", /* TODO: Change this value ? Do we need to generate older reports ? */
             &args.configure.unwrap_or_default(),
         )
         .await
@@ -143,6 +150,9 @@ async fn main() -> Result<(), Error> {
         }
 
         results.to_string()
+    } else {
+        println!("Tests are skipped ? {}", args.skip_tests);
+        String::new()
     };
 
     bar.set_step(Steps::RetrieveMilestones);
