@@ -12,11 +12,13 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 - Add error message for E0532               [[https://github.com/rust-gcc/gccrs/pull/3118][PR3118]]
 - Fix 32-bits builds                        [[https://github.com/rust-gcc/gccrs/pull/3114][PR3114]]
 - Eager expansion for include* #1805 #1865  [[https://github.com/rust-gcc/gccrs/pull/3107][PR3107]]
+- Fix LIBS override in upstream [[https://github.com/Rust-GCC/gccrs/issues/3120][Issue 3120]]
 
 *** Contributors this week
 
 - [[https://github.com/liamnaddell][Liam Naddell]]
 - [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
 - [[https://github.com/CohenArthur][Arthur Cohen]]
 
 *** Overall Task Status
