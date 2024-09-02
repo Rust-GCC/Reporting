@@ -8,22 +8,13 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Project update
 
-This month saw really good progress in terms of the number of merged PRs, issues completed, and testcases added. All three Google Summer of Code projects got completed, which required extensive reviewing of their last few pull requests. All three of our students passed the final evaluation brillantly, and are all interested in continuing to contribute to the compiler in their free time. We are very happy to have them join the team, and are looking forward to their contributions. We have offered to help mentor them for their continuing work, as well as to help with any compiler-related studies they might have. As a reminder, anyone interested in contributing to the project will be able to receive similar help and mentoring. We are currently working with another student outside of GSoC to establish a testsuite which will help us assert that ~gccrs~ produces code with correct semantics (for now, correct means "with ~rustc~'s semantics"). It is important for ~gccrs~ to only accept the correct subset of code, but it is also necessary that the assembly we produce has the same meaning and the same runtime characteristics as any other Rust program. This ties into our pursuit of producing a "correct" compiler, which we'll talk about more in a future blogpost in cooperation with the Rust project.
+This month saw really good progress in terms of the number of merged PRs, issues completed, and testcases added. All three Google Summer of Code projects got completed, which required extensive reviewing. Our three students passed the final evaluation brillantly, and are all interested in continuing to contribute to the compiler in their free time. We are very happy to have them join the team, and are looking forward to their future work. We have offered to help mentor them in the future, as well as to help with any compiler-related studies they might have. As a reminder, anyone interested in contributing to the project will be able to receive similar help and mentoring.
 
-* FIXME: Talk about a GSoC retrospective blogpost *
-* FIXME: Fix this sentence *
+In fact, we are currently working with another student outside of GSoC to put together a testsuite and testing program which will help us assert that ~gccrs~ produces code with correct semantics (as a reminder, correct means "with ~rustc~'s semantics"). It is important for ~gccrs~ to only accept the correct subset of code, but it is also necessary that the assembly we produce has the same meaning and the same runtime characteristics as any other Rust program. This ties into our pursuit of producing a "correct" compiler, which we'll talk about more in a future blogpost in cooperation with the Rust project.
 
-We have gained a few new contributors this summer, and we hope that this trend continues. We hope they continue to contribute to the project, and will spend some time this week to try and help with the codebase when necessary.
+In terms of technical contributions, we have closed the ~Unhandled attributes~ milestone, which covered the handling of all attributes required for compiling ~core 1.49~. We have made good progress on the ~Lang items~ milestone, with the only remaining step being to switch our existing code generation of lang item paths to these new paths we introduced. This will help all of our early code generation pipeline, namely surrounding built-in macros and the desugaring of certain constructs like ~for~ loops. Once this is done, we will fix the issues surrounding iterators and indexing, which currently prevent ~for~ loops from being completely implemented. We have gained a few new contributors this summer, and we hope that this trend continues. We hope they continue to contribute to the project, and will spend some time this week to try and help with the codebase when necessary.
 
-In terms of technical contributions, we have closed the ~Unhandled attributes~ milestone, which covered the handling of all attributes required for compiling ~core 1.49~. We have made good progress on the ~Lang items~ milestone, with the only remaining step being to switch our existing code generation of lang item paths to these new paths we introduced. This will help all of our early code generation pipeline, namely surrounding built-in macros and the desugaring of certain constructs like ~for~ loops. Once this is done, we will fix the issues surrounding iterators and indexing, which currently prevent ~for~ loops from being completely implemented.
-
-* FIXME: Technical deep dive on what a for loop desugars to? *
-
-Finally, we would like to be more public about ~gccrs~'s progress. In some recent comments surrounding the Rust-for-Linux project, we have noted that some people
-
-* FIXME: Other word? *
-
-believe that the work on the compiler has slowed down, despite our regular upstreaming and progress reports. We think this might be due to a lack of activity on social media and forums such as Reddit or HackerNews, and will start posting our monthly updates there again. We will also be coming out with a few blogposts in the coming weeks, namely around the progress achieved by our GSoC students and how it will impact users.
+Finally, we would like to be more public about ~gccrs~'s progress. In some recent comments surrounding the Rust-for-Linux project, we have noted that some internauts believe that the work on the compiler has slowed down, despite our regular upstreaming and progress reports. We think this might be due to a lack of activity on social media and forums such as Reddit or HackerNews, and will start posting our monthly updates there again. We will also be coming out with a few blogposts in the coming weeks, namely around the progress achieved by our GSoC students and how it will impact users.
 
 *** Community call
 
@@ -133,8 +124,8 @@ Our error propagation expressions (expressions which use the question mark opera
 | Question mark operator            |         0% |         0% |     - | 15th Dec 2024 |               - | 21st Feb 2025 |   GCC 15.1 |
 | Codegen fixes                     |         0% |         0% |     - |  7th Oct 2024 |               - |  1st Mar 2025 |   GCC 15.1 |
 | Specialization                    |         0% |         0% |     - |  1st Jan 2025 |               - |  1st Mar 2025 |   GCC 15.1 |
-| Inline assembly                   |         0% |       100% | +100% |  1st Jun 2024 |               - | 15th Sep 2024 |   GCC 15.1 |
-| Borrow checker improvements       |         0% |       100% | +100% |  1st Jun 2024 |               - | 15th Sep 2024 |   GCC 15.1 |
+| Inline assembly                   |         0% |       100% | +100% |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
+| Borrow checker improvements       |         0% |       100% | +100% |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
 | Rustc Testsuite Adaptor           |         0% |         0% |     - |  1st Jun 2024 |               - | 15th Sep 2024 |   GCC 15.1 |
 | black_box intrinsic               |         0% |         0% |     - | 28th Oct 2024 |               - | 28th Nov 2024 |   GCC 15.1 |
 | Unstable RfL features             |         0% |         0% |     - |  7th Jan 2025 |               - |  1st Mar 2025 |   GCC 15.1 |
