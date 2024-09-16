@@ -17,14 +17,14 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 - Fix v0-mangle1.rs test when run with ASAN [[https://github.com/Rust-GCC/gccrs/pull/3148][PR3148]]
 - Fix clang-format CI [[https://github.com/Rust-GCC/gccrs/pull/3152][PR3152]]
 - Asm generic il codegen [[https://github.com/Rust-GCC/gccrs/pull/3060][PR3060]]
-
+- [[https://inbox.sourceware.org/buildbot/Zs8EYRjiXwSV2gq4@elastic.org/T/#t][Add support for building gccrs in upstream "all languages builder with extra checks" by sourceware's buildbots]]
 *** Contributors this week
 
 - [[https://github.com/braw-lee][Kushal Pal]]
 - [[https://github.com/badumbatish][Jasmine Tang]]
 - [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
-
+- [[https://github.com/dkm][Marc Poulhiès]]
 *** Overall Task Status
 
 | Category    | Last Week | This Week | Delta |
