@@ -127,26 +127,26 @@ Our error propagation expressions (expressions which use the question mark opera
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |        338 |        338 |     - |
-| In Progress |         71 |         70 |    -1 |
-| Completed   |        856 |        872 |   +16 |
+| TODO        |        338 |        327 |   -11 |
+| In Progress |         70 |         75 |    +5 |
+| Completed   |        872 |        888 |   +16 |
 
 *** Test Cases
 
 | TestCases | Last Month | This Month | Delta |
 |-----------+------------+------------+-------|
-| Passing   | 8557       | 8629       | +72   |
+| Passing   | 8629       | 9144       | +515  |
 | Failed    | -          | -          | -     |
-| XFAIL     | 72         | 70         | -2    |
+| XFAIL     | 72         | 323        | +251  |
 | XPASS     | -          | -          | -     |
 
 *** Bugs
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |        125 |        128 |    +3 |
-| In Progress |         38 |         37 |    -1 |
-| Completed   |        424 |        429 |    +5 |
+| TODO        |        128 |        120 |    -8 |
+| In Progress |         37 |         40 |    -1 |
+| Completed   |        424 |        437 |    +5 |
 
 *** Milestones Progress
  
