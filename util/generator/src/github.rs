@@ -2,3 +2,5 @@
 
 pub mod milestone;
 pub mod pr;
+pub mod contrib;
+pub mod issues;

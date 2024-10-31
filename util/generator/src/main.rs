@@ -6,17 +6,21 @@ use clap::{Parser, ValueEnum};
 use error::Error;
 use git2::{Oid, Repository};
 use indicatif::MultiProgress;
+use octocrab::OctocrabBuilder;
 use progress::{FetchMethod, ProgressBarExt, Steps};
 use serde::Serialize;
 use std::path::PathBuf;
 use testcase::TestCases;
 use tinytemplate::TinyTemplate;
+use std::collections::HashSet;
 
 use chrono::{Days, Months, NaiveDate};
 
 use github::{
     milestone::{self, MStone},
     pr::{self, find_oldest_pr_merge_commit, Pr},
+    contrib::{self, Contrib},
+    issues::{self, get_nb_closed_issues}
 };
 
 mod naming {
@@ -80,6 +84,8 @@ struct Cli {
     pub date: NaiveDate,
     #[arg(short, long)]
     pub author: String,
+    #[arg(short, long, help = "Personal Token for authentification")]
+    pub token: String,
 }
 
 fn get_from_date(kind: &Kind, date: &NaiveDate) -> NaiveDate {
@@ -92,7 +98,7 @@ fn get_from_date(kind: &Kind, date: &NaiveDate) -> NaiveDate {
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     let args = Cli::parse();
-    let gh = octocrab::instance();
+    let gh = OctocrabBuilder::new().personal_token(args.token).build()?;
     let from_date = get_from_date(&args.kind, &args.date);
 
     let multi = MultiProgress::new();
@@ -109,9 +115,21 @@ async fn main() -> Result<(), Error> {
         .map(Pr::from)
         .collect::<Vec<Pr>>();
 
+    // dbg!(&merged_prs);
     let old_commit_sha = find_oldest_pr_merge_commit(&gh, &merged_prs).await;
 
+    let ctb = pr::fetch_merged(&gh, &from_date, &args.date)
+        .await?
+        // FIXME: Would it be better to have a trait extension for octo::PullRequest here?
+        // and `impl ReportFormatter` on it?
+        // yes
+        .into_iter()
+        .map(Contrib::from)
+        .collect::<HashSet<Contrib>>();
+
+
     let test_cases = if let (Some(old_commit_sha), false) = (old_commit_sha, args.skip_tests) {
+
         let repository = if let Some(ref path) = args.local_repo {
             bar.set_step(Steps::FetchRepository(FetchMethod::Local));
             Repository::open(path).map_err(Error::Repository)?
@@ -125,9 +143,12 @@ async fn main() -> Result<(), Error> {
                 Oid::from_str(&old_commit_sha).expect("We found this SHA in the repository"),
             )
             // TODO: Cleanup
-            .unwrap()
+            .map_err(|_| Error::RepoNotUpToDate("Be sur that your repo is up do date"))?
             .parent_id(0)
             .unwrap();
+
+        println!("{}", get_nb_closed_issues(&gh).await.unwrap());
+
 
         let results = TestCases::collect(
             &repository,
@@ -155,6 +176,7 @@ async fn main() -> Result<(), Error> {
         String::new()
     };
 
+
     bar.set_step(Steps::RetrieveMilestones);
     let milestones = milestone::fetch_all(&gh)
         .await?
@@ -162,13 +184,15 @@ async fn main() -> Result<(), Error> {
         .map(MStone::from)
         .collect::<Vec<MStone>>();
 
+    println!("oui");
+
     let ctx = Context {
         kind: args.kind,
         from: from_date,
         to: args.date,
         author: args.author,
         date: args.date,
-        contributors: String::new(),
+        contributors: ctb.iter().fold(String::new(), |acc, ct| format!("{acc}\n{ct}")),
         task_status: String::new(),
         test_cases,
         bugs: String::new(),

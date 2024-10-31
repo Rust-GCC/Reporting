@@ -8,7 +8,7 @@ use octocrab::{models::pulls::PullRequest, params::State, Octocrab};
 
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Pr {
     number: u64,
     url: String,
@@ -49,10 +49,11 @@ pub async fn fetch_merged(
     let mut pages = gh
         .pulls(ORGANISATION, REPOSITORY)
         .list()
-        .state(State::Closed)
+        .state(State::All)
         .per_page(100)
         .send()
         .await?;
+
 
     Ok(pages
         .take_items()
@@ -62,9 +63,9 @@ pub async fn fetch_merged(
                 .map(|e| {
                     let merge_date = &e.date_naive();
                     // Is the inclusive range okay?
-                    merge_date < from && merge_date > to
+                    merge_date > from && merge_date < to
                 })
-                .unwrap_or(true)
+                .unwrap_or(false)
         })
         .collect())
 }

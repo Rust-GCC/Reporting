@@ -9,7 +9,7 @@ edition = "2021"
 async-trait = "0.1.59"
 chrono = "0.4.23"
 clap = { version = "4.0.29", features = ["derive"] }
-octocrab = "0.17.0"
+octocrab = "0.41.2"
 serde = { version = "1.0.150", features = ["derive"] }
 tinytemplate = "1.2.1"
 tokio = { version = "1.32.0", features = ["full"] }

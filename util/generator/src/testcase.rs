@@ -19,11 +19,13 @@ pub enum ReportError {
     Configure(io::Error),
     /// An error happened during build stage.
     Make(io::Error),
+    MakeProcces,
     /// An error happened during check stage.
     Check(io::Error),
     /// Cannot convert program output to utf-8.
     CollectionError(std::str::Utf8Error),
 }
+
 
 impl fmt::Display for ReportError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -33,6 +35,7 @@ impl fmt::Display for ReportError {
             LocalError(why) => write!(f, "Local error: {why}"),
             Configure(why) => write!(f, "Error whilst running configure script: {why}"),
             Make(why) => write!(f, "Error whilst building compiler: {why}"),
+            MakeProcces => write!(f, "Error whilst building compiler"),
             Check(why) => write!(f, "Error whilst running testsuite: {why}"),
             CollectionError(why) => write!(f, "Error whilst collecting testsuite output: {why}"),
         }
@@ -87,14 +90,14 @@ fn gather_test_results(
     repo_location: &Path,
     additional_args: &str,
 ) -> Result<TestReport, ReportError> {
-    let build_dir = repo_location.to_path_buf().join("build");
+    let build_dir = repo_location.to_path_buf().join("build_report");
     // We do not want to mess with existing build
     if build_dir.exists() {
         panic!("A build directory already exists, please delete it.")
     }
     fs::create_dir(&build_dir).map_err(ReportError::LocalError)?;
     let mut configure_args = vec![
-        "--enable-multilib",
+        "--disable-multilib",
         "--disable-bootstrap",
         "--enable-languages=rust",
     ];
@@ -108,17 +111,33 @@ fn gather_test_results(
         .status()
         .map_err(ReportError::Configure)?;
 
+    let mut w_arg = vec!["-c",  "env | grep HARDEN"];
+
+    Command::new("bash")
+        .args(w_arg)
+        .current_dir(&build_dir)
+        .status()
+        .map_err(ReportError::Configure)?;
+
+
     // TODO: We either want to use a computed value or leave this bit to the
     // user by providing an interface for additional make arguments rather than
     // hardcoding the job amount.
-    let make_args = vec!["-j14"];
+    let make_args = vec!["-j8"];
 
-    Command::new("make")
+    let output = Command::new("make")
         .args(make_args)
         .stdout(Stdio::null())
         .current_dir(&build_dir)
         .status()
         .map_err(ReportError::Make)?;
+
+    dbg!(&output);
+
+    if ! output.success()
+    {
+        return Err(ReportError::MakeProcces);
+    }
 
     let output = Command::new("make")
         .arg("check-rust")
@@ -126,11 +145,15 @@ fn gather_test_results(
         .output()
         .map_err(ReportError::Check)?;
 
+        dbg!(&output);
+
     let s: Vec<&str> = std::str::from_utf8(&output.stdout)
         .map_err(ReportError::CollectionError)?
         .lines()
         .filter(|e| e.starts_with('#'))
         .collect();
+
+    dbg!(&s);
 
     let xfail = s
         .iter()
@@ -140,6 +163,8 @@ fn gather_test_results(
         .map(TestCount)
         .unwrap_or_default();
 
+    dbg!(&xfail);
+
     let passing = s
         .iter()
         .find(|s| s.contains("passes"))
@@ -147,6 +172,8 @@ fn gather_test_results(
         .and_then(|s| i64::from_str(s).ok())
         .map(TestCount)
         .unwrap_or_default();
+
+    dbg!(&passing);
 
     let result = TestReport {
         xfail,
@@ -180,14 +207,21 @@ impl TestCases {
         let workspace = repo
             .path()
             .parent()
-            .expect(".git parent should always exist");
+            .expect(".git parent should always exist").to_path_buf();
         repository::checkout(repo, previous).map_err(CheckoutError)?;
 
-        let previous = gather_test_results(workspace, configure_args)?;
+        let workspace_current = workspace.clone();
+        let configure_args = configure_args.to_owned();
+        
+        let configure_args_current = configure_args.to_owned();
+
+        let previous = tokio::task::spawn_blocking( move || gather_test_results(&workspace, &configure_args)).await.unwrap()?;
 
         repository::checkout(repo, current).map_err(CheckoutError)?;
 
-        let current = gather_test_results(workspace, configure_args)?;
+
+        let current = tokio::task::spawn_blocking( move || gather_test_results(&workspace_current, &configure_args_current)).await.unwrap()?;
+
 
         Ok(TestCases { previous, current })
     }
@@ -209,38 +243,38 @@ impl fmt::Display for TestCases {
         writeln!(f, "|{SEP:->W_0$}+{SEP:->W_1$}+{SEP:->W_2$}+{SEP:->W_3$}|")?;
         writeln!(
             f,
-            "|{:<W_0$}|{:<W_1$}|{:<W_2$}|{:<W_3$}|",
+            "|{:>W_0$}|{:>W_1$}|{:>W_2$}|{:>W_3$}|",
             "Passing",
-            self.previous.passing,
-            self.current.passing,
-            TestCount(self.current.failed.0 - self.previous.failed.0),
+            format!("{}", self.previous.passing),
+            format!("{}", self.current.passing),
+            format!("{}", TestCount(self.current.passing.0 - self.previous.passing.0)),
         )?;
 
         writeln!(
             f,
-            "|{:<W_0$}|{:<W_1$}|{:<W_2$}|{:<W_3$}|",
+            "|{:>W_0$}|{:>W_1$}|{:>W_2$}|{:>W_3$}|",
             "Failed",
-            self.previous.failed,
-            self.current.failed,
-            TestCount(self.current.failed.0 - self.previous.failed.0),
+            format!("{}", self.previous.failed),
+            format!("{}", self.current.failed),
+            format!("{}", TestCount(self.current.failed.0 - self.previous.failed.0)),
         )?;
 
         writeln!(
             f,
-            "|{:<W_0$}|{:<W_1$}|{:<W_2$}|{:<W_3$}|",
+            "|{:>W_0$}|{:>W_1$}|{:>W_2$}|{:>W_3$}|",
             "XFAIL",
-            self.previous.xfail,
-            self.current.xfail,
-            TestCount(self.current.xfail.0 - self.previous.xfail.0),
+            format!("{}", self.previous.xfail),
+            format!("{}", self.current.xfail),
+            format!("{}", TestCount(self.current.xfail.0 - self.previous.xfail.0)),
         )?;
 
         writeln!(
             f,
-            "|{:<W_0$}|{:<W_1$}|{:<W_2$}|{:<W_3$}|",
+            "|{:>W_0$}|{:>W_1$}|{:>W_2$}|{:>W_3$}|",
             "XPASS",
-            self.previous.xpass,
-            self.current.xpass,
-            TestCount(self.current.xpass.0 - self.previous.xpass.0),
+            format!("{}", self.previous.xpass),
+            format!("{}", self.current.xpass),
+            format!("{}", TestCount(self.current.xpass.0 - self.previous.xpass.0)),
         )
     }
 }
