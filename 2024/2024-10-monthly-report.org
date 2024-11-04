@@ -10,7 +10,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 37 pull-requests were merged this month, which makes October one of the most productive months of this year for ~gccrs~. Most of the changes concerned our name resolution rewrite, and more specifically its integration to the rest of the compiler pipeline. This paves the way for the removal of our old name resolution algorith, which will happen as soon as all testcases pass using the new algorithm. Some long standing type system bugs were also fixed, which brings us closer and closer towards typechecking ~core~ and being able to compile it. We are now approaching the end of the Stage 1 period for GCC 15.1, which means we will soon no longer be able to push changes to common GCC infrastructure. As such, we are spending some time making sure all of these changes are properly sent upstream and are being reviewed. Changes made specifically to the Rust frontend will be upstreamable until the release of GCC 15.1, in spring of 2025. We are also working towards a rework of our fork-updating process, in order to make it easier to develop ~gccrs~ on the most recent version of GCC. This process is currently manual, and hard to automate - which is not fair to the contributor in charge of this task. Spending this time will make it easier for us to upstream our changes, which will speed up that process.
 
-The technical blogpost from lsat month was well-received, with positive comments and conversations on Reddit. It has been linked in the blog.rust-lang.org blogpost, which has been reviewed and approved, and should release shortly.
+The technical blogpost from last month was well-received, with positive comments and conversations on Reddit. It has been linked in the blog.rust-lang.org blogpost, which has been reviewed and approved, and should release shortly.
 
 *** Community call
 
@@ -89,7 +89,7 @@ There are no calls for contribution this month, as we do not have a lot of good 
 |-----------+------------+------------+-------|
 | Passing   | 9144       | 9212       | +67   |
 | Failed    | -          | -          | -     |
-| XFAIL     | 323        | 294        | +29   |
+| XFAIL     | 323        | 294        | -29   |
 | XPASS     | -          | -          | -     |
 
 *** Bugs
@@ -97,7 +97,7 @@ There are no calls for contribution this month, as we do not have a lot of good 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
 | TODO        |        120 |        119 |    -1 |
-| In Progress |         40 |         48 |    -2 |
+| In Progress |         40 |         48 |    +8 |
 | Completed   |        437 |        441 |    +4 |
 
 *** Milestones Progress
