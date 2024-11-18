@@ -6,28 +6,22 @@
 
 Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
 
+- Typechecker improvements
+- NR 2.0 improvements
+- Patches around platform specific code for reusability with libgccjit/rustc_cg_gcc
+
 ** Completed Activities
 
 - gccrs: Fix bad handling for recursive type query     [[https://github.com/rust-gcc/gccrs/pull/3250][PR3250]]
-phil/dev                             about 5 days ago
 - Push ribs by kind rather than by value               [[https://github.com/rust-gcc/gccrs/pull/3249][PR3249]]
-powerboat9:fix-rib-kind              about 6 days ago
 - Improve handling of static items in toplevel 2.0     [[https://github.com/rust-gcc/gccrs/pull/3248][PR3248]]
-powerboat9:fix-static                about 6 days ago
 - Cleanup clang warnings                               [[https://github.com/rust-gcc/gccrs/pull/3244][PR3244]]
-CohenArthur:cleanup-struct-warnings  about 11 days ago
 - gccrs: add test case to show issue is fixed          [[https://github.com/rust-gcc/gccrs/pull/3243][PR3243]]
-phil/inference-bug-fix               about 11 days ago
 - Fix bad type checking on fn trait calls              [[https://github.com/rust-gcc/gccrs/pull/3240][PR3240]]
-phil/inference-bug-fix               about 12 days ago
 - Use name resolver 2.0 in `VisibilityResolver`        [[https://github.com/rust-gcc/gccrs/pull/3239][PR3239]]
-powerboat9:priv-res                  about 12 days ago
 - Improve handling of implicit `Self` parameter in AST [[https://github.com/rust-gcc/gccrs/pull/3238][PR3238]]
-powerboat9:fix-self                  about 13 days ago
 - Use name resolver 2.0 for module descendance checks  [[https://github.com/rust-gcc/gccrs/pull/3224][PR3224]]
-powerboat9:fix-mod-dec               about 21 days ago
 - Reorganize the CPU feature detection                 [[https://github.com/rust-gcc/gccrs/pull/3195][PR3195]]
-antoyo:rust-and-jit-cpu-features     about 1 month ago
 
 *** Contributors this week
 
@@ -39,9 +33,9 @@ antoyo:rust-and-jit-cpu-features     about 1 month ago
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |       327 |       322 |    -1 |
-| In Progress |        75 |        79 |    +1 |
-| Completed   |       897 |       894 |    +2 |
+| TODO        |       327 |       318 |    -9 |
+| In Progress |        75 |        81 |    +6 |
+| Completed   |       897 |       901 |    +4 |
 
 *** Test Cases
 
@@ -56,9 +50,9 @@ antoyo:rust-and-jit-cpu-features     about 1 month ago
 
 | Category    | Last Week | This Week | Delta |
 |-------------+-----------+-----------+-------|
-| TODO        |       120 |       118 |     - |
+| TODO        |       120 |       113 |    -7 |
 | In Progress |        40 |        41 |    +1 |
-| Completed   |       437 |       439 |     - |
+| Completed   |       437 |       445 |    +8 |
 
 *** Milestones Progress
 
@@ -67,17 +61,17 @@ antoyo:rust-and-jit-cpu-features     about 1 month ago
 | GCC 14.2                          |       100% |       100% |     - |  7th Jun 2024 |   15th Jun 2024 | 15th Jun 2024 |   GCC 14.2 |
 | GCC 15.1                          |       100% |       100% |     - | 21st Jun 2024 |   31st Jun 2024 |  1st Jul 2024 |   GCC 15.1 |
 | Name resolution 2.0 rework        |         6% |         6% |     - |  1st Jun 2024 |               - |  1st Apr 2025 |   GCC 15.1 |
-| Macro expansion                   |        21% |        21% |     - |  1st Jun 2024 |               - |  1st Jan 2025 |   GCC 15.1 |
+| Macro expansion                   |        29% |        29% |     - |  1st Jun 2024 |               - |  1st Jan 2025 |   GCC 15.1 |
 | Unhandled attributes              |       100% |       100% |     - |  1st Jul 2024 |   19th Aug 2024 | 15th Aug 2024 |   GCC 15.1 |
 | Lang items                        |        66% |        66% |     - |  1st Jul 2024 |               - |  1st Sep 2024 |   GCC 15.1 |
+| Deref and DerefMut improvements   |       100% |       100% |     - | 28th Sep 2024 |   25th Oct 2024 | 28th Dec 2024 |   GCC 15.1 |
 | Indexing fixes                    |         0% |         0% |     - | 21st Jul 2024 |               - | 15th Sep 2024 |   GCC 15.1 |
 | Iterator fixes                    |         0% |         0% |     - | 21st Jul 2024 |               - | 15th Sep 2024 |   GCC 15.1 |
 
 | Upcoming Milestone                |  Last Week |  This Week | Delta | Start Date    | Completion Date | Target        | Target GCC |
 |-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|------------|
 | Auto traits improvements          |         0% |         0% |     - | 15th Sep 2024 |               - | 21st Oct 2024 |   GCC 15.1 |
-| Deref and DerefMut improvements   |         0% |         0% |     - | 28th Sep 2024 |               - | 28th Oct 2024 |   GCC 15.1 |
-| Remaining typecheck issues        |         0% |         0% |     - | 21st Oct 2024 |               - |  1st Jan 2025 |   GCC 15.1 |
+| Remaining typecheck issues        |        85% |        76% |   -9% | 21st Oct 2024 |               - |  1st Jan 2025 |   GCC 15.1 |
 | cfg-core                          |         0% |         0% |     - |  1st Dec 2024 |               - |  1st Jan 2025 |   GCC 15.1 |
 | Question mark operator            |         0% |         0% |     - | 15th Dec 2024 |               - | 21st Feb 2025 |   GCC 15.1 |
 | Codegen fixes                     |         0% |         0% |     - |  7th Oct 2024 |               - |  1st Mar 2025 |   GCC 15.1 |
@@ -131,7 +125,6 @@ There have been no changes to the Risk table.
 ** Planned Activities
 
 - Continue fixing remaining failing test for name resolution 2.0
-- Update changes to the build system to detect cargo correctly before stage 3 freeze
-- Fix the remaining failing tests on the HIR rework
+- Continue with lang item codegen
 
 ** Detailed changelog
