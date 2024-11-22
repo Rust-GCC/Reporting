@@ -2,6 +2,8 @@
 
 This repository contains the reports for each week and a combined monthly report. Maintained by the GCC Rust core team.
 
+The monthly reports are available on [our website](https://rust-gcc.github.io/).
+
 Reach out to us on:
 
 * GCC Rust Zulip: https://gcc-rust.zulipchat.com/
