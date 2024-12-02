@@ -189,10 +189,10 @@ There are no calls for contribution this month, as we do not have a lot of good 
 
 *** Risks
 
-There have been no changes to the Risk table this month
+We have now entered Stage 3 of GCC development, and all of the patches we needed to get upstreamed have been upstreamed. The risk present in this table is no longer present.
 
 | Risk                                          | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                      |
 |-----------------------------------------------+--------------+-------------------+--------------+-----------------------------------------------------------------|
-| Missing features for GCC 15.1 deadline        |            2 |                 1 |            2 | Start working on required features as early as July (6mo ahead) |
+| Missing features for GCC 15.1 deadline        |            2 |                 0 |            0 | Start working on required features as early as July (6mo ahead) |
 
 ** Detailed changelog
