@@ -121,7 +121,7 @@ There are no calls for contribution this month, as we do not have a lot of good 
 | Completed   |        441 |        450 |    +9 |
 
 *** Milestones Progress
- 
+
 | Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        | Target GCC |
 |-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|------------|
 | Name resolution 2.0 rework        |         6% |        20% |  +14% |  1st Jun 2024 |               - |  1st Apr 2025 |   GCC 15.1 |
