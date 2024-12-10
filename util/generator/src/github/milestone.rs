@@ -22,7 +22,7 @@ impl MilestoneExt for Octocrab {
         owner: &str,
         repo: &str,
     ) -> Result<Page<Milestone>, octocrab::Error> {
-        self.get(format!("repos/{owner}/{repo}/milestones"), None::<&()>)
+        self.get(format!("https://api.github.com/repos/{owner}/{repo}/milestones"), None::<&()>)
             .await
     }
 }
