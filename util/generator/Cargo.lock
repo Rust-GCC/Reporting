@@ -403,6 +403,7 @@ dependencies = [
  "octocrab",
  "rand",
  "serde",
+ "serde_json",
  "tinytemplate",
  "tokio",
 ]

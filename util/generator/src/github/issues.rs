@@ -8,6 +8,8 @@ use serde::Serialize;
 
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
+use serde_json::Value;
+
 #[derive(Clone, Debug)]
 pub struct Issues{
     number: u64,
@@ -51,7 +53,7 @@ pub async fn fetch_issues(
 
 pub async fn get_nb_closed_issues(
      gh: &Octocrab,
- ) -> Result<u32, Error> {
+ ) -> Result<u64, Error> {
     
     let mut pages = gh
         .issues(ORGANISATION, REPOSITORY)
@@ -71,11 +73,15 @@ pub async fn get_nb_closed_issues(
         .send()
         .await?;
 
+
     let response = gh._get("https://api.github.com/search/issues?q=repo:Rust-GCC/gccrs+type:issue+state:closed").await.unwrap();
 
-    dbg!(&response);
+    let serres: Value = serde_json::from_str(gh.body_to_string(response).await.unwrap().as_str()).unwrap();
+    println!("{}", serres["total_count"]);
 
-
-    let nb_issues_last_p : u32 = last_page.into_iter().count().try_into().unwrap();
-    Ok((nb_p - 1) * 50+ nb_issues_last_p)
+    match serres["total_count"].as_u64()
+    {
+        Some(x) => return Ok(x),
+        None => Err(Error::SerdeNotFound("Total Count"))
+    }
     }

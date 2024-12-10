@@ -11,7 +11,8 @@ pub enum Error {
     Test(ReportError),
     Workspace(io::Error),
     Repository(git2::Error),
-    RepoNotUpToDate(& 'static str)
+    RepoNotUpToDate(& 'static str),
+    SerdeNotFound(& 'static str)
 }
 
 impl fmt::Display for Error {
@@ -25,6 +26,7 @@ impl fmt::Display for Error {
             Workspace(why) => write!(f, "Workspace management error: {why}"),
             Repository(why) => write!(f, "Repository management error: {why}"),
             RepoNotUpToDate(why) => write!(f, "{why}"),
+            SerdeNotFound(why) => write!(f, "Field {why} not found")
         }
     }
 }
