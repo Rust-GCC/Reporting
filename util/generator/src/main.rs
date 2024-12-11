@@ -20,8 +20,10 @@ use github::{
     milestone::{self, MStone},
     pr::{self, find_oldest_pr_merge_commit, Pr},
     contrib::{self, Contrib},
-    issues::{self, get_nb_closed_issues}
+    issues::{self, get_TODO, get_closed, get_in_progress}
 };
+
+use task::Task;
 
 mod naming {
     pub const ORGANISATION: &str = "rust-gcc";
@@ -33,6 +35,7 @@ mod github;
 mod progress;
 mod repository;
 mod testcase;
+mod task;
 
 // FIXME: There should be two templates: one for weekly reports, one for monthly reports, as monthly reports include tests etc
 static TEMPLATE: &str = include_str!("templates/report.org.template");
@@ -147,9 +150,6 @@ async fn main() -> Result<(), Error> {
             .parent_id(0)
             .unwrap();
 
-        println!("{}", get_nb_closed_issues(&gh).await.unwrap());
-
-
         let results = TestCases::collect(
             &repository,
             &previous_commit.to_string(),
@@ -184,8 +184,19 @@ async fn main() -> Result<(), Error> {
         .map(MStone::from)
         .collect::<Vec<MStone>>();
 
-    println!("oui");
+    let nb_todo = get_TODO(&gh, false).await?;
+    let in_prog = get_in_progress(&gh, false).await?;
+    let closed = get_closed(&gh, false).await?;
 
+    let task_status =  Task{nb_todo, in_prog, closed}.to_string();
+
+    let nb_todo = get_TODO(&gh, true).await?;
+    let in_prog = get_in_progress(&gh, true).await?;
+    let closed = get_closed(&gh, true).await?;
+
+    let bugs =  Task{nb_todo, in_prog, closed}.to_string();
+    
+    
     let ctx = Context {
         kind: args.kind,
         from: from_date,
@@ -193,9 +204,9 @@ async fn main() -> Result<(), Error> {
         author: args.author,
         date: args.date,
         contributors: ctb.iter().fold(String::new(), |acc, ct| format!("{acc}\n{ct}")),
-        task_status: String::new(),
+        task_status,
         test_cases,
-        bugs: String::new(),
+        bugs,
         milestones: milestones.iter().fold(String::new(), |acc, milestone| {
             format!("{acc}\n{milestone}")
         }),

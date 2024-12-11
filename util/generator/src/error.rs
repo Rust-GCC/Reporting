@@ -1,6 +1,7 @@
 use crate::repository::CloneError;
 use crate::testcase::ReportError;
 use std::{fmt, io};
+use serde_json::Error as sejs_Error;
 
 // TODO: Cleanup, improve
 #[derive(Debug)]
@@ -12,7 +13,7 @@ pub enum Error {
     Workspace(io::Error),
     Repository(git2::Error),
     RepoNotUpToDate(& 'static str),
-    SerdeNotFound(& 'static str)
+    SerdeNotFound(sejs_Error) 
 }
 
 impl fmt::Display for Error {
@@ -26,7 +27,7 @@ impl fmt::Display for Error {
             Workspace(why) => write!(f, "Workspace management error: {why}"),
             Repository(why) => write!(f, "Repository management error: {why}"),
             RepoNotUpToDate(why) => write!(f, "{why}"),
-            SerdeNotFound(why) => write!(f, "Field {why} not found")
+            SerdeNotFound(why) => write!(f, "Json serializing error: {why}")
         }
     }
 }
@@ -42,5 +43,10 @@ impl From<octocrab::Error> for Error {
 impl From<tinytemplate::error::Error> for Error {
     fn from(e: tinytemplate::error::Error) -> Error {
         Error::Template(e)
+    }
+}
+impl From<sejs_Error> for Error {
+    fn from(e: sejs_Error) -> Error {
+        Error::SerdeNotFound(e)
     }
 }

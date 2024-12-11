@@ -51,37 +51,81 @@ pub async fn fetch_issues(
     Ok(pages)
 }
 
-pub async fn get_nb_closed_issues(
+pub async fn get_in_progress(
      gh: &Octocrab,
+     bug: bool
  ) -> Result<u64, Error> {
-    
-    let mut pages = gh
-        .issues(ORGANISATION, REPOSITORY)
-        .list()
-        .state(octocrab::params::State::Closed)
-        .per_page(100)
-        .send()
-        .await?;
-    let nb_p : u32 = pages.number_of_pages().unwrap();
 
-    let mut last_page = gh
-        .issues(ORGANISATION, REPOSITORY)
-        .list()
-        .state(octocrab::params::State::Closed)
-        .per_page(100)
-        .page(nb_p)
-        .send()
-        .await?;
+     let mut all_uri = String::from("https://api.github.com/search/issues?q=repo:Rust-GCC/gccrs+type:issue+state:open");
+     let mut no_assignee_uri =  String::from("https://api.github.com/search/issues?q=repo:Rust-GCC/gccrs+type:issue+state:open+no:assignee");
+     if bug
+     {
+         all_uri.push_str("+label:bug");    
+         no_assignee_uri.push_str("+label:bug");
+     }
+    let all = gh._get(all_uri).await.unwrap();
 
+    let no_assignee = gh._get(no_assignee_uri).await.unwrap();
 
-    let response = gh._get("https://api.github.com/search/issues?q=repo:Rust-GCC/gccrs+type:issue+state:closed").await.unwrap();
-
-    let serres: Value = serde_json::from_str(gh.body_to_string(response).await.unwrap().as_str()).unwrap();
-    println!("{}", serres["total_count"]);
-
-    match serres["total_count"].as_u64()
+    let serres: Value = serde_json::from_str(gh.body_to_string(all).await.unwrap().as_str())?;
+    let serres_no: Value  = serde_json::from_str(gh.body_to_string(no_assignee).await.unwrap().as_str())?;
+    let nb_all = match serres["total_count"].as_u64()
     {
-        Some(x) => return Ok(x),
-        None => Err(Error::SerdeNotFound("Total Count"))
+        Some(x) => x,
+        None => 0
+    };
+
+    let nb_no= match serres_no["total_count"].as_u64()
+    {
+        Some(x) => x,
+        None => 0
+    };
+    Ok(nb_all - nb_no)
     }
+
+    pub async fn get_TODO(
+        gh: &Octocrab,
+        bug :bool
+    ) -> Result<u64, Error> {
+    
+    let mut no_assignee_uri = String::from("https://api.github.com/search/issues?q=repo:Rust-GCC/gccrs+type:issue+state:open+no:assignee");
+    if bug
+    {
+        no_assignee_uri.push_str("+label:bug")
+    }
+    let no_assignee = gh._get(no_assignee_uri).await.unwrap();
+
+    let serres_no: Value  = serde_json::from_str(gh.body_to_string(no_assignee).await.unwrap().as_str())?;
+
+    let nb_no= match serres_no["total_count"].as_u64()
+    {
+        Some(x) => x,
+        None => 0
+    };
+    Ok(nb_no)
+        
+    }
+
+    pub async fn get_closed(
+        gh: &Octocrab,
+        bug: bool
+    ) -> Result<u64, Error> {
+    
+    let mut no_assignee_uri = String::from("https://api.github.com/search/issues?q=repo:Rust-GCC/gccrs+type:issue+state:closed");
+    if bug
+    {
+        no_assignee_uri.push_str("+label:bug")
+    }
+
+    let no_assignee = gh._get(no_assignee_uri).await.unwrap();
+
+    let serres_no: Value  = serde_json::from_str(gh.body_to_string(no_assignee).await.unwrap().as_str())?;
+
+    let nb_no= match serres_no["total_count"].as_u64()
+    {
+        Some(x) => x,
+        None => 0
+    };
+    Ok(nb_no)
+        
     }
