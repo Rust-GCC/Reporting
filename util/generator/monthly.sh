@@ -14,4 +14,4 @@ else
   CMD="./generator"
 fi
 
-$CMD -k monthly -d "$DATE" -a "$AUTHOR" $PATH_TO_SRC --token "$GH_TOKEN"
+$CMD -k monthly -d "$DATE" -a "$AUTHOR" $PATH_TO_SRC

@@ -87,8 +87,6 @@ struct Cli {
     pub date: NaiveDate,
     #[arg(short, long)]
     pub author: String,
-    #[arg(short, long, help = "Personal Token for authentification")]
-    pub token: String,
 }
 
 fn get_from_date(kind: &Kind, date: &NaiveDate) -> NaiveDate {
@@ -101,7 +99,7 @@ fn get_from_date(kind: &Kind, date: &NaiveDate) -> NaiveDate {
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     let args = Cli::parse();
-    let gh = OctocrabBuilder::new().personal_token(args.token).build()?;
+    let gh = OctocrabBuilder::new().build()?;
     let from_date = get_from_date(&args.kind, &args.date);
 
     let multi = MultiProgress::new();
@@ -118,7 +116,6 @@ async fn main() -> Result<(), Error> {
         .map(Pr::from)
         .collect::<Vec<Pr>>();
 
-    // dbg!(&merged_prs);
     let old_commit_sha = find_oldest_pr_merge_commit(&gh, &merged_prs).await;
 
     let ctb = pr::fetch_merged(&gh, &from_date, &args.date)
