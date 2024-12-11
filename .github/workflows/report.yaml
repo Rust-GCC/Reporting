@@ -1,0 +1,42 @@
+name: Weekly Report
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Deps
+      run: |
+        sudo apt-get update;
+        sudo apt-get install -y \
+                automake \
+                autoconf \
+                libtool \
+                autogen \
+                bison \
+                flex \
+                libgmp3-dev \
+                libmpfr-dev \
+                libmpc-dev \
+                build-essential \
+                gcc-multilib \
+                g++-multilib \
+                dejagnu
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain=1.72.0;
+
+    - name: Generate report
+      run: |
+        cd utils/generator;  \
+        ./weekly.sh > "weekly_report";
+
+    - name: Archive report
+      uses: actions/upload-artifact@v4
+      with:
+        name: weekly_report
+        path: utils/generator/weekly_report
