@@ -1,9 +1,8 @@
 name: Weekly Report
 
 on:
-  push
-  # schedule:
-  #   - cron: '0 0 * * *'
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   build:
@@ -30,7 +29,6 @@ jobs:
                 g++-multilib \
                 dejagnu \
                 rustc
-        # curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain=1.72.0;
 
     - name: Generate report
       run: |
