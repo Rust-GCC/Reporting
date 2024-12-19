@@ -1,0 +1,19 @@
+[package]
+name = "generator"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait = "0.1.59"
+chrono = "0.4.23"
+clap = { version = "4.0.29", features = ["derive"] }
+octocrab = "0.41.2"
+serde = { version = "1.0.150", features = ["derive"] }
+tinytemplate = "1.2.1"
+tokio = { version = "1.32.0", features = ["full"] }
+git2 = "0.16.1"
+rand = "0.8.5"
+indicatif = "0.17"
+serde_json = "1.0.89"
