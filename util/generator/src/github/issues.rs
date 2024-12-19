@@ -58,28 +58,36 @@ pub async fn get_in_progress(
 
      let mut all_uri = String::from("https://api.github.com/search/issues?q=repo:Rust-GCC/gccrs+type:issue+state:open");
      let mut no_assignee_uri =  String::from("https://api.github.com/search/issues?q=repo:Rust-GCC/gccrs+type:issue+state:open+no:assignee");
+
      if bug
      {
          all_uri.push_str("+label:bug");    
          no_assignee_uri.push_str("+label:bug");
      }
-    let all = gh._get(all_uri).await.unwrap();
 
+    let all = gh._get(all_uri).await.unwrap();
     let no_assignee = gh._get(no_assignee_uri).await.unwrap();
 
     let serres: Value = serde_json::from_str(gh.body_to_string(all).await.unwrap().as_str())?;
     let serres_no: Value  = serde_json::from_str(gh.body_to_string(no_assignee).await.unwrap().as_str())?;
-    let nb_all = match serres["total_count"].as_u64()
+
+    let nb_all = if let Some(x) = serres["total_count"].as_u64() 
     {
-        Some(x) => x,
-        None => 0
+        x
+    }
+    else
+    {
+        0
+    };
+    let nb_no = if let Some(x) = serres_no["total_count"].as_u64() 
+    {
+        x
+    }
+    else
+    {
+        0
     };
 
-    let nb_no= match serres_no["total_count"].as_u64()
-    {
-        Some(x) => x,
-        None => 0
-    };
     Ok(nb_all - nb_no)
     }
 
@@ -89,21 +97,26 @@ pub async fn get_in_progress(
     ) -> Result<u64, Error> {
     
     let mut no_assignee_uri = String::from("https://api.github.com/search/issues?q=repo:Rust-GCC/gccrs+type:issue+state:open+no:assignee");
+
     if bug
     {
         no_assignee_uri.push_str("+label:bug")
     }
+
     let no_assignee = gh._get(no_assignee_uri).await.unwrap();
 
     let serres_no: Value  = serde_json::from_str(gh.body_to_string(no_assignee).await.unwrap().as_str())?;
 
-    let nb_no= match serres_no["total_count"].as_u64()
+    let nb_no = if let Some(x) = serres_no["total_count"].as_u64() 
     {
-        Some(x) => x,
-        None => 0
+        x
+    }
+    else
+    {
+        0
     };
+
     Ok(nb_no)
-        
     }
 
     pub async fn get_closed(
@@ -112,6 +125,7 @@ pub async fn get_in_progress(
     ) -> Result<u64, Error> {
     
     let mut no_assignee_uri = String::from("https://api.github.com/search/issues?q=repo:Rust-GCC/gccrs+type:issue+state:closed");
+
     if bug
     {
         no_assignee_uri.push_str("+label:bug")
@@ -121,11 +135,14 @@ pub async fn get_in_progress(
 
     let serres_no: Value  = serde_json::from_str(gh.body_to_string(no_assignee).await.unwrap().as_str())?;
 
-    let nb_no= match serres_no["total_count"].as_u64()
+    let nb_no = if let Some(x) = serres_no["total_count"].as_u64() 
     {
-        Some(x) => x,
-        None => 0
+        x
+    }
+    else
+    {
+        0
     };
+
     Ok(nb_no)
-        
     }
