@@ -47,39 +47,168 @@ fn main() {
 }
 #+END_SRC
 
+which errors out with the following:
+
+#+BEGIN_SRC rust
+   Compiling playground v0.0.1 (/playground)
+error[E0277]: `*const i32` cannot be shared between threads safely
+  --> src/main.rs:31:26
+   |
+31 |     take_thread_safe_foo(&n_s);
+   |                          ^^^^ `*const i32` cannot be shared between threads safely
+   |
+   = help: within `NonThreadSafe`, the trait `Sync` is not implemented for `*const i32`, which is required by `NonThreadSafe: Sync`
+note: required because it appears within the type `NonThreadSafe`
+  --> src/main.rs:8:8
+   |
+8  | struct NonThreadSafe(*const i32);
+   |        ^^^^^^^^^^^^^
+   = note: required for the cast from `&NonThreadSafe` to `&dyn Foo + Send + Sync`
+
+error[E0277]: `*const i32` cannot be sent between threads safely
+  --> src/main.rs:31:26
+   |
+31 |     take_thread_safe_foo(&n_s);
+   |                          ^^^^ `*const i32` cannot be sent between threads safely
+   |
+   = help: within `NonThreadSafe`, the trait `Send` is not implemented for `*const i32`, which is required by `NonThreadSafe: Send`
+note: required because it appears within the type `NonThreadSafe`
+  --> src/main.rs:8:8
+   |
+8  | struct NonThreadSafe(*const i32);
+   |        ^^^^^^^^^^^^^
+   = note: required for the cast from `&NonThreadSafe` to `&dyn Foo + Send + Sync`
+#+END_SRC
+
 Part of our pipeline was missing proper handling for these automatic trait bounds, which now enables us to build this code properly. Two missing features remain for properly handling these special bounds:
 
-1. Extra trait bounds can only be automatic traits
+1. Additional trait bounds can only be automatic traits
+
+We have to restrict the usage of additional trait bounds to auto traits exclusively, as ~rustc~ does:
+
+#+BEGIN_SRC rust
+fn takes_only_clone_copy_and_fromstr(a: &(dyn Clone + Copy + FromStr)) {}
+#+END_SRC
+
+will give out the following error:
+
+#+BEGIN_SRC rust
+error[E0225]: only auto traits can be used as additional traits in a trait object
+  --> src/main.rs:16:55
+   |
+16 | fn takes_only_clone_copy_and_fromstr(a: &(dyn Clone + Copy + FromStr)) {}
+   |                                               -----   ^^^^ additional non-auto trait
+   |                                               |
+   |                                               first non-auto trait
+   |
+   = help: consider creating a new trait with all of these as supertraits and using that trait here instead: `trait NewTrait: Clone + Copy + FromStr {}`
+   = note: auto-traits like `Send` and `Sync` are traits that have special properties; for more information on them, visit <https://doc.rust-lang.org/reference/special-types-and-traits.html#auto-traits>
+#+END_SRC
+
+https://doc.rust-lang.org/stable/error_codes/E0225.html
+
+We must add additional logic to our typechecker in order to check for these bounds, and make sure that the additional bounds we resolve to only refer to auto traits - otherwise, error out with an appropriate error message. This isn't a terribly difficult feature to add, but it does require a bit of experience with our type system.
 
 2. Implementing Send and Sync properly
 
-We accomplished a lot of technical changes during the month of December on three major milestones for the compiler: Auto traits, for-loops, and built-in derives.
+Finally, we must implement the ~Send~ and ~Sync~ traits properly, and auto traits in general, so that they are applied automatically unless you opt out of it. One major difficulty comes from having to automatically opt-out types that contains other opted-out types, like in the following example:
 
-- Mention why they're important?
-- Mention how they're used throughout core and std?
-- Mention why we needed to do a rework of our lang items?
-  - Explain what lang items are
-  - why can't we use ::core::option::Option::Some?
-  - How this differs from rustc?
+#+BEGIN_SRC rust
+#![feature(auto_traits)]
+#![feature(negative_impls)]
 
-Both for-loops and built-in derives required a major rework of our AST and HIR in order to handle lang-item paths, a special form of path expressions and path types used when refering directly to [[https://rustc-dev-guide.rust-lang.org/lang-items.html][lang-items]]. This had a big impact to most of the compiler pipeline, as we had to adapt most compiler passes to handle these new paths.
+auto trait MegaAuto {}
 
-*TODO*: Explain why lang item paths are needed for for-loops, with examples.
+struct S;
 
-Path of the into_iter function:
+impl !MegaAuto for S {}
 
-::core::iter::IntoIterator::into_iter(&self);
+struct S_Wrap(S);
 
-Once the lang-item fixes were completed, we were able to finish implementing for-loops desugaring, which is currently under review. This then lead to continuing work on built-in derive macros, the last remaining block for macro expansion for core 1.49. These built-in macros often need to refer to other lang-items, such as the ~Clone~ or ~Copy~ trait in order to be expanded properly.
+fn take_mega_auto(a: &dyn MegaAuto) {}
 
-- Explain auto traits
-- Explain what remains and how we're going to implement it
+fn main() {
+    let a = S;
+    let b = S_Wrap(S);
+    
+    take_mega_auto(&a);
+    take_mega_auto(&b);
+}
+#+END_SRC
 
-We then focused on setting up the basis for the ~Sync~ and ~Send~ auto-traits, which are used throughout core 1.49 and required for many Rust programs. We are now figuring out the last few details of implementing these auto-traits and will add handling for them in the coming weeks.
+which errors out with the following information:
+
+#+BEGIN_SRC rust
+
+error[E0277]: the trait bound `S: MegaAuto` is not satisfied
+  --> src/main.rs:18:20
+   |
+18 |     take_mega_auto(&a);
+   |                    ^^ the trait `MegaAuto` is not implemented for `S`
+   |
+   = note: required for the cast from `&S` to `&dyn MegaAuto`
+
+error[E0277]: the trait bound `S: MegaAuto` is not satisfied in `S_Wrap`
+  --> src/main.rs:19:20
+   |
+19 |     take_mega_auto(&b);
+   |                    ^^ within `S_Wrap`, the trait `MegaAuto` is not implemented for `S`
+   |
+note: required because it appears within the type `S_Wrap`
+  --> src/main.rs:10:8
+   |
+10 | struct S_Wrap(S);
+   |        ^^^^^^
+   = note: required for the cast from `&S_Wrap` to `&dyn MegaAuto`
+#+END_SRC
+
+This will be a lot more involved, and will require important changes to our type system.
+
+The rest of the month was focused on for-loops and built-in derive macros, which first required a major refactor of our AST and HIR. The problem is as follows: for-loops desugar using the following pattern:
+
+#+BEGIN_SRC rust
+for <pattern> in <iterator> {
+  <body>
+}
+
+// becomes
+
+{
+    let result = match ::std::iter::IntoIterator::into_iter(<iterator>) {
+        mut iter => {
+            loop {
+                let mut __next;
+                match ::std::iter::Iterator::next(&mut iter) {
+                    ::std::option::Option::Some(val) => __next = val,
+                    ::std::option::Option::None => break
+                };
+                let <pattern> = __next;
+                <body>;
+            }
+        }
+    };
+    result
+}
+#+END_SRC
+
+The paths used in this desugaring are a bit special, as they all start with a leading ~::~. [[https://doc.rust-lang.org/reference/paths.html#path-qualifiers][This is used to indicate that the first path segment should refer to an external crate, and that the path should resolve in one of these crates]]. This is very useful to prevent ambiguity: If a user were to define their own ~std~ module, with an inner ~option~ module and an ~Option~ enum, simply using the ~std::option::Option~ path would resolve to this instead of the expected standard enum.
+
+If for some reason this user-defined enum were to be different, the desugared code would not work, and you would end up with cryptic errors. But since the path is required to resolve in the extern crate ~std~, there are no issues. /However/, ~gccrs~ cannot yet compile the standard library, or distribute it and link it to each program being compiled. Meaning that we would never be able to resolve those paths, at least until we get to compile the standard library. But the standard library contains for-loops, meaning we're in a real pickle.
+
+Thankfully, those specific paths used for desugars or macro expansions often refer to specific items that the compiler knows about: [[https://doc.rust-lang.org/unstable-book/language-features/lang-items.html][lang items]]. By instead using "lang item paths", we can refer to these specific items and enum variants to properly desugar our for-loops. But these paths are extremely different from regular, segmented paths, and required a big refactor of both our AST and HIR. Which then allowed us to almost complete the desugaring of for-loops, and improve our handling of built-in macros - another kind of compiler expansion that makes use of lang items your probably know about, such as ~Copy~ or ~Clone~.
+
+We still have a few built-in derives to properly implement in order to support all of them, and close out the ~Macro expansion~ milestone of the project. These built-in derives are used all throughout ~std~, and throughout most Rust code, meaning they are essential for compiling the Rust standard library.
+
+If you are interested in helping with these efforts, feel free to pick up any of the issues mentioned in our Call for Contribution or to join the project! We are always available on [[https://github.com/rust-gcc/gccrs][GitHub]] or on our [[https://gcc-rust.zulipchat.com/][Zulip]] and always happy to see new faces.
 
 *** Community call
 
-*FIXME*
+We will have our next monthly community call on the 13th of January at 10am UTC. You can subscribe to our calendar to see when the next one will be held. The call is open to everyone, even if you would just like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to be notified of upcoming events.
+
+- [[https://meet.jit.si/gccrs-community-call-january][Jitsi link]]
+- Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
+- [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com][Google calendar link]]
+- [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
 
 ** Call for contribution
 
