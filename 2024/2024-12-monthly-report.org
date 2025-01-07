@@ -8,7 +8,61 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Project update
 
-We accomplished a lot of technical changes during the month of December on three major milestones for the compiler: Auto traits, for-loops, and built-in derives. Both for-loops and built-in derives required a major rework of our AST and HIR in order to handle lang-item paths, a special form of path expressions and path types used when refering directly to [[https://rustc-dev-guide.rust-lang.org/lang-items.html][lang-items]]. This had a big impact to most of the compiler pipeline, as we had to adapt most compiler passes to handle these new paths.
+This month of development was focused on three major milestones of compiler development: auto traits, built-in macros and for-loops, which are all important in order to compile ~core 1.49~ and later, the Rust-for-Linux project.
+
+The most widely known auto traits in Rust may be [[https://doc.rust-lang.org/nomicon/send-and-sync.html][Send and Sync]], which are used all throughout the Rust standard library to indicate thread-safety. As such, these traits are often used in trait-bounds to restrict sharing behavior to thread-safe objects:
+
+#+BEGIN_SRC rust
+trait Foo {
+    fn foo(&self);
+}
+
+struct Safe;
+
+// We cannot send pointers safely between threads
+struct NonThreadSafe(*const i32);
+
+impl Foo for Safe { fn foo(&self) { } }
+impl Foo for NonThreadSafe { fn foo(&self) { } }
+
+fn take_foo(foo: &(dyn Foo)) {
+    foo.foo();
+}
+
+fn take_thread_safe_foo(foo: &(dyn Foo + Send + Sync)) {
+    foo.foo();
+}
+
+fn main() {
+    let s = Safe;
+    
+    let i = 15;
+    let n_s = NonThreadSafe(&i as *const i32);
+    
+    take_foo(&s);
+    take_foo(&n_s);
+    
+    take_thread_safe_foo(&s);
+    take_thread_safe_foo(&n_s);
+}
+#+END_SRC
+
+Part of our pipeline was missing proper handling for these automatic trait bounds, which now enables us to build this code properly. Two missing features remain for properly handling these special bounds:
+
+1. Extra trait bounds can only be automatic traits
+
+2. Implementing Send and Sync properly
+
+We accomplished a lot of technical changes during the month of December on three major milestones for the compiler: Auto traits, for-loops, and built-in derives.
+
+- Mention why they're important?
+- Mention how they're used throughout core and std?
+- Mention why we needed to do a rework of our lang items?
+  - Explain what lang items are
+  - why can't we use ::core::option::Option::Some?
+  - How this differs from rustc?
+
+Both for-loops and built-in derives required a major rework of our AST and HIR in order to handle lang-item paths, a special form of path expressions and path types used when refering directly to [[https://rustc-dev-guide.rust-lang.org/lang-items.html][lang-items]]. This had a big impact to most of the compiler pipeline, as we had to adapt most compiler passes to handle these new paths.
 
 *TODO*: Explain why lang item paths are needed for for-loops, with examples.
 
@@ -17,6 +71,9 @@ Path of the into_iter function:
 ::core::iter::IntoIterator::into_iter(&self);
 
 Once the lang-item fixes were completed, we were able to finish implementing for-loops desugaring, which is currently under review. This then lead to continuing work on built-in derive macros, the last remaining block for macro expansion for core 1.49. These built-in macros often need to refer to other lang-items, such as the ~Clone~ or ~Copy~ trait in order to be expanded properly.
+
+- Explain auto traits
+- Explain what remains and how we're going to implement it
 
 We then focused on setting up the basis for the ~Sync~ and ~Send~ auto-traits, which are used throughout core 1.49 and required for many Rust programs. We are now figuring out the last few details of implementing these auto-traits and will add handling for them in the coming weeks.
 
