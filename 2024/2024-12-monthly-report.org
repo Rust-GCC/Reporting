@@ -80,7 +80,7 @@ note: required because it appears within the type `NonThreadSafe`
    = note: required for the cast from `&NonThreadSafe` to `&dyn Foo + Send + Sync`
 #+END_SRC
 
-Part of our pipeline was missing proper handling for these automatic trait bounds, which now enables us to build this code properly. Two missing features remain for properly handling these special bounds:
+Part of our pipeline was lacking support for these automatic trait bounds, which now enables us to build this code properly. Two missing features remain for properly handling these special bounds:
 
 1. Additional trait bounds can only be automatic traits
 
@@ -193,9 +193,9 @@ for <pattern> in <iterator> {
 
 The paths used in this desugaring are a bit special, as they all start with a leading ~::~. [[https://doc.rust-lang.org/reference/paths.html#path-qualifiers][This is used to indicate that the first path segment should refer to an external crate, and that the path should resolve in one of these crates]]. This is very useful to prevent ambiguity: If a user were to define their own ~std~ module, with an inner ~option~ module and an ~Option~ enum, simply using the ~std::option::Option~ path would resolve to this instead of the expected standard enum.
 
-If for some reason this user-defined enum were to be different, the desugared code would not work, and you would end up with cryptic errors. But since the path is required to resolve in the extern crate ~std~, there are no issues. /However/, ~gccrs~ cannot yet compile the standard library, or distribute it and link it to each program being compiled. Meaning that we would never be able to resolve those paths, at least until we get to compile the standard library. But the standard library contains for-loops, meaning we're in a real pickle.
+If for some reason this user-defined enum were to be different, the desugared code would not work, and you would end up with cryptic errors. But since the path is required to resolve in the extern crate ~std~, there are no issues. /However/, ~gccrs~ cannot yet compile the standard library, or distribute it and link it to each program being compiled. Meaning that we would never be able to resolve those paths, at least until we get to compile the standard library. But the standard library contains for-loops, so we're in a real pickle.
 
-Thankfully, those specific paths used for desugars or macro expansions often refer to specific items that the compiler knows about: [[https://doc.rust-lang.org/unstable-book/language-features/lang-items.html][lang items]]. By instead using "lang item paths", we can refer to these specific items and enum variants to properly desugar our for-loops. But these paths are extremely different from regular, segmented paths, and required a big refactor of both our AST and HIR. Which then allowed us to almost complete the desugaring of for-loops, and improve our handling of built-in macros - another kind of compiler expansion that makes use of lang items your probably know about, such as ~Copy~ or ~Clone~.
+Thankfully, those specific paths used for desugars or macro expansions often refer to specific items that the compiler knows about: [[https://doc.rust-lang.org/unstable-book/language-features/lang-items.html][lang items]]. By instead using "lang item paths", we can refer to these specific items and enum variants to properly desugar our for-loops. But these paths are extremely different from regular, segmented paths, and required a big refactor of both our AST and HIR. Which then allowed us to almost complete the desugaring of for-loops, and improve our handling of built-in macros - another kind of compiler expansion that makes use of lang items you probably already know about, such as ~Copy~ or ~Clone~.
 
 We still have a few built-in derives to properly implement in order to support all of them, and close out the ~Macro expansion~ milestone of the project. These built-in derives are used all throughout ~std~, and throughout most Rust code, meaning they are essential for compiling the Rust standard library.
 
