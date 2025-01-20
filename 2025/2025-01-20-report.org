@@ -51,9 +51,9 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 | TestCases | Last Week | This Week | Delta |
 |-----------+-----------+-----------+-------|
-| Passing   | 9407      | 9407      |   +78 |
+| Passing   | 9407      | 9426      |   +19 |
 | Failed    | -         | -         |     - |
-| XFAIL     | 206       | 206       |   -60 |
+| XFAIL     | 206       | 209       |    +3 |
 | XPASS     |           |           |       |
 
 *** Milestones Progress
