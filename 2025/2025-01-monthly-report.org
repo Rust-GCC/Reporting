@@ -1,0 +1,386 @@
+#+title:  Monthly Report for January 2025
+#+author: Philip Herron, Pierre-Emmanuel Patry and Arthur Cohen
+#+date:   2025-02-03
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Project update
+
+47 pull requests merged since last month
+
+This month of development was focused on three major milestones of compiler development: auto traits, built-in macros and for-loops, which are all important in order to compile ~core 1.49~ and later, the Rust-for-Linux project.
+
+The most widely known auto traits in Rust may be [[https://doc.rust-lang.org/nomicon/send-and-sync.html][Send and Sync]], which are used all throughout the Rust standard library to indicate thread-safety. As such, these traits are often used in trait-bounds to restrict sharing behavior to thread-safe objects:
+
+#+BEGIN_SRC rust
+trait Foo {
+    fn foo(&self);
+}
+
+struct Safe;
+
+// We cannot send pointers safely between threads
+struct NonThreadSafe(*const i32);
+
+impl Foo for Safe { fn foo(&self) { } }
+impl Foo for NonThreadSafe { fn foo(&self) { } }
+
+fn take_foo(foo: &(dyn Foo)) {
+    foo.foo();
+}
+
+fn take_thread_safe_foo(foo: &(dyn Foo + Send + Sync)) {
+    foo.foo();
+}
+
+fn main() {
+    let s = Safe;
+    
+    let i = 15;
+    let n_s = NonThreadSafe(&i as *const i32);
+    
+    take_foo(&s);
+    take_foo(&n_s);
+    
+    take_thread_safe_foo(&s);
+    take_thread_safe_foo(&n_s);
+}
+#+END_SRC
+
+which errors out with the following:
+
+#+BEGIN_SRC rust
+   Compiling playground v0.0.1 (/playground)
+error[E0277]: `*const i32` cannot be shared between threads safely
+  --> src/main.rs:31:26
+   |
+31 |     take_thread_safe_foo(&n_s);
+   |                          ^^^^ `*const i32` cannot be shared between threads safely
+   |
+   = help: within `NonThreadSafe`, the trait `Sync` is not implemented for `*const i32`, which is required by `NonThreadSafe: Sync`
+note: required because it appears within the type `NonThreadSafe`
+  --> src/main.rs:8:8
+   |
+8  | struct NonThreadSafe(*const i32);
+   |        ^^^^^^^^^^^^^
+   = note: required for the cast from `&NonThreadSafe` to `&dyn Foo + Send + Sync`
+
+error[E0277]: `*const i32` cannot be sent between threads safely
+  --> src/main.rs:31:26
+   |
+31 |     take_thread_safe_foo(&n_s);
+   |                          ^^^^ `*const i32` cannot be sent between threads safely
+   |
+   = help: within `NonThreadSafe`, the trait `Send` is not implemented for `*const i32`, which is required by `NonThreadSafe: Send`
+note: required because it appears within the type `NonThreadSafe`
+  --> src/main.rs:8:8
+   |
+8  | struct NonThreadSafe(*const i32);
+   |        ^^^^^^^^^^^^^
+   = note: required for the cast from `&NonThreadSafe` to `&dyn Foo + Send + Sync`
+#+END_SRC
+
+Part of our pipeline was lacking support for these automatic trait bounds, which now enables us to build this code properly. Two missing features remain for properly handling these special bounds:
+
+1. Additional trait bounds can only be automatic traits
+
+We have to restrict the usage of additional trait bounds to auto traits exclusively, as ~rustc~ does:
+
+#+BEGIN_SRC rust
+fn takes_only_clone_copy_and_fromstr(a: &(dyn Clone + Copy + FromStr)) {}
+#+END_SRC
+
+will give out the following error:
+
+#+BEGIN_SRC rust
+error[E0225]: only auto traits can be used as additional traits in a trait object
+  --> src/main.rs:16:55
+   |
+16 | fn takes_only_clone_copy_and_fromstr(a: &(dyn Clone + Copy + FromStr)) {}
+   |                                               -----   ^^^^ additional non-auto trait
+   |                                               |
+   |                                               first non-auto trait
+   |
+   = help: consider creating a new trait with all of these as supertraits and using that trait here instead: `trait NewTrait: Clone + Copy + FromStr {}`
+   = note: auto-traits like `Send` and `Sync` are traits that have special properties; for more information on them, visit <https://doc.rust-lang.org/reference/special-types-and-traits.html#auto-traits>
+#+END_SRC
+
+https://doc.rust-lang.org/stable/error_codes/E0225.html
+
+We must add additional logic to our typechecker in order to check for these bounds, and make sure that the additional bounds we resolve to only refer to auto traits - otherwise, error out with an appropriate error message. This isn't a terribly difficult feature to add, but it does require a bit of experience with our type system.
+
+2. Implementing Send and Sync properly
+
+Finally, we must implement the ~Send~ and ~Sync~ traits properly, and auto traits in general, so that they are applied automatically unless you opt out of it. One major difficulty comes from having to automatically opt-out types that contains other opted-out types, like in the following example:
+
+#+BEGIN_SRC rust
+#![feature(auto_traits)]
+#![feature(negative_impls)]
+
+auto trait MegaAuto {}
+
+struct S;
+
+impl !MegaAuto for S {}
+
+struct S_Wrap(S);
+
+fn take_mega_auto(a: &dyn MegaAuto) {}
+
+fn main() {
+    let a = S;
+    let b = S_Wrap(S);
+    
+    take_mega_auto(&a);
+    take_mega_auto(&b);
+}
+#+END_SRC
+
+which errors out with the following information:
+
+#+BEGIN_SRC rust
+
+error[E0277]: the trait bound `S: MegaAuto` is not satisfied
+  --> src/main.rs:18:20
+   |
+18 |     take_mega_auto(&a);
+   |                    ^^ the trait `MegaAuto` is not implemented for `S`
+   |
+   = note: required for the cast from `&S` to `&dyn MegaAuto`
+
+error[E0277]: the trait bound `S: MegaAuto` is not satisfied in `S_Wrap`
+  --> src/main.rs:19:20
+   |
+19 |     take_mega_auto(&b);
+   |                    ^^ within `S_Wrap`, the trait `MegaAuto` is not implemented for `S`
+   |
+note: required because it appears within the type `S_Wrap`
+  --> src/main.rs:10:8
+   |
+10 | struct S_Wrap(S);
+   |        ^^^^^^
+   = note: required for the cast from `&S_Wrap` to `&dyn MegaAuto`
+#+END_SRC
+
+This will be a lot more involved, and will require important changes to our type system.
+
+The rest of the month was focused on for-loops and built-in derive macros, which first required a major refactor of our AST and HIR. The problem is as follows: for-loops desugar using the following pattern:
+
+#+BEGIN_SRC rust
+for <pattern> in <iterator> {
+  <body>
+}
+
+// becomes
+
+{
+    let result = match ::std::iter::IntoIterator::into_iter(<iterator>) {
+        mut iter => {
+            loop {
+                let mut __next;
+                match ::std::iter::Iterator::next(&mut iter) {
+                    ::std::option::Option::Some(val) => __next = val,
+                    ::std::option::Option::None => break
+                };
+                let <pattern> = __next;
+                <body>;
+            }
+        }
+    };
+    result
+}
+#+END_SRC
+
+The paths used in this desugaring are a bit special, as they all start with a leading ~::~. [[https://doc.rust-lang.org/reference/paths.html#path-qualifiers][This is used to indicate that the first path segment should refer to an external crate, and that the path should resolve in one of these crates]]. This is very useful to prevent ambiguity: If a user were to define their own ~std~ module, with an inner ~option~ module and an ~Option~ enum, simply using the ~std::option::Option~ path would resolve to this instead of the expected standard enum.
+
+If for some reason this user-defined enum were to be different, the desugared code would not work, and you would end up with cryptic errors. But since the path is required to resolve in the extern crate ~std~, there are no issues. /However/, ~gccrs~ cannot yet compile the standard library, or distribute it and link it to each program being compiled. Meaning that we would never be able to resolve those paths, at least until we get to compile the standard library. But the standard library contains for-loops, so we're in a real pickle.
+
+Thankfully, those specific paths used for desugars or macro expansions often refer to specific items that the compiler knows about: [[https://doc.rust-lang.org/unstable-book/language-features/lang-items.html][lang items]]. By instead using "lang item paths", we can refer to these specific items and enum variants to properly desugar our for-loops. But these paths are extremely different from regular, segmented paths, and required a big refactor of both our AST and HIR. Which then allowed us to almost complete the desugaring of for-loops, and improve our handling of built-in macros - another kind of compiler expansion that makes use of lang items you probably already know about, such as ~Copy~ or ~Clone~.
+
+We still have a few built-in derives to properly implement in order to support all of them, and close out the ~Macro expansion~ milestone of the project. These built-in derives are used all throughout ~std~, and throughout most Rust code, meaning they are essential for compiling the Rust standard library.
+
+If you are interested in helping with these efforts, feel free to pick up any of the issues mentioned in our Call for Contribution or to join the project! We are always available on [[https://github.com/rust-gcc/gccrs][GitHub]] or on our [[https://gcc-rust.zulipchat.com/][Zulip]] and always happy to see new faces.
+
+*** Community call
+
+We will have our next monthly community call on the 13th of January at 10am UTC. You can subscribe to our calendar to see when the next one will be held. The call is open to everyone, even if you would just like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to be notified of upcoming events.
+
+- [[https://meet.jit.si/gccrs-community-call-january][Jitsi link]]
+- Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
+- [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com][Google calendar link]]
+- [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
+
+** Call for contribution
+
+- https://github.com/Rust-GCC/gccrs/issues/2500
+
+- https://github.com/Rust-GCC/gccrs/issues/2376
+
+** Completed Activities
+
+- nr2.0: Remove accidental copies of resolver                             [[https://github.com/rust-gcc/gccrs/pull/3408][PR3408]]
+- Fix an issue with `ForeverStack::dfs_rib`                               [[https://github.com/rust-gcc/gccrs/pull/3406][PR3406]]
+- Resolve lang-item PathInExpressions in nr2.0 late resolver              [[https://github.com/rust-gcc/gccrs/pull/3404][PR3404]]
+- lang-items: Add structural_{peq, teq}                                   [[https://github.com/rust-gcc/gccrs/pull/3401][PR3401]]
+- Do not warn about unused fields if they start with '_'                  [[https://github.com/rust-gcc/gccrs/pull/3400][PR3400]]
+- Add `derive(Debug)` stub                                                [[https://github.com/rust-gcc/gccrs/pull/3398][PR3398]]
+- Update `upload-artifact` to v4                                          [[https://github.com/rust-gcc/gccrs/pull/3387][PR3387]]
+- ast: builder: Add Return expression builder                             [[https://github.com/rust-gcc/gccrs/pull/3386][PR3386]]
+- ast: Add new Expr::Kinds                                                [[https://github.com/rust-gcc/gccrs/pull/3385][PR3385]]
+- lang-items: Add From::from                                              [[https://github.com/rust-gcc/gccrs/pull/3384][PR3384]]
+- gccrs: add new -frust-overflow-checks to control overflow checks        [[https://github.com/rust-gcc/gccrs/pull/3383][PR3383]]
+- gccrs: catch missing guard for optional result                          [[https://github.com/rust-gcc/gccrs/pull/3380][PR3380]]
+- backend: Allow anything as a match scrutinee                            [[https://github.com/rust-gcc/gccrs/pull/3379][PR3379]]
+- Prepare lang-item `{AST, HIR}::PathInExpressions`                       [[https://github.com/rust-gcc/gccrs/pull/3378][PR3378]]
+- Check for type paths nr2.0 can't handle yet                             [[https://github.com/rust-gcc/gccrs/pull/3377][PR3377]]
+- gccrs: add support for ref literal patterns                             [[https://github.com/rust-gcc/gccrs/pull/3376][PR3376]]
+- lang-items: Add Result and Try lang items                               [[https://github.com/rust-gcc/gccrs/pull/3375][PR3375]]
+- Add receiver lang item                                                  [[https://github.com/rust-gcc/gccrs/pull/3374][PR3374]]
+- Nr2 closure captures                                                    [[https://github.com/rust-gcc/gccrs/pull/3373][PR3373]]
+- Add basic handling for auto-traits                                      [[https://github.com/rust-gcc/gccrs/pull/3370][PR3370]]
+- derive(Copy): Improve bounds when deriving Copy                         [[https://github.com/rust-gcc/gccrs/pull/3369][PR3369]]
+- Improve `derive(Clone)` for generic types                               [[https://github.com/rust-gcc/gccrs/pull/3367][PR3367]]
+- Refactor lang item paths                                                [[https://github.com/rust-gcc/gccrs/pull/3366][PR3366]]
+- gccrs: Add missing name resolution to static items in blocks            [[https://github.com/rust-gcc/gccrs/pull/3365][PR3365]]
+- nr2.0: Early resolve pending eager macro invocations                    [[https://github.com/rust-gcc/gccrs/pull/3364][PR3364]]
+- Remove dead code related to external functions                          [[https://github.com/rust-gcc/gccrs/pull/3363][PR3363]]
+- Revert "refactor all attribute functions in rust-collect-lang-items.cc" [[https://github.com/rust-gcc/gccrs/pull/3361][PR3361]]
+- gccrs: match arms are a LUB                                             [[https://github.com/rust-gcc/gccrs/pull/3360][PR3360]]
+- nr2.0: Resolve `Self` inside impl blocks                                [[https://github.com/rust-gcc/gccrs/pull/3359][PR3359]]
+- gccrs: fix ICE with hir dump on closure                                 [[https://github.com/rust-gcc/gccrs/pull/3358][PR3358]]
+- gccrs: cleanup our enum type layout to be closer to rustc               [[https://github.com/rust-gcc/gccrs/pull/3357][PR3357]]
+- gccrs: fix ICE in borrows to invalid expressions                        [[https://github.com/rust-gcc/gccrs/pull/3356][PR3356]]
+- gccrs: add support for lang_item eq and PartialEq trait                 [[https://github.com/rust-gcc/gccrs/pull/3347][PR3347]]
+- Finish `derive(Clone)` for enums                                        [[https://github.com/rust-gcc/gccrs/pull/3343][PR3343]]
+- refactor all attribute functions in rust-collect-lang-items.cc          [[https://github.com/rust-gcc/gccrs/pull/3338][PR3338]]
+- nr2.0: Improve default and top-level resolvers                          [[https://github.com/rust-gcc/gccrs/pull/3332][PR3332]]
+- Visit the trait paths of trait implementations                          [[https://github.com/rust-gcc/gccrs/pull/3331][PR3331]]
+- Allow float type to be casted as integer type                           [[https://github.com/rust-gcc/gccrs/pull/3319][PR3319]]
+- gccrs: improve mutability checks                                        [[https://github.com/rust-gcc/gccrs/pull/3311][PR3311]]
+- Fix nr2 unit struct                                                     [[https://github.com/rust-gcc/gccrs/pull/3299][PR3299]]
+- Fix bug in type resolution of paths                                     [[https://github.com/rust-gcc/gccrs/pull/3277][PR3277]]
+- Fix rust breakage with nr2                                              [[https://github.com/rust-gcc/gccrs/pull/3266][PR3266]]
+- Add `ForeverStackStore`                                                 [[https://github.com/rust-gcc/gccrs/pull/3251][PR3251]]
+- Infer crate name after file opening                                     [[https://github.com/rust-gcc/gccrs/pull/3146][PR3146]]
+- Add option_env support                                                  [[https://github.com/rust-gcc/gccrs/pull/3094][PR3094]]
+- testsuite: Fix missing handling of little endian.                       [[https://github.com/rust-gcc/gccrs/pull/2805][PR2805]]
+- Add `try` intrinsics                                                    [[https://github.com/rust-gcc/gccrs/pull/2614][PR2614]]
+
+*** Contributors this month
+
+- [[https://github.com/Lishin1215][Lishin]] (new contributor!)
+- [[https://github.com/dylngg][Dylan Gardner]] (new contributor!)
+- [[https://github.com/liushuyu][liushuyu]]
+- [[https://github.com/liamnaddell][Liam Naddell]]
+- [[https://github.com/nobel-sh][Nobel Singh]]
+- [[https://github.com/powerboat9][Owen Avery]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/tschwinge][Thomas Schwinge]]
+- [[https://github.com/philberty][Philip Herron]]
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
+- [[https://github.com/CohenArthur][Arthur Cohen]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        308 |        308 |     - |
+| In Progress |         80 |         96 |   +16 |
+| Completed   |        922 |        933 |   +11 |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        110 |        108 |    -2 |
+| In Progress |         38 |         43 |    +5 |
+| Completed   |        458 |        461 |    +3 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 9329       | 9500       | +171  |
+| Failed    | -          | -          | -     |
+| XFAIL     | 262        | 182        | -80   |
+| XPASS     | -          | -          | -     |
+
+*** Milestones Progress
+
+| Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        | Target GCC |
+|-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|------------|
+| Name resolution 2.0 rework        |        20% |        28% |   +8% |  1st Jun 2024 |               - |  1st Apr 2025 |   GCC 15.1 |
+| Macro expansion                   |        33% |        56% |  +23% |  1st Jun 2024 |               - |  1st Jan 2025 |   GCC 15.1 |
+| Auto traits improvements          |        60% |       100% |  +40% | 15th Sep 2024 |   20th Jan 2025 | 21st Dec 2024 |   GCC 15.1 |
+| Lang items                        |        90% |       100% |  +10% |  1st Jul 2024 |   10th Jan 2025 | 21st Nov 2024 |   GCC 15.1 |
+| Remaining typecheck issues        |        88% |        88% |     - | 21st Oct 2024 |               - |  1st Mar 2025 |   GCC 15.1 |
+| cfg-core                          |         0% |        15% |  +15% |  1st Dec 2024 |               - |  1st Mar 2025 |   GCC 15.1 |
+| Codegen fixes                     |         0% |        10% |  +10% |  7th Oct 2024 |               - |  1st Mar 2025 |   GCC 15.1 |
+| black_box intrinsic               |         0% |        20% |  +20% | 28th Oct 2024 |               - | 28th Jan 2025 |   GCC 15.1 |
+| Question mark operator            |         0% |        66% |  +66% | 15th Dec 2024 |               - | 21st Feb 2025 |   GCC 15.1 |
+ 
+| Upcoming Milestone                | Last Month | This Month | Delta | Start Date    | Completion Date | Target        | Target GCC |
+|-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|------------|
+| Specialization                    |         0% |         0% |     - |  1st Jan 2025 |               - |  1st Mar 2025 |   GCC 15.1 |
+| Inline assembly                   |       100% |       100% |     - |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
+| Borrow checker improvements       |       100% |       100% |     - |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
+| Rustc Testsuite Adaptor           |         0% |         0% |     - |  1st Jun 2024 |               - | 15th Sep 2024 |   GCC 15.1 |
+| Unstable RfL features             |         0% |         0% |     - |  7th Jan 2025 |               - |  1st Mar 2025 |   GCC 15.1 |
+| cfg-rfl                           |         0% |         0% |     - |  7th Jan 2025 |               - | 15th Feb 2025 |   GCC 15.1 |
+| alloc parser issues               |       100% |       100% |     - |  7th Jan 2025 |   31st Jun 2024 | 28th Jan 2025 |   GCC 15.1 |
+| let-else                          |         0% |         0% |     - | 28th Jan 2025 |               - | 28th Feb 2025 |   GCC 15.1 |
+| Explicit generics with impl Trait |         0% |         0% |     - | 28th Feb 2025 |               - | 28th Mar 2025 |   GCC 15.1 |
+| Downgrade to Rust 1.49            |         0% |         0% |     - |             - |               - |  1st Apr 2025 |   GCC 15.1 |
+| offset_of!() builtin macro        |         0% |         0% |     - | 15th Mar 2025 |               - | 15th May 2025 |   GCC 15.1 |
+| Generic Associated Types          |         0% |         0% |     - | 15th Mar 2025 |               - | 15th Jun 2025 |   GCC 16.1 |
+| RfL const generics                |         0% |         0% |     - |  1st May 2025 |               - | 15th Jun 2025 |   GCC 16.1 |
+| frontend plugin hooks             |         0% |         0% |     - | 15th May 2025 |               - |  7th Jul 2025 |   GCC 16.1 |
+| Handling the testsuite issues     |         0% |         0% |     - | 15th Sep 2024 |               - | 15th Sep 2025 |   GCC 16.1 |
+| std parser issues                 |       100% |       100% |     - |  7th Jan 2025 |   31st Jun 2024 | 28th Jan 2025 |   GCC 16.1 |
+| main shim                         |         0% |         0% |     - | 28th Jul 2025 |               - | 15th Sep 2025 |   GCC 16.1 |
+
+| Past Milestone                    | Last Month | This Month | Delta | Start Date    | Completion Date | Target        | Target GCC |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|------------|
+| Data Structures 1 - Core          |       100% |       100% |     - | 30th Nov 2020 |   27th Jan 2021 | 29th Jan 2021 |   GCC 14.1 |
+| Control Flow 1 - Core             |       100% |       100% |     - | 28th Jan 2021 |   10th Feb 2021 | 26th Feb 2021 |   GCC 14.1 |
+| Data Structures 2 - Generics      |       100% |       100% |     - | 11th Feb 2021 |   14th May 2021 | 28th May 2021 |   GCC 14.1 |
+| Data Structures 3 - Traits        |       100% |       100% |     - | 20th May 2021 |   17th Sep 2021 | 27th Aug 2021 |   GCC 14.1 |
+| Control Flow 2 - Pattern Matching |       100% |       100% |     - | 20th Sep 2021 |    9th Dec 2021 | 29th Nov 2021 |   GCC 14.1 |
+| Macros and cfg expansion          |       100% |       100% |     - |  1st Dec 2021 |   31st Mar 2022 | 28th Mar 2022 |   GCC 14.1 |
+| Imports and Visibility            |       100% |       100% |     - | 29th Mar 2022 |   13th Jul 2022 | 27th May 2022 |   GCC 14.1 |
+| Const Generics                    |       100% |       100% |     - | 30th May 2022 |   10th Oct 2022 | 17th Oct 2022 |   GCC 14.1 |
+| Initial upstream patches          |       100% |       100% |     - | 10th Oct 2022 |   13th Nov 2022 | 13th Nov 2022 |   GCC 14.1 |
+| Upstream initial patchset         |       100% |       100% |     - | 13th Nov 2022 |   13th Dec 2022 | 19th Dec 2022 |   GCC 14.1 |
+| Update GCC's master branch        |       100% |       100% |     - |  1st Jan 2023 |   21st Feb 2023 |  3rd Mar 2023 |   GCC 14.1 |
+| Final set of upstream patches     |       100% |       100% |     - | 16th Nov 2022 |    1st May 2023 | 30th Apr 2023 |   GCC 14.1 |
+| Borrow Checking 1                 |       100% |       100% |     - |           TBD |    8th Jan 2024 | 15th Aug 2023 |   GCC 14.1 |
+| Procedural Macros 1               |       100% |       100% |     - | 13th Apr 2023 |    6th Aug 2023 |  6th Aug 2023 |   GCC 14.1 |
+| GCC 13.2 Release                  |       100% |       100% |     - | 13th Apr 2023 |   22nd Jul 2023 | 15th Jul 2023 |   GCC 14.1 |
+| GCC 14 Stage 3                    |       100% |       100% |     - |  1st Sep 2023 |   20th Sep 2023 |  1st Nov 2023 |   GCC 14.1 |
+| GCC 14.1 Release                  |       100% |       100% |     - |  2nd Jan 2024 |    2nd Jun 2024 | 15th Apr 2024 |   GCC 14.1 |
+| format_args!() support            |       100% |       100% |     - | 15th Feb 2024 |               - |  1st Apr 2024 |   GCC 14.1 |
+| GCC 14.2                          |       100% |       100% |     - |  7th Jun 2024 |   15th Jun 2024 | 15th Jun 2024 |   GCC 14.2 |
+| GCC 15.1                          |       100% |       100% |     - | 21st Jun 2024 |   31st Jun 2024 |  1st Jul 2024 |   GCC 15.1 |
+| Unhandled attributes              |       100% |       100% |     - |  1st Jul 2024 |   15th Aug 2024 | 15th Aug 2024 |   GCC 15.1 |
+| Deref and DerefMut improvements   |       100% |       100% |     - | 28th Sep 2024 |   25th Oct 2024 | 28th Dec 2024 |   GCC 15.1 |
+| Indexing fixes                    |       100% |       100% |     - | 21st Jul 2024 |   25th Dec 2024 | 15th Nov 2024 |   GCC 15.1 |
+| Iterator fixes                    |       100% |       100% |     - | 21st Jul 2024 |   25th Dec 2024 | 15th Nov 2024 |   GCC 15.1 |
+
+** Planned Activities
+
+- Implement remaining built-in derive macros
+- Implement Send and Sync auto traits
+- Finish for-loops code expansion
+- Improve our process for updating our github repository with upstream GCC
+
+*** Risks
+
+We have now entered Stage 3 of GCC development, and all of the patches we needed to get upstreamed have been upstreamed. The risk present in this table is no longer present.
+
+| Risk                                          | Impact (1-3) | Likelihood (0-10) | Risk (I * L) | Mitigation                                                      |
+|-----------------------------------------------+--------------+-------------------+--------------+-----------------------------------------------------------------|
+| Missing features for GCC 15.1 deadline        |            2 |                 0 |            0 | Start working on required features as early as July (6mo ahead) |
+
+** Detailed changelog
