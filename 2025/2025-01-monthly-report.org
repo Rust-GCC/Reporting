@@ -8,28 +8,47 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Project update
 
-- 47 pull requests merged since last month
-- Work on all these milestones
-  - Lang items -> for-loops, question mark operator
-  - Question mark operator
-    - Two Missing type inference issues, which are being worked on by Philip, and then this is done
-  - For loops
-  - Auto traits
-  - built-in derive macros
-    - Specifically on these following macros:
-      - Default
-        - Required for Rust-for-Linux modules, e.g. the ModuleInfo struct
-        https://github.com/Rust-for-Linux/linux/blob/rust-next/rust/macros/module.rs
-      - PartialEq, Eq
-        - required for compiling RfL's implementation of the kernel memory allocation infrastructure
-        https://github.com/Rust-for-Linux/linux/blob/rust-next/rust/kernel/alloc.rs
-  - black box intrinsics
-    - Required for compiling core, bench, test, rustc testsuite
-  - name resolution 2.0
-  - for-loops are working! which seems really cringe but requires
-    - hindley milner type inference
-    - proper lang item path resolving
-      - which required a full rework of our entire AST and HIR path classes, which affect almost every class in the compiler
+We are continuing our work towards GCC 15.1, and trying to develop as many features as possible before this release. The only non-technical news this month is our Talk submission to RustWeek in the Netherlands, which you can find [[https://www.papercall.io/speakers/134949/speaker_talks/287270-inching-ever-closer-to-the-rust-standard-library-with-gccrs][here]] - Pierre-Emmanuel and Arthur are looking forward to meeting all of you there!
+
+We are happy to report that this month saw an impressive 48 pull-requests merged, with contributions from 10 individual developers including two new contributors, [[https://github.com/Lishin1215][Lishin]] and [[https://github.com/dylngg][Dylan Gardner]].
+
+Similarly to last month, we have been focusing on a few select milestones which affect a large amount of code within the Rust standard library and the Rust-for-Linux project.
+
+We have completed the work on for-loops, and have started working on adding support for the famous [[https://doc.rust-lang.org/rust-by-example/std/result/question_mark.html]["Question Mark operator"]]. These two milestones required an important rework of both our AST and HIR path classes, which affect almost all classes in the compiler. This rework also allowed us to continue working on Rust's built-in derive macros, in particular ~Clone~, ~Copy~, ~Default~, ~PartialEq~ and ~Eq~.
+
+[[./assets/mermaid-01-monthly.svg]]
+
+While for-loops are simple constructs in most programming languages, they pose a real challenge in Rust and require a lot of features to be implemented properly - iterators, lang-item, type inference... After weeks of work, they are finally complete and available in ~gccrs~. They are used in multiple areas of both the Rust standard library and Rust-for-Linux, which means our compiler's reach has greatly increased by supporting this seemingly simple feature. If you are interested, have a look at our documentation for their implementation which goes into more detail: [[https://github.com/Rust-GCC/gccrs/blob/ea2be9c594daadb8bc63133253aef4f7db208a26/gcc/rust/ast/rust-desugar-for-loops.h#L29][rust-desugar-for-loops.h]]
+
+Our implementation of the Question Mark operator is almost complete, with only a couple of type inference issues remaining to close out the milestone. They are currently being worked on and will soon be merged into the compiler.
+
+_FIXME_: Show code example of the desugar + type inference issues
+
+Our work on built-in derive macros also affects a large area of Rust-for-Linux and ~core~ code, as these macros are used for an important number of primitive Rust types. We added support for two new important derive macros this month, ~Default~ and ~PartialEq~. ~Default~ enables the user to generate a ~::default()~ function, which will create a basic instance of a type with all of its fields using a default value. This is for example used in Rust-for-Linux's ~ModuleInfo~ struct, which is used whenever you define a new Rust module for the kernel:
+
+#+BEGIN_SRC rust
+#[derive(Debug, Default)] // <-- HERE!
+struct ModuleInfo {
+    type_: String,
+    license: String,
+    name: String,
+    author: Option<String>,
+    description: Option<String>,
+    alias: Option<Vec<String>>,
+    firmware: Option<Vec<String>>,
+}
+
+impl ModuleInfo {
+    fn parse(it: &mut token_stream::IntoIter) -> Self {
+        let mut info = ModuleInfo::default(); // <-- generated function is used HERE!
+
+#+END_SRC
+
+(from https://github.com/Rust-for-Linux/linux/blob/rust-next/rust/macros/module.rs#L92)
+
+Fully supporting the ~ModuleInfo~ type means compiling its implementation, which requires us to offer a proper `::default()` function for the type - which in itself requires supporting ~#[derive(Default)]~ for all of the types and subtypes contained within the ~ModuleInfo~ structure: ~String~, ~Option<T>~, ~Vec<T>~...
+
+Another example of built-in derive macro in Rust-for-Linux is ~PartialEq~, which can be found in the implementation of the [[https://github.com/Rust-for-Linux/linux/blob/rust-next/rust/kernel/alloc.rs][kernel memory allocation infrastructure interface]]. The implementiaton of the ~PartialEq~ trait through that macro enables the comparison of these allocation flags, which is required for ~gccrs~ to properly compile the Rust elements of the kernel.
 
 #+BEGIN_COMMENT
 
@@ -57,8 +76,6 @@ flowchart LR;
     class target subgraphColor;
 
 #+END_COMMENT
-
-[[./assets/mermaid-01-monthly.svg]]
 
 *** Community call
 
