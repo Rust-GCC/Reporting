@@ -31,7 +31,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
     - proper lang item path resolving
       - which required a full rework of our entire AST and HIR path classes, which affect almost every class in the compiler
 
-<--! mermaid code
+#+BEGIN_COMMENT
 
 flowchart LR;
     subgraph target[Target Components]
@@ -56,7 +56,7 @@ flowchart LR;
     class core,alloc,Rust-for-Linux innerNode;
     class target subgraphColor;
 
--->
+#+END_COMMENT
 
 [[./assets/mermaid-01-monthly.svg]]
 
