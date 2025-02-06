@@ -22,8 +22,6 @@ While for-loops are simple constructs in most programming languages, they pose a
 
 Our implementation of the Question Mark operator is almost complete, with only a couple of type inference issues remaining to close out the milestone. They are currently being worked on and will soon be merged into the compiler.
 
-_FIXME_: Show code example of the desugar + type inference issues
-
 Our work on built-in derive macros also affects a large area of Rust-for-Linux and ~core~ code, as these macros are used for an important number of primitive Rust types. We added support for two new important derive macros this month, ~Default~ and ~PartialEq~. ~Default~ enables the user to generate a ~::default()~ function, which will create a basic instance of a type with all of its fields using a default value. This is for example used in Rust-for-Linux's ~ModuleInfo~ struct, which is used whenever you define a new Rust module for the kernel:
 
 #+BEGIN_SRC rust
@@ -46,7 +44,7 @@ impl ModuleInfo {
 
 (from https://github.com/Rust-for-Linux/linux/blob/rust-next/rust/macros/module.rs#L92)
 
-Fully supporting the ~ModuleInfo~ type means compiling its implementation, which requires us to offer a proper `::default()` function for the type - which in itself requires supporting ~#[derive(Default)]~ for all of the types and subtypes contained within the ~ModuleInfo~ structure: ~String~, ~Option<T>~, ~Vec<T>~...
+Fully supporting the ~ModuleInfo~ type means compiling its implementation, which requires us to offer a proper ~::default()~ function for the type - which in itself requires supporting ~#[derive(Default)]~ for all of the types and subtypes contained within the ~ModuleInfo~ structure: ~String~, ~Option<T>~, ~Vec<T>~...
 
 Another example of built-in derive macro in Rust-for-Linux is ~PartialEq~, which can be found in the implementation of the [[https://github.com/Rust-for-Linux/linux/blob/rust-next/rust/kernel/alloc.rs][kernel memory allocation infrastructure interface]]. The implementiaton of the ~PartialEq~ trait through that macro enables the comparison of these allocation flags, which is required for ~gccrs~ to properly compile the Rust elements of the kernel.
 
@@ -79,7 +77,7 @@ flowchart LR;
 
 *** Community call
 
-We will have our next monthly community call on the 10th of February at 10am UTC. You can subscribe to our calendar to see when the next one will be held. The call is open to everyone, even if you would just like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to be notified of upcoming events.
+We will have our next monthly community call on the 17th of February at 10am UTC. You can subscribe to our calendar to see when the next one will be held. The call is open to everyone, even if you would just like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to be notified of upcoming events.
 
 - [[https://meet.jit.si/gccrs-community-call-february][Jitsi link]]
 - Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
@@ -95,19 +93,19 @@ We will have our next monthly community call on the 10th of February at 10am UTC
 ** Completed Activities
 
 - nr2.0: Remove accidental copies of resolver                             [[https://github.com/rust-gcc/gccrs/pull/3408][PR3408]]
-- Fix an issue with `ForeverStack::dfs_rib`                               [[https://github.com/rust-gcc/gccrs/pull/3406][PR3406]]
+- Fix an issue with ~ForeverStack::dfs_rib~                               [[https://github.com/rust-gcc/gccrs/pull/3406][PR3406]]
 - Resolve lang-item PathInExpressions in nr2.0 late resolver              [[https://github.com/rust-gcc/gccrs/pull/3404][PR3404]]
 - lang-items: Add structural_{peq, teq}                                   [[https://github.com/rust-gcc/gccrs/pull/3401][PR3401]]
 - Do not warn about unused fields if they start with '_'                  [[https://github.com/rust-gcc/gccrs/pull/3400][PR3400]]
-- Add `derive(Debug)` stub                                                [[https://github.com/rust-gcc/gccrs/pull/3398][PR3398]]
-- Update `upload-artifact` to v4                                          [[https://github.com/rust-gcc/gccrs/pull/3387][PR3387]]
+- Add ~derive(Debug)~ stub                                                [[https://github.com/rust-gcc/gccrs/pull/3398][PR3398]]
+- Update ~upload-artifact~ to v4                                          [[https://github.com/rust-gcc/gccrs/pull/3387][PR3387]]
 - ast: builder: Add Return expression builder                             [[https://github.com/rust-gcc/gccrs/pull/3386][PR3386]]
 - ast: Add new Expr::Kinds                                                [[https://github.com/rust-gcc/gccrs/pull/3385][PR3385]]
 - lang-items: Add From::from                                              [[https://github.com/rust-gcc/gccrs/pull/3384][PR3384]]
 - gccrs: add new -frust-overflow-checks to control overflow checks        [[https://github.com/rust-gcc/gccrs/pull/3383][PR3383]]
 - gccrs: catch missing guard for optional result                          [[https://github.com/rust-gcc/gccrs/pull/3380][PR3380]]
 - backend: Allow anything as a match scrutinee                            [[https://github.com/rust-gcc/gccrs/pull/3379][PR3379]]
-- Prepare lang-item `{AST, HIR}::PathInExpressions`                       [[https://github.com/rust-gcc/gccrs/pull/3378][PR3378]]
+- Prepare lang-item ~{AST, HIR}::PathInExpressions~                       [[https://github.com/rust-gcc/gccrs/pull/3378][PR3378]]
 - Check for type paths nr2.0 can't handle yet                             [[https://github.com/rust-gcc/gccrs/pull/3377][PR3377]]
 - gccrs: add support for ref literal patterns                             [[https://github.com/rust-gcc/gccrs/pull/3376][PR3376]]
 - lang-items: Add Result and Try lang items                               [[https://github.com/rust-gcc/gccrs/pull/3375][PR3375]]
@@ -115,19 +113,19 @@ We will have our next monthly community call on the 10th of February at 10am UTC
 - Nr2 closure captures                                                    [[https://github.com/rust-gcc/gccrs/pull/3373][PR3373]]
 - Add basic handling for auto-traits                                      [[https://github.com/rust-gcc/gccrs/pull/3370][PR3370]]
 - derive(Copy): Improve bounds when deriving Copy                         [[https://github.com/rust-gcc/gccrs/pull/3369][PR3369]]
-- Improve `derive(Clone)` for generic types                               [[https://github.com/rust-gcc/gccrs/pull/3367][PR3367]]
+- Improve ~derive(Clone)~ for generic types                               [[https://github.com/rust-gcc/gccrs/pull/3367][PR3367]]
 - Refactor lang item paths                                                [[https://github.com/rust-gcc/gccrs/pull/3366][PR3366]]
 - gccrs: Add missing name resolution to static items in blocks            [[https://github.com/rust-gcc/gccrs/pull/3365][PR3365]]
 - nr2.0: Early resolve pending eager macro invocations                    [[https://github.com/rust-gcc/gccrs/pull/3364][PR3364]]
 - Remove dead code related to external functions                          [[https://github.com/rust-gcc/gccrs/pull/3363][PR3363]]
 - Revert "refactor all attribute functions in rust-collect-lang-items.cc" [[https://github.com/rust-gcc/gccrs/pull/3361][PR3361]]
 - gccrs: match arms are a LUB                                             [[https://github.com/rust-gcc/gccrs/pull/3360][PR3360]]
-- nr2.0: Resolve `Self` inside impl blocks                                [[https://github.com/rust-gcc/gccrs/pull/3359][PR3359]]
+- nr2.0: Resolve ~Self~ inside impl blocks                                [[https://github.com/rust-gcc/gccrs/pull/3359][PR3359]]
 - gccrs: fix ICE with hir dump on closure                                 [[https://github.com/rust-gcc/gccrs/pull/3358][PR3358]]
 - gccrs: cleanup our enum type layout to be closer to rustc               [[https://github.com/rust-gcc/gccrs/pull/3357][PR3357]]
 - gccrs: fix ICE in borrows to invalid expressions                        [[https://github.com/rust-gcc/gccrs/pull/3356][PR3356]]
 - gccrs: add support for lang_item eq and PartialEq trait                 [[https://github.com/rust-gcc/gccrs/pull/3347][PR3347]]
-- Finish `derive(Clone)` for enums                                        [[https://github.com/rust-gcc/gccrs/pull/3343][PR3343]]
+- Finish ~derive(Clone)~ for enums                                        [[https://github.com/rust-gcc/gccrs/pull/3343][PR3343]]
 - refactor all attribute functions in rust-collect-lang-items.cc          [[https://github.com/rust-gcc/gccrs/pull/3338][PR3338]]
 - nr2.0: Improve default and top-level resolvers                          [[https://github.com/rust-gcc/gccrs/pull/3332][PR3332]]
 - Visit the trait paths of trait implementations                          [[https://github.com/rust-gcc/gccrs/pull/3331][PR3331]]
@@ -136,11 +134,11 @@ We will have our next monthly community call on the 10th of February at 10am UTC
 - Fix nr2 unit struct                                                     [[https://github.com/rust-gcc/gccrs/pull/3299][PR3299]]
 - Fix bug in type resolution of paths                                     [[https://github.com/rust-gcc/gccrs/pull/3277][PR3277]]
 - Fix rust breakage with nr2                                              [[https://github.com/rust-gcc/gccrs/pull/3266][PR3266]]
-- Add `ForeverStackStore`                                                 [[https://github.com/rust-gcc/gccrs/pull/3251][PR3251]]
+- Add ~ForeverStackStore~                                                 [[https://github.com/rust-gcc/gccrs/pull/3251][PR3251]]
 - Infer crate name after file opening                                     [[https://github.com/rust-gcc/gccrs/pull/3146][PR3146]]
 - Add option_env support                                                  [[https://github.com/rust-gcc/gccrs/pull/3094][PR3094]]
 - testsuite: Fix missing handling of little endian.                       [[https://github.com/rust-gcc/gccrs/pull/2805][PR2805]]
-- Add `try` intrinsics                                                    [[https://github.com/rust-gcc/gccrs/pull/2614][PR2614]]
+- Add ~try~ intrinsics                                                    [[https://github.com/rust-gcc/gccrs/pull/2614][PR2614]]
 
 *** Contributors this month
 
