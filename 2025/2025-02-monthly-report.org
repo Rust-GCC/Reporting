@@ -239,7 +239,7 @@ We will have our next monthly community call on the 17th of March at 10am UTC. Y
 | Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        | Target GCC |
 |-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|------------|
 | Name resolution 2.0 rework        |        28% |        28% |     - |  1st Jun 2024 |               - |  1st Apr 2025 |   GCC 15.1 |
-| Macro expansion                   |        56% |        86% |  +30% |  1st Jun 2024 |               - |  1st Jan 2025 |   GCC 15.1 |nko
+| Macro expansion                   |        56% |        86% |  +30% |  1st Jun 2024 |               - |  1st Jan 2025 |   GCC 15.1 |
 | Remaining typecheck issues        |        88% |        88% |     - | 21st Oct 2024 |               - |  1st Mar 2025 |   GCC 15.1 |
 | cfg-core                          |        15% |        75% |  +60% |  1st Dec 2024 |               - |  1st Mar 2025 |   GCC 15.1 |
 | Codegen fixes                     |        10% |        10% |     - |  7th Oct 2024 |               - |  1st Mar 2025 |   GCC 15.1 |
