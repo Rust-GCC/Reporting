@@ -1,0 +1,42 @@
+name: Weekly Report
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Deps
+      run: |
+        sudo apt-get update;
+        sudo apt-get install -y \
+                automake \
+                autoconf \
+                libtool \
+                autogen \
+                bison \
+                flex \
+                libgmp3-dev \
+                libmpfr-dev \
+                libmpc-dev \
+                build-essential \
+                gcc-multilib \
+                g++-multilib \
+                dejagnu \
+                rustc
+
+    - name: Generate report
+      run: |
+        cd util/generator;  \
+        ./weekly.sh > "weekly_report";
+
+    - name: Archive report
+      uses: actions/upload-artifact@v4
+      with:
+        name: weekly_report
+        path: util/generator/weekly_report
