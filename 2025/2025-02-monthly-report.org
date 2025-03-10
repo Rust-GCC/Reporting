@@ -8,53 +8,90 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Project update
 
-- Work on derive macros
-    - derive(PartialOrd, PartialEq)
-    - code examples
-- $crate metavar?
-- Work on `impl Trait` types
-    - Code examples
-- Error propagation
+We are still working hard to get as many features completed in time before the release of GCC 15.1. We have started preparing our branch for upstreaming patches to the compiler, and are in the process of improving our upstreaming and fork-updating process to make it more streamlined and enable upstreams to happen more often. This is taking quite a bit of time, but we are still on track regarding the milestones we set ourselves for GCC 15.1
 
-We are continuing our work towards GCC 15.1, and trying to develop as many features as possible before this release. The only non-technical news this month is our Talk submission to RustWeek in the Netherlands, which you can find [[https://www.papercall.io/speakers/134949/speaker_talks/287270-inching-ever-closer-to-the-rust-standard-library-with-gccrs][here]] - Pierre-Emmanuel and Arthur are looking forward to meeting all of you there!
+We have started work on two major technical features required for handling Rust-for-Linux code: ~impl Trait types~ and ~let-else~, two patterns used in the kernel and also often found in user code. Note also that ~impl Trait types~ are also used extensively in ~core~, and are thus a requirement for properly handling the Rust standard library.
 
-We are happy to report that this month saw an impressive 48 pull-requests merged, with contributions from 10 individual developers including two new contributors, [[https://github.com/Lishin1215][Lishin]] and [[https://github.com/dylngg][Dylan Gardner]].
-
-Similarly to last month, we have been focusing on a few select milestones which affect a large amount of code within the Rust standard library and the Rust-for-Linux project.
-
-We have completed the work on for-loops, and have started working on adding support for the famous [[https://doc.rust-lang.org/rust-by-example/std/result/question_mark.html]["Question Mark operator"]]. These two milestones required an important rework of both our AST and HIR path classes, which affect almost all classes in the compiler. This rework also allowed us to continue working on Rust's built-in derive macros, in particular ~Clone~, ~Copy~, ~Default~, ~PartialEq~ and ~Eq~.
+We have also continued work on our ongoing milestones, such as macro expansion fixes, our name resolution rewrite, and the handling of conditional compilation directives for ~core~. We will then start working on a slimmed down version of [[https://rust-lang.github.io/rfcs/1210-impl-specialization.html][specialization]], as it is seldom used in ~core~, but still required for properly compiling it.
 
 [[./assets/mermaid-02-monthly.svg]]
 
-While for-loops are simple constructs in most programming languages, they pose a real challenge in Rust and require a lot of features to be implemented properly - iterators, lang-item, type inference... After weeks of work, they are finally complete and available in ~gccrs~. They are used in multiple areas of both the Rust standard library and Rust-for-Linux, which means our compiler's reach has greatly increased by supporting this seemingly simple feature. If you are interested, have a look at our documentation for their implementation which goes into more detail: [[https://github.com/Rust-GCC/gccrs/blob/ea2be9c594daadb8bc63133253aef4f7db208a26/gcc/rust/ast/rust-desugar-for-loops.h#L29][rust-desugar-for-loops.h]]
+Pierre-Emmanuel and Arthur will be attending Rust in Paris on the 14th of March, and we are hoping to meet lots of other French Rustaceans. Our next event will then be RustWeek in the Netherlands in May, and we will also be attending EuroRust in Paris where we hope to give a talk on the current state of ~gccrs~.
 
-Our implementation of the Question Mark operator is almost complete, with only a couple of type inference issues remaining to close out the milestone. They are currently being worked on and will soon be merged into the compiler.
+A missing part of our macro expansion implementation was the handling of the `$crate` metavar, a special meta-variable used in macros which allows to refer to items defined in the same crate as the macro itself. When such a macro is used in an external crate, the metavar needs to be replaced by the crate-name and a scope resolution operator (~ ::<crate_name> ~), but when it is used in the current crate, it can simply be replaced by the ~crate~ path segment.
 
-Our work on built-in derive macros also affects a large area of Rust-for-Linux and ~core~ code, as these macros are used for an important number of primitive Rust types. We added support for two new important derive macros this month, ~Default~ and ~PartialEq~. ~Default~ enables the user to generate a ~::default()~ function, which will create a basic instance of a type with all of its fields using a default value. This is for example used in Rust-for-Linux's ~ModuleInfo~ struct, which is used whenever you define a new Rust module for the kernel:
+In RfL's inner implementation of its printing macros, this is used for making a call to a specific function: ~call_printk~. This enables calling the macro from the kernel as well as from any kernel modules which uses the kernel as a dependency.
 
 #+BEGIN_SRC rust
-#[derive(Debug, Default)] // <-- HERE!
-struct ModuleInfo {
-    type_: String,
-    license: String,
-    name: String,
-    author: Option<String>,
-    description: Option<String>,
-    alias: Option<Vec<String>>,
-    firmware: Option<Vec<String>>,
-}
 
-impl ModuleInfo {
-    fn parse(it: &mut token_stream::IntoIter) -> Self {
-        let mut info = ModuleInfo::default(); // <-- generated function is used HERE!
+macro_rules! print_macro (
+    ($format_string:path, false, $($arg:tt)+) => (
+        match format_args!($($arg)+) {
+            args => unsafe {
+                $crate::print::call_printk(
+                    &$format_string,
+                    crate::__LOG_PREFIX,
+                    args,
+                );
+            }
+        }
+    );
+);
 
 #+END_SRC
 
-(from https://github.com/Rust-for-Linux/linux/blob/rust-next/rust/macros/module.rs#L92)
+- Interesting codegen but not desugar
+- Explain why, show desugar, show code example, show typechecking error
 
-Fully supporting the ~ModuleInfo~ type means compiling its implementation, which requires us to offer a proper ~::default()~ function for the type - which in itself requires supporting ~#[derive(Default)]~ for all of the types and subtypes contained within the ~ModuleInfo~ structure: ~String~, ~Option<T>~, ~Vec<T>~...
+#+BEGIN_SRC rust
 
-Another example of built-in derive macro in Rust-for-Linux is ~PartialEq~, which can be found in the implementation of the [[https://github.com/Rust-for-Linux/linux/blob/rust-next/rust/kernel/alloc.rs][kernel memory allocation infrastructure interface]]. The implementiaton of the ~PartialEq~ trait through that macro enables the comparison of these allocation flags, which is required for ~gccrs~ to properly compile the Rust elements of the kernel.
+let Some(TokenTree::Ident(ident)) = tokens.next() else {
+    panic!("expected identifier as modifier");
+};
+
+#+END_SRC
+
+__FIXME__: Reword
+
+Finally, handling opaque types/~impl Trait types~ is required for many existing Rust programs and libraries, as it is a feature often used for refering to unnameable types or for more concise code. For example, when specifying complex bounds on a generic type, one can often use an ~impl Trait type~ instead:
+
+#+BEGIN_SRC rust
+
+fn foo<T: Iterator<Item = Bar>>(iterator: T) {}
+
+// becomes
+
+fn foo(iterator: impl Iterator<Item = Bar>) {}
+
+#+END_SRC
+
+More importantly, they are required for returning unnameable types, for example in the case of closures. We know that closures implement function-like traits, but they don't have a type that is defined anywhere in source - their type is only known by the compiler. This makes it extremely hard to return them, as one is not quite sure what to put in their function's signature. We can use the ~impl Trait~ notation to express the fact that what we are returning implements a certain trait that we know about (in the case of closures, often ~Fn~, ~FnOnce~ or ~FnMut~), and the typechecker will ensure that is the case.
+
+#+BEGIN_SRC rust
+
+#[inline]
+fn flatten<U: Iterator, Acc>(
+    fold: &mut impl FnMut(Acc, U::Item) -> Acc,
+) -> impl FnMut(Acc, U) -> Acc + '_ {
+    move |acc, iter| iter.fold(acc, &mut *fold)
+}
+
+#+END_SRC
+
+In the case of Rust-for-Linux, this is also used to abstract complex memory operations used when dealing with self-referential types. The kernel offers a helpful ~pin_init!()~ macro for initializing self-referrential types, but the concrete type is not known by the user and thus cannot be named - all the user needs to know about is that this type implements the `PinInit` trait.
+
+#+BEGIN_SRC rust
+
+impl Example {
+    fn new() -> impl PinInit<Self> {
+        pin_init!(Self {
+            c: 10,
+            d <- new_mutex!(Inner { a: 20, b: 30 }),
+        })
+    }
+}
+
+#+END_SRC
 
 #+BEGIN_COMMENT
 
@@ -98,9 +135,9 @@ flowchart LR;
 
 *** Community call
 
-We will have our next monthly community call on the 17th of February at 10am UTC. You can subscribe to our calendar to see when the next one will be held. The call is open to everyone, even if you would just like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to be notified of upcoming events.
+We will have our next monthly community call on the 17th of March at 10am UTC. You can subscribe to our calendar to see when the next one will be held. The call is open to everyone, even if you would just like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to be notified of upcoming events.
 
-- [[https://meet.jit.si/gccrs-community-call-february][Jitsi link]]
+- [[https://meet.jit.si/gccrs-community-call-march][Jitsi link]]
 - Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
 - [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com][Google calendar link]]
 - [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
@@ -263,6 +300,7 @@ We will have our next monthly community call on the 17th of February at 10am UTC
 - Finish `derive(PartialOrd)` implementation
 - Finish let-else implementation
 - Start working on RfL related milestones
+- Start working on specialization
 
 *** Risks
 
