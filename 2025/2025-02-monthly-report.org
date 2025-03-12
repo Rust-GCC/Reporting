@@ -18,7 +18,7 @@ We have also continued work on our ongoing milestones, such as macro expansion f
 
 Pierre-Emmanuel and Arthur will be attending Rust in Paris on the 14th of March, and we are hoping to meet lots of other French Rustaceans. Our next event will then be RustWeek in the Netherlands in May, and we will also be attending EuroRust in Paris where we hope to give a talk on the current state of ~gccrs~.
 
-A missing part of our macro expansion implementation was the handling of the `$crate` metavar, a special meta-variable used in macros which allows to refer to items defined in the same crate as the macro itself. When such a macro is used in an external crate, the metavar needs to be replaced by the crate-name and a scope resolution operator (~ ::<crate_name> ~), but when it is used in the current crate, it can simply be replaced by the ~crate~ path segment.
+A missing part of our macro expansion implementation was the handling of the ~$crate~ metavar, a special meta-variable used in macros which allows to refer to items defined in the same crate as the macro itself. When such a macro is used in an external crate, the metavar needs to be replaced by the crate-name and a scope resolution operator (::<crate_name>), but when it is used in the current crate, it can simply be replaced by the ~crate~ path segment.
 
 In RfL's inner implementation of its printing macros, this is used for making a call to a specific function: ~call_printk~. This enables calling the macro from the kernel as well as from any kernel modules which uses the kernel as a dependency.
 
