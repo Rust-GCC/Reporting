@@ -94,9 +94,7 @@ let Some(TokenTree::Ident(ident)) = tokens.next() else {
 
 #+END_SRC
 
-__FIXME__: Reword
-
-Finally, handling opaque types/~impl Trait types~ is required for many existing Rust programs and libraries, as it is a feature often used for refering to unnameable types or for more concise code. For example, when specifying complex bounds on a generic type, one can often use an ~impl Trait type~ instead:
+Finally, we also started working on handling opaque types/~impl Trait types~. This is required for many existing Rust programs and libraries, as it is a feature often used for refering to unnameable types or for more concise code. For example, when specifying complex bounds on a generic type, one can often use an ~impl Trait type~ instead:
 
 #+BEGIN_SRC rust
 
