@@ -40,7 +40,7 @@ macro_rules! print_macro (
 
 #+END_SRC
 
-Another feature we need to handle for Rust in the Linux kernel is ~let else~ statements. ~let else~ statements look just like regular ~let~ statements with a pattern, with an extra diverging ~else~ block in case the pattern does not match.
+Another feature we need to handle for Rust in the Linux kernel is ~let else~ statements. ~let else~ statements look just like regular ~let~ statements with a pattern, with an extra diverging ~else~ block in case the pattern does not match. This example is taken directly from the kernel's inner implementation for parsing some of its macros.
 
 #+BEGIN_SRC rust
 
