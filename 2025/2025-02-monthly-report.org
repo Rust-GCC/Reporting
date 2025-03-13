@@ -40,8 +40,51 @@ macro_rules! print_macro (
 
 #+END_SRC
 
-- Interesting codegen but not desugar
-- Explain why, show desugar, show code example, show typechecking error
+Another feature we need to handle for Rust in the Linux kernel is ~let else~ statements. ~let else~ statements look just like regular ~let~ statements with a pattern, with an extra diverging ~else~ block in case the pattern does not match.
+
+#+BEGIN_SRC rust
+
+let Some(TokenTree::Ident(ident)) = tokens.next() else {
+    panic!("expected identifier as modifier");
+};
+
+#+END_SRC
+
+Functionally, the above code is similar to this one:
+
+#+BEGIN_SRC rust
+
+let ident = match tokens.next() {
+    Some(TokenTree::Ident(ident)) => ident,
+    _ => panic!("expected identifier as modifier"),
+};
+
+#+END_SRC
+
+However, we cannot just desugar to a match expression despite the behavior being the same. The reason for this is that the following code typechecks:
+
+#+BEGIN_SRC rust
+
+let foo = match bar() {
+    Some(value) => value,
+    None => default_value,
+};
+
+#+END_SRC
+
+While this one does not:
+
+#+BEGIN_SRC rust
+
+let Some(value) = bar() else {
+    Some(default_value)
+};
+
+#+END_SRC
+
+As the ~else~ block of a ~let else~ must be a diverging expression, whose type can only be ~!~. So, something like a ~return~ expression or a macro invocation of ~unreachable!()~ or ~panic!()~.
+
+[[https://play.rust-lang.org/?version=stable&mode=debug&edition=2024&gist=d60a434b58ebee9c4a05624907cdda19][Playground example]]
 
 #+BEGIN_SRC rust
 
