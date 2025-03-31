@@ -1,0 +1,150 @@
+#+title:  Weekly report for 24th of March to 31st of March 2025
+#+author: Philip Herron, Pierre-Emmanuel Patry, Arthur Cohen
+#+date:   2025-03-31
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+- Last upstream batch last monday, went well
+  - Now onto regularly scheduled upstreaming every monday
+  - One coming this afternoon
+- Closing out one big milestone about bringing minimum required Rust version to 1.49
+  - Enables testing on old repositories and much older systems
+  - Also brings us closer to compiling our own Rust code
+- 29 pull requests this week, mostly bugfixes by Philip which is very nice
+
+** Completed Activities
+
+#3624  gccrs: Fix SEGV when type path resolver fails outright               phil/mod-type-path                about 2 days ago
+#3623  gccrs: fix ice when setting up regions                               phil/ice-regions                  about 2 days ago
+#3622  gccrs: fix crash in parse repr options and missing delete call       phil/ice-repr-parse-2             about 2 days ago
+#3621  gccrs: FIX ICE for malformed repr attribute                          phil/parse-repr-options-ice       about 2 days ago
+#3620  gccrs: FIX ICE when working with HIR::BareFunctionType               phil/ice-clone-type               about 2 days ago
+#3619  gccrs: Fix ICE in array ref constexpr                                phil/const-array-ref-ice          about 2 days ago
+#3604  Add ending newline to `rust-macro-builtins-log-debug.cc`             powerboat9:add-nl                 about 3 days ago
+#3603  nr2.0: Rename `prelude` to `lang_prelude`                            powerboat9:prelude-name           about 3 days ago
+#3602  gccrs: Fix ICE during const expr eval on array expressions           phil/array-expr-ice               about 3 days ago
+#3601  gccrs: Fix ICE when compiling path which resolves to trait constant  phil/ice-query-compile-const      about 3 days ago
+#3600  gccrs: Give the builtin unit struct an actual locus                  phil/unit-struct-locus            about 3 days ago
+#3580  gccrs: Fix ICE when doing method resolution on trait predicates      phil/ice-dot-op                   about 3 days ago
+#3579  gccrs: Fix ICE when compiling block expressions in array capacity    phil/array-expr-constant          about 3 days ago
+#3578  gccrs: Add check for super traits being implemented by Self          phil/super-trait-checks           about 4 days ago
+#3576  gccrs: Fix ICE when using super mid way though path                  phil/ice-name-resolve-super       about 4 days ago
+#3575  gccrs: Fix ICE when array elements are not a value                   phil/fix-ice-coercion-adjustment  about 4 days ago
+#3573  gccrs: fix unconstrained infer vars on generic associated type       phil/associated-types-infer-dev   about 4 days ago
+#3572  Fix core library test's canonical path                               P-E-P:nr2-fix-issue-2905-2-test   about 4 days ago
+#3562  Lower raw string literals                                            powerboat9:fix-raw-lower          about 5 days ago
+#3561  Fix validation of constant items                                     powerboat9:fix-const-expr         about 5 days ago
+#3529  Fix unresolved imports                                               P-E-P:nr2-fix-unresolved-import   about 6 days ago
+#3528  rust: Lower minimum supported Rust version to 1.49                   CohenArthur:rust-1.49             about 6 days ago
+#3527  nr2.0: Fix test `macros/mbe/macro43.rs`                              powerboat9:fix-43                 about 7 days ago
+#3521  nr2.0: Fix test `const_generics_3.rs`                                powerboat9:fix-const              about 9 days ago
+#3517  Nr2: Add missing function to silence error                           P-E-P:nr2-missing-function        about 10 days ago
+#3515  NR2: Fix path resolution canonical path in tests                     P-E-P:fix-nr2-intrinsics          about 10 days ago
+#3504  ci: disable network                                                  thesamesam:sam-gccrs-ci           about 13 days ago
+#3494  testsuite: Add more testcases for `cfg()` in core                    CohenArthur:cfg-core-testcases    about 23 days ago
+#3468  Parse and lower `let-else` statements                                CohenArthur:parse-let-else        about 25 days ago
+
+*** Contributors this week
+
+- [[https://github.com/thesamesam][Sam James]]
+- [[https://github.com/powerboat9][Owen Avery]]
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
+- [[https://github.com/philberty/][Philip Herron]]
+
+*** Overall Task Status
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       291 |       368 |   +77 |
+| In Progress |        99 |       117 |   +18 |
+| Completed   |       987 |      1012 |   +25 |
+
+*** Bugs
+
+| Category    | Last Week | This Week | Delta |
+|-------------+-----------+-----------+-------|
+| TODO        |       104 |       179 |   +75 |
+| In Progress |        32 |        53 |   +21 |
+| Completed   |       478 |       495 |   +17 |
+
+*** Test Cases
+
+| TestCases | Last Week | This Week | Delta |
+|-----------+-----------+-----------+-------|
+| Passing   | 10122     | 10191     |   +69 |
+| Failed    | -         | -         |     - |
+| XFAIL     | 102       | 89        |   -13 |
+| XPASS     |           |           |       |
+
+*** Milestones Progress
+
+| Milestone                         |  Last Week |  This Week | Delta | Start Date    | Completion Date | Target        | Target GCC |
+|-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|------------|
+| Name resolution 2.0 rework        |        28% |        48% |  +20% |  1st Jun 2024 |               - |  1st Apr 2025 |   GCC 15.1 |
+| Macro expansion                   |        86% |        86% |     - |  1st Jun 2024 |               - |  1st Jan 2025 |   GCC 15.1 |
+| Remaining typecheck issues        |        88% |        91% |   +3% | 21st Oct 2024 |               - |  1st Mar 2025 |   GCC 15.1 |
+| cfg-core                          |        75% |       100% |  +25% |  1st Dec 2024 |   26th Mar 2025 |  1st Mar 2025 |   GCC 15.1 |
+| Codegen fixes                     |        10% |        10% |     - |  7th Oct 2024 |               - |  1st Mar 2025 |   GCC 15.1 |
+| black_box intrinsic               |        50% |        50% |     - | 28th Oct 2024 |               - | 28th Jan 2025 |   GCC 15.1 |
+| Question mark operator            |       100% |       100% |     - | 15th Dec 2024 |   21st Feb 2025 | 21st Feb 2025 |   GCC 15.1 |
+| let-else                          |        30% |       100% |  +70% | 28th Jan 2025 |               - | 28th Feb 2025 |   GCC 15.1 |
+| cfg-rfl                           |         0% |       100% | +100% |  7th Jan 2025 |   26th Mar 2025 | 15th Feb 2025 |   GCC 15.1 |
+| Downgrade to Rust 1.49            |         0% |       100% | +100% |             - |   26th Mar 2025 |  1st Apr 2025 |   GCC 15.1 |
+| Specialization                    |         0% |         0% |     - |  1st Jan 2025 |               - |  1st Mar 2025 |   GCC 15.1 |
+ 
+| Upcoming Milestone                |  Last Week |  This Week | Delta | Start Date    | Completion Date | Target        | Target GCC |
+|-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|------------|
+| Unstable RfL features             |         0% |         0% |     - |  7th Jan 2025 |               - |  1st Mar 2025 |   GCC 15.1 |
+| Explicit generics with impl Trait |         0% |         0% |     - | 28th Feb 2025 |               - | 28th Mar 2025 |   GCC 15.1 |
+| offset_of!() builtin macro        |         0% |         0% |     - | 15th Mar 2025 |               - | 15th May 2025 |   GCC 15.1 |
+| Generic Associated Types          |         0% |         0% |     - | 15th Mar 2025 |               - | 15th Jun 2025 |   GCC 16.1 |
+| RfL const generics                |         0% |         0% |     - |  1st May 2025 |               - | 15th Jun 2025 |   GCC 16.1 |
+| frontend plugin hooks             |         0% |         0% |     - | 15th May 2025 |               - |  7th Jul 2025 |   GCC 16.1 |
+| Handling the testsuite issues     |         0% |         0% |     - | 15th Sep 2024 |               - | 15th Sep 2025 |   GCC 16.1 |
+| main shim                         |         0% |         0% |     - | 28th Jul 2025 |               - | 15th Sep 2025 |   GCC 16.1 |
+
+| Past Milestone                    |  Last Week |  This Week | Delta | Start Date    | Completion Date | Target        | Target GCC |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|------------|
+| Data Structures 1 - Core          |       100% |       100% |     - | 30th Nov 2020 |   27th Jan 2021 | 29th Jan 2021 |   GCC 14.1 |
+| Control Flow 1 - Core             |       100% |       100% |     - | 28th Jan 2021 |   10th Feb 2021 | 26th Feb 2021 |   GCC 14.1 |
+| Data Structures 2 - Generics      |       100% |       100% |     - | 11th Feb 2021 |   14th May 2021 | 28th May 2021 |   GCC 14.1 |
+| Data Structures 3 - Traits        |       100% |       100% |     - | 20th May 2021 |   17th Sep 2021 | 27th Aug 2021 |   GCC 14.1 |
+| Control Flow 2 - Pattern Matching |       100% |       100% |     - | 20th Sep 2021 |    9th Dec 2021 | 29th Nov 2021 |   GCC 14.1 |
+| Macros and cfg expansion          |       100% |       100% |     - |  1st Dec 2021 |   31st Mar 2022 | 28th Mar 2022 |   GCC 14.1 |
+| Imports and Visibility            |       100% |       100% |     - | 29th Mar 2022 |   13th Jul 2022 | 27th May 2022 |   GCC 14.1 |
+| Const Generics                    |       100% |       100% |     - | 30th May 2022 |   10th Oct 2022 | 17th Oct 2022 |   GCC 14.1 |
+| Initial upstream patches          |       100% |       100% |     - | 10th Oct 2022 |   13th Nov 2022 | 13th Nov 2022 |   GCC 14.1 |
+| Upstream initial patchset         |       100% |       100% |     - | 13th Nov 2022 |   13th Dec 2022 | 19th Dec 2022 |   GCC 14.1 |
+| Update GCC's master branch        |       100% |       100% |     - |  1st Jan 2023 |   21st Feb 2023 |  3rd Mar 2023 |   GCC 14.1 |
+| Final set of upstream patches     |       100% |       100% |     - | 16th Nov 2022 |    1st May 2023 | 30th Apr 2023 |   GCC 14.1 |
+| Borrow Checking 1                 |       100% |       100% |     - |           TBD |    8th Jan 2024 | 15th Aug 2023 |   GCC 14.1 |
+| Procedural Macros 1               |       100% |       100% |     - | 13th Apr 2023 |    6th Aug 2023 |  6th Aug 2023 |   GCC 14.1 |
+| GCC 13.2 Release                  |       100% |       100% |     - | 13th Apr 2023 |   22nd Jul 2023 | 15th Jul 2023 |   GCC 14.1 |
+| GCC 14 Stage 3                    |       100% |       100% |     - |  1st Sep 2023 |   20th Sep 2023 |  1st Nov 2023 |   GCC 14.1 |
+| GCC 14.1 Release                  |       100% |       100% |     - |  2nd Jan 2024 |    2nd Jun 2024 | 15th Apr 2024 |   GCC 14.1 |
+| format_args!() support            |       100% |       100% |     - | 15th Feb 2024 |               - |  1st Apr 2024 |   GCC 14.1 |
+| GCC 14.2                          |       100% |       100% |     - |  7th Jun 2024 |   15th Jun 2024 | 15th Jun 2024 |   GCC 14.2 |
+| GCC 15.1                          |       100% |       100% |     - | 21st Jun 2024 |   31st Jun 2024 |  1st Jul 2024 |   GCC 15.1 |
+| Unhandled attributes              |       100% |       100% |     - |  1st Jul 2024 |   15th Aug 2024 | 15th Aug 2024 |   GCC 15.1 |
+| Inline assembly                   |       100% |       100% |     - |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
+| Rustc Testsuite Adaptor           |       100% |       100% |     - |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
+| Borrow checker improvements       |       100% |       100% |     - |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
+| Deref and DerefMut improvements   |       100% |       100% |     - | 28th Sep 2024 |   25th Oct 2024 | 28th Dec 2024 |   GCC 15.1 |
+| Indexing fixes                    |       100% |       100% |     - | 21st Jul 2024 |   25th Dec 2024 | 15th Nov 2024 |   GCC 15.1 |
+| Iterator fixes                    |       100% |       100% |     - | 21st Jul 2024 |   25th Dec 2024 | 15th Nov 2024 |   GCC 15.1 |
+| Auto traits improvements          |       100% |       100% |     - | 15th Sep 2024 |   20th Jan 2025 | 21st Dec 2024 |   GCC 15.1 |
+| Lang items                        |       100% |       100% |     - |  1st Jul 2024 |   10th Jan 2025 | 21st Nov 2024 |   GCC 15.1 |
+| alloc parser issues               |       100% |       100% |     - |  7th Jan 2025 |   31st Jun 2024 | 28th Jan 2025 |   GCC 15.1 |
+| std parser issues                 |       100% |       100% |     - |  7th Jan 2025 |   31st Jun 2024 | 28th Jan 2025 |   GCC 16.1 |
+
+*** Risks
+
+** Planned Activities
+
+- Continue fixing remaining failing test for name resolution 2.0
+- Finish built-in derive macros
+
+** Detailed changelog
+
