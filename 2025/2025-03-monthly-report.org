@@ -8,146 +8,112 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Project update
 
-- Rust version lowered to 1.49
-    - Means more testing and easier to compiler for more distributions and systems, including some old Darwin and Ubuntu machines still in use today
-    - Means gccrs is getting closer to compiling its own Rust dependencies - as soon as we can compile core and std, this'll be one of our main objectives
-- 70 PRs merged this month
-- Fixing tons of issues popping up when compiling core
-- Fuzzing from Matthew uncovered a whole bunch of issues, which have been fixed
-- We have implemented ~min_specialization~
-    - Not used in RfL
-    - Used in `core` for performance reasons
-        - This means that both the default implementation and the more specialized one have the *same* behavior - hence choosing the wrong one would only incur a runtime performance loss. This is the only case of specialization that we support! We do not support deciding between multiple default implementations and choosing the most specific one.
+74 pull-requests were merged this month, with multiple internal compiler error fixes thanks to the fuzzing work done by [[https://github.com/matthiaskrgr][Matthias Krüger]], which helped expose multiple invalid code paths in the compiler. Thank you!
 
-We are still working hard to get as many features completed in time before the release of GCC 15.1. We have started preparing our branch for upstreaming patches to the compiler, and are in the process of improving our upstreaming and fork-updating process to make it more streamlined and enable upstreams to happen more often. This is taking quite a bit of time, but we are still on track regarding the milestones we set ourselves for GCC 15.1
+We also spent some time getting our mininum supported Rust version down to Rust 1.49 for our Rust components. As a reminder, Rust 1.49 is the version that ~gccrs~ currently targets, and getting our own Rust components compilable with this version also means getting closer and closer to ~gccrs~ compiling its own components - an objective we will pursue as soon as we are able to compile the Rust standard library. This also enables for more testing on less common systems, as certain versions of Darwin or Ubuntu still in use by our community only have access to older Rust installations.
 
-We have started work on two major technical features required for handling Rust-for-Linux code: ~impl Trait types~ and ~let-else~, two patterns used in the kernel and also often found in user code. Note also that ~impl Trait types~ are also used extensively in ~core~, and are thus a requirement for properly handling the Rust standard library.
-
-We have also continued work on our ongoing milestones, such as macro expansion fixes, our name resolution rewrite, and the handling of conditional compilation directives for ~core~. We will then start working on a slimmed down version of [[https://rust-lang.github.io/rfcs/1210-impl-specialization.html][specialization]], as it is seldom used in ~core~, but still required for properly compiling it.
+We are still working on developing new features and upstreaming them in time for the GCC 15.1 release. The cutoff date for the branch is yet to be announced, but should happen soon. We have continued work on our milestones, and have spent a lot of time getting further and further into the compilation of ~core~. This opened new issues on the project with our macro expansion and name resolution, which we quickly fixed in the last few weeks.
 
 [[./assets/mermaid-03-monthly.svg]]
 
-Pierre-Emmanuel and Arthur will be attending Rust in Paris on the 14th of March, and we are hoping to meet lots of other French Rustaceans. Our next event will then be RustWeek in the Netherlands in May, and we will also be attending EuroRust in Paris where we hope to give a talk on the current state of ~gccrs~.
+One of the focus of this month was adding support for the ~min_specialization~ feature, which you can learn more about [[https://github.com/rust-lang/rfcs/blob/master/text/1210-impl-specialization.md][here]]. In its current form, ~gccrs~ only supports a subset of ~min_specialization~, which itself is a subset of ~specialization~ in general. We are required to support parts of this feature as it used in ~core~ to improve runtime performance in certain cases.
 
-A missing part of our macro expansion implementation was the handling of the ~$crate~ metavar, a special meta-variable used in macros which allows to refer to items defined in the same crate as the macro itself. When such a macro is used in an external crate, the metavar needs to be replaced by the crate-name and a scope resolution operator (::<crate_name>), but when it is used in the current crate, it can simply be replaced by the ~crate~ path segment.
-
-In RfL's inner implementation of its printing macros, this is used for making a call to a specific function: ~call_printk~. This enables calling the macro from the kernel as well as from any kernel modules which uses the kernel as a dependency.
+For example, the machinery responsible for implementing [[https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.zip][Iterator::zip]] (as a reminder, ~Iterator::zip~ enables you to tie together two iterators and advance them as the same time) lives in the ~core::iter::adapters::ZipImpl~ trait, whose definition looks like this:
 
 #+BEGIN_SRC rust
 
-macro_rules! print_macro (
-    ($format_string:path, false, $($arg:tt)+) => (
-        match format_args!($($arg)+) {
-            args => unsafe {
-                $crate::print::call_printk(
-                    &$format_string,
-                    crate::__LOG_PREFIX,
-                    args,
-                );
-            }
-        }
-    );
-);
-
-#+END_SRC
-
-Another feature we need to handle for Rust in the Linux kernel is ~let else~ statements. ~let else~ statements look just like regular ~let~ statements with a pattern, with an extra diverging ~else~ block in case the pattern does not match. This example is taken directly from the kernel's inner implementation for parsing some of its macros.
-
-#+BEGIN_SRC rust
-
-let Some(TokenTree::Ident(ident)) = tokens.next() else {
-    panic!("expected identifier as modifier");
-};
-
-#+END_SRC
-
-Functionally, the above code is similar to this one:
-
-#+BEGIN_SRC rust
-
-let ident = match tokens.next() {
-    Some(TokenTree::Ident(ident)) => ident,
-    _ => panic!("expected identifier as modifier"),
-};
-
-#+END_SRC
-
-However, we cannot just desugar to a match expression despite the behavior being the same. The reason for this is that the following code typechecks:
-
-#+BEGIN_SRC rust
-
-let foo = match bar() {
-    Some(value) => value,
-    None => default_value,
-};
-
-#+END_SRC
-
-While this one does not:
-
-#+BEGIN_SRC rust
-
-let Some(value) = bar() else {
-    Some(default_value)
-};
-
-#+END_SRC
-
-As the ~else~ block of a ~let else~ must be a diverging expression, whose type can only be ~!~. So, something like a ~return~ expression or a macro invocation of ~unreachable!()~ or ~panic!()~.
-
-[[https://play.rust-lang.org/?version=stable&mode=debug&edition=2024&gist=d60a434b58ebee9c4a05624907cdda19][Playground example]]
-
-#+BEGIN_SRC rust
-
-let Some(TokenTree::Ident(ident)) = tokens.next() else {
-    panic!("expected identifier as modifier");
-};
-
-#+END_SRC
-
-Finally, we also started working on handling opaque types/~impl Trait types~. This is required for many existing Rust programs and libraries, as it is a feature often used for refering to unnameable types or for more concise code. For example, when specifying complex bounds on a generic type, one can often use an ~impl Trait type~ instead:
-
-#+BEGIN_SRC rust
-
-fn foo<T: Iterator<Item = Bar>>(iterator: T) {}
-
-// becomes
-
-fn foo(iterator: impl Iterator<Item = Bar>) {}
-
-#+END_SRC
-
-More importantly, they are required for returning unnameable types, for example in the case of closures. We know that closures implement function-like traits, but they don't have a type that is defined anywhere in source - their type is only known by the compiler. This makes it extremely hard to return them, as one is not quite sure what to put in their function's signature. We can use the ~impl Trait~ notation to express the fact that what we are returning implements a certain trait that we know about (in the case of closures, often ~Fn~, ~FnOnce~ or ~FnMut~), and the typechecker will ensure that is the case.
-
-#+BEGIN_SRC rust
-
-#[inline]
-fn flatten<U: Iterator, Acc>(
-    fold: &mut impl FnMut(Acc, U::Item) -> Acc,
-) -> impl FnMut(Acc, U) -> Acc + '_ {
-    move |acc, iter| iter.fold(acc, &mut *fold)
+// Zip specialization trait
+#[doc(hidden)]
+trait ZipImpl<A, B> {
+    type Item;
+    fn new(a: A, b: B) -> Self;
+    fn next(&mut self) -> Option<Self::Item>;
+    fn size_hint(&self) -> (usize, Option<usize>);
+    fn nth(&mut self, n: usize) -> Option<Self::Item>;
+    fn next_back(&mut self) -> Option<Self::Item>
+    where
+        A: DoubleEndedIterator + ExactSizeIterator,
+        B: DoubleEndedIterator + ExactSizeIterator;
+    // This has the same safety requirements as `Iterator::__iterator_get_unchecked`
+    unsafe fn get_unchecked(&mut self, idx: usize) -> <Self as Iterator>::Item
+    where
+        Self: Iterator + TrustedRandomAccess;
 }
-
 #+END_SRC
 
-In the case of Rust-for-Linux, this is also used to abstract complex memory operations used when dealing with self-referential types. The kernel offers a helpful ~pin_init!()~ macro for initializing self-referrential types, but the concrete type is not known by the user and thus cannot be named - all the user needs to know about is that this type implements the `PinInit` trait.
+If we keep reading through the file, we can see two implementations for this trait:
 
 #+BEGIN_SRC rust
 
-impl Example {
-    fn new() -> impl PinInit<Self> {
-        pin_init!(Self {
-            c: 10,
-            d <- new_mutex!(Inner { a: 20, b: 30 }),
-        })
+impl<A, B> ZipImpl<A, B> for Zip<A, B>
+where
+    A: Iterator,
+    B: Iterator,
+{ /* ... */ }
+
+// and ...
+
+#[doc(hidden)]
+impl<A, B> ZipImpl<A, B> for Zip<A, B>
+where
+    A: TrustedRandomAccess + Iterator,
+    B: TrustedRandomAccess + Iterator,
+{ /* ... */ }
+#+END_SRC
+
+In one case, the implementation is more specialized and adds an extra bound - ~TrustedRandomAccess~. Without specialization, these two implementations are ambiguous, as they contain similar bounds. But by using specialization, the ~core~ library is able to provide a default, safe and slower implementation of ~zip~ while also providing a fast one where possible, for example if the iterators support trusted random access, meaning it supports efficent and safe random index accesses.
+
+The method ~next~ for these two implementations of ~ZipImpl~ thus look like the following:
+
+#+BEGIN_SRC rust
+
+impl<A, B> ZipImpl<A, B> for Zip<A, B>
+where
+    A: Iterator,
+    B: Iterator,
+{
+    #[inline]
+    default fn next(&mut self) -> Option<(A::Item, B::Item)> {
+        let x = self.a.next()?;
+        let y = self.b.next()?;
+        Some((x, y))
     }
 }
 
+// and...
+
+impl<A, B> ZipImpl<A, B> for Zip<A, B>
+where
+    A: TrustedRandomAccess + Iterator,
+    B: TrustedRandomAccess + Iterator,
+{
+    #[inline]
+    fn next(&mut self) -> Option<(A::Item, B::Item)> {
+        if self.index < self.len {
+            let i = self.index;
+            self.index += 1;
+            // SAFETY: `i` is smaller than `self.len`, thus smaller than `self.a.len()` and `self.b.len()`
+            unsafe {
+                Some((self.a.__iterator_get_unchecked(i), self.b.__iterator_get_unchecked(i)))
+            }
+        } else if A::may_have_side_effect() && self.index < self.a.size() {
+            // match the base implementation's potential side effects
+            // SAFETY: we just checked that `self.index` < `self.a.len()`
+            unsafe {
+                self.a.__iterator_get_unchecked(self.index);
+            }
+            self.index += 1;
+            None
+        } else {
+            None
+        }
+    }
+}
 #+END_SRC
 
+In the more specific method, the behavior is the same, but the implementation makes use of extra type information to provide faster runtime performance when selecting the next items to iterate on. With the work done this month, ~gccrs~ is now able to select these faster methods without producing an "ambiguous method resolution" error. While specialization is not used in Rust-for-Linux, it is important that we are able to resolve to the same methods as ~rustc~ when compiling code. This will also make for more optimized binaries and a faster kernel once we are able to compile Rust-for-Linux. In order to fully support ~min_specialization~ however, we would need to implement a new algorithm for deciding between two ~default~ functions and choosing the most specific one, which would require the development of a new decision tree and the associated algorithms. This is not required for ~core~ or Rust-for-Linux, and will thus be worked on at a later date.
+
 #+BEGIN_COMMENT
-
-
 flowchart LR;
     subgraph target[Target Components]
         core --> alloc;
@@ -176,9 +142,9 @@ flowchart LR;
 
 *** Community call
 
-We will have our next monthly community call on the 17th of March at 10am UTC. You can subscribe to our calendar to see when the next one will be held. The call is open to everyone, even if you would just like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to be notified of upcoming events.
+We will have our next monthly community call on the 21st of April at 10am UTC. You can subscribe to our calendar to see when the next one will be held. The call is open to everyone, even if you would just like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to be notified of upcoming events.
 
-- [[https://meet.jit.si/gccrs-community-call-march][Jitsi link]]
+- [[https://meet.jit.si/gccrs-community-call-april][Jitsi link]]
 - Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
 - [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com][Google calendar link]]
 - [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
@@ -191,59 +157,161 @@ We will have our next monthly community call on the 17th of March at 10am UTC. Y
 
 ** Completed Activities
 
-- nr2.0: Make sure `PathInExpression` is default resolved                    [[https://github.com/rust-gcc/gccrs/pull/3491][PR3491]]
-- nr2.0: Set the node id of the root node                                    [[https://github.com/rust-gcc/gccrs/pull/3490][PR3490]]
-- Reduce usage of `rust-session-manager.h`                                   [[https://github.com/rust-gcc/gccrs/pull/3464][PR3464]]
-- expansion: Correctly expand `$crate` metavar                               [[https://github.com/rust-gcc/gccrs/pull/3457][PR3457]]
-- Adjust unknown macro error message                                         [[https://github.com/rust-gcc/gccrs/pull/3455][PR3455]]
-- Adjust type path resolution error message                                  [[https://github.com/rust-gcc/gccrs/pull/3453][PR3453]]
-- nr2.0: Handle lang item type path segments                                 [[https://github.com/rust-gcc/gccrs/pull/3452][PR3452]]
-- nr2.0: Implement `macro_use` for modules                                   [[https://github.com/rust-gcc/gccrs/pull/3451][PR3451]]
-- Fix macro invocation in impl trait type bound                              [[https://github.com/rust-gcc/gccrs/pull/3450][PR3450]]
-- Add `derive(Hash)` expansion                                               [[https://github.com/rust-gcc/gccrs/pull/3449][PR3449]]
-- Remove some member functions from `SingleASTNode`                          [[https://github.com/rust-gcc/gccrs/pull/3447][PR3447]]
-- Remove `PathInExpression::get_pattern_node_id`                             [[https://github.com/rust-gcc/gccrs/pull/3446][PR3446]]
-- Fix expansion of macros inside modules                                     [[https://github.com/rust-gcc/gccrs/pull/3445][PR3445]]
-- nr2.0: Fix issue with external crates                                      [[https://github.com/rust-gcc/gccrs/pull/3443][PR3443]]
-- Add comments to `resolve_segments`                                         [[https://github.com/rust-gcc/gccrs/pull/3442][PR3442]]
-- gccrs: initial setup for new OpaqueType to represent Impl types            [[https://github.com/rust-gcc/gccrs/pull/3441][PR3441]]
-- gccrs: Add name resolution and HIR lowering for ImplTraitType's            [[https://github.com/rust-gcc/gccrs/pull/3440][PR3440]]
-- gccrs: improve error diagnostic for bad type-resolution in CallExpr        [[https://github.com/rust-gcc/gccrs/pull/3439][PR3439]]
-- Desugar error propagation                                                  [[https://github.com/rust-gcc/gccrs/pull/3438][PR3438]]
-- gccrs: self paths are patterns but we dont have mappings for it            [[https://github.com/rust-gcc/gccrs/pull/3436][PR3436]]
-- gccrs: fix name resolution for generics where type param is declared later [[https://github.com/rust-gcc/gccrs/pull/3435][PR3435]]
-- gccrs: fix unconstrained generics check to handle recursive generics       [[https://github.com/rust-gcc/gccrs/pull/3434][PR3434]]
-- gccrs: add diagnostic for E0229 no associated type arguments allowed here  [[https://github.com/rust-gcc/gccrs/pull/3431][PR3431]]
-- gccrs: enum type layout needs to respect the enum repr type                [[https://github.com/rust-gcc/gccrs/pull/3427][PR3427]]
-- gccrs: add variant_count intrinsic                                         [[https://github.com/rust-gcc/gccrs/pull/3426][PR3426]]
-- gccrs: add discriminant value intrinsic                                    [[https://github.com/rust-gcc/gccrs/pull/3425][PR3425]]
-- Get rid of duplicate interface #3396                                       [[https://github.com/rust-gcc/gccrs/pull/3423][PR3423]]
-- gccrs: remove bad type checking diagnostic                                 [[https://github.com/rust-gcc/gccrs/pull/3421][PR3421]]
-- Add warning about default visitor usage                                    [[https://github.com/rust-gcc/gccrs/pull/3419][PR3419]]
-- nr2.0: Run `DefaultResolver::visit` on `PathInExpression`                  [[https://github.com/rust-gcc/gccrs/pull/3418][PR3418]]
-- gccrs: Add test case to show issue is fixed                                [[https://github.com/rust-gcc/gccrs/pull/3417][PR3417]]
-- nr2.0: Resolve paths which start with Self                                 [[https://github.com/rust-gcc/gccrs/pull/3416][PR3416]]
-- derive(PartialEq): Add partial implementation (hehe)                       [[https://github.com/rust-gcc/gccrs/pull/3415][PR3415]]
-- gccrs: Fix compilation of trait-items which map to impl items              [[https://github.com/rust-gcc/gccrs/pull/3414][PR3414]]
-- gccrs: Fix bad generic substitution error on fn/adt types                  [[https://github.com/rust-gcc/gccrs/pull/3413][PR3413]]
-- gccrs: Fix crash in privay reporter for placeholder types                  [[https://github.com/rust-gcc/gccrs/pull/3412][PR3412]]
-- gccrs: coercion sites allow for type inference as well.                    [[https://github.com/rust-gcc/gccrs/pull/3411][PR3411]]
-- gccrs: Fix ICE during path probe                                           [[https://github.com/rust-gcc/gccrs/pull/3410][PR3410]]
-- gccrs: Fix ICE when fn_once and fn_once_output lang item is not defined    [[https://github.com/rust-gcc/gccrs/pull/3409][PR3409]]
-- nr2.0: Remove accidental copies of resolver                                [[https://github.com/rust-gcc/gccrs/pull/3408][PR3408]]
-- Add `derive(Default)`                                                      [[https://github.com/rust-gcc/gccrs/pull/3399][PR3399]]
-- inline-asm: Fix some warnings                                              [[https://github.com/rust-gcc/gccrs/pull/3393][PR3393]]
-- Desugar for-loops in the AST                                               [[https://github.com/rust-gcc/gccrs/pull/3392][PR3392]]
-- hir-dump: Fix more segfaults in the HIR dump                               [[https://github.com/rust-gcc/gccrs/pull/3316][PR3316]]
-- Add type check on if-expr                                                  [[https://github.com/rust-gcc/gccrs/pull/3306][PR3306]]
-- Fix bug in type resolution of paths                                        [[https://github.com/rust-gcc/gccrs/pull/3277][PR3277]]
-- Resolve instances of `TypePath` more accurately                            [[https://github.com/rust-gcc/gccrs/pull/3220][PR3220]]
+- format_args: Allow extraneous commas, improve safety                             [[https://github.com/rust-gcc/gccrs/pull/3737][PR3737]]
+CohenArthur:format-args-improvements                about 2 days ago
+- nr2.0: Do not resolve modules this run if they are unloaded                      [[https://github.com/rust-gcc/gccrs/pull/3736][PR3736]]
+CohenArthur:do-not-resolve-unloaded-modules-nr2.0   about 3 days ago
+- Handle doc comments in macros + fixes for invalid macro expansions in `core`     [[https://github.com/rust-gcc/gccrs/pull/3734][PR3734]]
+CohenArthur:handle-doc-comments-in-macros           about 3 days ago
+- Cleanup rust-gcc.cc by Andrew Pinski (20-03-2025)                                [[https://github.com/rust-gcc/gccrs/pull/3721][PR3721]]
+CohenArthur:pinskia-patches-20-03-2025              about 5 days ago
+- nr2.0: Adjust test `issue-2812.rs`                                               [[https://github.com/rust-gcc/gccrs/pull/3701][PR3701]]
+powerboat9:fix-28                                   about 8 days ago
+- nr2.0: Adjust test `macro6.rs`                                                   [[https://github.com/rust-gcc/gccrs/pull/3700][PR3700]]
+powerboat9:fix-6                                    about 8 days ago
+- Fix const checking of enum discriminants                                         [[https://github.com/rust-gcc/gccrs/pull/3699][PR3699]]
+powerboat9:fix-enum                                 about 8 days ago
+- fix: add check for null feature gate to display error properly                   [[https://github.com/rust-gcc/gccrs/pull/3692][PR3692]]
+matty-kuhn:master                                   about 10 days ago
+- nr2.0: Remove duplicate self visit                                               [[https://github.com/rust-gcc/gccrs/pull/3691][PR3691]]
+powerboat9:fix-self                                 about 10 days ago
+- gccrs: Fix ICE for reserved lifetime name                                        [[https://github.com/rust-gcc/gccrs/pull/3690][PR3690]]
+phil/lifetime-ice                                   about 10 days ago
+- gccrs: Fix ICE on raw reference                                                  [[https://github.com/rust-gcc/gccrs/pull/3688][PR3688]]
+phil/raw-ptr                                        about 10 days ago
+- gccrs: Fix ICE on invalid match arms                                             [[https://github.com/rust-gcc/gccrs/pull/3687][PR3687]]
+phil/enum-ice                                       about 10 days ago
+- Implement proper method resolution for min_specialization                        [[https://github.com/rust-gcc/gccrs/pull/3685][PR3685]]
+CohenArthur:ignore-specialized-methods              about 10 days ago
+- gccrs: Fix ICE when hitting invalid types for generics                           [[https://github.com/rust-gcc/gccrs/pull/3684][PR3684]]
+phil/subst-crash                                    about 11 days ago
+- gccrs: Fix recusive type query and nullptr on type path                          [[https://github.com/rust-gcc/gccrs/pull/3683][PR3683]]
+phil/generic_param_resolve                          about 11 days ago
+- gccrs: Fix ICE when there are 2 functions named main                             [[https://github.com/rust-gcc/gccrs/pull/3682][PR3682]]
+phil/ice-2-main                                     about 11 days ago
+- Nr2: fix missing labels                                                          [[https://github.com/rust-gcc/gccrs/pull/3679][PR3679]]
+P-E-P:nr2-fix-missing-label                         about 12 days ago
+- Add base for handling `#![feature(min_specialization)]`                          [[https://github.com/rust-gcc/gccrs/pull/3678][PR3678]]
+CohenArthur:handle-min-specialization-feature-name  about 12 days ago
+- install.texi: Mention Rust requirement for building gccrs                        [[https://github.com/rust-gcc/gccrs/pull/3677][PR3677]]
+CohenArthur:install-texi-reqs                       about 13 days ago
+- gccrs: Fix ICE when doing shift checks on const decl                             [[https://github.com/rust-gcc/gccrs/pull/3676][PR3676]]
+phil/ice-const-eval                                 about 13 days ago
+- gccrs: Fix ICE when resolving lifetimes without name                             [[https://github.com/rust-gcc/gccrs/pull/3675][PR3675]]
+phil/life-time-ice                                  about 13 days ago
+- nr2.0: Improve test script                                                       [[https://github.com/rust-gcc/gccrs/pull/3674][PR3674]]
+powerboat9:fix-test                                 about 14 days ago
+- Fix error when evaluating an enum discriminant containing arithmetic operations  [[https://github.com/rust-gcc/gccrs/pull/3637][PR3637]]
+sakupan102:const-enum-discrim                       about 14 days ago
+- gccrs: Fix SEGV when type path resolver fails outright                           [[https://github.com/rust-gcc/gccrs/pull/3624][PR3624]]
+phil/mod-type-path                                  about 16 days ago
+- gccrs: fix ice when setting up regions                                           [[https://github.com/rust-gcc/gccrs/pull/3623][PR3623]]
+phil/ice-regions                                    about 16 days ago
+- gccrs: fix crash in parse repr options and missing delete call                   [[https://github.com/rust-gcc/gccrs/pull/3622][PR3622]]
+phil/ice-repr-parse-2                               about 16 days ago
+- gccrs: FIX ICE for malformed repr attribute                                      [[https://github.com/rust-gcc/gccrs/pull/3621][PR3621]]
+phil/parse-repr-options-ice                         about 16 days ago
+- gccrs: FIX ICE when working with HIR::BareFunctionType                           [[https://github.com/rust-gcc/gccrs/pull/3620][PR3620]]
+phil/ice-clone-type                                 about 16 days ago
+- gccrs: Fix ICE in array ref constexpr                                            [[https://github.com/rust-gcc/gccrs/pull/3619][PR3619]]
+phil/const-array-ref-ice                            about 16 days ago
+- Add ending newline to `rust-macro-builtins-log-debug.cc`                         [[https://github.com/rust-gcc/gccrs/pull/3604][PR3604]]
+powerboat9:add-nl                                   about 17 days ago
+- nr2.0: Rename `prelude` to `lang_prelude`                                        [[https://github.com/rust-gcc/gccrs/pull/3603][PR3603]]
+powerboat9:prelude-name                             about 17 days ago
+- gccrs: Fix ICE during const expr eval on array expressions                       [[https://github.com/rust-gcc/gccrs/pull/3602][PR3602]]
+phil/array-expr-ice                                 about 17 days ago
+- gccrs: Fix ICE when compiling path which resolves to trait constant              [[https://github.com/rust-gcc/gccrs/pull/3601][PR3601]]
+phil/ice-query-compile-const                        about 17 days ago
+- gccrs: Give the builtin unit struct an actual locus                              [[https://github.com/rust-gcc/gccrs/pull/3600][PR3600]]
+phil/unit-struct-locus                              about 17 days ago
+- gccrs: Fix ICE when doing method resolution on trait predicates                  [[https://github.com/rust-gcc/gccrs/pull/3580][PR3580]]
+phil/ice-dot-op                                     about 17 days ago
+- gccrs: Fix ICE when compiling block expressions in array capacity                [[https://github.com/rust-gcc/gccrs/pull/3579][PR3579]]
+phil/array-expr-constant                            about 18 days ago
+- gccrs: Add check for super traits being implemented by Self                      [[https://github.com/rust-gcc/gccrs/pull/3578][PR3578]]
+phil/super-trait-checks                             about 18 days ago
+- gccrs: Fix ICE when using super mid way though path                              [[https://github.com/rust-gcc/gccrs/pull/3576][PR3576]]
+phil/ice-name-resolve-super                         about 18 days ago
+- gccrs: Fix ICE when array elements are not a value                               [[https://github.com/rust-gcc/gccrs/pull/3575][PR3575]]
+phil/fix-ice-coercion-adjustment                    about 18 days ago
+- gccrs: fix unconstrained infer vars on generic associated type                   [[https://github.com/rust-gcc/gccrs/pull/3573][PR3573]]
+phil/associated-types-infer-dev                     about 18 days ago
+- Fix core library test's canonical path                                           [[https://github.com/rust-gcc/gccrs/pull/3572][PR3572]]
+P-E-P:nr2-fix-issue-2905-2-test                     about 18 days ago
+- Lower raw string literals                                                        [[https://github.com/rust-gcc/gccrs/pull/3562][PR3562]]
+powerboat9:fix-raw-lower                            about 19 days ago
+- Fix validation of constant items                                                 [[https://github.com/rust-gcc/gccrs/pull/3561][PR3561]]
+powerboat9:fix-const-expr                           about 19 days ago
+- nr2.0: Handle global paths                                                       [[https://github.com/rust-gcc/gccrs/pull/3532][PR3532]]
+powerboat9:fix-open                                 about 19 days ago
+- Fix unresolved imports                                                           [[https://github.com/rust-gcc/gccrs/pull/3529][PR3529]]
+P-E-P:nr2-fix-unresolved-import                     about 20 days ago
+- rust: Lower minimum supported Rust version to 1.49                               [[https://github.com/rust-gcc/gccrs/pull/3528][PR3528]]
+CohenArthur:rust-1.49                               about 20 days ago
+- nr2.0: Fix test `macros/mbe/macro43.rs`                                          [[https://github.com/rust-gcc/gccrs/pull/3527][PR3527]]
+powerboat9:fix-43                                   about 21 days ago
+- gccrs: support generic super traits recursively                                  [[https://github.com/rust-gcc/gccrs/pull/3522][PR3522]]
+phil/super-trait-cycle-issue                        about 22 days ago
+- nr2.0: Fix test `const_generics_3.rs`                                            [[https://github.com/rust-gcc/gccrs/pull/3521][PR3521]]
+powerboat9:fix-const                                about 23 days ago
+- Recognize `#[track_caller]`                                                      [[https://github.com/rust-gcc/gccrs/pull/3520][PR3520]]
+beamandala:3026                                     about 24 days ago
+- Modify multiple definition error                                                 [[https://github.com/rust-gcc/gccrs/pull/3519][PR3519]]
+powerboat9:redef                                    about 24 days ago
+- nr2.0: Adjust indentifier expression handling                                    [[https://github.com/rust-gcc/gccrs/pull/3518][PR3518]]
+powerboat9:fix-ident                                about 24 days ago
+- Nr2: Add missing function to silence error                                       [[https://github.com/rust-gcc/gccrs/pull/3517][PR3517]]
+P-E-P:nr2-missing-function                          about 24 days ago
+- nr2.0: Adjust visitors for struct expressions                                    [[https://github.com/rust-gcc/gccrs/pull/3516][PR3516]]
+powerboat9:fix-gen                                  about 24 days ago
+- NR2: Fix path resolution canonical path in tests                                 [[https://github.com/rust-gcc/gccrs/pull/3515][PR3515]]
+P-E-P:fix-nr2-intrinsics                            about 24 days ago
+- chore: refactoring rust_error_at "redefined multiple times"                      [[https://github.com/rust-gcc/gccrs/pull/3513][PR3513]]
+sriganeshres:refactor-multiple                      about 26 days ago
+- nr2.0: Fix `StructExprFieldIdentifier` handling                                  [[https://github.com/rust-gcc/gccrs/pull/3512][PR3512]]
+powerboat9:fix-struct-3                             about 26 days ago
+- nr2.0: Fix test `self-path2.rs`                                                  [[https://github.com/rust-gcc/gccrs/pull/3511][PR3511]]
+powerboat9:fix-self                                 about 26 days ago
+- polonius: Vendor Rust dependencies                                               [[https://github.com/rust-gcc/gccrs/pull/3508][PR3508]]
+CohenArthur:vendor-polonius-deps                    about 27 days ago
+- ci: disable network                                                              [[https://github.com/rust-gcc/gccrs/pull/3504][PR3504]]
+thesamesam:sam-gccrs-ci                             about 27 days ago
+- Fix Error: Type or Const Parameters on Foreign Items                             [[https://github.com/rust-gcc/gccrs/pull/3503][PR3503]]
+sakupan102:error-extern-generics                    about 1 month ago
+- gccrs: check for recursion trait cycle with bounds checks                        [[https://github.com/rust-gcc/gccrs/pull/3501][PR3501]]
+phil/super-trait-cycle-issue                        about 1 month ago
+- gccrs: Track defid on fntypes and cleanup                                        [[https://github.com/rust-gcc/gccrs/pull/3500][PR3500]]
+phil/dev-code-gen                                   about 1 month ago
+- Fix nr2 use declaration import                                                   [[https://github.com/rust-gcc/gccrs/pull/3499][PR3499]]
+P-E-P:fix-nr2-imports                               about 1 month ago
+- nr2.0: Check `compile/torture/*.rs` tests                                        [[https://github.com/rust-gcc/gccrs/pull/3498][PR3498]]
+powerboat9:more-tests                               about 1 month ago
+- Fix some small issues                                                            [[https://github.com/rust-gcc/gccrs/pull/3497][PR3497]]
+powerboat9:fix-spell                                about 1 month ago
+- Fix nr2 as string ice (within foreverstack)                                      [[https://github.com/rust-gcc/gccrs/pull/3495][PR3495]]
+P-E-P:fix-nr2-as-string-ice-2                       about 1 month ago
+- testsuite: Add more testcases for `cfg()` in core                                [[https://github.com/rust-gcc/gccrs/pull/3494][PR3494]]
+CohenArthur:cfg-core-testcases                      about 1 month ago
+- nr2.0: Set the node id of the root node                                          [[https://github.com/rust-gcc/gccrs/pull/3490][PR3490]]
+powerboat9:crate-fix                                about 1 month ago
+- Parse and lower `let-else` statements                                            [[https://github.com/rust-gcc/gccrs/pull/3468][PR3468]]
+CohenArthur:parse-let-else                          about 1 month ago
+- Fix nr2 exhaustiveness                                                           [[https://github.com/rust-gcc/gccrs/pull/3465][PR3465]]
+P-E-P:fix-nr2-exhaustiveness                        about 1 month ago
+- Prevent duplicate resolution insertions                                          [[https://github.com/rust-gcc/gccrs/pull/3456][PR3456]]
+powerboat9:no-dupe                                  about 1 month ago
+- Fix modules with same name as builtins causing ICE (#3315)                       [[https://github.com/rust-gcc/gccrs/pull/3437][PR3437]]
+liamnaddell:modname                                 about 1 month ago
 
 *** Contributors this month
 
+- [[https://github.com/powerboat9][Owen Avery]]
+- [[https://github.com/thesamesam][Sam James]]
+- [[https://github.com/liamnaddell][Liam Naddell]]
+
 - [[https://github.com/GS-GOAT][GS-GOAT]] (new contributor!)
 - [[https://github.com/Kamiinarii78][Benjamin Thos]]
-- [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/dkm][Marc Poulhiès]]
 - [[https://github.com/tschwinge][Thomas Schwinge]]
 - [[https://github.com/philberty][Philip Herron]]
@@ -254,25 +322,25 @@ We will have our next monthly community call on the 17th of March at 10am UTC. Y
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |        308 |        294 |   -14 |
-| In Progress |         96 |         93 |    -3 |
-| Completed   |        933 |        981 |   +48 |
+| TODO        |        294 |        493 |  +199 |
+| In Progress |         93 |        119 |   +26 |
+| Completed   |        981 |       1035 |   +54 |
 
 *** Bugs
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |        108 |        102 |    -6 |
-| In Progress |         43 |         32 |   -11 |
-| Completed   |        461 |        477 |   +16 |
+| TODO        |        102 |        218 |  +116 |
+| In Progress |         32 |         55 |   -23 |
+| Completed   |        477 |        510 |   +33 |
 
 *** Test Cases
 
 | TestCases | Last Month | This Month | Delta |
 |-----------+------------+------------+-------|
-| Passing   | 9500       | 9762       |  +262 |
+| Passing   | 9762       | 10296      |  +534 |
 | Failed    | -          | -          |     - |
-| XFAIL     | 182        | 114        |   -68 |
+| XFAIL     | 114        | 81         |   -33 |
 | XPASS     | -          | -          |     - |
 
 *** Milestones Progress
