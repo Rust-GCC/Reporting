@@ -1,6 +1,6 @@
-#+title:  Monthly Report for February 2025
+#+title:  Monthly Report for March 2025
 #+author: Philip Herron, Pierre-Emmanuel Patry and Arthur Cohen
-#+date:   2025-03-10
+#+date:   2025-04-14
 
 ** Overview
 
@@ -158,165 +158,88 @@ We will have our next monthly community call on the 21st of April at 10am UTC. Y
 ** Completed Activities
 
 - format_args: Allow extraneous commas, improve safety                             [[https://github.com/rust-gcc/gccrs/pull/3737][PR3737]]
-CohenArthur:format-args-improvements                about 2 days ago
 - nr2.0: Do not resolve modules this run if they are unloaded                      [[https://github.com/rust-gcc/gccrs/pull/3736][PR3736]]
-CohenArthur:do-not-resolve-unloaded-modules-nr2.0   about 3 days ago
-- Handle doc comments in macros + fixes for invalid macro expansions in `core`     [[https://github.com/rust-gcc/gccrs/pull/3734][PR3734]]
-CohenArthur:handle-doc-comments-in-macros           about 3 days ago
+- Handle doc comments in macros + fixes for invalid macro expansions in ~core~     [[https://github.com/rust-gcc/gccrs/pull/3734][PR3734]]
 - Cleanup rust-gcc.cc by Andrew Pinski (20-03-2025)                                [[https://github.com/rust-gcc/gccrs/pull/3721][PR3721]]
-CohenArthur:pinskia-patches-20-03-2025              about 5 days ago
-- nr2.0: Adjust test `issue-2812.rs`                                               [[https://github.com/rust-gcc/gccrs/pull/3701][PR3701]]
-powerboat9:fix-28                                   about 8 days ago
-- nr2.0: Adjust test `macro6.rs`                                                   [[https://github.com/rust-gcc/gccrs/pull/3700][PR3700]]
-powerboat9:fix-6                                    about 8 days ago
+- nr2.0: Adjust test ~issue-2812.rs~                                               [[https://github.com/rust-gcc/gccrs/pull/3701][PR3701]]
+- nr2.0: Adjust test ~macro6.rs~                                                   [[https://github.com/rust-gcc/gccrs/pull/3700][PR3700]]
 - Fix const checking of enum discriminants                                         [[https://github.com/rust-gcc/gccrs/pull/3699][PR3699]]
-powerboat9:fix-enum                                 about 8 days ago
 - fix: add check for null feature gate to display error properly                   [[https://github.com/rust-gcc/gccrs/pull/3692][PR3692]]
-matty-kuhn:master                                   about 10 days ago
 - nr2.0: Remove duplicate self visit                                               [[https://github.com/rust-gcc/gccrs/pull/3691][PR3691]]
-powerboat9:fix-self                                 about 10 days ago
 - gccrs: Fix ICE for reserved lifetime name                                        [[https://github.com/rust-gcc/gccrs/pull/3690][PR3690]]
-phil/lifetime-ice                                   about 10 days ago
 - gccrs: Fix ICE on raw reference                                                  [[https://github.com/rust-gcc/gccrs/pull/3688][PR3688]]
-phil/raw-ptr                                        about 10 days ago
 - gccrs: Fix ICE on invalid match arms                                             [[https://github.com/rust-gcc/gccrs/pull/3687][PR3687]]
-phil/enum-ice                                       about 10 days ago
 - Implement proper method resolution for min_specialization                        [[https://github.com/rust-gcc/gccrs/pull/3685][PR3685]]
-CohenArthur:ignore-specialized-methods              about 10 days ago
 - gccrs: Fix ICE when hitting invalid types for generics                           [[https://github.com/rust-gcc/gccrs/pull/3684][PR3684]]
-phil/subst-crash                                    about 11 days ago
 - gccrs: Fix recusive type query and nullptr on type path                          [[https://github.com/rust-gcc/gccrs/pull/3683][PR3683]]
-phil/generic_param_resolve                          about 11 days ago
 - gccrs: Fix ICE when there are 2 functions named main                             [[https://github.com/rust-gcc/gccrs/pull/3682][PR3682]]
-phil/ice-2-main                                     about 11 days ago
 - Nr2: fix missing labels                                                          [[https://github.com/rust-gcc/gccrs/pull/3679][PR3679]]
-P-E-P:nr2-fix-missing-label                         about 12 days ago
-- Add base for handling `#![feature(min_specialization)]`                          [[https://github.com/rust-gcc/gccrs/pull/3678][PR3678]]
-CohenArthur:handle-min-specialization-feature-name  about 12 days ago
+- Add base for handling ~#![feature(min_specialization)]~                          [[https://github.com/rust-gcc/gccrs/pull/3678][PR3678]]
 - install.texi: Mention Rust requirement for building gccrs                        [[https://github.com/rust-gcc/gccrs/pull/3677][PR3677]]
-CohenArthur:install-texi-reqs                       about 13 days ago
 - gccrs: Fix ICE when doing shift checks on const decl                             [[https://github.com/rust-gcc/gccrs/pull/3676][PR3676]]
-phil/ice-const-eval                                 about 13 days ago
 - gccrs: Fix ICE when resolving lifetimes without name                             [[https://github.com/rust-gcc/gccrs/pull/3675][PR3675]]
-phil/life-time-ice                                  about 13 days ago
 - nr2.0: Improve test script                                                       [[https://github.com/rust-gcc/gccrs/pull/3674][PR3674]]
-powerboat9:fix-test                                 about 14 days ago
 - Fix error when evaluating an enum discriminant containing arithmetic operations  [[https://github.com/rust-gcc/gccrs/pull/3637][PR3637]]
-sakupan102:const-enum-discrim                       about 14 days ago
 - gccrs: Fix SEGV when type path resolver fails outright                           [[https://github.com/rust-gcc/gccrs/pull/3624][PR3624]]
-phil/mod-type-path                                  about 16 days ago
 - gccrs: fix ice when setting up regions                                           [[https://github.com/rust-gcc/gccrs/pull/3623][PR3623]]
-phil/ice-regions                                    about 16 days ago
 - gccrs: fix crash in parse repr options and missing delete call                   [[https://github.com/rust-gcc/gccrs/pull/3622][PR3622]]
-phil/ice-repr-parse-2                               about 16 days ago
 - gccrs: FIX ICE for malformed repr attribute                                      [[https://github.com/rust-gcc/gccrs/pull/3621][PR3621]]
-phil/parse-repr-options-ice                         about 16 days ago
 - gccrs: FIX ICE when working with HIR::BareFunctionType                           [[https://github.com/rust-gcc/gccrs/pull/3620][PR3620]]
-phil/ice-clone-type                                 about 16 days ago
 - gccrs: Fix ICE in array ref constexpr                                            [[https://github.com/rust-gcc/gccrs/pull/3619][PR3619]]
-phil/const-array-ref-ice                            about 16 days ago
-- Add ending newline to `rust-macro-builtins-log-debug.cc`                         [[https://github.com/rust-gcc/gccrs/pull/3604][PR3604]]
-powerboat9:add-nl                                   about 17 days ago
-- nr2.0: Rename `prelude` to `lang_prelude`                                        [[https://github.com/rust-gcc/gccrs/pull/3603][PR3603]]
-powerboat9:prelude-name                             about 17 days ago
+- Add ending newline to ~rust-macro-builtins-log-debug.cc~                         [[https://github.com/rust-gcc/gccrs/pull/3604][PR3604]]
+- nr2.0: Rename ~prelude~ to ~lang_prelude~                                        [[https://github.com/rust-gcc/gccrs/pull/3603][PR3603]]
 - gccrs: Fix ICE during const expr eval on array expressions                       [[https://github.com/rust-gcc/gccrs/pull/3602][PR3602]]
-phil/array-expr-ice                                 about 17 days ago
 - gccrs: Fix ICE when compiling path which resolves to trait constant              [[https://github.com/rust-gcc/gccrs/pull/3601][PR3601]]
-phil/ice-query-compile-const                        about 17 days ago
 - gccrs: Give the builtin unit struct an actual locus                              [[https://github.com/rust-gcc/gccrs/pull/3600][PR3600]]
-phil/unit-struct-locus                              about 17 days ago
 - gccrs: Fix ICE when doing method resolution on trait predicates                  [[https://github.com/rust-gcc/gccrs/pull/3580][PR3580]]
-phil/ice-dot-op                                     about 17 days ago
 - gccrs: Fix ICE when compiling block expressions in array capacity                [[https://github.com/rust-gcc/gccrs/pull/3579][PR3579]]
-phil/array-expr-constant                            about 18 days ago
 - gccrs: Add check for super traits being implemented by Self                      [[https://github.com/rust-gcc/gccrs/pull/3578][PR3578]]
-phil/super-trait-checks                             about 18 days ago
 - gccrs: Fix ICE when using super mid way though path                              [[https://github.com/rust-gcc/gccrs/pull/3576][PR3576]]
-phil/ice-name-resolve-super                         about 18 days ago
 - gccrs: Fix ICE when array elements are not a value                               [[https://github.com/rust-gcc/gccrs/pull/3575][PR3575]]
-phil/fix-ice-coercion-adjustment                    about 18 days ago
 - gccrs: fix unconstrained infer vars on generic associated type                   [[https://github.com/rust-gcc/gccrs/pull/3573][PR3573]]
-phil/associated-types-infer-dev                     about 18 days ago
 - Fix core library test's canonical path                                           [[https://github.com/rust-gcc/gccrs/pull/3572][PR3572]]
-P-E-P:nr2-fix-issue-2905-2-test                     about 18 days ago
 - Lower raw string literals                                                        [[https://github.com/rust-gcc/gccrs/pull/3562][PR3562]]
-powerboat9:fix-raw-lower                            about 19 days ago
 - Fix validation of constant items                                                 [[https://github.com/rust-gcc/gccrs/pull/3561][PR3561]]
-powerboat9:fix-const-expr                           about 19 days ago
 - nr2.0: Handle global paths                                                       [[https://github.com/rust-gcc/gccrs/pull/3532][PR3532]]
-powerboat9:fix-open                                 about 19 days ago
 - Fix unresolved imports                                                           [[https://github.com/rust-gcc/gccrs/pull/3529][PR3529]]
-P-E-P:nr2-fix-unresolved-import                     about 20 days ago
 - rust: Lower minimum supported Rust version to 1.49                               [[https://github.com/rust-gcc/gccrs/pull/3528][PR3528]]
-CohenArthur:rust-1.49                               about 20 days ago
-- nr2.0: Fix test `macros/mbe/macro43.rs`                                          [[https://github.com/rust-gcc/gccrs/pull/3527][PR3527]]
-powerboat9:fix-43                                   about 21 days ago
+- nr2.0: Fix test ~macros/mbe/macro43.rs~                                          [[https://github.com/rust-gcc/gccrs/pull/3527][PR3527]]
 - gccrs: support generic super traits recursively                                  [[https://github.com/rust-gcc/gccrs/pull/3522][PR3522]]
-phil/super-trait-cycle-issue                        about 22 days ago
-- nr2.0: Fix test `const_generics_3.rs`                                            [[https://github.com/rust-gcc/gccrs/pull/3521][PR3521]]
-powerboat9:fix-const                                about 23 days ago
-- Recognize `#[track_caller]`                                                      [[https://github.com/rust-gcc/gccrs/pull/3520][PR3520]]
-beamandala:3026                                     about 24 days ago
+- nr2.0: Fix test ~const_generics_3.rs~                                            [[https://github.com/rust-gcc/gccrs/pull/3521][PR3521]]
+- Recognize ~#[track_caller]~                                                      [[https://github.com/rust-gcc/gccrs/pull/3520][PR3520]]
 - Modify multiple definition error                                                 [[https://github.com/rust-gcc/gccrs/pull/3519][PR3519]]
-powerboat9:redef                                    about 24 days ago
 - nr2.0: Adjust indentifier expression handling                                    [[https://github.com/rust-gcc/gccrs/pull/3518][PR3518]]
-powerboat9:fix-ident                                about 24 days ago
 - Nr2: Add missing function to silence error                                       [[https://github.com/rust-gcc/gccrs/pull/3517][PR3517]]
-P-E-P:nr2-missing-function                          about 24 days ago
 - nr2.0: Adjust visitors for struct expressions                                    [[https://github.com/rust-gcc/gccrs/pull/3516][PR3516]]
-powerboat9:fix-gen                                  about 24 days ago
 - NR2: Fix path resolution canonical path in tests                                 [[https://github.com/rust-gcc/gccrs/pull/3515][PR3515]]
-P-E-P:fix-nr2-intrinsics                            about 24 days ago
 - chore: refactoring rust_error_at "redefined multiple times"                      [[https://github.com/rust-gcc/gccrs/pull/3513][PR3513]]
-sriganeshres:refactor-multiple                      about 26 days ago
-- nr2.0: Fix `StructExprFieldIdentifier` handling                                  [[https://github.com/rust-gcc/gccrs/pull/3512][PR3512]]
-powerboat9:fix-struct-3                             about 26 days ago
-- nr2.0: Fix test `self-path2.rs`                                                  [[https://github.com/rust-gcc/gccrs/pull/3511][PR3511]]
-powerboat9:fix-self                                 about 26 days ago
+- nr2.0: Fix ~StructExprFieldIdentifier~ handling                                  [[https://github.com/rust-gcc/gccrs/pull/3512][PR3512]]
+- nr2.0: Fix test ~self-path2.rs~                                                  [[https://github.com/rust-gcc/gccrs/pull/3511][PR3511]]
 - polonius: Vendor Rust dependencies                                               [[https://github.com/rust-gcc/gccrs/pull/3508][PR3508]]
-CohenArthur:vendor-polonius-deps                    about 27 days ago
 - ci: disable network                                                              [[https://github.com/rust-gcc/gccrs/pull/3504][PR3504]]
-thesamesam:sam-gccrs-ci                             about 27 days ago
 - Fix Error: Type or Const Parameters on Foreign Items                             [[https://github.com/rust-gcc/gccrs/pull/3503][PR3503]]
-sakupan102:error-extern-generics                    about 1 month ago
 - gccrs: check for recursion trait cycle with bounds checks                        [[https://github.com/rust-gcc/gccrs/pull/3501][PR3501]]
-phil/super-trait-cycle-issue                        about 1 month ago
 - gccrs: Track defid on fntypes and cleanup                                        [[https://github.com/rust-gcc/gccrs/pull/3500][PR3500]]
-phil/dev-code-gen                                   about 1 month ago
 - Fix nr2 use declaration import                                                   [[https://github.com/rust-gcc/gccrs/pull/3499][PR3499]]
-P-E-P:fix-nr2-imports                               about 1 month ago
-- nr2.0: Check `compile/torture/*.rs` tests                                        [[https://github.com/rust-gcc/gccrs/pull/3498][PR3498]]
-powerboat9:more-tests                               about 1 month ago
+- nr2.0: Check ~compile/torture/*.rs~ tests                                        [[https://github.com/rust-gcc/gccrs/pull/3498][PR3498]]
 - Fix some small issues                                                            [[https://github.com/rust-gcc/gccrs/pull/3497][PR3497]]
-powerboat9:fix-spell                                about 1 month ago
 - Fix nr2 as string ice (within foreverstack)                                      [[https://github.com/rust-gcc/gccrs/pull/3495][PR3495]]
-P-E-P:fix-nr2-as-string-ice-2                       about 1 month ago
-- testsuite: Add more testcases for `cfg()` in core                                [[https://github.com/rust-gcc/gccrs/pull/3494][PR3494]]
-CohenArthur:cfg-core-testcases                      about 1 month ago
+- testsuite: Add more testcases for ~cfg()~ in core                                [[https://github.com/rust-gcc/gccrs/pull/3494][PR3494]]
 - nr2.0: Set the node id of the root node                                          [[https://github.com/rust-gcc/gccrs/pull/3490][PR3490]]
-powerboat9:crate-fix                                about 1 month ago
-- Parse and lower `let-else` statements                                            [[https://github.com/rust-gcc/gccrs/pull/3468][PR3468]]
-CohenArthur:parse-let-else                          about 1 month ago
+- Parse and lower ~let-else~ statements                                            [[https://github.com/rust-gcc/gccrs/pull/3468][PR3468]]
 - Fix nr2 exhaustiveness                                                           [[https://github.com/rust-gcc/gccrs/pull/3465][PR3465]]
-P-E-P:fix-nr2-exhaustiveness                        about 1 month ago
 - Prevent duplicate resolution insertions                                          [[https://github.com/rust-gcc/gccrs/pull/3456][PR3456]]
-powerboat9:no-dupe                                  about 1 month ago
 - Fix modules with same name as builtins causing ICE (#3315)                       [[https://github.com/rust-gcc/gccrs/pull/3437][PR3437]]
-liamnaddell:modname                                 about 1 month ago
 
 *** Contributors this month
 
+- [[https://github.com/sakupan102][Ryutaro Okada]] (new contributor!)
+- [[https://github.com/matty-kuhn][Matty Kuhn]] (new contributor!)
+- [[https://github.com/beamandala][Bhavesh M]] (new contributor!)
+- [[https://github.com/sriganeshres][Sri Ganesh Thota]]
 - [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/thesamesam][Sam James]]
 - [[https://github.com/liamnaddell][Liam Naddell]]
-
-- [[https://github.com/GS-GOAT][GS-GOAT]] (new contributor!)
-- [[https://github.com/Kamiinarii78][Benjamin Thos]]
-- [[https://github.com/dkm][Marc Poulhiès]]
-- [[https://github.com/tschwinge][Thomas Schwinge]]
-- [[https://github.com/philberty][Philip Herron]]
-- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
-- [[https://github.com/CohenArthur][Arthur Cohen]]
 
 *** Overall Task Status
 
@@ -406,7 +329,7 @@ liamnaddell:modname                                 about 1 month ago
 
 ** Planned Activities
 
-- Finish `derive(PartialOrd)` and `derive(PartialEq)` implementation
+- Finish ~derive(PartialOrd)~ and ~derive(PartialEq)~ implementation
 - Finish let-else compilation
 - Upstream changes up to the release point
 
