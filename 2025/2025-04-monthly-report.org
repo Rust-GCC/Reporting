@@ -130,6 +130,8 @@ Having a community call this month will be difficult, as Pierre-Emmanuel and Art
 | GCC 14.2                          |       100% |       100% |     - |  7th Jun 2024 |   15th Jun 2024 | 15th Jun 2024 |   GCC 14.2 |
 | GCC 15.1                          |       100% |       100% |     - | 21st Jun 2024 |   31st Jun 2024 |  1st Jul 2024 |   GCC 15.1 |
 
+## Snip
+
 | Milestone                         | Start Date    | Completion Date | Target        | Target GCC |
 |-----------------------------------+---------------+-----------------+---------------|------------|
 | Unhandled attributes              |  1st Jul 2024 |   15th Aug 2024 | 15th Aug 2024 |   GCC 15.1 |
