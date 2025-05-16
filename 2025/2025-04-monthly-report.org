@@ -95,16 +95,6 @@ Having a community call this month will be difficult, as Pierre-Emmanuel and Art
 
 | Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        | Target GCC |
 |-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|------------|
-| Name resolution 2.0 rework        |        49% |       100% |  +51% |  1st Jun 2024 |               - |  1st Apr 2025 |   GCC 15.1 |
-| Macro expansion                   |        90% |       100% |  +10% |  1st Jun 2024 |               - |  1st Jan 2025 |   GCC 15.1 |
-| Remaining typecheck issues        |        98% |       100% |   +2% | 21st Oct 2024 |               - |  1st Mar 2025 |   GCC 15.1 |
-| cfg-core                          |       100% |       100% |     - |  1st Dec 2024 |   24th Mar 2025 |  1st Mar 2025 |   GCC 15.1 |
-| Codegen fixes                     |       100% |       100% |     - |  7th Oct 2024 |    1st Apr 2025 |  1st Mar 2025 |   GCC 15.1 |
-| black_box intrinsic               |        75% |       100% |  +25% | 28th Oct 2024 |               - | 28th Jan 2025 |   GCC 15.1 |
-| let-else                          |        60% |       100% |  +30% | 28th Jan 2025 |               - | 28th Feb 2025 |   GCC 15.1 |
-| Specialization                    |       100% |       100% |     - |  1st Jan 2025 |    1st Apr 2025 |  1st Mar 2025 |   GCC 15.1 |
-| cfg-rfl                           |       100% |       100% |     - |  7th Jan 2025 |   19th Mar 2025 | 15th Feb 2025 |   GCC 15.1 |
-| Downgrade to Rust 1.49            |       100% |       100% |     - | 14th Mar 2025 |   26th Mar 2025 |  1st Apr 2025 |   GCC 15.1 |
 | Explicit generics with impl Trait |        40% |        40% |     - | 28th Feb 2025 |               - | 28th Mar 2025 |   GCC 15.1 |
  
 | Upcoming Milestone                | Last Month | This Month | Delta | Start Date    | Completion Date | Target        | Target GCC |
@@ -139,18 +129,31 @@ Having a community call this month will be difficult, as Pierre-Emmanuel and Art
 | format_args!() support            |       100% |       100% |     - | 15th Feb 2024 |               - |  1st Apr 2024 |   GCC 14.1 |
 | GCC 14.2                          |       100% |       100% |     - |  7th Jun 2024 |   15th Jun 2024 | 15th Jun 2024 |   GCC 14.2 |
 | GCC 15.1                          |       100% |       100% |     - | 21st Jun 2024 |   31st Jun 2024 |  1st Jul 2024 |   GCC 15.1 |
-| Unhandled attributes              |       100% |       100% |     - |  1st Jul 2024 |   15th Aug 2024 | 15th Aug 2024 |   GCC 15.1 |
-| Inline assembly                   |       100% |       100% |     - |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
-| Rustc Testsuite Adaptor           |       100% |       100% |     - |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
-| Borrow checker improvements       |       100% |       100% |     - |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
-| Deref and DerefMut improvements   |       100% |       100% |     - | 28th Sep 2024 |   25th Oct 2024 | 28th Dec 2024 |   GCC 15.1 |
-| Indexing fixes                    |       100% |       100% |     - | 21st Jul 2024 |   25th Dec 2024 | 15th Nov 2024 |   GCC 15.1 |
-| Iterator fixes                    |       100% |       100% |     - | 21st Jul 2024 |   25th Dec 2024 | 15th Nov 2024 |   GCC 15.1 |
-| Auto traits improvements          |       100% |       100% |     - | 15th Sep 2024 |   20th Jan 2025 | 21st Dec 2024 |   GCC 15.1 |
-| Lang items                        |       100% |       100% |     - |  1st Jul 2024 |   10th Jan 2025 | 21st Nov 2024 |   GCC 15.1 |
-| alloc parser issues               |       100% |       100% |     - |  7th Jan 2025 |   31st Jun 2024 | 28th Jan 2025 |   GCC 15.1 |
-| std parser issues                 |       100% |       100% |     - |  7th Jan 2025 |   31st Jun 2024 | 28th Jan 2025 |   GCC 16.1 |
-| Question mark operator            |       100% |       100% |     - | 15th Dec 2024 |   21st Feb 2025 | 21st Feb 2025 |   GCC 15.1 |
+
+| Milestone                         | Start Date    | Completion Date | Target        | Target GCC |
+|-----------------------------------+---------------+-----------------+---------------|------------|
+| Unhandled attributes              |  1st Jul 2024 |   15th Aug 2024 | 15th Aug 2024 |   GCC 15.1 |
+| Inline assembly                   |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
+| Rustc Testsuite Adaptor           |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
+| Borrow checker improvements       |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
+| Deref and DerefMut improvements   | 28th Sep 2024 |   25th Oct 2024 | 28th Dec 2024 |   GCC 15.1 |
+| Indexing fixes                    | 21st Jul 2024 |   25th Dec 2024 | 15th Nov 2024 |   GCC 15.1 |
+| Iterator fixes                    | 21st Jul 2024 |   25th Dec 2024 | 15th Nov 2024 |   GCC 15.1 |
+| Auto traits improvements          | 15th Sep 2024 |   20th Jan 2025 | 21st Dec 2024 |   GCC 15.1 |
+| Lang items                        |  1st Jul 2024 |   10th Jan 2025 | 21st Nov 2024 |   GCC 15.1 |
+| alloc parser issues               |  7th Jan 2025 |   31st Jun 2024 | 28th Jan 2025 |   GCC 15.1 |
+| std parser issues                 |  7th Jan 2025 |   31st Jun 2024 | 28th Jan 2025 |   GCC 16.1 |
+| Question mark operator            | 15th Dec 2024 |   21st Feb 2025 | 21st Feb 2025 |   GCC 15.1 |
+| Name resolution 2.0 rework        |  1st Jun 2024 |               - |  1st Apr 2025 |   GCC 15.1 |
+| Macro expansion                   |  1st Jun 2024 |               - |  1st Jan 2025 |   GCC 15.1 |
+| Remaining typecheck issues        | 21st Oct 2024 |               - |  1st Mar 2025 |   GCC 15.1 |
+| cfg-core                          |  1st Dec 2024 |   24th Mar 2025 |  1st Mar 2025 |   GCC 15.1 |
+| Codegen fixes                     |  7th Oct 2024 |    1st Apr 2025 |  1st Mar 2025 |   GCC 15.1 |
+| black_box intrinsic               | 28th Oct 2024 |               - | 28th Jan 2025 |   GCC 15.1 |
+| let-else                          | 28th Jan 2025 |               - | 28th Feb 2025 |   GCC 15.1 |
+| Specialization                    |  1st Jan 2025 |    1st Apr 2025 |  1st Mar 2025 |   GCC 15.1 |
+| cfg-rfl                           |  7th Jan 2025 |   19th Mar 2025 | 15th Feb 2025 |   GCC 15.1 |
+| Downgrade to Rust 1.49            | 14th Mar 2025 |   26th Mar 2025 |  1st Apr 2025 |   GCC 15.1 |
 
 ** Planned Activities
 
