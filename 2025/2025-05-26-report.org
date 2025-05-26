@@ -1,6 +1,6 @@
-#+title:  Weekly report for 5th of May to 19th of May 2025
+#+title:  Weekly report for 19th of May to 26th of May 2025
 #+author: Philip Herron, Pierre-Emmanuel Patry, Arthur Cohen
-#+date:   2025-05-19
+#+date:   2025-05-26
 
 ** Overview
 
