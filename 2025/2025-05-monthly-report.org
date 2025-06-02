@@ -51,68 +51,42 @@ Work also continued on the name resolution rewrite, which is now frustratingly c
 ** Completed Activities
 
 - gccrs: Always emit the error highest in the type hierarchy                      [[https://github.com/rust-gcc/pull/3809][PR3809]]
-phil/dev                           about 6 days ago
 - Adjust included headers in `rust-lang.cc`                                       [[https://github.com/rust-gcc/pull/3808][PR3808]]
-powerboat9:adjust-headers          about 6 days ago
 - gccrs: Initial support for Return Position Impl Trait                           [[https://github.com/rust-gcc/pull/3807][PR3807]]
-phil/rpt                           about 6 days ago
 - gccrs: refactor default infer vars to be its own function                       [[https://github.com/rust-gcc/pull/3806][PR3806]]
-phil/refactor-default              about 6 days ago
 - gccrs: Remove unneeded clones untill we have an arena allocator for these temps [[https://github.com/rust-gcc/pull/3805][PR3805]]
-phil/unify-updates                 about 6 days ago
 - nr2.0: Fix some paths in test files                                             [[https://github.com/rust-gcc/pull/3803][PR3803]]
-powerboat9:fix-simple              about 10 days ago
 - nr2.0: Fix `IfLet` pattern handling                                             [[https://github.com/rust-gcc/pull/3802][PR3802]]
-powerboat9:fix-iflet               about 12 days ago
 - nr2.0: Fix test `builtin_abort.rs`                                              [[https://github.com/rust-gcc/pull/3800][PR3800]]
-powerboat9:fix-abort               about 12 days ago
 - Remove rvalue reference binding                                                 [[https://github.com/rust-gcc/pull/3795][PR3795]]
-powerboat9:macro-improve           about 19 days ago
 - Remove unused file                                                              [[https://github.com/rust-gcc/pull/3794][PR3794]]
-dkm/drop_rust_macro_cc             about 19 days ago
 - gccrs: Fix NR2 ICE in visit_attributes                                          [[https://github.com/rust-gcc/pull/3793][PR3793]]
-tommyscholly:3661                  about 20 days ago
 - gccrs: We cant clone types as it will dup the node-id                           [[https://github.com/rust-gcc/pull/3792][PR3792]]
-phil/derive-clone-fix              about 22 days ago
 - Fix `Attr` metavariable binding                                                 [[https://github.com/rust-gcc/pull/3790][PR3790]]
-powerboat9:fix-meta                about 23 days ago
 - nr2.0: Fix borrow checking                                                      [[https://github.com/rust-gcc/pull/3789][PR3789]]
-powerboat9:fix-borrow              about 23 days ago
 - Fix test `same_field_name.rs`                                                   [[https://github.com/rust-gcc/pull/3788][PR3788]]
-powerboat9:fix-field               about 23 days ago
 - Adapt attribute lang hook and do some cleanup                                   [[https://github.com/rust-gcc/pull/3786][PR3786]]
-dkm/attributes                     about 24 days ago
 - Small improvements to `DefaultASTVisitor` and nr2.0                             [[https://github.com/rust-gcc/pull/3784][PR3784]]
-powerboat9:fix-minor               about 24 days ago
 - Fix ICE segfault on empty static loops                                          [[https://github.com/rust-gcc/pull/3781][PR3781]]
-tommyscholly:master                about 25 days ago
 - gccrs: Prevent passing generic arguments to impl traits in argument position    [[https://github.com/rust-gcc/pull/3780][PR3780]]
-phil/apit-desugar                  about 25 days ago
 - ast: collect InlineAsm node dump                                                [[https://github.com/rust-gcc/pull/3779][PR3779]]
-0xn4utilus:ast/collect-inline-asm  about 26 days ago
 - gccrs: desugar APIT impl traits                                                 [[https://github.com/rust-gcc/pull/3778][PR3778]]
-phil/apit-desugar                  about 26 days ago
 - gccrs: Emit error diagnostic for bad impl type usage                            [[https://github.com/rust-gcc/pull/3777][PR3777]]
-phil/apit-diagnostic               about 26 days ago
 - nr2.0: Adjust enum item visitors                                                [[https://github.com/rust-gcc/pull/3775][PR3775]]
-powerboat9:fix-enum                about 1 month ago
 - Improve canonical path handling for impl items                                  [[https://github.com/rust-gcc/pull/3774][PR3774]]
-powerboat9:fix-can-min             about 1 month ago
 - Improve struct pattern compilation                                              [[https://github.com/rust-gcc/pull/3773][PR3773]]
-powerboat9:fix-pat                 about 1 month ago
 - nr2.0: Adjust resolution of impl items                                          [[https://github.com/rust-gcc/pull/3768][PR3768]]
-powerboat9:fix-36                  about 1 month ago
 - Handle const blocks                                                             [[https://github.com/rust-gcc/pull/3738][PR3738]]
-CohenArthur:handle-const-blocks    about 1 month ago
 
 *** Contributors this month
 
+- [[https://github.com/tommyscholly][Tom Schollenberger]] (new contributor!)
 - [[https://github.com/dkm][Marc Poulhiès]]
-- [[https://github.com/tschwinge][Thomas Schwinge]]
 - [[https://github.com/powerboat9][Owen Avery]]
 - [[https://github.com/CohenArthur][Arthur Cohen]]
 - [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
 - [[https://github.com/philberty][Philip Herron]]
+- [[https://github.com/0xn4utilus][Gyanendra Banjare]]
 
 *** Overall Task Status
 
