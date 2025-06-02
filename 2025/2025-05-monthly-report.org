@@ -134,9 +134,9 @@ CohenArthur:handle-const-blocks    about 1 month ago
 
 | TestCases | Last Month | This Month | Delta |
 |-----------+------------+------------+-------|
-| Passing   | 10392      | 10392      |   +96 |
+| Passing   | 10392      | 10631      |  +239 |
 | Failed    | -          | -          |     - |
-| XFAIL     | 73         | 73         |    -8 |
+| XFAIL     | 73         | 73         |     - |
 | XPASS     | -          | -          |     - |
 
 *** Milestones Progress
