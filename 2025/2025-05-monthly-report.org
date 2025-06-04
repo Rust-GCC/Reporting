@@ -12,35 +12,18 @@ The past month of development was mostly focused on community outreach, with a t
 
 In practice, this means that ~gccrs~ should be useful for Rust-for-Linux in a shorter span of time than originally planned, and we will start integrating the kernel's source code to our testing infrastructure in our efforts to target those crates. We spent some time last month establishing these milestones, which will be worked on as part of a further 6 months of support from [[https://opensrcsec.com/][Open Source Security, inc]], until the end of Stage 1 for GCC 16.1.
 
-As such, the next milestones will be divided like so:
-
-**** `core` support
-
-- Look into what is missing in `core`
-- Some nameres stuff
-- Some macro expansion stuff?
-- Some derive macros?
-- Some pattern matching stuff
-
-We need to first finish name resolution as we still have a lot of unresolved imports when compiling `core`.
-
-**** RfL support
-
-- Start running `gccrs` on the `rust/kernel/lib.rs` crate
-- We need to look at `Pin` as that is used a *lot* in RfL - and it probably needs some compiler support
-  - pin_init
-  - pin_init_from_closure
-  - PinInit trait
-  - a lot of stuff returns `impl PinInit<...>` so we need to finish RPIT first
-  - and also `RPITIT` since that is used in `InPlaceModule` trait for example
-- We need `offset_of!()`
-- We need proper inline assembly support
+Our next efforts will focus on finishing our name resolution pass for ~core~, and fixing the remaining macro expansion bugs. As part of Google Summer of Code, we will work on improving our pattern matching backend which will allow us to covers all of the patterns used in ~core~. Once that work is complete, we will spend time exploring the ~Pin~ semantics and making sure ~gccrs~ handles them correctly, as this data structure is used everywhere in the Linux kernel. This will then allow us to start testing the compiler on the kernel crates, hopefully by the end of the summer.
 
 Work also continued on the name resolution rewrite, which is now frustratingly close to replacing our previous implementation. We are resuming work on all areas of the compiler in June. The project received contributions from the usual suspects, with around 25 pull requests from external contributors this month. We are also starting work with our two GSoC students, Zhi Heng and Ryutaro Okada. They will be working on improving our pattern matching backend and on reimplementing certain Rust lints within our front-end rather than by depending on the GCC common compiler framework.
 
 *** Community call
 
-*FIXME*
+We will have our next monthly community call on the 9th of June at 9am UTC. You can subscribe to our calendar to see when the next one will be held. The call is open to everyone, even if you would just like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to be notified of upcoming events.
+
+- [[https://meet.jit.si/gccrs-community-call-june][Jitsi link]]
+- Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
+- [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com][Google calendar link]]
+- [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
 
 ** Call for contribution
 
