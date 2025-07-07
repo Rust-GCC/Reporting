@@ -30,8 +30,8 @@ We have also established further milestones for the next few months of work on ~
 |Milestone|
 |---|
 |Inline assembly|
-|~try~ blocks|
-|~while-let~ loops|
+|try blocks|
+|while-let loops|
 |core attributes|
 |core nightly features|
 |defered inference|
@@ -39,9 +39,9 @@ We have also established further milestones for the next few months of work on ~
 |Return Position impl Trait|
 |Fn traits|
 |Recursive types|
-|~Drop~|
-|~Pin~, ~PinInit~|
-|~offset_of!()~|
+|Drop|
+|Pin, PinInit|
+|offset_of!()|
 
 Our two GSoC students Zhi Heng and Ryutaro Okada are progressing nicely on their projects, with both students passing the upcoming midterm evaluation with flying colors. We are very satisfied with the speed at which they are working, as well as their comprehension of the task at hand. Ryutaro was able to reimplement one of our checks for assignments to read-only variables, and can now support generic functions, which was not allowed before. In the meantime, Zhi Heng has contributed multiple improvements to our backend regarding the compilation of complicated patterns such as tuple patterns and slice patterns.
 
