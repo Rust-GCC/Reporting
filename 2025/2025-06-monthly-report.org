@@ -16,16 +16,68 @@ We have also established further milestones for the next few months of work on ~
 
 **** try blocks
 
-*FIXME*
+~try~ blocks are used throughout ~core~, especially in the implementation of the various iterators such as ~try_fold~:
+
+#+BEGIN_SRC rust
+fn try_fold<B, F, R>(&mut self, init: B, mut f: F) -> R
+where
+    Self: Sized,
+    F: FnMut(B, Self::Item) -> R,
+    R: Try<Ok = B>,
+{
+    let mut accum = init;
+    while let Some(x) = self.next() {
+        accum = f(accum, x)?;
+    }
+
+    try { accum } // HERE
+}
+#+END_SRC
+
+~try~ blocks create a scope in which it is possible to use the ~?~ operator. They are syntactic sugar for the following construct:
+
+#+BEGIN_SRC rust
+try {
+  <stmts>;
+  <expr>
+}
+
+// becomes
+
+{
+  <stmts>;
+  ::std::ops::Try::from_ok(<expr>)
+}
+#+END_SRC
+
+Handling them in the majority of cases should hopefully be a simple desugar that can be implemented quite quickly.
 
 **** const-generic inference
 
-*FIXME*
+Const-generic inference allows the user to instruct the compiler to deduct the value of a const generic instead of spelling it out explicitly. This is used in the ~stdarch~ crate, which ~core~ depends on, for the ~simd_shuffle~ macro, which takes as argument an array of unknown but fixed size:
 
-**** legacy const generics
+#+BEGIN_SRC rust
+macro_rules! simd_shuffle {
+    ($x:expr, $y:expr, $idx:expr $(,)?) => {{
+        simd_shuffle(
+            $x,
+            $y,
+            const {
+                let v: [u32; _] = $idx;
+                v
+            },
+        )
+    }};
+}
 
-*FIXME*
+let d: uint8x8_t = simd_shuffle!(b, b, [8, 9, 10, 11, 12, 13, 14, 15]);
 
+let e: uint16x4_t = simd_shuffle!(c, c, [4, 5, 6, 7]);
+#+END_SRC
+
+Since the array's size is known by the compiler, but not by the user writing the macro, we can rely on the compiler to infer the array's size and call the proper intrinsic, while still keeping the macro definition and invocations simple.
+
+**** Further milestones
 
 |Milestone|
 |---|
@@ -43,7 +95,7 @@ We have also established further milestones for the next few months of work on ~
 |Pin, PinInit|
 |offset_of!()|
 
-Our two GSoC students Zhi Heng and Ryutaro Okada are progressing nicely on their projects, with both students passing the upcoming midterm evaluation with flying colors. We are very satisfied with the speed at which they are working, as well as their comprehension of the task at hand. Ryutaro was able to reimplement one of our checks for assignments to read-only variables, and can now support generic functions, which was not allowed before. In the meantime, Zhi Heng has contributed multiple improvements to our backend regarding the compilation of complicated patterns such as tuple patterns and slice patterns.
+In other news, our two GSoC students [[https://github.com/polygonalr][Zhi Heng]] and [[https://github.com/sakupan102][Ryutaro Okada]] are progressing nicely on their projects, with both students passing the upcoming midterm evaluation with flying colors. We are very satisfied with the speed at which they are working, as well as their comprehension of the task at hand. Ryutaro was able to reimplement one of our checks for assignments to read-only variables, and can now support generic functions, which was not allowed before. In the meantime, Zhi Heng has contributed multiple improvements to our backend regarding the compilation of complicated patterns such as tuple patterns and slice patterns.
 
 Finally, we are also in the process of merging fixes for the release of GCC 15.2.
 
@@ -168,27 +220,27 @@ We will have our next monthly community call on the 15th of July at 9am UTC. You
 
 | Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        | Target GCC |
 |-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|------------|
-| Name resolution 2.0 rework        |       100% |       100% |     - |  1st Jun 2024 |               - |  1st Apr 2025 |   GCC 15.1 |
-| Macro expansion                   |       100% |       100% |     - |  1st Jun 2024 |               - |  1st Jan 2025 |   GCC 15.1 |
-| Remaining typecheck issues        |       100% |       100% |     - | 21st Oct 2024 |               - |  1st Mar 2025 |   GCC 15.1 |
-| cfg-core                          |       100% |       100% |     - |  1st Dec 2024 |   24th Mar 2025 |  1st Mar 2025 |   GCC 15.1 |
-| Codegen fixes                     |       100% |       100% |     - |  7th Oct 2024 |    1st Apr 2025 |  1st Mar 2025 |   GCC 15.1 |
-| black_box intrinsic               |       100% |       100% |     - | 28th Oct 2024 |               - | 28th Jan 2025 |   GCC 15.1 |
-| let-else                          |       100% |       100% |     - | 28th Jan 2025 |               - | 28th Feb 2025 |   GCC 15.1 |
-| Specialization                    |       100% |       100% |     - |  1st Jan 2025 |    1st Apr 2025 |  1st Mar 2025 |   GCC 15.1 |
-| cfg-rfl                           |       100% |       100% |     - |  7th Jan 2025 |   19th Mar 2025 | 15th Feb 2025 |   GCC 15.1 |
-| Downgrade to Rust 1.49            |       100% |       100% |     - | 14th Mar 2025 |   26th Mar 2025 |  1st Apr 2025 |   GCC 15.1 |
-| Explicit generics with impl Trait |        40% |        55% |  +15% | 28th Feb 2025 |               - | 28th Mar 2025 |   GCC 15.1 |
+| Explicit generics with impl Trait |        40% |        85% |  +45% | 28th Feb 2025 |               - | 28th Mar 2025 |   GCC 16.1 |
+| Final Inline assembly fixes       |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+| try blocks                        |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+| while-let loops                   |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
  
 | Upcoming Milestone                | Last Month | This Month | Delta | Start Date    | Completion Date | Target        | Target GCC |
 |-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|------------|
 | Unstable RfL features             |         0% |         0% |     - |  7th Jan 2025 |               - |  1st Aug 2025 |   GCC 16.1 |
-| offset_of!() builtin macro        |         0% |         0% |     - | 15th Mar 2025 |               - | 15th Aug 2025 |   GCC 16.1 |
 | Generic Associated Types          |         0% |         0% |     - | 15th Mar 2025 |               - | 15th Jun 2025 |   GCC 16.1 |
 | RfL const generics                |         0% |         0% |     - |  1st May 2025 |               - | 15th Jun 2025 |   GCC 16.1 |
 | frontend plugin hooks             |         0% |         0% |     - | 15th May 2025 |               - |  7th Jul 2025 |   GCC 16.1 |
 | Handling the testsuite issues     |         0% |         0% |     - | 15th Sep 2024 |               - | 15th Sep 2025 |   GCC 16.1 |
 | main shim                         |         0% |         0% |     - | 28th Jul 2025 |               - | 15th Sep 2025 |   GCC 16.1 |
+| Final core attributes             |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+| Core nightly features             |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+| Defered inference                 |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+| Fn traits fixes                   |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+| Recursive types                   |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+| Drop                              |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+| Pin, PinInit                      |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+| offset_of!() builtin macro        |         0% |         0% |     - | 15th Mar 2025 |               - | 15th Aug 2025 |   GCC 16.1 |
 
 | Past Milestone                    | Last Month | This Month | Delta | Start Date    | Completion Date | Target        | Target GCC |
 |-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|------------|
@@ -224,6 +276,16 @@ We will have our next monthly community call on the 15th of July at 9am UTC. You
 | alloc parser issues               |       100% |       100% |     - |  7th Jan 2025 |   31st Jun 2024 | 28th Jan 2025 |   GCC 15.1 |
 | std parser issues                 |       100% |       100% |     - |  7th Jan 2025 |   31st Jun 2024 | 28th Jan 2025 |   GCC 16.1 |
 | Question mark operator            |       100% |       100% |     - | 15th Dec 2024 |   21st Feb 2025 | 21st Feb 2025 |   GCC 15.1 |
+| Name resolution 2.0 rework        |       100% |       100% |     - |  1st Jun 2024 |               - |  1st Apr 2025 |   GCC 15.1 |
+| Macro expansion                   |       100% |       100% |     - |  1st Jun 2024 |               - |  1st Jan 2025 |   GCC 15.1 |
+| Remaining typecheck issues        |       100% |       100% |     - | 21st Oct 2024 |               - |  1st Mar 2025 |   GCC 15.1 |
+| cfg-core                          |       100% |       100% |     - |  1st Dec 2024 |   24th Mar 2025 |  1st Mar 2025 |   GCC 15.1 |
+| Codegen fixes                     |       100% |       100% |     - |  7th Oct 2024 |    1st Apr 2025 |  1st Mar 2025 |   GCC 15.1 |
+| black_box intrinsic               |       100% |       100% |     - | 28th Oct 2024 |               - | 28th Jan 2025 |   GCC 15.1 |
+| let-else                          |       100% |       100% |     - | 28th Jan 2025 |               - | 28th Feb 2025 |   GCC 15.1 |
+| Specialization                    |       100% |       100% |     - |  1st Jan 2025 |    1st Apr 2025 |  1st Mar 2025 |   GCC 15.1 |
+| cfg-rfl                           |       100% |       100% |     - |  7th Jan 2025 |   19th Mar 2025 | 15th Feb 2025 |   GCC 15.1 |
+| Downgrade to Rust 1.49            |       100% |       100% |     - | 14th Mar 2025 |   26th Mar 2025 |  1st Apr 2025 |   GCC 15.1 |
 
 ** Planned Activities
 
