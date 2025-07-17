@@ -289,7 +289,8 @@ We will have our next monthly community call on the 15th of July at 9am UTC. You
 
 ** Planned Activities
 
-- Finish merging our fixes in 15.2
+- Start working on try blocks and while-let loops
+- Finish name resolution and macro expansion issues
 
 *** Risks
 
