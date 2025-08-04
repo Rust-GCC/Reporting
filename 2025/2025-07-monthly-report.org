@@ -8,6 +8,14 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Project update
 
+Our two GSoC students are progressing nicely on their projects and are both ahead of schedule. Zhi Heng's work is allowing us to handle some complex pattern matches present in ~core~, which the compiler would previously ignore - while Ryutaro's contributions are adding more complex warning checkers while removing previous false positives. Thanks to them, the compiler is getting more correct, and gets closer and closer to real Rust code.
+
+Speaking of this, this month marks an important milestone for ~gccrs~: One of our earliest "real-code" milestone was an implementation of ~SipHash~ as is present in ~core~: [[https://github.com/rust-lang/rust/blob/1.60.0/library/core/src/hash/sip.rs][Link]]. This algorithm relies on an important amount of code from ~core~, and we have been trying to compile it for [[https://github.com/Rust-GCC/gccrs/issues/1247][multiple years]]. With Philip's recent work on fixing typechecker issues, the module now works and is being compiled properly.
+
+Overall, our progress on ~core~ is great and things are moving fast. We have completed the two milestones mentioned in last month's report, ~try-block~s and ~while-let~ loops, which allows us to continue moving forward with ~core~. We have also completed the work package on the ~offset_of!()~ builtin macro, which marks our first Rust-for-Linux specific feature - as the macro does not exist in the Rust 1.49 standard library.
+
+This means that our goal of experimenting with compiling the kernel at the end of the summer is on track.
+
 - GSoC
 - try blocks are completed
     - show try desugar
