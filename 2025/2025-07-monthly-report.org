@@ -12,29 +12,108 @@ Our two GSoC students are progressing nicely on their projects and are both ahea
 
 Speaking of this, this month marks an important milestone for ~gccrs~: One of our earliest "real-code" milestone was an implementation of ~SipHash~ as is present in ~core~: [[https://github.com/rust-lang/rust/blob/1.60.0/library/core/src/hash/sip.rs][Link]]. This algorithm relies on an important amount of code from ~core~, and we have been trying to compile it for [[https://github.com/Rust-GCC/gccrs/issues/1247][multiple years]]. With Philip's recent work on fixing typechecker issues, the module now works and is being compiled properly.
 
-Overall, our progress on ~core~ is great and things are moving fast. We have completed the two milestones mentioned in last month's report, ~try-block~s and ~while-let~ loops, which allows us to continue moving forward with ~core~. We have also completed the work package on the ~offset_of!()~ builtin macro, which marks our first Rust-for-Linux specific feature - as the macro does not exist in the Rust 1.49 standard library.
+Overall, our progress on ~core~ is great and things are moving fast. We have completed the two milestones mentioned in last month's report, ~try~ blocks and ~while-let~ loops, which allows us to continue moving forward with ~core~. We have also completed the work package on the ~offset_of!()~ builtin macro, which marks our first Rust-for-Linux specific feature - as the macro does not exist in the Rust 1.49 standard library.
 
 This means that our goal of experimenting with compiling the kernel at the end of the summer is on track.
 
-- GSoC
-- try blocks are completed
-    - show try desugar
-    - explain our first steps
-- while-let loops are completed
-    - show while-let desugar
-- offset_of is completed
-    - explain our workaround
-- sip hasher testcase
-- progress on pattern matching?
-- progress on core is GREAT
-    - still working with our plan of trying out Rust-for-Linux at the end of the summer/beginning of September
-- 15.2 fixes
+**** try blocks
+
+The desugar for ~try~ blocks is interesting as it ties in with the desugar for the ~?~ operator to prevent an early return from the enclosing function instead of the current block.
+
+In Rust 1.49, the common desugar for the ~?~ operator is as follows:
+
+#+BEGIN_SRC rust
+fn foo() -> Result<i32, ()> {
+    let a = bar()?;
+
+    Ok(15i32);
+}
+
+// becomes
+
+
+fn foo() -> Result<i32, ()> {
+    let a = match Try::into_result(bar()) {
+        Ok(value) => value,
+        Err(err) => return Try::from_err(From::from(err)),
+    };
+
+    Ok(15i32);
+}
+#+END_SRC
+
+As explained in last month's report, the desugar for ~try~ blocks is as follows:
+
+#+BEGIN_SRC rust
+try {
+  <stmts>;
+  <expr>
+}
+
+// becomes
+
+{
+  <stmts>;
+  ::std::ops::Try::from_ok(<expr>)
+}
+#+END_SRC
+
+However, if we desugar the ~?~ operator inside of a ~try~ block...
+
+#+BEGIN_SRC rust
+fn foo() -> Result<i32, ()> {
+    let a: Result<i32, ()> = try {
+        bar()?;
+        
+        14i32
+    };
+    
+    a
+}
+
+// becomes
+
+fn foo() -> Result<i32, ()> {
+    let a: Result<i32, ()> = {
+        match Try::into_result(bar()) {
+            Ok(value) => value,
+            Err(err) => return Try::from_err(From::from(err)),
+        };
+
+        Try::from_ok(14i32)
+    }
+
+    Ok(15i32);
+}
+#+END_SRC
+
+...we can easily see how this would cause an early return from the function instead of the block, should the ~bar~ function call return an error. This is not the desired behavior, so the desugar must be able to handle short-circuiting from the enclosing ~try~ block instead.
+
+#+BEGIN_SRC rust
+// expected desugar
+fn foo() -> Result<i32, ()> {
+    let a: Result<i32, ()>  = 'try_label {
+        match Try::into_result(bar()) {
+            Ok(value) => value,
+            Err(err) => {
+                break 'try_label Try::from_err(From::from(err));
+            }
+        };
+
+        Try::from_ok(14i32)
+    }
+
+    Ok(15i32);
+}
+#+END_SRC
+
+We cannot yet handle this "complex" desugar, which would require some changes to our desugaring infrastructure to keep some context when desugaring the ~?~ operator. However, *all* of the ~try~ blocks in ~core~ 1.49 only use the simple form of ~try { <expr> }~, which makes our job easier!
 
 *** Community call
 
-We will have our next monthly community call on the 15th of July at 9am UTC. You can subscribe to our calendar to see when the next one will be held. The call is open to everyone, even if you would just like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to be notified of upcoming events.
+We will have our next monthly community call on the 11th of August at 9am UTC. You can subscribe to our calendar to see when the next one will be held. The call is open to everyone, even if you would just like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to be notified of upcoming events.
 
-- [[https://meet.jit.si/gccrs-community-call-july][Jitsi link]]
+- [[https://meet.jit.si/gccrs-community-call-august][Jitsi link]]
 - Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
 - [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com][Google calendar link]]
 - [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
