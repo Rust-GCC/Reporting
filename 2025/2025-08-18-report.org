@@ -8,7 +8,9 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 - 20 pull requests merged this week
 - Rework macro expansion to make it more correct as it is lacking in some places
-
+- More backend support for complex pattern matching
+- Have to write talks for Cauldron, Kangrejos and Oxidize so progress will slow down in the coming weeks
+- Still working on some issues with macro expansion for core, which is lacking in several places as it was written 4 years ago!
 
 ** Completed Activities
 
@@ -78,9 +80,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 |-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|------------|
 | Explicit generics with impl Trait |        85% |       100% |     - | 28th Feb 2025 |   21st Jul 2025 | 28th Mar 2025 |   GCC 16.1 |
 | Final Inline assembly fixes       |        65% |        65% |     - |               |               - |               |   GCC 16.1 |
-| try blocks                        |       100% |       100% |     - |               |   30th Jul 2025 |               |   GCC 16.1 |
-| while-let loops                   |       100% |       100% |     - |               |   30th Jul 2025 |               |   GCC 16.1 |
-| offset_of!() builtin macro        |       100% |       100% |     - | 15th Mar 2025 |    4th Aug 2025 | 15th Aug 2025 |   GCC 16.1 |
+| Remaining macro expansion fixes   |         0% |        25% |     - |               |               - |               |   GCC 16.1 |
  
 | Upcoming Milestone                |  Last Week |  This Week | Delta | Start Date    | Completion Date | Target        | Target GCC |
 |-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|------------|
@@ -142,6 +142,9 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 | Specialization                    |       100% |       100% |     - |  1st Jan 2025 |    1st Apr 2025 |  1st Mar 2025 |   GCC 15.1 |
 | cfg-rfl                           |       100% |       100% |     - |  7th Jan 2025 |   19th Mar 2025 | 15th Feb 2025 |   GCC 15.1 |
 | Downgrade to Rust 1.49            |       100% |       100% |     - | 14th Mar 2025 |   26th Mar 2025 |  1st Apr 2025 |   GCC 15.1 |
+| try blocks                        |       100% |       100% |     - |               |   30th Jul 2025 |               |   GCC 16.1 |
+| while-let loops                   |       100% |       100% |     - |               |   30th Jul 2025 |               |   GCC 16.1 |
+| offset_of!() builtin macro        |       100% |       100% |     - | 15th Mar 2025 |    4th Aug 2025 | 15th Aug 2025 |   GCC 16.1 |
 
 *** Risks
 
