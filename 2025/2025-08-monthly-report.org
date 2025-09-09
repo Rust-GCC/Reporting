@@ -222,9 +222,5 @@ We will have our next monthly community call on the 8th of September at 9am UTC.
 
 ** Planned Activities
 
-- Start working on try blocks and while-let loops
-- Finish name resolution and macro expansion issues
-
-*** Risks
-
-We must establish the list of GCC-common changes we need, as we will have to send them upstream before the start of Stage 3 around November. This is the only risk which could incur further problems and prevent more gccrs features from landing in 16.1.
+- Finish debugging ~core~
+- Start experimenting with the kernel's Rust code
