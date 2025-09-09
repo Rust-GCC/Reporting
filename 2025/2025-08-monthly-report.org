@@ -10,13 +10,28 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 The month of August was focused on bug fixing for building ~core~, once again. We identified some issues in our macro expansion and reworked our ~ExpandVisitor~, a piece of code we had originally written 3 years ago which contained some shortcomings and would not expand macro invocations in all places required. We implemented a new visitor to visit nodes from their container, and potentially reseat their pointer - which fixed a lot of the issues and increased the completeness of the compiler. We then transformed all of our mutating visitors into visitors inheriting from this container visitor, which resulted in a cleaner codebase and a more correct front end.
 
-Google Summer of Code also came to an end, with both our students [[]] and [[]] successfully completing their projects and earning top scores in their final evaluations. It was a joy to work alongside them on their projects, and we hope to see them contribute in the future.
+Google Summer of Code also came to an end, with both our students [[https://github.com/sakupan102][Ryutaro Okada]] and [[https://github.com/Polygonalr][Zhi Heng]] successfully completing their projects and earning top scores in their final evaluations. It was a joy to work alongside them on their projects, and we hope to see them contribute in the future.
 
-**** REFLECT ON SUMMER MILESTONES
+As a reminder, our current objective is to get ~gccrs~ to a state where it can compile the Linux kernel's Rust parts. The Rust-for-Linux project does not depend on the entire Rust standard library (~std~), but only on ~core~ - like a lot of Rust embedded projects. However, because the project wants to benefit from all of Rust's functionalities, they are reimplementing parts of the standard library using the kernel's memory allocator - this enables Rust kernel module developers to use types such as ~Vec<T>~, or ~String~. As such, the milestones we worked on this summer are aimed at two objectives:
+
+1. Compile Rust's ~core~ library, as it is the sole dependency of the Linux kernel's Rust crate
+2. Compile the Rust kernel crate
+
+In order to do this, we had to implement some new Rust features over the summer: namely, ~try~ blocks and ~while-let~ loops, both used in ~core~ and within the kernel. The kernel makes use of more recent Rust features that are not present in the version we target, so we must implement them as well - for example, the ~offset_of~ macro.
+
+Our first objective is the kernel's ~alloc~ crate, a reimplementation of parts of the Rust ~std~ crate responsible for implementing dynamically allocated types. Thanks to the work of our contributors over the summer, we were able to implement all of the required language features mentioned above. We are now debugging a few remaining bugs in our name resolution and macro expansion passes.
+
+The next two weeks of work on the project will be focused on these bugs, and the last two weeks of the month of September will be solely dedicated to compiling the Linux kernel's ~alloc~ crate.
 
 We are currently interviewing two interns who would contribute to the project for the period of September to January - we are currently designing milestones for them, so that they may contribute meaningfully to the project while gaining work experience within our company Embecosm SAS.
 
-The next two weeks of work on the project will be focused on the last remaining bugs in our AST pipeline for ~core~, and the last two weeks of the month of September will be solely dedicated to compiling the Linux kernel's ~alloc~ crate - our first foray into getting Rust-for-Linux to compile with ~gccrs~.
+Finally, we will also be present at three major conferences in September:
+
+- Oxidize in Berlin, Germany
+- Kangrejos in Oviedo, Spain
+- GNU Cauldron in Port, Portugal
+
+Pierre-Emmanuel and Arthur will be giving talks at these three venues and we hope to meet with everyone interested in the project!
 
 *** Community call
 
