@@ -1,0 +1,180 @@
+#+title:  Monthly Report for November 2025
+#+author: Philip Herron, Pierre-Emmanuel Patry and Arthur Cohen
+#+date:   2025-12-01
+
+** Overview
+
+Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
+
+*** Project update
+
+We have made good progress on compiling Rust-for-Linux with a first few PRs aimed at compiling Generic Associated Types. These types are unstable in Rust 1.49, and not present in ~core~, but required for compiling the kernel crates. Regarding ~core~, we have made progress on multiple name resolution issues and are now going much further in the pipeline. Only a few late name resolution issues remain, which we intend to fix shortly.
+
+Our upstreaming process is now well ironed out, with weekly upstreams to GCC. This has led to an increase in reviews and interactions from the GCC side of the community which is very welcome! Having a more regular upstream schedule also helped with fixing some bootstrapping issues more quickly, which were introduced due to changes in the C++ frontend.
+
+We are busy working away at the issues for Rust-for-Linux, and hope to be able to compile the kernel soon. We will try to present this work at multiple conferences in 2026, and we hope to have some good news! The goal is for the Rust front-end of GCC 16.1 to be able to compile the kernel and most 1.49 Rust code, and we are on track to complete this objective.
+
+*** Community call
+
+We will have our next monthly community call on the 8th of December at 10am UTC. You can subscribe to our calendar to see when the next one will be held. The call is open to everyone, even if you would just like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to be notified of upcoming events.
+
+- [[https://meet.jit.si/gccrs-community-call-december][Jitsi link]]
+- Calendar ID: 7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894@group.calendar.google.com
+- [[https://calendar.google.com/calendar/embed?src=7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com][Google calendar link]]
+- [[https://calendar.google.com/calendar/ical/7060a0923ffebd3cb52b1afef35a28ff7b64f05962c9af84c23b1847f1f5f894%40group.calendar.google.com/public/basic.ics][iCal link]]
+
+** Call for contribution
+
+- https://github.com/Rust-GCC/gccrs/issues/2500
+
+- https://github.com/Rust-GCC/gccrs/issues/2376
+
+** Completed Activities
+
+- Improve feature handling                                                  [[https://github.com/rust-gcc/gccrs/pull/4319][PR4319]]
+- Add missing test for lang item feature gate                               [[https://github.com/rust-gcc/gccrs/pull/4318][PR4318]]
+- Remove non leaf errors                                                    [[https://github.com/rust-gcc/gccrs/pull/4317][PR4317]]
+- Remove non-leaf error message in delimited tt                             [[https://github.com/rust-gcc/gccrs/pull/4315][PR4315]]
+- gccrs: Fix comment typos in rust-macro-expand.h                           [[https://github.com/rust-gcc/gccrs/pull/4314][PR4314]]
+- Correct spelling of 'mentionned'                                          [[https://github.com/rust-gcc/gccrs/pull/4313][PR4313]]
+- Fixes PR 122886: Initialize uninit boolean                                [[https://github.com/rust-gcc/gccrs/pull/4312][PR4312]]
+- Remove non-leaf parsing failure error                                     [[https://github.com/rust-gcc/gccrs/pull/4310][PR4310]]
+- Sync with upstream (2025-11-25): fb9b614c675f66a7979a5f37ef60f32fab73abdd [[https://github.com/rust-gcc/gccrs/pull/4307][PR4307]]
+- ci: add pull-request URL in commit emails                                 [[https://github.com/rust-gcc/gccrs/pull/4306][PR4306]]
+- #[lang] not feature gated                                                 [[https://github.com/rust-gcc/gccrs/pull/4304][PR4304]]
+- Stop an infinite loop at EOF                                              [[https://github.com/rust-gcc/gccrs/pull/4303][PR4303]]
+- ci: refactor ccpp workflow                                                [[https://github.com/rust-gcc/gccrs/pull/4299][PR4299]]
+- Sync with upstream (2025-11-18): c48c6c0a50e45735783fc3a626a54e4a9c6bd36f [[https://github.com/rust-gcc/gccrs/pull/4295][PR4295]]
+- gccrs: Add support for initial generic associated types                   [[https://github.com/rust-gcc/gccrs/pull/4292][PR4292]]
+- gccrs: Fix `compile_float_literal` not compiling negatives properly       [[https://github.com/rust-gcc/gccrs/pull/4287][PR4287]]
+- ci: fix reference check                                                   [[https://github.com/rust-gcc/gccrs/pull/4286][PR4286]]
+- ci: use variable instead of secrets for regular settings                  [[https://github.com/rust-gcc/gccrs/pull/4284][PR4284]]
+- Sync with upstream (2025-11-12): 6947098a34ccc2f64ff52de88a136bc438091c10 [[https://github.com/rust-gcc/gccrs/pull/4281][PR4281]]
+- ci: drop macos build                                                      [[https://github.com/rust-gcc/gccrs/pull/4280][PR4280]]
+- gccrs: fix segfault on empty doc attribute                                [[https://github.com/rust-gcc/gccrs/pull/4271][PR4271]]
+- gccrs: fix cfg attribute without parentheses error                        [[https://github.com/rust-gcc/gccrs/pull/4264][PR4264]]
+- README: Fedora: Add `gcc`, `gcc-c++`, `cargo`, and `awk`                  [[https://github.com/rust-gcc/gccrs/pull/4255][PR4255]]
+- gccrs: fix segfault in clone_pattern w macro                              [[https://github.com/rust-gcc/gccrs/pull/4217][PR4217]]
+- gccrs: add error check if derive has wrong item                           [[https://github.com/rust-gcc/gccrs/pull/4211][PR4211]]
+- Improve feature handling                                                  [[https://github.com/rust-gcc/gccrs/pull/4082][PR4082]]
+- Add derived set to collect derived nodes.                                 [[https://github.com/rust-gcc/gccrs/pull/4047][PR4047]]
+- Create `LocalVariable`                                                    [[https://github.com/rust-gcc/gccrs/pull/3862][PR3862]]
+
+*** Contributors this month
+
+- [[https://github.com/jwakely][Jonathan Wakely]] (new contributor!)
+- [[https://github.com/aytey][Andrew V. Teylu]] (new contributor!)
+- [[https://github.com/osalbahr][Osama Albahrani]] (new contributor!)
+- [[https://github.com/lucbf][Lúcio Boari Fleury]] (new contributor!)
+- [[https://github.com/powerboat9][Owen Avery]]
+- [[https://github.com/P-E-P][Pierre-Emmanuel Patry]]
+- [[https://github.com/dkm][Marc Poulhiès]]
+- [[https://github.com/tamaroning][Raiki Tamura]]
+- [[https://github.com/Polygonalr][Zhi Heng]]
+- [[https://github.com/lucasly-ba][Lucas Ly Ba]]
+- [[https://github.com/Villosse][Lenny Chiadmi-Delage]]
+- [[https://github.com/sakupan102][Ryutaro Okada]]
+
+*** Overall Task Status
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        418 |        419 |    +1 |
+| In Progress |        115 |        116 |    +1 |
+| Completed   |       1177 |       1184 |    +7 |
+
+*** Bugs
+
+| Category    | Last Month | This Month | Delta |
+|-------------+------------+------------+-------|
+| TODO        |        197 |        198 |    +1 |
+| In Progress |         55 |         55 |     - |
+| Completed   |        586 |        588 |    +2 |
+
+*** Test Cases
+
+| TestCases | Last Month | This Month | Delta |
+|-----------+------------+------------+-------|
+| Passing   | 10458      | 10444      |   -14 |
+| Failed    | -          | -          |     - |
+| XFAIL     | 74         | 74         |     - |
+| XPASS     | -          | -          |     - |
+
+*** Milestones Progress
+
+
+| Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        | Target GCC |
+|-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|------------|
+| Rust-for-Linux                    |         0% |        12% |  +12% |  1st Nov 2025 |               - |             - |   GCC 16.1 |
+ 
+| Upcoming Milestone                | Last Month | This Month | Delta | Start Date    | Completion Date | Target        | Target GCC |
+|-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|------------|
+| Unstable RfL features             |         0% |         0% |     - |  7th Jan 2025 |               - |  1st Aug 2025 |   GCC 16.1 |
+| Generic Associated Types          |         0% |         0% |     - | 15th Mar 2025 |               - | 15th Jun 2025 |   GCC 16.1 |
+| RfL const generics                |         0% |         0% |     - |  1st May 2025 |               - | 15th Jun 2025 |   GCC 16.1 |
+| frontend plugin hooks             |         0% |         0% |     - | 15th May 2025 |               - |  7th Jul 2025 |   GCC 16.1 |
+| Handling the testsuite issues     |         0% |         0% |     - | 15th Sep 2024 |               - | 15th Sep 2025 |   GCC 16.1 |
+| main shim                         |         0% |         0% |     - | 28th Jul 2025 |               - | 15th Sep 2025 |   GCC 16.1 |
+| Final core attributes             |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+| Core nightly features             |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+| Defered inference                 |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+| Fn traits fixes                   |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+| Recursive types                   |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+| Drop                              |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+| Pin, PinInit                      |         0% |         0% |     - |               |               - |               |   GCC 16.1 |
+
+| Past Milestone                    | Last Month | This Month | Delta | Start Date    | Completion Date | Target        | Target GCC |
+|-----------------------------------+------------+------------+-------+---------------+-----------------+---------------|------------|
+| Data Structures 1 - Core          |       100% |       100% |     - | 30th Nov 2020 |   27th Jan 2021 | 29th Jan 2021 |   GCC 14.1 |
+| Control Flow 1 - Core             |       100% |       100% |     - | 28th Jan 2021 |   10th Feb 2021 | 26th Feb 2021 |   GCC 14.1 |
+| Data Structures 2 - Generics      |       100% |       100% |     - | 11th Feb 2021 |   14th May 2021 | 28th May 2021 |   GCC 14.1 |
+| Data Structures 3 - Traits        |       100% |       100% |     - | 20th May 2021 |   17th Sep 2021 | 27th Aug 2021 |   GCC 14.1 |
+| Control Flow 2 - Pattern Matching |       100% |       100% |     - | 20th Sep 2021 |    9th Dec 2021 | 29th Nov 2021 |   GCC 14.1 |
+| Macros and cfg expansion          |       100% |       100% |     - |  1st Dec 2021 |   31st Mar 2022 | 28th Mar 2022 |   GCC 14.1 |
+| Imports and Visibility            |       100% |       100% |     - | 29th Mar 2022 |   13th Jul 2022 | 27th May 2022 |   GCC 14.1 |
+| Const Generics                    |       100% |       100% |     - | 30th May 2022 |   10th Oct 2022 | 17th Oct 2022 |   GCC 14.1 |
+| Initial upstream patches          |       100% |       100% |     - | 10th Oct 2022 |   13th Nov 2022 | 13th Nov 2022 |   GCC 14.1 |
+| Upstream initial patchset         |       100% |       100% |     - | 13th Nov 2022 |   13th Dec 2022 | 19th Dec 2022 |   GCC 14.1 |
+| Update GCC's master branch        |       100% |       100% |     - |  1st Jan 2023 |   21st Feb 2023 |  3rd Mar 2023 |   GCC 14.1 |
+| Final set of upstream patches     |       100% |       100% |     - | 16th Nov 2022 |    1st May 2023 | 30th Apr 2023 |   GCC 14.1 |
+| Borrow Checking 1                 |       100% |       100% |     - |           TBD |    8th Jan 2024 | 15th Aug 2023 |   GCC 14.1 |
+| Procedural Macros 1               |       100% |       100% |     - | 13th Apr 2023 |    6th Aug 2023 |  6th Aug 2023 |   GCC 14.1 |
+| GCC 13.2 Release                  |       100% |       100% |     - | 13th Apr 2023 |   22nd Jul 2023 | 15th Jul 2023 |   GCC 14.1 |
+| GCC 14 Stage 3                    |       100% |       100% |     - |  1st Sep 2023 |   20th Sep 2023 |  1st Nov 2023 |   GCC 14.1 |
+| GCC 14.1 Release                  |       100% |       100% |     - |  2nd Jan 2024 |    2nd Jun 2024 | 15th Apr 2024 |   GCC 14.1 |
+| format_args!() support            |       100% |       100% |     - | 15th Feb 2024 |               - |  1st Apr 2024 |   GCC 14.1 |
+| GCC 14.2                          |       100% |       100% |     - |  7th Jun 2024 |   15th Jun 2024 | 15th Jun 2024 |   GCC 14.2 |
+| GCC 15.1                          |       100% |       100% |     - | 21st Jun 2024 |   31st Jun 2024 |  1st Jul 2024 |   GCC 15.1 |
+| Unhandled attributes              |       100% |       100% |     - |  1st Jul 2024 |   15th Aug 2024 | 15th Aug 2024 |   GCC 15.1 |
+| Inline assembly                   |       100% |       100% |     - |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
+| Rustc Testsuite Adaptor           |       100% |       100% |     - |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
+| Borrow checker improvements       |       100% |       100% |     - |  1st Jun 2024 |   26th Aug 2024 | 15th Sep 2024 |   GCC 15.1 |
+| Deref and DerefMut improvements   |       100% |       100% |     - | 28th Sep 2024 |   25th Oct 2024 | 28th Dec 2024 |   GCC 15.1 |
+| Indexing fixes                    |       100% |       100% |     - | 21st Jul 2024 |   25th Dec 2024 | 15th Nov 2024 |   GCC 15.1 |
+| Iterator fixes                    |       100% |       100% |     - | 21st Jul 2024 |   25th Dec 2024 | 15th Nov 2024 |   GCC 15.1 |
+| Auto traits improvements          |       100% |       100% |     - | 15th Sep 2024 |   20th Jan 2025 | 21st Dec 2024 |   GCC 15.1 |
+| Lang items                        |       100% |       100% |     - |  1st Jul 2024 |   10th Jan 2025 | 21st Nov 2024 |   GCC 15.1 |
+| alloc parser issues               |       100% |       100% |     - |  7th Jan 2025 |   31st Jun 2024 | 28th Jan 2025 |   GCC 15.1 |
+| std parser issues                 |       100% |       100% |     - |  7th Jan 2025 |   31st Jun 2024 | 28th Jan 2025 |   GCC 16.1 |
+| Question mark operator            |       100% |       100% |     - | 15th Dec 2024 |   21st Feb 2025 | 21st Feb 2025 |   GCC 15.1 |
+| Name resolution 2.0 rework        |       100% |       100% |     - |  1st Jun 2024 |               - |  1st Apr 2025 |   GCC 15.1 |
+| Macro expansion                   |       100% |       100% |     - |  1st Jun 2024 |               - |  1st Jan 2025 |   GCC 15.1 |
+| Remaining typecheck issues        |       100% |       100% |     - | 21st Oct 2024 |               - |  1st Mar 2025 |   GCC 15.1 |
+| cfg-core                          |       100% |       100% |     - |  1st Dec 2024 |   24th Mar 2025 |  1st Mar 2025 |   GCC 15.1 |
+| Codegen fixes                     |       100% |       100% |     - |  7th Oct 2024 |    1st Apr 2025 |  1st Mar 2025 |   GCC 15.1 |
+| black_box intrinsic               |       100% |       100% |     - | 28th Oct 2024 |               - | 28th Jan 2025 |   GCC 15.1 |
+| let-else                          |       100% |       100% |     - | 28th Jan 2025 |               - | 28th Feb 2025 |   GCC 15.1 |
+| Specialization                    |       100% |       100% |     - |  1st Jan 2025 |    1st Apr 2025 |  1st Mar 2025 |   GCC 15.1 |
+| cfg-rfl                           |       100% |       100% |     - |  7th Jan 2025 |   19th Mar 2025 | 15th Feb 2025 |   GCC 15.1 |
+| Downgrade to Rust 1.49            |       100% |       100% |     - | 14th Mar 2025 |   26th Mar 2025 |  1st Apr 2025 |   GCC 15.1 |
+| try blocks                        |       100% |       100% |     - |               |   30th Jul 2025 |               |   GCC 16.1 |
+| while-let loops                   |       100% |       100% |     - |               |   30th Jul 2025 |               |   GCC 16.1 |
+| offset_of!() builtin macro        |       100% |       100% |     - | 15th Mar 2025 |    4th Aug 2025 | 15th Aug 2025 |   GCC 16.1 |
+| Explicit generics with impl Trait |       100% |       100% |     - | 28th Feb 2025 |   21st Jul 2025 | 28th Mar 2025 |   GCC 16.1 |
+| Final Inline assembly fixes       |       100% |       100% |     - |               |               - |               |   GCC 16.1 |
+
+** Planned Activities
+
+- Finish debugging ~core~
+- Continue collecting issues for Rust-for-Linux milestones
+- Work on RfL issues
