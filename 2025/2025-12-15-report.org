@@ -45,7 +45,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 | TestCases |  Last Week |  This Week | Delta |
 |-----------+------------+------------+-------|
-| Passing   | 10494      | 10494      |     - |
+| Passing   | 10494      | 10445      |   +49 |
 | Failed    | -          | -          |     - |
 | XFAIL     | 74         | 74         |     - |
 | XPASS     | -          | -          |     - |
