@@ -6,6 +6,21 @@
 
 Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[https://www.embecosm.com/][Embecosm]] for their ongoing support for this project.
 
+*** 2026 Introduction
+
+Hi everyone! Welcome to our first monthly report of the year 2026! As our work starts again after the winter holidays, we wanted to take some time to outline what is shaping up to be a pretty significant year for ~gccrs~, in a more candid way than the usual tone of these reports. The goal of this is for people interested in our project to know what to expect, how to support us, and what the project will focus on moving forward.
+
+We have recently been mentioned LWN's "Predictions for the new year" article, which sparked some encouraging and supportive comments that we really enjoyed reading. The specific quote of the article is as follows:
+
+"The gccrs project will deliver a working Rust compiler"
+
+Wow! That's not a lot of pressure at all!
+
+But Jonathan is right - the goal is for ~gccrs~ to be able to compile the Rust parts of the Linux kernel in 2026. Preferably, before RustConf and EuroRust, so that we can make some noise about it. Now, that does not mean that you will be able to use a Linux kernel with the Rust parts compiled by ~gccrs~ (we do hope you try and report all of the interesting issues though). ~gccrs~ will still be experimental, and even though it should be able to compile the kernel, that does not mean the executable produced will be able to run correctly. *For 2026, our goal is for gccrs to be able to /mis-compile/ the kernel.*
+
+- Mention getting in touch with more Kernel people
+- Mention getting in touch with more Rust people
+
 *** Project update
 
 This last report of the year 2025 
