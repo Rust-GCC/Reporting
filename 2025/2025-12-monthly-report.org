@@ -10,7 +10,7 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 Hi everyone! Welcome to our first monthly report of the year 2026! As our work starts again after the winter holidays, we wanted to take some time to outline what is shaping up to be a pretty significant year for ~gccrs~, in a more candid way than the usual tone of these reports. The goal of this is for people interested in our project to know what to expect, how to support us, and what the project will focus on moving forward.
 
-We have recently been mentioned LWN's "Predictions for the new year" article, which sparked some encouraging and supportive comments that we really enjoyed reading. The specific quote of the article is as follows:
+We have recently been mentioned in LWN's "Predictions for the new year" article, which sparked some encouraging and supportive comments that we really enjoyed reading. The specific quote of the article is as follows:
 
 "The gccrs project will deliver a working Rust compiler"
 
