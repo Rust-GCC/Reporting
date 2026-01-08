@@ -16,14 +16,19 @@ We have recently been mentioned LWN's "Predictions for the new year" article, wh
 
 Wow! That's not a lot of pressure at all!
 
-But Jonathan is right - the goal is for ~gccrs~ to be able to compile the Rust parts of the Linux kernel in 2026. Preferably, before RustConf and EuroRust, so that we can make some noise about it. Now, that does not mean that you will be able to use a Linux kernel with the Rust parts compiled by ~gccrs~ (we do hope you try and report all of the interesting issues though). ~gccrs~ will still be experimental, and even though it should be able to compile the kernel, that does not mean the executable produced will be able to run correctly. *For 2026, our goal is for gccrs to be able to /mis-compile/ the kernel.*
+But Jonathan is right - the goal is for ~gccrs~ to be able to compile the Rust parts of the Linux kernel in 2026. Preferably, before RustConf and EuroRust, so that we can make some noise about it. Now, that does not mean that you will be able to use a Linux kernel with the Rust parts compiled by ~gccrs~ (we do hope you try and report all of the interesting issues though). ~gccrs~ will still be experimental, and even though it should be able to compile the kernel, that does not mean the executable produced will be able to run correctly. For 2026, our goal is for gccrs to be able to /mis/-compile the kernel. There are things that we do not plan for ~gccrs~ to handle just yet, which may incur incorrect behavior in the produced binaries - which is to be expected from an experimental compiler.
 
-- Mention getting in touch with more Kernel people
-- Mention getting in touch with more Rust people
+Thus begins a nine months long marathon to get the kernel compiling :)
+
+This time will also be a great opportunity to get in touch with more people on the kernel and Rust side to make sure that ~gccrs~ fits in in all the ways that is expected of the project.
+
+Regarding the upcoming GCC 16.1 release: while we are working towards getting the kernel working by the time it comes out, this might not happen. For people willing to experiment with compiling their kernel using ~gccrs~, you will have to compile the project from scratch. We hope to get enough in GCC 16.1 so that ~gccrs~ is able to compile ~core~, and can thus be used in embedded environments for ~#![no_std]~ Rust code.
+
+We hope you understand that playing catch up like this takes a long time, and that some problems only show up when compiling actual projects - not simple test cases. While we do have the advantage of knowing what is supposed to work, we run into different problems than if we were just trying to design our own programming language from scratch. Knowing how ~core~ works, what compiler tricks are required, how the crate is implemented, is not innate, and while the team is getting pretty good at it, we still have some work to do.
+
+Thank you once again for your continued support and involvment. 2025 was a very fun year for the project, and 2026 seems to be headed in the same direction, with even more interesting problems to fix.
 
 *** Project update
-
-This last report of the year 2025 
 
 For the last month of 2025, we have once again made good progress on our name resolution algorithm in the hopes of getting ~core~ further along our compilation pipeline. We have not necessarily focused on the kernel itself this month, as most of the team was away on vacation for half of the month. The entire early name resolution and macro expansion fixed-point is now complete for ~core~, which is a massive milestone for the project - it is actually the reason why we decided to rewrite name resolution from scratch a couple of years ago. We are now able to handle all of the complex imports and exports in ~core~, coupled with the extensive amount of macros used for various primitive implementations. This leads us to the second half of the problem, late name resolution, which is currently still not finished for ~core~. This holiday season, we have fixed four massive bugs which impacted ~core~ as well as complex Rust crates. There are still a few issues with our late name resolution, namely around certain vectorized types and methods not being found, but nothing too drastic or hard to fix.
 
