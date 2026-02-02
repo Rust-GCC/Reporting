@@ -22,6 +22,10 @@ On a final technical note, one of the issues discovered with ~core~ this month w
 
 This helps provide better errors and improves the API for later passes of the compiler, such as late name resolution and type-checking.
 
+Another interesting discovery this month is this hack taken directly from ~rustc~:
+
+*some more mumbo jumbo*
+
 *** Community call
 
 We will not have a community call this month as most of the team will be traveling. You can subscribe to our calendar to see when the next one will be held. The call is open to everyone, even if you would just like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to be notified of upcoming events.
