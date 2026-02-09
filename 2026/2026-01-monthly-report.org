@@ -18,13 +18,68 @@ Feel free to propose any project you'd be interested in working on! Please join 
 
 On a final technical note, one of the issues discovered with ~core~ this month was an interesting edge-case in our import resolution algorithm we had failed to consider:
 
-*very technical mumbo jumbo*
+Our naive approach to import definitions was to directly insert the ID of the node that the import would resolve to. For example, in the following example,
 
-This helps provide better errors and improves the API for later passes of the compiler, such as late name resolution and type-checking.
+#+BEGIN_SRC rust
+mod foo { // Definition ID 1
+    fn bar() {} // Definition ID 2
+}
 
-Another interesting discovery this month is this hack taken directly from ~rustc~:
+use foo::bar;
 
-*some more mumbo jumbo*
+fn main() { // Definition ID 3
+    bar();
+}
+#+END_SRC
+
+We'd "replace" the import by a direct insert of Definition ID 2, and have the call to ~bar~ directly resolve to the /function/ instead of resolving to the /import/. This is fine in most cases, and went unnoticed for a long period of time. For the most part, resolving to a reference to a definition or to the definition itself does not make a difference - the proper function gets called, typechecked, and everyone is happy. However, imports /must/ act as a proper definition point, just like functions or modules. Consider this example:
+
+#+BEGIN_SRC rust
+use crate::intrinsics::{self, abort, is_aligned_and_not_null, is_nonoverlapping};
+
+/* snip */
+
+#[lang = "align_offset"]
+pub(crate) unsafe fn align_offset<T: Sized>(p: *const T, a: usize) -> usize {
+    use intrinsics::{
+        unchecked_shl, unchecked_shr, unchecked_sub, wrapping_add, wrapping_mul, wrapping_sub,
+    };
+
+    /* snip */
+}
+
+#+END_SRC
+
+Here, the second import within the ~align_offset~ function directly points to `crate::intrinsics::self` as a definition, and must be understood this way. But the /import/ does not contain any function definitions, it merely points to the module which contains them. This means that we must rework how our name resolution algorithm works for itself, and for the output it produces for the rest of the compiler, as later passes do not care about whether something is a definition or a reference to a definition - they only want to work on the actual modules, types and functions.
+
+Up until this point, our name resolution worked with an internal structure that was also its output for later passes - a simple hashmap linking each usage-point to its definition-point:
+
+#+BEGIN_SRC rust
+HashMap<Usage, Definition> usage_map;
+#+END_SRC
+
+With ~Usage~ and ~Definition~ simply being newtype-patterns for a ~NodeID~, our internal ID structure for our AST nodes.
+
+#+BEGIN_SRC rust
+struct Usage(NodeId);
+struct Definition(NodeId);
+#+END_SRC
+
+One possible modification is to modify the ~Definition~ type to allow them to become references to other ~Definition~s:
+
+#+BEGIN_SRC rust
+struct Usage(NodeId);
+enum Definition {
+  ImportOf(NodeId), // A use import
+  Actual(NodeId), // Literally anything else that is a definition
+}
+#+END_SRC
+
+This transforms our simple map into a graph, which we can then traverse at the end of name resolution to turn it back into a regular map - essentially flat-mapping it for later passes. This approach also allows us to do import loop detection, something we had not given much thought about previously as it is not essential for code-gen.
+
+An issue with this implementation is that when inserting usage-points in our ~usage_map~, we must know whether or not the ~NodeId~ that we resolved to in our ~NameResolutionCtx~ ribs is an import, or an actual definition. This has multiple ramifications and requires multiple changes to our internal name resolution structures, while also increasing their memory usage. Thankfully, we can easily avoid much of these changes thanks to one trick - if a ~Definition~ is also present in the map as a key, then it must mean that it is an import!
+
+By traversing the map recursively as a graph and checking if each definition is also present as a key, we can easily avoid a lot of code churn and still produce the output expected by later compiler passes.
 
 *** Community call
 
