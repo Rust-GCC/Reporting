@@ -50,7 +50,7 @@ pub(crate) unsafe fn align_offset<T: Sized>(p: *const T, a: usize) -> usize {
 
 #+END_SRC
 
-Here, the second import within the ~align_offset~ function directly points to `crate::intrinsics::self` as a definition, and must be understood this way. But the /import/ does not contain any function definitions, it merely points to the module which contains them. This means that we must rework how our name resolution algorithm works for itself, and for the output it produces for the rest of the compiler, as later passes do not care about whether something is a definition or a reference to a definition - they only want to work on the actual modules, types and functions.
+Here, the second import within the ~align_offset~ function directly points to ~crate::intrinsics::self~ as a definition, and must be understood this way. But the /import/ does not contain any function definitions, it merely points to the module which contains them. This means that we must rework how our name resolution algorithm works for itself, and for the output it produces for the rest of the compiler, as later passes do not care about whether something is a definition or a reference to a definition - they only want to work on the actual modules, types and functions.
 
 Up until this point, our name resolution worked with an internal structure that was also its output for later passes - a simple hashmap linking each usage-point to its definition-point:
 
