@@ -32,7 +32,37 @@ fn main() { // Definition ID 3
 }
 #+END_SRC
 
-We'd "replace" the import by a direct insert of Definition ID 2, and have the call to ~bar~ directly resolve to the /function/ instead of resolving to the /import/. This is fine in most cases, and went unnoticed for a long period of time. For the most part, resolving to a reference to a definition or to the definition itself does not make a difference - the proper function gets called, typechecked, and everyone is happy. However, imports /must/ act as a proper definition point, just like functions or modules. Consider this example:
+We'd "replace" the import by a direct insert of Definition ID 2, and have the call to ~bar~ directly resolve to the /function/ instead of resolving to the /import/. This is fine in most cases, and went unnoticed for a long period of time.
+
+
+#+BEGIN_SRC rust
+mod foo { // Definition ID 1
+    fn bar() {} // Definition ID 2
+}
+
+use foo::bar; // Resolved to Definition ID 2, insert Definition ID 2
+
+fn main() { // Definition ID 3
+    bar(); // Resolved to Definition ID 2
+}
+#+END_SRC
+ 
+
+For the most part, resolving to a reference to a definition or to the definition itself does not make a difference - the proper function gets called, typechecked, and everyone is happy. However, imports /must/ act as a proper definition point, just like functions or modules. The correct way to resolve the above example is as follows:
+
+#+BEGIN_SRC rust
+mod foo { // Definition ID 1
+    fn bar() {} // Definition ID 2
+}
+
+use foo::bar; // Resolved to ID 2, Definition ID 3
+
+fn main() { // Definition ID 4
+    bar(); // Resolved to ID 3
+}
+#+END_SRC
+
+Consider this example:
 
 #+BEGIN_SRC rust
 use crate::intrinsics::{self, abort, is_aligned_and_not_null, is_nonoverlapping};
