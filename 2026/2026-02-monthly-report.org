@@ -8,122 +8,17 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Project update
 
-- RustConf CfP
-    - One of the best ever! A truly objective opinion
-    - Mention going to Montreal
-- Vacation and traveling
-- PE stuff
-- NR stuff?
-- GSoC
-- This month
-    - RustConf acceptance or not
-    - Embedded World
-    - Finish bug fixing on last complex core import
+We have submitted an abstract to the RustConf call-for-papers, where we hope to present various interesting compiler stories about our journey towards ~core~ and compiling the Linux kernel. If accepted, Pierre-Emmanuel and Arthur will be looking forward to meeting everyone in Montreal in September. ~gccrs~ will also be at Embedded World in Nuremberg, so feel free to drop by and talk about the project!
 
-This beginning of the year was quite productive, with 41 pull-requests merged and numerous ~core~ problems discovered and addressed.
+Work during the month of February has been a bit slower, between professional travel and holidays. Nevertheless, Pierre-Emmanuel kept chipping away at getting certain Rust-for-Linux crates to compile, namely by reworking our attribute handling to allow more unstable features to be processed by ~gccrs~. This meant reworking our pipeline once again, in order to split the cfg-stripping into two passes, much like we split name resolution into multiple passes last year.
 
-Our work on getting the kernel to compile is focused on the crates surrounding the main kernel crate. Pierre-Emmanuel has also been focusing on the numerous nightly unstable features used by the kernel, as ~gccrs~ will need to support them rather quickly. On a related note, one nightly feature we have implemented this month - but which is not essential to the kernel - is ~#![no_core]~. ~gccrs~ now properly tries to link your Rust program with ~core~, which since we cannot compile ~core~ yet, means all of our testsuite has to opt out of that linkage using the ~#![no_core]~ attribute. Unfortunately, this commit was so big that the changelog for it was rejected by the mailing list's spam filter. Heh.
+For the work on ~core~, we are now one import resolution issue away from getting to typechecking. We hope to fix this particular import in the coming weeks, and to keep progressing on other middle-end ~core~ issues.
 
-In other news, Pierre-Emmanuel updated the GCC wiki with project ideas for this year's Google Summer of Code: https://gcc.gnu.org/wiki/SummerOfCode%C2%A0
-
-Feel free to propose any project you'd be interested in working on! Please join our Zulip group chat in order to start discussing with the team if you plan on applying for GSoC.
-
-On a final technical note, one of the issues discovered with ~core~ this month was an interesting edge-case in our import resolution algorithm we had failed to consider:
-
-Our naive approach to import definitions was to directly insert the ID of the node that the import would resolve to. For example, in the following example,
-
-#+BEGIN_SRC rust
-mod foo { // Definition ID 1
-    fn bar() {} // Definition ID 2
-}
-
-use foo::bar;
-
-fn main() { // Definition ID 3
-    bar();
-}
-#+END_SRC
-
-We'd "replace" the import by a direct insert of Definition ID 2, and have the call to ~bar~ directly resolve to the /function/ instead of resolving to the /import/. This is fine in most cases, and went unnoticed for a long period of time.
-
-
-#+BEGIN_SRC rust
-mod foo { // Definition ID 1
-    fn bar() {} // Definition ID 2
-}
-
-use foo::bar; // Resolved to Definition ID 2, insert Definition ID 2
-
-fn main() { // Definition ID 3
-    bar(); // Resolved to Definition ID 2
-}
-#+END_SRC
- 
-
-For the most part, resolving to a reference to a definition or to the definition itself does not make a difference - the proper function gets called, typechecked, and everyone is happy. However, imports /must/ act as a proper definition point, just like functions or modules. The correct way to resolve the above example is as follows:
-
-#+BEGIN_SRC rust
-mod foo { // Definition ID 1
-    fn bar() {} // Definition ID 2
-}
-
-use foo::bar; // Resolved to ID 2, Definition ID 3
-
-fn main() { // Definition ID 4
-    bar(); // Resolved to ID 3
-}
-#+END_SRC
-
-Consider this example:
-
-#+BEGIN_SRC rust
-use crate::intrinsics::{self, abort, is_aligned_and_not_null, is_nonoverlapping};
-
-/* snip */
-
-#[lang = "align_offset"]
-pub(crate) unsafe fn align_offset<T: Sized>(p: *const T, a: usize) -> usize {
-    use intrinsics::{
-        unchecked_shl, unchecked_shr, unchecked_sub, wrapping_add, wrapping_mul, wrapping_sub,
-    };
-
-    /* snip */
-}
-
-#+END_SRC
-
-Here, the second import within the ~align_offset~ function directly points to ~crate::intrinsics::self~ as a definition, and must be understood this way. But the /import/ does not contain any function definitions, it merely points to the module which contains them. This means that we must rework how our name resolution algorithm works for itself, and for the output it produces for the rest of the compiler, as later passes do not care about whether something is a definition or a reference to a definition - they only want to work on the actual modules, types and functions.
-
-Up until this point, our name resolution worked with an internal structure that was also its output for later passes - a simple hashmap linking each usage-point to its definition-point:
-
-#+BEGIN_SRC rust
-HashMap<Usage, Definition> usage_map;
-#+END_SRC
-
-With ~Usage~ and ~Definition~ simply being newtype-patterns for a ~NodeID~, our internal ID structure for our AST nodes.
-
-#+BEGIN_SRC rust
-struct Usage(NodeId);
-struct Definition(NodeId);
-#+END_SRC
-
-One possible modification is to modify the ~Definition~ type to allow them to become references to other ~Definition~s:
-
-#+BEGIN_SRC rust
-struct Usage(NodeId);
-enum Definition {
-  ImportOf(NodeId), // A use import
-  Actual(NodeId), // Literally anything else that is a definition
-}
-#+END_SRC
-
-This transforms our simple map into a graph, which we can then traverse at the end of name resolution to turn it back into a regular map - essentially flat-mapping it for later passes. This approach also allows us to do import loop detection, something we had not given much thought about previously as it is not essential for code-gen.
-
-An issue with this implementation is that when inserting usage-points in our ~usage_map~, we must know whether or not the ~NodeId~ that we resolved to in our ~NameResolutionCtx~ ribs is an import, or an actual definition. This has multiple ramifications and requires multiple changes to our internal name resolution structures, while also increasing their memory usage. Thankfully, we can easily avoid much of these changes thanks to one trick - if a ~Definition~ is also present in the map as a key, then it must mean that it is an import!
-
-By traversing the map recursively as a graph and checking if each definition is also present as a key, we can easily avoid a lot of code churn and still produce the output expected by later compiler passes.
+We have started receiving interest from potential Google Summer of Code students, which is always heartwarming - we look forward to your contributions and proposals as the application date grows closer.
 
 *** Community call
+
+*FIXME*: Community call on the week after? 17th?
 
 We will not have a community call this month as most of the team will be traveling. You can subscribe to our calendar to see when the next one will be held. The call is open to everyone, even if you would just like to sit-in and listen. You can also subscribe to our [[https://gcc.gnu.org/mailman/listinfo/gcc-rust][mailing-list]] or join our [[https://gcc-rust.zulipchat.com][Zulip chat]] to be notified of upcoming events.
 
