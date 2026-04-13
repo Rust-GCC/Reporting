@@ -127,6 +127,7 @@ Here is the list of overarching milestones gccrs is currently targeting. We'll u
 | Rust-for-Linux compiler 1.0        | The compiler is able to compile the Linux kernel and produce a runnable kernel   | LC 1.0  |
 | General purpose Rust 1.49 compiler | The compiler passes the Rust 1.49 testsuite, and handles general purpose code    | GC      |
 
+
 | Milestone                         | Last Month | This Month | Delta | Start Date    | Completion Date | Target        | OA Milest. |
 |-----------------------------------|------------|------------|-------|---------------|-----------------|---------------|------------|
 | Rust-for-Linux                    |        16% |        25% |   +9% |  1st Nov 2025 |               - |             - |     LC 0.1 |
