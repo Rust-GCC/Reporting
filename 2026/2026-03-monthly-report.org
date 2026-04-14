@@ -110,7 +110,7 @@ We will have our next monthly community call on the 27th of April at 9am UTC. Yo
 
 | TestCases | Last Month | This Month | Delta |
 |-----------+------------+------------+-------|
-| Passing   | 10563      | 10598      |   +35 |
+| Passing   | 10598      | 10945      |  +347 |
 | Failed    | -          | -          |     - |
 | XFAIL     | 73         | 73         |     - |
 | XPASS     | -          | -          |     - |
