@@ -1,6 +1,6 @@
-#+title:  Weekly report for 13th of April to 30th of April 2026
+#+title:  Weekly report for 13th of April to 20th of April 2026
 #+author: Philip Herron, Pierre-Emmanuel Patry, Arthur Cohen
-#+date:   2026-04-30
+#+date:   2026-04-20
 
 ** Overview
 
