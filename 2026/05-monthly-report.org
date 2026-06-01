@@ -66,43 +66,6 @@ We will have our next monthly community call on the 27th of April at 9am UTC. Yo
 - Fix intrinsic error location                                              [[https://github.com/rust-gcc/gccrs/pull/4502][PR4502]]
 - lint: Fix ICE on error_mark_node in unused variable linter                [[https://github.com/rust-gcc/gccrs/pull/4438][PR4438]]
 
-- Fix ICE in unused var when we hit unit const type                          [[https://github.com/rust-gcc/gccrs/pull/4518][PR4518]]
-- Add cttz and cttz_nonzero support                                          [[https://github.com/rust-gcc/gccrs/pull/4511][PR4511]]
-- Replace usages of `chainon`                                                [[https://github.com/rust-gcc/gccrs/pull/4508][PR4508]]
-- Strip down 1.0 resolver                                                    [[https://github.com/rust-gcc/gccrs/pull/4506][PR4506]]
-- Delete macro attribute input                                               [[https://github.com/rust-gcc/gccrs/pull/4505][PR4505]]
-- rust: Fix ICE in function_set_parameters                                   [[https://github.com/rust-gcc/gccrs/pull/4501][PR4501]]
-- gccrs: Fix ICE caused by TypeCheckBase::parse_repr_options                 [[https://github.com/rust-gcc/gccrs/pull/4500][PR4500]]
-- Improve unit struct matching                                               [[https://github.com/rust-gcc/gccrs/pull/4499][PR4499]]
-- Fix glob import all ICE issue                                              [[https://github.com/rust-gcc/gccrs/pull/4498][PR4498]]
-- Remove redundant expand visitor overloads                                  [[https://github.com/rust-gcc/gccrs/pull/4497][PR4497]]
-- gccrs: Add new test cases for old issues                                   [[https://github.com/rust-gcc/gccrs/pull/4494][PR4494]]
-- Sync with upstream (2026-03-18): 1c73a21caf2dc83ced30f10076a682ea26e1ba71  [[https://github.com/rust-gcc/gccrs/pull/4491][PR4491]]
-- Deduplicate some functions within PointerVisitor                           [[https://github.com/rust-gcc/gccrs/pull/4489][PR4489]]
-- Accepts `compiler_builtins` and `no_builtins` attribute.                   [[https://github.com/rust-gcc/gccrs/pull/4488][PR4488]]
-- Use pretty printer instead ofcall to open_memstream                        [[https://github.com/rust-gcc/gccrs/pull/4487][PR4487]]
-- testsuite:Add a testcase for setup_associated_types                        [[https://github.com/rust-gcc/gccrs/pull/4485][PR4485]]
-- Add ability to inject inner attributes from CLI                            [[https://github.com/rust-gcc/gccrs/pull/4484][PR4484]]
-- Add enum items to value namespace as well                                  [[https://github.com/rust-gcc/gccrs/pull/4480][PR4480]]
-- Squashing local commits                                                    [[https://github.com/rust-gcc/gccrs/pull/4468][PR4468]]
-- Intrinsic: Add `ctlz` and `ctlz_nonzero` intrinsics                        [[https://github.com/rust-gcc/gccrs/pull/4467][PR4467]]
-- Add no_std to builtin attributes                                           [[https://github.com/rust-gcc/gccrs/pull/4466][PR4466]]
-- Sync with upstream (2026-03-05): 0970bb8565616f61c6b7a7dd0edbc829b0064703  [[https://github.com/rust-gcc/gccrs/pull/4464][PR4464]]
-- enforce function qualifier order                                           [[https://github.com/rust-gcc/gccrs/pull/4463][PR4463]]
-- feat: Implement `no_core` feature gate check                               [[https://github.com/rust-gcc/gccrs/pull/4462][PR4462]]
-- Fix match arm scope                                                        [[https://github.com/rust-gcc/gccrs/pull/4460][PR4460]]
-- Intrinsic refactor                                                         [[https://github.com/rust-gcc/gccrs/pull/4459][PR4459]]
-- Disambiguate identifier and path patterns                                  [[https://github.com/rust-gcc/gccrs/pull/4455][PR4455]]
-- gccrs: Fix 128-bit non-decimal integer literal saturation                  [[https://github.com/rust-gcc/gccrs/pull/4454][PR4454]]
-- intrinsic: Add bswap intrinsic                                             [[https://github.com/rust-gcc/gccrs/pull/4452][PR4452]]
-- resolve: Fix ICE on ambiguous glob re-exports                              [[https://github.com/rust-gcc/gccrs/pull/4451][PR4451]]
-- Prevent error emission with multiple wildcards                             [[https://github.com/rust-gcc/gccrs/pull/4450][PR4450]]
-- rust: Explicitly instantiate FFIVec<Piece> template                        [[https://github.com/rust-gcc/gccrs/pull/4446][PR4446]]
-- lint: Fix ICE on error_mark_node in unused variable linter                 [[https://github.com/rust-gcc/gccrs/pull/4438][PR4438]]
-- Improve path resolution                                                    [[https://github.com/rust-gcc/gccrs/pull/4428][PR4428]]
-- expand: Add error check if derive has wrong item                           [[https://github.com/rust-gcc/gccrs/pull/4359][PR4359]]
-- nr1.0: Remove support in checking phases                                   [[https://github.com/rust-gcc/gccrs/pull/4108][PR4108]]
-
 *** Contributors this month
 
 - [[https://github.com/fisnikhasani][Fisnik Hasani]] (new contributor!)
@@ -122,23 +85,23 @@ We will have our next monthly community call on the 27th of April at 9am UTC. Yo
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |        406 |        406 |    +5 |
-| In Progress |        118 |        118 |    +1 |
-| Completed   |       1245 |       1245 |   +20 |
+| TODO        |        406 |        409 |    +3 |
+| In Progress |        118 |        118 |     - |
+| Completed   |       1245 |       1255 |   +10 |
 
 *** Bugs
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |        192 |        192 |    +2 |
+| TODO        |        192 |        191 |    -1 |
 | In Progress |         52 |         52 |     - |
-| Completed   |        619 |        619 |   +14 |
+| Completed   |        619 |        623 |    +4 |
 
 *** Test Cases
 
 | TestCases | Last Month | This Month | Delta |
 |-----------+------------+------------+-------|
-| Passing   | 10945      | 10945      |  +347 |
+| Passing   | 10989      | 10945      |   +44 |
 | Failed    | -          | -          |     - |
 | XFAIL     | 73         | 73         |     - |
 | XPASS     | -          | -          |     - |
