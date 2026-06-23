@@ -1,6 +1,7 @@
 #+title:  Monthly Report for March 2026
 #+author: Philip Herron, Pierre-Emmanuel Patry and Arthur Cohen
 #+date:   2026-04-13
+#+options: ^:nil
 
 ** Overview
 
