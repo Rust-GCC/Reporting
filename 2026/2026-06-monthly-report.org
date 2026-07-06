@@ -98,17 +98,17 @@ Last but not least, [[https://github.com/polygonalr][Zhi Heng]] has been working
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |        409 |        409 |    +3 |
-| In Progress |        118 |        118 |     - |
-| Completed   |       1255 |       1255 |   +10 |
+| TODO        |        409 |        428 |   +19 |
+| In Progress |        118 |        128 |   +10 |
+| Completed   |       1255 |       1272 |   +17 |
 
 *** Bugs
 
 | Category    | Last Month | This Month | Delta |
 |-------------+------------+------------+-------|
-| TODO        |        191 |        191 |    -1 |
+| TODO        |        191 |        203 |   +12 |
 | In Progress |         52 |         52 |     - |
-| Completed   |        623 |        623 |    +4 |
+| Completed   |        623 |        630 |    +7 |
 
 *** Test Cases
 
