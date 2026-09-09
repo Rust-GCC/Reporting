@@ -8,7 +8,9 @@ Thanks again to [[https://opensrcsec.com/][Open Source Security, inc]] and [[htt
 
 *** Project update
 
-Despite a tumultuous month of August, we have made great progress on the compiler in both getting closer to compiling ~core~ and into compiling the Linux kernel. For ~core~, after closing out the ~Late name resolution fixes~ milestone at the beginning of the month, we moved on to ~Lowering~, a pass which takes care of desugaring our high level ~AST~ into a more palatable intermediate representation for the rest of the compiler, our ~HIR~. This pass is also responsible for verifying the validity of the AST in multiple places, as well as desugaring certain language constructs into others, allowing the HIR to be a smaller overall representation than the AST, simplifying later passes such as type-checking and code generation.
+Over the course of the month of August, both Pierre-Emmanuel and Arthur unfortunately got laid-off from Embecosm for economic reasons. Thankfully, their contracts have been picked up by Open Source Security, and work on the compiler continues as before.
+
+Despite this tumultuous period, we have made great progress on the compiler in both getting closer to compiling ~core~ and into compiling the Linux kernel. For ~core~, after closing out the ~Late name resolution fixes~ milestone at the beginning of the month, we moved on to ~Lowering~, a pass which takes care of desugaring our high level ~AST~ into a more palatable intermediate representation for the rest of the compiler, our ~HIR~. This pass is also responsible for verifying the validity of the AST in multiple places, as well as desugaring certain language constructs into others, allowing the HIR to be a smaller overall representation than the AST, simplifying later passes such as type-checking and code generation.
 
 We ran into several lowering errors when compiling ~core~ as certain behaviors were unexpected or mishandled. We were able to fix all of the shortcomings of this pass during the month of August and move on to typechecking errors.
 
