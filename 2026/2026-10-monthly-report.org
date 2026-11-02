@@ -12,7 +12,7 @@ The project merged 102 PRs merged in the last months, which is impressive consid
 
 For example, a ~intrinsics::nontemporal_store<T>~ is equivalent to a ~intrinsics::move_val_init<T>~ but with an extra marker to indicate to the backend that this data should not be held in cache. It is currently impossible to add this "marker" from a GCC frontend, so we simply emit the same code as a ~move_val_init~ when generating this intrinsic. Likewise, GCC's ~__builtin_prefetch()~ does not allow prefetching from the instruction cache, as opposed to LLVM's ~llvm.prefetch~ intrinsic. We thus... don't prefetch instructions for ~prefetch_{write, read}_instruction<T>~, which again only affects the performance of the produced binary, but not its behavior.
 
-This month also saw a lot of work on external crate handling, with Pierre-Emmanuel making great progress on name resolving paths from external crates. We are closing in on this and hope to be able to correctly compile crates together for real-life projects in the next few weeks. We are also picking up the typechecking work and going through the last few remaining bugs with recursive types and slice intrinsics. These are the only few hurdles remaining before a full compilation of ~core~.
+This month also saw a lot of work on external crate handling, with Pierre-Emmanuel making great progress on name resolving paths from external crates. We could not handle modules defined within external crates, and could not resolve global paths from other crates. Fixing this highlighted a slew of other issues and thus took a long time. We introduced a new testsuite focused on multi-crates testing to ensure we won't introduce further regressions. We are also picking up the typechecking work and going through the last few remaining bugs with recursive types and slice intrinsics. These are the only few hurdles remaining before a full compilation of ~core~.
 
 On the side, we have also started experimenting with the BPF backend for GCC using ~gccrs~. We are currently modifying the code from the SCX REEVDF scheduler (https://github.com/sched-ext/scx/) in order to get it to compile with ~gccrs~. These projects are interesting, as they do not depend on the standard library, and are thus a perfect target for ~gccrs~. We still need to tweak them a little as they are written in a more recent version of Rust than what ~gccrs~ is currently targeting, and thus make use of unsupported Rust language features such as ~if-let~ chains.
 
@@ -22,7 +22,7 @@ For now, only the recording of the RustConf talk is available: https://www.youtu
 
 We will be posting the other recordings as soon as we have them!
 
-During the month of November, we plan on continuing the work on the typechecker and on external crate handling. We also want to start implementing ~CoercePointee~ properly, as it is an essential feature for the low-level ~alloc~ crate of the Linux kernel.
+During the month of November, we plan on continuing the work on the typechecker and on the backend. We also want to start implementing ~CoercePointee~ properly, as it is an essential feature for the low-level ~alloc~ crate of the Linux kernel.
 
 ** Call for contribution
 
